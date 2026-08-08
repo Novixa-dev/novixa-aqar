@@ -7,7 +7,7 @@ use Spatie\LaravelSettings\Settings;
 class GeneralSettings extends Settings
 {
 
-    public string $site_name = 'Liberu Real Estate';
+    public string $site_name = 'Aqar / عقاري';
     public string $site_email = 'info@liberu.co.uk';
     public ?string $site_phone = null;
     public ?string $site_address = null;
@@ -18,7 +18,7 @@ class GeneralSettings extends Settings
     public ?string $twitter_url = null;
     public ?string $github_url = null;
     public ?string $youtube_url = null;
-    public string $footer_copyright = '© Liberu Real Estate. All rights reserved.';
+    public string $footer_copyright = '© Aqar (عقاري). جميع الحقوق محفوظة.';
 
     public static function group(): string
     {

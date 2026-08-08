@@ -11,18 +11,18 @@ class SiteSettingsSeeder extends Seeder
     {
         $settings = app(GeneralSettings::class);
 
-        $settings->site_name = config('app.name', 'Liberu Genealogy');
-        $settings->site_email = 'info@liberugenealogy.com';
-        $settings->site_phone = '+44 208 050 5865';
-        $settings->site_address = '123 Genealogy St, London, UK';
-        $settings->site_country = 'United Kingdom';
-        $settings->site_currency = '£';
-        $settings->site_default_language = 'en';
-        $settings->facebook_url = 'https://www.facebook.com/familytree365';
+        $settings->site_name = config('app.name', 'Aqar / عقاري');
+        $settings->site_email = 'info@aqar.ye';
+        $settings->site_phone = '+967 770 000 000';
+        $settings->site_address = 'Al-Mukalla, Hadhramaut, Yemen';
+        $settings->site_country = 'Yemen';
+        $settings->site_currency = 'YER';
+        $settings->site_default_language = 'ar';
+        $settings->facebook_url = null;
         $settings->twitter_url = null;
-        $settings->github_url = 'https://www.github.com/liberu-genealogy';
+        $settings->github_url = null;
         $settings->youtube_url = null;
-        $settings->footer_copyright = '© ' . date('Y') . ' ' . config('app.name', 'Liberu Genealogy') . '. All rights reserved.';
+        $settings->footer_copyright = '© ' . date('Y') . ' ' . config('app.name', 'Aqar / عقاري') . '. All rights reserved.';
 
         $settings->save();
     }

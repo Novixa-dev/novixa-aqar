@@ -36,6 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName('عقاري | Aqar')
             // ->login([AuthenticatedSessionController::class, 'create'])
             // ->loginRouteSlug('login')
             ->homeUrl('/admin')

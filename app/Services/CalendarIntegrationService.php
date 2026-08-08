@@ -100,7 +100,7 @@ class CalendarIntegrationService
 
         return "BEGIN:VCALENDAR\r\n" .
             "VERSION:2.0\r\n" .
-            "PRODID:-//Liberu Real Estate//EN\r\n" .
+            "PRODID:-//Aqar//EN\r\n" .
             "CALSCALE:GREGORIAN\r\n" .
             "METHOD:REQUEST\r\n" .
             "BEGIN:VEVENT\r\n" .

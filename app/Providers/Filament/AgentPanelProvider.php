@@ -35,6 +35,7 @@ class AgentPanelProvider extends PanelProvider
         $panel
             ->id('agent')
             ->path('agent')
+            ->brandName('عقاري | Aqar')
             ->homeUrl('/agent')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([

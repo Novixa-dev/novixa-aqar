@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Liberu Real Estate'),
+    'name' => env('APP_NAME', 'Aqar / عقاري'),
     'version' => '1.7.3',
 
     /*

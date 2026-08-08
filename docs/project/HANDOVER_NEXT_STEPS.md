@@ -33,20 +33,21 @@
 
 - **TASK-001 (Upstream Baseline)**: **VERIFIED & COMPLETED**
 - **TASK-002 (Architecture Audit)**: **VERIFIED & COMPLETED**
-- **Next Active Task**: **TASK-003 — Branding & Identity (`Aqar / عقاري`)**
+- **TASK-003 (Branding & Identity)**: **VERIFIED & COMPLETED**
+- **Next Active Task**: **TASK-004 — Arabic Localization (`ar`)**
 
 ---
 
-## 3. Next Implementation Plan (TASK-003: Branding & Identity)
+## 3. Next Implementation Plan (TASK-004: Arabic Localization)
 
 ### Objective
-Incorporate the **Aqar / عقاري** identity ("نظام إدارة وتسويق العقارات") across the application header, title tags, Filament admin panel header, login screen, and favicon assets.
+Complete the comprehensive Arabic localization dictionary (`lang/ar/`) for all core real-estate models, property status options, Filament resources, public navigation links, and validation error messages.
 
 ### Scope & Tasks
-1. Update `config/app.php` name to `Aqar` (`عقاري`).
-2. Customise Filament Panel provider branding (`app/Providers/Filament/AdminPanelProvider.php`).
-3. Add Arabic slogan and logo brand elements in guest layout and admin dashboard.
-4. Prepare TASK-003 analysis document in `docs/tasks/TASK-003-BRANDING-ANALYSIS.md`.
+1. Verify and update translation files in `lang/ar/`.
+2. Translate all property feature names, property types, listing statuses, and lead statuses.
+3. Configure application default locale in `config/app.php` to `ar`.
+4. Prepare TASK-004 analysis document in `docs/tasks/TASK-004-ARABIC-LOCALIZATION-ANALYSIS.md`.
 
 ---
 
