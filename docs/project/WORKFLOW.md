@@ -5,7 +5,7 @@
 | TASK-001 | Establish upstream baseline | COMPLETED | 2026-08-08 | 2026-08-08 | baseline-setup | PASS (670 tests) |
 | TASK-002 | Architecture audit | COMPLETED | 2026-08-08 | 2026-08-08 | arch-audit | PASS |
 | TASK-003 | Branding | COMPLETED | 2026-08-09 | 2026-08-09 | branding-aqar | PASS (670 tests) |
-| TASK-004 | Arabic localization | NOT_STARTED | | | | |
+| TASK-004 | Arabic localization | COMPLETED | 2026-08-09 | 2026-08-09 | arabic-localization | PASS (670 tests) |
 | TASK-005 | RTL polish | NOT_STARTED | | | | |
 | TASK-006 | Yemen localization | NOT_STARTED | | | | |
 | TASK-007 | Property UX | NOT_STARTED | | | | |

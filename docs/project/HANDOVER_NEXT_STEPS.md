@@ -34,20 +34,21 @@
 - **TASK-001 (Upstream Baseline)**: **VERIFIED & COMPLETED**
 - **TASK-002 (Architecture Audit)**: **VERIFIED & COMPLETED**
 - **TASK-003 (Branding & Identity)**: **VERIFIED & COMPLETED**
-- **Next Active Task**: **TASK-004 — Arabic Localization (`ar`)**
+- **TASK-004 (Arabic Localization)**: **VERIFIED & COMPLETED**
+- **Next Active Task**: **TASK-005 — RTL Polish (`dir="rtl"`)**
 
 ---
 
-## 3. Next Implementation Plan (TASK-004: Arabic Localization)
+## 3. Next Implementation Plan (TASK-005: RTL Polish)
 
 ### Objective
-Complete the comprehensive Arabic localization dictionary (`lang/ar/`) for all core real-estate models, property status options, Filament resources, public navigation links, and validation error messages.
+Ensure full structural Right-To-Left (RTL) layout support across HTML templates, Filament Admin Panels, Livewire components, navigation drawers, and property cards.
 
 ### Scope & Tasks
-1. Verify and update translation files in `lang/ar/`.
-2. Translate all property feature names, property types, listing statuses, and lead statuses.
-3. Configure application default locale in `config/app.php` to `ar`.
-4. Prepare TASK-004 analysis document in `docs/tasks/TASK-004-ARABIC-LOCALIZATION-ANALYSIS.md`.
+1. Set `<html dir="rtl" lang="ar">` across all Blade root layouts.
+2. Verify Filament Admin Panel layout direction.
+3. Validate logical CSS padding/margin utility usage.
+4. Prepare TASK-005 analysis document in `docs/tasks/TASK-005-RTL-POLISH-ANALYSIS.md`.
 
 ---
 
