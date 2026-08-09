@@ -37,19 +37,20 @@
 - **TASK-004 (Arabic Localization)**: **VERIFIED & COMPLETED**
 - **TASK-005 (RTL Polish)**: **VERIFIED & COMPLETED**
 - **TASK-006 (Yemen Localization)**: **VERIFIED & COMPLETED**
-- **Next Active Task**: **TASK-007 — Property UX (Listing, Details & CTAs)**
+- **TASK-007 (Property UX)**: **VERIFIED & COMPLETED**
+- **Next Active Task**: **TASK-008 — WhatsApp / Call / Sharing (`wa.me` & Social Sharing)**
 
 ---
 
-## 3. Next Implementation Plan (TASK-007: Property UX)
+## 3. Next Implementation Plan (TASK-008: WhatsApp / Call / Sharing)
 
 ### Objective
-Enhance public property search, listing cards, detail page ordering (Gallery, Title, Sale/Rent, Price, Location, Key Specs, Description, Amenities, Office Info, Contact CTAs), and responsive mobile layout.
+Integrate context-aware WhatsApp links (`wa.me`) with pre-filled Arabic message templates, click-to-call links, and property sharing/URL copy buttons.
 
 ### Scope & Tasks
-1. Verify property detail view layout structure.
-2. Ensure price formatting uses active currency symbol (`ر.ي`).
-3. Prepare TASK-007 analysis document in `docs/tasks/TASK-007-PROPERTY-UX-ANALYSIS.md`.
+1. Build reusable WhatsApp link generator helper with property title and ID.
+2. Verify phone number formatting and click-to-call actions.
+3. Prepare TASK-008 analysis document in `docs/tasks/TASK-008-WHATSAPP-CALL-SHARING-ANALYSIS.md`.
 
 ---
 

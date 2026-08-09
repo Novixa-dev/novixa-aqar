@@ -184,43 +184,72 @@
                             <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
                                 {{ $property->title }}
                             </h1>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200">
+                                    {{ strtolower($property->status ?? '') === 'rent' || strtolower($property->listing_type ?? '') === 'rent' ? __('property.listing_types.rent') : __('property.listing_types.sale') }}
+                                </span>
+                                @if($property->type)
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200">
+                                        {{ __('property.types.' . strtolower($property->type)) ?? $property->type }}
+                                    </span>
+                                @endif
+                            </div>
+
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                {{ $property->location ?? $property->city ?? 'المكلا، حضرموت' }}
+                            </p>
+
                             <div class="mt-4 sm:items-center sm:gap-4 sm:flex">
-                                <p class="text-2xl font-extrabold text-gray-900 sm:text-3xl dark:text-white">
-                                    {{ $currency . ' ' . number_format($property->price, 2) }}
+                                <p class="text-3xl font-black text-emerald-600 dark:text-emerald-400">
+                                    {{ number_format($property->price, 0) . ' ' . $currency }}
                                 </p>
-                                
-                                <div class="flex items-center gap-2 mt-2 sm:mt-0">
-                                    <div class="flex items-center gap-1">
-                                        @forelse($reviews as $review)
-                                            @for ($i = 1; $i <= 5; $i++)
-                                                @if ($i <= $review->rating)
-                                                    <svg class="w-4 h-4 text-yellow-300" aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        fill="currentColor" viewBox="0 0 24 24">
-                                                        <path
-                                                            d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
-                                                    </svg>
-                                                @else
-                                                    <svg class="w-4 h-4 text-yellow-300" aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        fill="" viewBox="0 0 24 24">
-                                                        <path
-                                                            d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
-                                                    </svg>
-                                                @endif
-                                            @endfor
-                                            <a href="#"
-                                                class="text-sm font-medium leading-none text-gray-900 underline hover:no-underline dark:text-white">
-                                                {{ count($reviews) }} Reviews
-                                            </a>
-                                        @empty
-                                            <p class="text-gray-500">No reviews yet.</p>
-                                        @endforelse
+                            </div>
 
-
-                                    </div>
-
+                            {{-- Key Specs Grid --}}
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6 p-4 bg-gray-50 dark:bg-gray-800/80 rounded-xl border border-gray-200 dark:border-gray-700">
+                                <div class="p-3 bg-white dark:bg-gray-900 rounded-lg shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">المساحة</p>
+                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ $property->size ?? $property->area ?? '150' }} م²</p>
                                 </div>
+                                <div class="p-3 bg-white dark:bg-gray-900 rounded-lg shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">غرف النوم</p>
+                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ $property->bedrooms ?? 3 }} غرف</p>
+                                </div>
+                                <div class="p-3 bg-white dark:bg-gray-900 rounded-lg shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">دورات المياه</p>
+                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ $property->bathrooms ?? 2 }} حمامات</p>
+                                </div>
+                                <div class="p-3 bg-white dark:bg-gray-900 rounded-lg shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">نوع العقار</p>
+                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ __('property.types.' . strtolower($property->type ?? 'apartment')) ?? ($property->type ?? 'عقار') }}</p>
+                                </div>
+                            </div>
+
+                            {{-- WhatsApp & Call Quick Actions --}}
+                            <div class="mb-4 flex flex-wrap gap-3">
+                                @php
+                                    $whatsappPhone = "+967770000000";
+                                    $whatsappText = urlencode("السلام عليكم، أستفسر عن العقار: " . $property->title . " (رقم العقار: " . $property->id . ")");
+                                @endphp
+                                <a href="https://wa.me/{{ $whatsappPhone }}?text={{ $whatsappText }}" target="_blank"
+                                    class="flex-1 min-w-[160px] inline-flex items-center justify-center py-3 px-4 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-md transition-all duration-150">
+                                    <svg class="w-5 h-5 me-2 fill-current" viewBox="0 0 24 24">
+                                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
+                                    </svg>
+                                    تواصل عبر الواتساب
+                                </a>
+
+                                <a href="tel:{{ $whatsappPhone }}"
+                                    class="flex-1 min-w-[140px] inline-flex items-center justify-center py-3 px-4 text-sm font-bold text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-xl shadow-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 transition-all duration-150">
+                                    <svg class="w-5 h-5 me-2 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    اتصال بالمكتب
+                                </a>
                             </div>
 
                             <div class="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
