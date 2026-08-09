@@ -35,20 +35,20 @@
 - **TASK-002 (Architecture Audit)**: **VERIFIED & COMPLETED**
 - **TASK-003 (Branding & Identity)**: **VERIFIED & COMPLETED**
 - **TASK-004 (Arabic Localization)**: **VERIFIED & COMPLETED**
-- **Next Active Task**: **TASK-005 — RTL Polish (`dir="rtl"`)**
+- **TASK-005 (RTL Polish)**: **VERIFIED & COMPLETED**
+- **Next Active Task**: **TASK-006 — Yemen Localization (`YER` & Al-Mukalla)**
 
 ---
 
-## 3. Next Implementation Plan (TASK-005: RTL Polish)
+## 3. Next Implementation Plan (TASK-006: Yemen Localization)
 
 ### Objective
-Ensure full structural Right-To-Left (RTL) layout support across HTML templates, Filament Admin Panels, Livewire components, navigation drawers, and property cards.
+Configure Yemeni Rial (`YER` / `ر.ي`) as default demo currency, seed Al-Mukalla/Hadhramaut districts (Fuwah, Al-Dais, Al-Sharj, Al-Salam, Buwaysh, Khalaf), and update contact preferences.
 
 ### Scope & Tasks
-1. Set `<html dir="rtl" lang="ar">` across all Blade root layouts.
-2. Verify Filament Admin Panel layout direction.
-3. Validate logical CSS padding/margin utility usage.
-4. Prepare TASK-005 analysis document in `docs/tasks/TASK-005-RTL-POLISH-ANALYSIS.md`.
+1. Set default currency setting in `GeneralSettings` and settings migrations to `YER` (`ر.ي`).
+2. Update district list and location seeders for Al-Mukalla / Hadhramaut.
+3. Prepare TASK-006 analysis document in `docs/tasks/TASK-006-YEMEN-LOCALIZATION-ANALYSIS.md`.
 
 ---
 
