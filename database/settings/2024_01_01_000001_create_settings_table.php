@@ -11,8 +11,8 @@ return new class extends SettingsMigration
         $this->migrator->add('general.site_phone', '');
         $this->migrator->add('general.site_address', '');
         $this->migrator->add('general.site_country', '');
-        $this->migrator->add('general.site_currency', '$');
-        $this->migrator->add('general.site_default_language', 'en');
+        $this->migrator->add('general.site_currency', 'ر.ي');
+        $this->migrator->add('general.site_default_language', 'ar');
         $this->migrator->add('general.facebook_url', null);
         $this->migrator->add('general.twitter_url', null);
         $this->migrator->add('general.github_url', 'https://www.github.com/liberu-real-estate/real-estate-laravel');

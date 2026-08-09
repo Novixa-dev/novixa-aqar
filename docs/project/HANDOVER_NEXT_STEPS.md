@@ -36,19 +36,20 @@
 - **TASK-003 (Branding & Identity)**: **VERIFIED & COMPLETED**
 - **TASK-004 (Arabic Localization)**: **VERIFIED & COMPLETED**
 - **TASK-005 (RTL Polish)**: **VERIFIED & COMPLETED**
-- **Next Active Task**: **TASK-006 — Yemen Localization (`YER` & Al-Mukalla)**
+- **TASK-006 (Yemen Localization)**: **VERIFIED & COMPLETED**
+- **Next Active Task**: **TASK-007 — Property UX (Listing, Details & CTAs)**
 
 ---
 
-## 3. Next Implementation Plan (TASK-006: Yemen Localization)
+## 3. Next Implementation Plan (TASK-007: Property UX)
 
 ### Objective
-Configure Yemeni Rial (`YER` / `ر.ي`) as default demo currency, seed Al-Mukalla/Hadhramaut districts (Fuwah, Al-Dais, Al-Sharj, Al-Salam, Buwaysh, Khalaf), and update contact preferences.
+Enhance public property search, listing cards, detail page ordering (Gallery, Title, Sale/Rent, Price, Location, Key Specs, Description, Amenities, Office Info, Contact CTAs), and responsive mobile layout.
 
 ### Scope & Tasks
-1. Set default currency setting in `GeneralSettings` and settings migrations to `YER` (`ر.ي`).
-2. Update district list and location seeders for Al-Mukalla / Hadhramaut.
-3. Prepare TASK-006 analysis document in `docs/tasks/TASK-006-YEMEN-LOCALIZATION-ANALYSIS.md`.
+1. Verify property detail view layout structure.
+2. Ensure price formatting uses active currency symbol (`ر.ي`).
+3. Prepare TASK-007 analysis document in `docs/tasks/TASK-007-PROPERTY-UX-ANALYSIS.md`.
 
 ---
 

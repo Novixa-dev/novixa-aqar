@@ -16,7 +16,7 @@ class SiteSettingsSeeder extends Seeder
         $settings->site_phone = '+967 770 000 000';
         $settings->site_address = 'Al-Mukalla, Hadhramaut, Yemen';
         $settings->site_country = 'Yemen';
-        $settings->site_currency = 'YER';
+        $settings->site_currency = 'ر.ي';
         $settings->site_default_language = 'ar';
         $settings->facebook_url = null;
         $settings->twitter_url = null;
