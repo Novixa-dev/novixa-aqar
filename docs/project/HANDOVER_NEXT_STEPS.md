@@ -40,19 +40,19 @@
 - **TASK-007 (Property UX)**: **VERIFIED & COMPLETED**
 - **TASK-008 (WhatsApp / Call / Sharing)**: **VERIFIED & COMPLETED** (706 tests pass)
 - **TASK-009 (Lead Management)**: **VERIFIED & COMPLETED** (708 tests pass)
-- **Next Active Task**: **TASK-010 — Owner Property Submission**
+- **TASK-010 (Owner Property Submission)**: **VERIFIED & COMPLETED** (709 tests pass)
+- **Next Active Task**: **TASK-011 — Property Requests & Buyer Inquiries**
 
 ---
 
-## 3. Next Implementation Plan (TASK-010: Owner Property Submission)
+## 3. Next Implementation Plan (TASK-011: Property Requests)
 
 ### Objective
-Enable property owners and landlords to directly submit their properties for review and approval by office agents/brokers.
+Enable clients/buyers looking for specific unlisted properties to post property requests (`طلبات العقارات والبحث المخصص`).
 
 ### Scope & Tasks
-1. Audit property submission form (`property-submission-form.blade.php`).
-2. Add owner contact details, property address, features, and image upload.
-3. Prepare TASK-010 analysis document in `docs/tasks/TASK-010-OWNER-SUBMISSION-ANALYSIS.md`.
+1. Audit property request submission flow and buyer inquiry matching.
+2. Prepare TASK-011 analysis document in `docs/tasks/TASK-011-PROPERTY-REQUESTS-ANALYSIS.md`.
 
 ---
 

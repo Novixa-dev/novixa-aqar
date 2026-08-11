@@ -11,7 +11,7 @@
 | TASK-007 | Property UX | COMPLETED | 2026-08-09 | 2026-08-09 | property-ux | PASS (670 tests) |
 | TASK-008 | WhatsApp / call / sharing | COMPLETED | 2026-08-11 | 2026-08-11 | whatsapp-sharing | PASS (706 tests) |
 | TASK-009 | Lead management | COMPLETED | 2026-08-11 | 2026-08-11 | lead-management | PASS (708 tests) |
-| TASK-010 | Owner submission | NOT_STARTED | | | | |
+| TASK-010 | Owner submission | COMPLETED | 2026-08-11 | 2026-08-11 | owner-submission | PASS (709 tests) |
 | TASK-011 | Property requests | NOT_STARTED | | | | |
 | TASK-012 | SEO / OpenGraph | NOT_STARTED | | | | |
 | TASK-013 | Demo data | NOT_STARTED | | | | |

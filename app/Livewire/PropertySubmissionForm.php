@@ -20,6 +20,9 @@ class PropertySubmissionForm extends Component
     public $area_sqft;
     public $year_built;
     public $property_type;
+    public $neighborhood_id;
+    public $owner_phone;
+    public $listing_type = 'sale';
     public $images = [];
     public $video;
     public $customDescription;
@@ -36,6 +39,8 @@ class PropertySubmissionForm extends Component
         'area_sqft' => 'required|numeric|min:0',
         'year_built' => 'required|integer|min:1800|max:2099',
         'property_type' => 'required|string|max:255',
+        'neighborhood_id' => 'nullable|exists:neighborhoods,id',
+        'owner_phone' => 'nullable|string|max:30',
         'images.*' => 'image|max:5120', // 5MB Max
         'video' => 'nullable|mimetypes:video/mp4,video/quicktime|max:102400', // 100MB Max
         'customDescription' => 'nullable|string|max:1000',
@@ -75,6 +80,8 @@ class PropertySubmissionForm extends Component
     public function submit()
     {
         $this->validate();
+
+        $teamId = auth()->user()?->currentTeam?->id ?? \App\Models\Team::first()?->id;
     
         $property = Property::create([
             'title' => $this->title,
@@ -84,9 +91,12 @@ class PropertySubmissionForm extends Component
             'bedrooms' => $this->bedrooms,
             'bathrooms' => $this->bathrooms,
             'area_sqft' => $this->area_sqft,
-            'year_built' => $this->year_built,
+            'year_built' => $this->year_built ?? date('Y'),
             'property_type' => $this->property_type,
+            'neighborhood_id' => $this->neighborhood_id ?: null,
+            'internal_notes' => $this->owner_phone ? 'رقم هاتف المالك: ' . $this->owner_phone : null,
             'status' => 'pending',
+            'team_id' => $teamId,
             'user_id' => auth()->id(),
             'custom_description' => $this->customDescription,
         ]);
@@ -101,8 +111,9 @@ class PropertySubmissionForm extends Component
                 ->toMediaCollection('videos');
         }
     
-        session()->flash('message', 'Property submitted successfully and is pending approval.');
-        $this->reset();
+        session()->flash('message', 'تم إرسال طلب إضافة العقار بنجاح وهو قيد المراجعة والموافقة من قبل إدارة المكتب.');
+        $this->dispatch('propertySubmitted');
+        $this->reset(['title', 'description', 'location', 'price', 'bedrooms', 'bathrooms', 'area_sqft', 'year_built', 'property_type', 'neighborhood_id', 'owner_phone', 'images', 'video', 'customDescription']);
     }
 
     public function preview()
@@ -124,6 +135,9 @@ class PropertySubmissionForm extends Component
     
     public function render()
     {
-        return view('livewire.property-submission-form');
+        $neighborhoods = \App\Models\Neighborhood::all();
+        return view('livewire.property-submission-form', [
+            'neighborhoods' => $neighborhoods,
+        ]);
     }
 }
