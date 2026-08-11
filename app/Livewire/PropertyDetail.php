@@ -159,9 +159,24 @@ class PropertyDetail extends Component
         }
     }
 
+    public $showInquiryModal = false;
+
+    public function openInquiryModal()
+    {
+        $this->showInquiryModal = true;
+    }
+
+    public function closeInquiryModal()
+    {
+        $this->showInquiryModal = false;
+        $this->resetValidation();
+    }
+
     public function submitLeadForm()
     {
         $this->validate();
+
+        $teamId = $this->team?->id ?? \App\Models\Team::first()?->id;
 
         $lead = Lead::create([
             'name' => $this->name,
@@ -170,16 +185,24 @@ class PropertyDetail extends Component
             'message' => $this->message,
             'interest' => $this->isLettingsProperty ? 'renting' : 'buying',
             'status' => 'new',
-            'team_id' => $this->team->id,
+            'team_id' => $teamId,
         ]);
 
-        $lead->addActivity('property_inquiry', "Inquired about property {$this->property->id}");
+        $lead->addActivity('property_inquiry', "استفسار عن العقار #{$this->property->id}: {$this->property->title}");
 
-        $this->leadScoringService->updateLeadScore($lead);
+        if ($this->leadScoringService) {
+            $this->leadScoringService->updateLeadScore($lead);
+        } else {
+            app(LeadScoringService::class)->updateLeadScore($lead);
+        }
+
+        $lead->updateCategory();
 
         $this->reset(['name', 'email', 'phone', 'message']);
+        $this->showInquiryModal = false;
 
-        session()->flash('message', 'Thank you for your inquiry. We will contact you soon!');
+        session()->flash('message', __('lead.form.inquiry_success'));
+        $this->dispatch('leadSubmitted');
     }
 
     public function getEnergyRatingColor($rating)

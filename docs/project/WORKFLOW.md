@@ -10,7 +10,7 @@
 | TASK-006 | Yemen localization | COMPLETED | 2026-08-09 | 2026-08-09 | yemen-localization | PASS (670 tests) |
 | TASK-007 | Property UX | COMPLETED | 2026-08-09 | 2026-08-09 | property-ux | PASS (670 tests) |
 | TASK-008 | WhatsApp / call / sharing | COMPLETED | 2026-08-11 | 2026-08-11 | whatsapp-sharing | PASS (706 tests) |
-| TASK-009 | Lead management | NOT_STARTED | | | | |
+| TASK-009 | Lead management | COMPLETED | 2026-08-11 | 2026-08-11 | lead-management | PASS (708 tests) |
 | TASK-010 | Owner submission | NOT_STARTED | | | | |
 | TASK-011 | Property requests | NOT_STARTED | | | | |
 | TASK-012 | SEO / OpenGraph | NOT_STARTED | | | | |

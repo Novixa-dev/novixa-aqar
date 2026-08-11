@@ -39,19 +39,20 @@
 - **TASK-006 (Yemen Localization)**: **VERIFIED & COMPLETED**
 - **TASK-007 (Property UX)**: **VERIFIED & COMPLETED**
 - **TASK-008 (WhatsApp / Call / Sharing)**: **VERIFIED & COMPLETED** (706 tests pass)
-- **Next Active Task**: **TASK-009 — Lead Management & Inquiries**
+- **TASK-009 (Lead Management)**: **VERIFIED & COMPLETED** (708 tests pass)
+- **Next Active Task**: **TASK-010 — Owner Property Submission**
 
 ---
 
-## 3. Next Implementation Plan (TASK-009: Lead Management)
+## 3. Next Implementation Plan (TASK-010: Owner Property Submission)
 
 ### Objective
-Enhance lead capture forms, viewing request workflows, inquiry state handling, and broker notification triggers for incoming real estate leads.
+Enable property owners and landlords to directly submit their properties for review and approval by office agents/brokers.
 
 ### Scope & Tasks
-1. Audit Lead submission endpoints and Livewire components.
-2. Ensure pre-filled property reference when lead forms are submitted via WhatsApp or web form.
-3. Prepare TASK-009 analysis document in `docs/tasks/TASK-009-LEAD-MANAGEMENT-ANALYSIS.md`.
+1. Audit property submission form (`property-submission-form.blade.php`).
+2. Add owner contact details, property address, features, and image upload.
+3. Prepare TASK-010 analysis document in `docs/tasks/TASK-010-OWNER-SUBMISSION-ANALYSIS.md`.
 
 ---
 

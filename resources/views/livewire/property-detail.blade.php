@@ -311,6 +311,14 @@
                                     </svg>
                                     {{ $isFavorited ? 'In Wishlist' : 'Add to Wishlist' }}
                                 </button>
+                                
+                                <button wire:click="openInquiryModal" type="button"
+                                     class="inline-flex items-center justify-center py-2.5 px-5 text-sm font-semibold text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 rounded-lg shadow-xs dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-4 sm:mt-0 transition-colors">
+                                     <svg class="w-5 h-5 me-2 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                                     </svg>
+                                     إرسال استفسار
+                                 </button>
 
                                 <a href="#" title="" data-modal-target="scheduleViewingModal"
                                     data-modal-toggle="scheduleViewingModal"
@@ -322,7 +330,7 @@
                                             stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-                                    Schedule a viewing
+                                    حجز معاينة
                                 </a>
 
                                 <a href="#" title="" data-modal-target="bookValuationModal"
@@ -1172,6 +1180,82 @@
                             </div>
                         </form>
                     </div>
+                </div>
+            </div>
+            @endif
+            <!-- Property Web Inquiry Modal -->
+            @if($showInquiryModal)
+            <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-gray-900/60 backdrop-blur-xs p-4" wire:click.self="closeInquiryModal">
+                <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div class="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                                {{ __('lead.form.inquiry_title') ?? 'إرسال استفسار حول العقار' }}
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                {{ $property->title }} (#{{ $property->id }})
+                            </p>
+                        </div>
+                        <button type="button" wire:click="closeInquiryModal"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-700 dark:hover:text-white transition-colors">
+                            <svg class="w-4 h-4" aria-hidden="true" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form wire:submit.prevent="submitLeadForm" class="p-6 space-y-4">
+                        <div>
+                            <label for="lead_name" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                {{ __('lead.attributes.name') ?? 'الاسم الكامل' }} <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="lead_name" wire:model="name"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-500 focus:border-primary-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="أدخل اسمك الكامل" required>
+                            @error('name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label for="lead_email" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                البريد الإلكتروني <span class="text-red-500">*</span>
+                            </label>
+                            <input type="email" id="lead_email" wire:model="email"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-500 focus:border-primary-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="name@example.com" required>
+                            @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label for="lead_phone" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                {{ __('lead.attributes.phone') ?? 'رقم الهاتف' }}
+                            </label>
+                            <input type="text" id="lead_phone" wire:model="phone"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-500 focus:border-primary-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="+967 770 000 000">
+                            @error('phone') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label for="lead_message" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                {{ __('lead.attributes.notes') ?? 'تفاصيل الاستفسار' }}
+                            </label>
+                            <textarea id="lead_message" wire:model="message" rows="3"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-500 focus:border-primary-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                placeholder="أكتب أي أسئلة أو ملاحظات تود الاستفسار عنها..."></textarea>
+                            @error('message') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <button type="button" wire:click="closeInquiryModal"
+                                class="py-2.5 px-4 text-xs font-medium text-gray-700 bg-white rounded-xl border border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                                إلغاء
+                            </button>
+                            <button type="submit"
+                                class="py-2.5 px-5 text-xs font-bold text-white bg-primary-700 hover:bg-primary-800 rounded-xl shadow-md transition-all duration-150">
+                                {{ __('lead.form.send_inquiry') ?? 'إرسال الاستفسار' }}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
             @endif
