@@ -9,7 +9,7 @@
 | TASK-005 | RTL polish | COMPLETED | 2026-08-09 | 2026-08-09 | rtl-polish | PASS (670 tests) |
 | TASK-006 | Yemen localization | COMPLETED | 2026-08-09 | 2026-08-09 | yemen-localization | PASS (670 tests) |
 | TASK-007 | Property UX | COMPLETED | 2026-08-09 | 2026-08-09 | property-ux | PASS (670 tests) |
-| TASK-008 | WhatsApp / call / sharing | NOT_STARTED | | | | |
+| TASK-008 | WhatsApp / call / sharing | COMPLETED | 2026-08-11 | 2026-08-11 | whatsapp-sharing | PASS (706 tests) |
 | TASK-009 | Lead management | NOT_STARTED | | | | |
 | TASK-010 | Owner submission | NOT_STARTED | | | | |
 | TASK-011 | Property requests | NOT_STARTED | | | | |

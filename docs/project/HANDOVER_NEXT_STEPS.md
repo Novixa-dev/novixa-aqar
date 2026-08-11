@@ -38,19 +38,20 @@
 - **TASK-005 (RTL Polish)**: **VERIFIED & COMPLETED**
 - **TASK-006 (Yemen Localization)**: **VERIFIED & COMPLETED**
 - **TASK-007 (Property UX)**: **VERIFIED & COMPLETED**
-- **Next Active Task**: **TASK-008 — WhatsApp / Call / Sharing (`wa.me` & Social Sharing)**
+- **TASK-008 (WhatsApp / Call / Sharing)**: **VERIFIED & COMPLETED** (706 tests pass)
+- **Next Active Task**: **TASK-009 — Lead Management & Inquiries**
 
 ---
 
-## 3. Next Implementation Plan (TASK-008: WhatsApp / Call / Sharing)
+## 3. Next Implementation Plan (TASK-009: Lead Management)
 
 ### Objective
-Integrate context-aware WhatsApp links (`wa.me`) with pre-filled Arabic message templates, click-to-call links, and property sharing/URL copy buttons.
+Enhance lead capture forms, viewing request workflows, inquiry state handling, and broker notification triggers for incoming real estate leads.
 
 ### Scope & Tasks
-1. Build reusable WhatsApp link generator helper with property title and ID.
-2. Verify phone number formatting and click-to-call actions.
-3. Prepare TASK-008 analysis document in `docs/tasks/TASK-008-WHATSAPP-CALL-SHARING-ANALYSIS.md`.
+1. Audit Lead submission endpoints and Livewire components.
+2. Ensure pre-filled property reference when lead forms are submitted via WhatsApp or web form.
+3. Prepare TASK-009 analysis document in `docs/tasks/TASK-009-LEAD-MANAGEMENT-ANALYSIS.md`.
 
 ---
 

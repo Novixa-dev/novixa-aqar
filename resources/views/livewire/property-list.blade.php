@@ -82,6 +82,14 @@
                                         {{ app(\App\Settings\GeneralSettings::class)->site_currency . ' ' . number_format($property->price, 2) }}
                                     </span>
                                     <div class="flex items-center justify-end gap-1">
+                                        <a href="{{ \App\Helpers\AqarContactHelper::getWhatsAppUrl($property->contact_phone ?? null, $property->title, $property->id) }}"
+                                             target="_blank" rel="noopener noreferrer"
+                                             title="تواصل عبر الواتساب"
+                                             class="rounded-lg p-2 text-green-600 hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors">
+                                             <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                                                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
+                                             </svg>
+                                         </a>
                                         <button type="button" data-tooltip-target="tooltip-quick-look"
                                             class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                             <span class="sr-only"> Quick look </span>

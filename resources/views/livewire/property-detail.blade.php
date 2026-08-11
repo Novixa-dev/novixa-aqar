@@ -230,26 +230,69 @@
                             </div>
 
                             {{-- WhatsApp & Call Quick Actions --}}
-                            <div class="mb-4 flex flex-wrap gap-3">
+                            <div class="mb-6">
                                 @php
-                                    $whatsappPhone = "+967770000000";
-                                    $whatsappText = urlencode("السلام عليكم، أستفسر عن العقار: " . $property->title . " (رقم العقار: " . $property->id . ")");
+                                    $contactPhone = $property->contact_phone ?? app(\App\Settings\GeneralSettings::class)->site_phone;
+                                    $whatsappUrl = \App\Helpers\AqarContactHelper::getWhatsAppUrl($contactPhone, $property->title, $property->id);
+                                    $callUrl = \App\Helpers\AqarContactHelper::formatForCall($contactPhone);
+                                    $shareUrls = \App\Helpers\AqarContactHelper::getShareUrls(request()->url(), $property->title);
                                 @endphp
-                                <a href="https://wa.me/{{ $whatsappPhone }}?text={{ $whatsappText }}" target="_blank"
-                                    class="flex-1 min-w-[160px] inline-flex items-center justify-center py-3 px-4 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-md transition-all duration-150">
-                                    <svg class="w-5 h-5 me-2 fill-current" viewBox="0 0 24 24">
-                                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
-                                    </svg>
-                                    تواصل عبر الواتساب
-                                </a>
 
-                                <a href="tel:{{ $whatsappPhone }}"
-                                    class="flex-1 min-w-[140px] inline-flex items-center justify-center py-3 px-4 text-sm font-bold text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-xl shadow-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 transition-all duration-150">
-                                    <svg class="w-5 h-5 me-2 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                    </svg>
-                                    اتصال بالمكتب
-                                </a>
+                                <div class="flex flex-wrap gap-3 mb-4">
+                                    <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer"
+                                        class="flex-1 min-w-[160px] inline-flex items-center justify-center py-3 px-4 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-md transition-all duration-150">
+                                        <svg class="w-5 h-5 me-2 fill-current" viewBox="0 0 24 24">
+                                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
+                                        </svg>
+                                        تواصل عبر الواتساب
+                                    </a>
+
+                                    <a href="tel:{{ $callUrl }}"
+                                        class="flex-1 min-w-[140px] inline-flex items-center justify-center py-3 px-4 text-sm font-bold text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-xl shadow-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 transition-all duration-150">
+                                        <svg class="w-5 h-5 me-2 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                        </svg>
+                                        اتصال بالمكتب
+                                    </a>
+                                </div>
+
+                                {{-- Social Sharing Toolbar --}}
+                                <div class="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-200/80 dark:border-gray-700/80 flex items-center justify-between gap-2 flex-wrap">
+                                    <span class="text-xs font-semibold text-gray-600 dark:text-gray-300 me-2 flex items-center">
+                                        <svg class="w-4 h-4 me-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                                        </svg>
+                                        مشاركة العقار:
+                                    </span>
+                                    <div class="flex items-center gap-1.5" x-data="{ copied: false }">
+                                        <a href="{{ $shareUrls['whatsapp'] }}" target="_blank" rel="noopener noreferrer" title="مشاركة عبر الواتساب"
+                                            class="p-2 text-green-600 hover:bg-green-100 rounded-lg dark:hover:bg-green-900/40 transition-colors">
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
+                                            </svg>
+                                        </a>
+                                        <a href="{{ $shareUrls['twitter'] }}" target="_blank" rel="noopener noreferrer" title="مشاركة عبر X / منصة تويتر"
+                                            class="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 rounded-lg dark:hover:bg-gray-700 transition-colors">
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                            </svg>
+                                        </a>
+                                        <a href="{{ $shareUrls['facebook'] }}" target="_blank" rel="noopener noreferrer" title="مشاركة عبر فيسبوك"
+                                            class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg dark:hover:bg-blue-900/40 transition-colors">
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                            </svg>
+                                        </a>
+                                        <button @click="navigator.clipboard.writeText(window.location.href); copied = true; setTimeout(() => copied = false, 2000)" 
+                                            title="نسخ رابط العقار"
+                                            class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 rounded-lg dark:hover:bg-gray-700 transition-colors flex items-center gap-1 text-xs">
+                                            <svg class="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                            </svg>
+                                            <span x-text="copied ? 'تم النسخ!' : 'نسخ الرابط'" class="font-medium text-xs"></span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
