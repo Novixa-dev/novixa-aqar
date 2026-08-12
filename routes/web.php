@@ -28,6 +28,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/sitemap.xml', function () {
+    $sitemapPath = public_path('sitemap.xml');
+    if (!file_exists($sitemapPath)) {
+        \Illuminate\Support\Facades\Artisan::call('sitemap:generate');
+    }
+    return response()->file($sitemapPath, [
+        'Content-Type' => 'text/xml',
+    ]);
+});
+
 Route::post('/bookings', [BookingController::class, 'store'])->middleware('throttle:10,1');
 Route::middleware('auth')->group(function () {
     Route::get('/bookings/{booking}/calendar.ics', [BookingController::class, 'downloadIcs'])->name('booking.ics');

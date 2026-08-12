@@ -1,4 +1,41 @@
 <div>
+@push('meta')
+    <title>{{ $property->title }} | {{ app(\App\Settings\GeneralSettings::class)->site_name }}</title>
+    <meta name="description" content="{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 160) }}">
+    <link rel="canonical" href="{{ url()->current() }}">
+    
+    <!-- OpenGraph Tags -->
+    <meta property="og:title" content="{{ $property->title }}">
+    <meta property="og:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 200) }}">
+    <meta property="og:image" content="{{ $property->getFirstMediaUrl('images') ?: asset('build/images/property-placeholder.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $property->title }}">
+    <meta name="twitter:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 200) }}">
+    <meta name="twitter:image" content="{{ $property->getFirstMediaUrl('images') ?: asset('build/images/property-placeholder.png') }}">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    @php
+        $jsonLd = json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'RealEstateListing',
+            'name' => $property->title,
+            'description' => \Illuminate\Support\Str::limit(strip_tags($property->description), 250),
+            'url' => url()->current(),
+            'image' => $property->getFirstMediaUrl('images') ?: asset('build/images/property-placeholder.png'),
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => $property->price,
+                'priceCurrency' => 'YER',
+                'availability' => 'https://schema.org/InStock',
+            ],
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    @endphp
+    <script type="application/ld+json">{!! $jsonLd !!}</script>
+@endpush
     @php
         $currency = app(\App\Settings\GeneralSettings::class)->site_currency;
     @endphp

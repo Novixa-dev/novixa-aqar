@@ -42,18 +42,19 @@
 - **TASK-009 (Lead Management)**: **VERIFIED & COMPLETED** (708 tests pass)
 - **TASK-010 (Owner Property Submission)**: **VERIFIED & COMPLETED** (709 tests pass)
 - **TASK-011 (Property Requests & Buyer Inquiries)**: **VERIFIED & COMPLETED** (710 tests pass)
-- **Next Active Task**: **TASK-012 — SEO / Meta / OpenGraph Polish**
+- **TASK-012 (SEO / OpenGraph Polish)**: **VERIFIED & COMPLETED** (712 tests pass)
+- **Next Active Task**: **TASK-013 — Yemen & Al-Mukalla Demo Data Seeders**
 
 ---
 
-## 3. Next Implementation Plan (TASK-012: SEO / OpenGraph Polish)
+## 3. Next Implementation Plan (TASK-013: Demo Data Seeders)
 
 ### Objective
-Enhance SEO meta tags, OpenGraph social sharing previews, structured JSON-LD real estate schema, and XML sitemap generation.
+Provide realistic Yemeni real estate demo seeders (Al-Mukalla neighborhoods, Yemeni Rial pricing, properties, leads, and staff roles).
 
 ### Scope & Tasks
-1. Audit property metadata tags and OpenGraph image preview generation.
-2. Prepare TASK-012 analysis document in `docs/tasks/TASK-012-SEO-OPENGRAPH-ANALYSIS.md`.
+1. Audit database seeders and factory data.
+2. Prepare TASK-013 analysis document in `docs/tasks/TASK-013-DEMO-DATA-ANALYSIS.md`.
 
 ---
 
