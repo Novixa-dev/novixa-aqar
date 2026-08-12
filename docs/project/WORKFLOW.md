@@ -12,7 +12,7 @@
 | TASK-008 | WhatsApp / call / sharing | COMPLETED | 2026-08-11 | 2026-08-11 | whatsapp-sharing | PASS (706 tests) |
 | TASK-009 | Lead management | COMPLETED | 2026-08-11 | 2026-08-11 | lead-management | PASS (708 tests) |
 | TASK-010 | Owner submission | COMPLETED | 2026-08-11 | 2026-08-11 | owner-submission | PASS (709 tests) |
-| TASK-011 | Property requests | NOT_STARTED | | | | |
+| TASK-011 | Property requests | COMPLETED | 2026-08-11 | 2026-08-11 | property-requests | PASS (710 tests) |
 | TASK-012 | SEO / OpenGraph | NOT_STARTED | | | | |
 | TASK-013 | Demo data | NOT_STARTED | | | | |
 | TASK-014 | UI polish | NOT_STARTED | | | | |

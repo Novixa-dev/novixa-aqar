@@ -41,18 +41,19 @@
 - **TASK-008 (WhatsApp / Call / Sharing)**: **VERIFIED & COMPLETED** (706 tests pass)
 - **TASK-009 (Lead Management)**: **VERIFIED & COMPLETED** (708 tests pass)
 - **TASK-010 (Owner Property Submission)**: **VERIFIED & COMPLETED** (709 tests pass)
-- **Next Active Task**: **TASK-011 — Property Requests & Buyer Inquiries**
+- **TASK-011 (Property Requests & Buyer Inquiries)**: **VERIFIED & COMPLETED** (710 tests pass)
+- **Next Active Task**: **TASK-012 — SEO / Meta / OpenGraph Polish**
 
 ---
 
-## 3. Next Implementation Plan (TASK-011: Property Requests)
+## 3. Next Implementation Plan (TASK-012: SEO / OpenGraph Polish)
 
 ### Objective
-Enable clients/buyers looking for specific unlisted properties to post property requests (`طلبات العقارات والبحث المخصص`).
+Enhance SEO meta tags, OpenGraph social sharing previews, structured JSON-LD real estate schema, and XML sitemap generation.
 
 ### Scope & Tasks
-1. Audit property request submission flow and buyer inquiry matching.
-2. Prepare TASK-011 analysis document in `docs/tasks/TASK-011-PROPERTY-REQUESTS-ANALYSIS.md`.
+1. Audit property metadata tags and OpenGraph image preview generation.
+2. Prepare TASK-012 analysis document in `docs/tasks/TASK-012-SEO-OPENGRAPH-ANALYSIS.md`.
 
 ---
 
