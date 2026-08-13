@@ -18,8 +18,8 @@
 | TASK-014 | UI polish | COMPLETED | 2026-08-12 | 2026-08-13 | ui-polish | PASS (716 tests) |
 | TASK-015 | Security review | COMPLETED | 2026-08-13 | 2026-08-13 | security-review | PASS (720 tests) |
 | TASK-016 | Testing / QA | COMPLETED | 2026-08-13 | 2026-08-13 | testing-qa | PASS (720 tests) |
-| TASK-017 | Deployment preparation | IN_PROGRESS | 2026-08-13 | | | |
-| TASK-018 | Final release audit | NOT_STARTED | | | | |
+| TASK-017 | Deployment preparation | COMPLETED | 2026-08-13 | 2026-08-13 | deployment-prep | PASS |
+| TASK-018 | Final release audit | IN_PROGRESS | 2026-08-13 | | | |
 
 ## Rules
 - Only one implementation task may be IN_PROGRESS.
