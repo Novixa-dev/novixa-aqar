@@ -1,9 +1,9 @@
-<div x-data="chatbotWidget()" x-init="init()" class="fixed bottom-4 right-4 z-50">
+<div x-data="chatbotWidget()" x-init="init()" class="fixed bottom-4 end-4 z-50">
     <!-- Chat Toggle Button -->
     <button 
         @click="toggleChat()" 
         x-show="!isOpen"
-        class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all duration-200 flex items-center justify-center"
+        class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center"
         aria-label="Open chat"
     >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,16 +20,16 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 transform scale-100"
         x-transition:leave-end="opacity-0 transform scale-95"
-        class="bg-white rounded-lg shadow-2xl w-96 h-[600px] flex flex-col"
+        class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-80 sm:w-96 h-[550px] flex flex-col border border-gray-100 dark:border-gray-700 overflow-hidden"
         style="display: none;"
     >
         <!-- Header -->
-        <div class="bg-blue-600 text-white p-4 rounded-t-lg flex justify-between items-center">
+        <div class="bg-blue-600 text-white p-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                <div class="w-3 h-3 bg-green-400 rounded-full"></div>
-                <h3 class="font-semibold">Customer Support</h3>
+                <div class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></div>
+                <h3 class="font-bold text-sm">{{ __('Customer Support') }}</h3>
             </div>
-            <button @click="toggleChat()" class="text-white hover:text-gray-200">
+            <button @click="toggleChat()" class="text-white/80 hover:text-white transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>

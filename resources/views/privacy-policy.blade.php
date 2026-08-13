@@ -1,53 +1,51 @@
 @extends('layouts.app')
+
 @section('content')
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                <h1 class="text-2xl font-bold mb-4">Privacy Policy</h1>
-                
-                <p class="mb-4">
-                    At our real estate platform, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information.
-                </p>
-
-                <h2 class="text-xl font-semibold mb-2">1. Information We Collect</h2>
-                <p class="mb-4">
-                    We collect personal information that you provide directly to us, such as your name, email address, phone number, and property preferences. We may also collect information about your usage of our platform.
-                </p>
-
-                <h2 class="text-xl font-semibold mb-2">2. How We Use Your Information</h2>
-                <p class="mb-4">
-                    We use your information to provide and improve our services, communicate with you, and personalize your experience. We may also use your information for marketing purposes, but you can opt out at any time.
-                </p>
-
-                <h2 class="text-xl font-semibold mb-2">3. Data Protection</h2>
-                <p class="mb-4">
-                    We implement a variety of security measures to maintain the safety of your personal information. However, no method of transmission over the Internet is 100% secure.
-                </p>
-
-                <h2 class="text-xl font-semibold mb-2">4. Sharing of Information</h2>
-                <p class="mb-4">
-                    We do not sell or rent your personal information to third parties. We may share your information with service providers who assist us in operating our platform or servicing you.
-                </p>
-
-                <h2 class="text-xl font-semibold mb-2">5. Your Rights</h2>
-                <p class="mb-4">
-                    You have the right to access, correct, or delete your personal information. You may also object to or restrict certain processing of your information.
-                </p>
-
-                <h2 class="text-xl font-semibold mb-2">6. Cookies</h2>
-                <p class="mb-4">
-                    We use cookies to improve your experience on our platform. You can set your browser to refuse all or some browser cookies, or to alert you when websites set or access cookies.
-                </p>
-
-                <h2 class="text-xl font-semibold mb-2">7. Changes to This Policy</h2>
-                <p class="mb-4">
-                    We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.
-                </p>
-
-                <p class="mt-6">
-                    If you have any questions about this Privacy Policy, please contact us using the information provided on our Contact page.
-                </p>
-            </div>
-        </div>
+<div class="container mx-auto px-4 lg:px-8 py-12">
+    <!-- Header -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider mb-4 border border-blue-100 dark:border-blue-800">
+            {{ __('Privacy Policy') }}
+        </span>
+        <h1 class="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-4">
+            {{ app()->getLocale() === 'ar' ? 'سياسة الخصوصية وحماية البيانات' : 'Privacy & Data Protection Policy' }}
+        </h1>
+        <p class="text-base sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed font-light">
+            {{ app()->getLocale() === 'ar' ? 'نلتزم في منصة نوفيكسا عقار بحماية خصوصية مستخدمينا وتأمين بياناتهم الشخصية وفق أعلى المعايير الأمنية.' : 'At Novixa Aqar, we are strictly committed to safeguarding our users’ personal information with industry-leading security.' }}
+        </p>
     </div>
+
+    <!-- Content Card -->
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-8 lg:p-12 space-y-8 text-gray-700 dark:text-gray-300 leading-relaxed">
+        <section>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold">1</span>
+                <span>{{ app()->getLocale() === 'ar' ? 'البيانات التي نجمعها' : 'Information We Collect' }}</span>
+            </h2>
+            <p class="text-sm sm:text-base">
+                {{ app()->getLocale() === 'ar' ? 'نقوم بجمع البيانات الضرورية لتقديم الخدمات مثل الاسم، رقم الهاتف، البريد الإلكتروني، وتفضيلات البحث العقاري ومواعيد المعاينة لتسهيل تواصل الوكلاء والملاك معك.' : 'We collect necessary information such as name, phone number, email, and property preferences to facilitate inquiries and bookings.' }}
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold">2</span>
+                <span>{{ app()->getLocale() === 'ar' ? 'كيفية استخدام البيانات' : 'How We Use Your Information' }}</span>
+            </h2>
+            <p class="text-sm sm:text-base">
+                {{ app()->getLocale() === 'ar' ? 'تُستخدم بياناتك لإدارة الحسابات، تحسين نتائج البحث، إتمام طلبات المعاينة، وتوثيق عقود الإيجار الرقمية، ولن يتم بيع أو تأجير بياناتك لأي طرف ثالث مطلقاً.' : 'Your data is used solely to manage accounts, process booking requests, power AI recommendations, and execute digital contracts. We never sell your personal information.' }}
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold">3</span>
+                <span>{{ app()->getLocale() === 'ar' ? 'الأمان والتشفير' : 'Security & Encryption' }}</span>
+            </h2>
+            <p class="text-sm sm:text-base">
+                {{ app()->getLocale() === 'ar' ? 'نطبق بروتوكولات تشفير متقدمة لحماية قواعد البيانات والاتصال بين متصفحك وخوادم المنصة لمنع أي وصول غير مصرح به.' : 'We implement advanced encryption protocols and security best practices to protect your data against unauthorized access.' }}
+            </p>
+        </section>
+    </div>
+</div>
 @endsection

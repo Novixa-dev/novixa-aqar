@@ -5,67 +5,156 @@
 @endsection
 
 @section('content')
-<div class="container mx-auto px-4 pt-24 pb-8">
-    <h1 class="text-4xl font-bold mb-8 text-center">{{ __('Welcome to') }} {{ app(\App\Settings\GeneralSettings::class)->site_name }}</h1>
+<div class="container mx-auto px-4 lg:px-8 py-8">
+    <!-- Hero Banner & Smart Search -->
+    <div class="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 rounded-3xl p-8 lg:p-14 text-white shadow-2xl mb-12 relative overflow-hidden">
+        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="max-w-3xl mx-auto text-center relative z-10">
+            <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-blue-200 text-xs font-semibold uppercase tracking-wider mb-6 border border-white/10">
+                ✨ {{ app()->getLocale() === 'ar' ? 'الجيل القادم من المنصات العقارية' : 'Next Generation Real Estate Platform' }}
+            </span>
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight mb-6">
+                {{ __('Find Your Dream Property in Yemen & Beyond') }}
+            </h1>
+            <p class="text-base sm:text-lg text-blue-100/90 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
+                {{ __('Explore wide range of residential and commercial properties with Novixa Aqar.') }}
+            </p>
 
-    <div class="mb-12">
-        <h2 class="text-2xl font-semibold mb-6 text-center">{{ __('Find Your Dream Property') }}</h2>
-        <form action="{{ route('property.list') }}" method="GET" class="max-w-2xl mx-auto">
-            <div class="flex flex-wrap -mx-2 mb-4">
-                <div class="w-full md:w-1/2 px-2 mb-4 md:mb-0">
-                    <input type="text" name="search" placeholder="{{ __('Search by location or property name') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <!-- Search Form Card -->
+            <form action="{{ route('property.list') }}" method="GET" class="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-2xl shadow-xl text-gray-900 dark:text-white flex flex-col md:flex-row gap-3 border border-gray-100 dark:border-gray-700">
+                <div class="flex-1 relative">
+                    <input type="text" name="search" 
+                           placeholder="{{ __('Search properties...') }}" 
+                           class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm dark:placeholder-gray-400">
                 </div>
-                <div class="w-full md:w-1/4 px-2 mb-4 md:mb-0">
-                    <select name="property_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div class="w-full md:w-48">
+                    <select name="property_type" 
+                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-700 dark:text-gray-200">
                         <option value="">{{ __('All Types') }}</option>
                         <option value="apartment">{{ __('Apartment') }}</option>
                         <option value="house">{{ __('House') }}</option>
                         <option value="condo">{{ __('Condo') }}</option>
+                        <option value="villa">{{ __('Villa') }}</option>
+                        <option value="land">{{ __('Land') }}</option>
                     </select>
                 </div>
-                <div class="w-full md:w-1/4 px-2">
-                    <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">{{ __('Search') }}</button>
-                </div>
-            </div>
-        </form>
+                <button type="submit" 
+                        class="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span>{{ __('Search') }}</span>
+                </button>
+            </form>
+        </div>
     </div>
 
-    <section class="mb-12">
-        <h2 class="text-2xl font-semibold mb-6 text-center">{{ __('Property Map') }}</h2>
-        <x-property-map :properties="$mapProperties" />
-    </section>
+    <!-- Featured Properties Grid -->
+    <section class="mb-16">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-2">{{ __('Featured Properties') }}</h2>
+                <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ __('Explore our handpicked premium listings') }}</p>
+            </div>
+            <a href="{{ route('property.list') }}" class="inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                <span>{{ app()->getLocale() === 'ar' ? 'عرض كافة العقارات' : 'Browse All Properties' }}</span>
+                <span>&rarr;</span>
+            </a>
+        </div>
 
-    <section class="mb-12">
-        <h2 class="text-2xl font-semibold mb-6 text-center">{{ __('Featured Properties') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($featuredProperties as $property)
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition duration-300 hover:shadow-xl">
-                    <img src="{{ $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png') }}" alt="{{ $property->title }}" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2">{{ $property->title }}</h3>
-                        <p class="text-gray-600 mb-4">{{ Str::limit($property->description, 100) }}</p>
-                        <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
-                            <span><i class="fas fa-bed mr-1"></i> {{ $property->bedrooms }} {{ __('bed') }}</span>
-                            <span><i class="fas fa-bath mr-1"></i> {{ $property->bathrooms }} {{ __('bath') }}</span>
-                            <span><i class="fas fa-ruler-combined mr-1"></i> {{ $property->area_sqft }} {{ __('sqft') }}</span>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col group">
+                    <div class="relative h-56 w-full overflow-hidden bg-gray-100 dark:bg-gray-700">
+                        <img src="{{ $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png') }}" 
+                             alt="{{ $property->title }}" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-3 start-3">
+                            <span class="px-3 py-1 bg-blue-600/90 backdrop-blur-md text-white text-xs font-bold rounded-lg shadow-sm">
+                                {{ $property->type ?: __('Featured') }}
+                            </span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xl font-bold text-green-600">&pound{{ number_format($property->price, 2) }}</span>
-                            <a href="{{ route('property.detail', $property->id) }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">{{ __('View Details') }}</a>
+                    </div>
+
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="text-2xl font-black text-blue-600 dark:text-blue-400 mb-2">
+                                ${{ number_format($property->price, 0) }}
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors">
+                                {{ $property->title }}
+                            </h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">
+                                {{ $property->description }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-gray-400 py-3 border-t border-gray-100 dark:border-gray-700/80 mb-4">
+                                <span class="flex items-center gap-1">🛏️ {{ $property->bedrooms ?? 0 }} {{ __('Beds') }}</span>
+                                <span class="flex items-center gap-1">🚿 {{ $property->bathrooms ?? 0 }} {{ __('Baths') }}</span>
+                                <span class="flex items-center gap-1">📐 {{ $property->area_sqft ?? 0 }} {{ __('Sq Ft') }}</span>
+                            </div>
+
+                            <a href="{{ route('property.detail', $property->id) }}" 
+                               class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-50 dark:bg-gray-700/60 hover:bg-blue-600 hover:text-white text-gray-700 dark:text-gray-200 font-semibold rounded-xl text-sm transition-all duration-200">
+                                <span>{{ __('View Details') }}</span>
+                                <span>&rarr;</span>
+                            </a>
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="col-span-3">
-                    <p class="text-center text-gray-600">{{ __('No featured properties available at the moment.') }}</p>
+                <div class="col-span-full text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+                    <p class="text-gray-500 dark:text-gray-400">{{ __('No featured properties available at the moment.') }}</p>
                 </div>
             @endforelse
         </div>
     </section>
 
+    <!-- Interactive Property Map Section -->
+    <section class="mb-16">
+        <div class="text-center max-w-2xl mx-auto mb-8">
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-2">{{ __('Interactive Property Map') }}</h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ __('Explore listings geographically across cities and neighborhoods') }}</p>
+        </div>
+        <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700">
+            <x-property-map :properties="$mapProperties" />
+        </div>
+    </section>
+
+    <!-- Why Choose Us Features Grid -->
+    <section class="mb-12 py-12 bg-gray-50 dark:bg-gray-800/40 rounded-3xl p-8 lg:p-12 border border-gray-100 dark:border-gray-800">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <h2 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-3">{{ __('Why Choose Novixa Aqar?') }}</h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ __('We provide comprehensive real estate management and marketing solutions') }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xs border border-gray-100 dark:border-gray-700">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mb-4">
+                    🤖
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('Smart Solutions') }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ __('Cutting-edge AI valuations, holographic tours and virtual staging.') }}</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xs border border-gray-100 dark:border-gray-700">
+                <div class="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/40 text-green-600 dark:text-green-400 flex items-center justify-center text-2xl mb-4">
+                    🛡️
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('Verified Listings') }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ __('Every listing is reviewed and validated for maximum security and peace of mind.') }}</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xs border border-gray-100 dark:border-gray-700">
+                <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl mb-4">
+                    ⚡
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('Seamless Experience') }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ __('Effortless search, direct agent communication and automated bookings.') }}</p>
+            </div>
+        </div>
+    </section>
 </div>
 @endsection
-
-@push('scripts')
-    @livewireScripts
-@endpush

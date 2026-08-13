@@ -13,10 +13,9 @@ class MenuService
         $menuItems = Menu::whereNull('parent_id')->orderBy('order')->get();
 
         $menu = SpatieMenu::new()
-            ->addClass('lg:flex lg:items-center space-x-4 ')
-            ->addItemClass('block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700');
-           
-            
+            ->addClass('flex flex-col lg:flex-row lg:items-center gap-1 lg:gap-6')
+            ->addItemClass('block py-2 px-3 lg:p-0 text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400 rounded-lg lg:rounded-none transition-colors');
+
         $this->createMenuItems($menuItems)->each(function ($item) use ($menu) {
             $menu->add($item);
         });
@@ -27,21 +26,24 @@ class MenuService
     private function createMenuItems($items)
     {
         return $items->map(function ($item) {
-            if ($item->children->count() > 0) {
+            $displayName = __($item->name);
+
+            if ($item->children && $item->children->count() > 0) {
                 $submenu = SpatieMenu::new()
-                    ->addClass('absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1')
-                    ->addItemClass('block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100');
-    
+                    ->addClass('absolute start-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl py-2 border border-gray-100 dark:border-gray-700 z-50')
+                    ->addItemClass('block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 transition-colors');
+
                 $this->createMenuItems($item->children)->each(function ($subItem) use ($submenu) {
                     $submenu->add($subItem);
                 });
-    
+
                 return SpatieMenu::new()
-                    ->add(Link::to($item->url, $item->name)->addClass('relative group'))
+                    ->add(Link::to($item->url, $displayName)->addClass('relative group flex items-center gap-1 font-medium'))
                     ->add($submenu->addClass('hidden group-hover:block'));
             }
-    
-            return Link::to($item->url, $item->name);
+
+            return Link::to($item->url, $displayName);
         });
     }
 }
+

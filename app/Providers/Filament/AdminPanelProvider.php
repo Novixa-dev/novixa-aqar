@@ -44,7 +44,7 @@ class AdminPanelProvider extends PanelProvider
             // ->emailVerification()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                'primary' => Color::Gray,
+                'primary' => Color::Blue,
             ])
             ->userMenuItems([
                 MenuItem::make()
@@ -55,15 +55,20 @@ class AdminPanelProvider extends PanelProvider
                         : url($panel->getPath())),
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
+            ->discoverResources(in: app_path('Filament/Staff/Resources'), for: 'App\\Filament\\Staff\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Staff/Widgets'), for: 'App\\Filament\\Staff\\Widgets')
+            ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->pages([
                 FilamentPage\Dashboard::class,
                 Pages\EditProfile::class,
-                // Pages\ApiTokenManagerPage::class,
             ])->widgets([
-                 Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
+                \App\Filament\Staff\Widgets\StatsOverview::class,
+                \App\Filament\Staff\Widgets\PropertyStatsOverview::class,
+                \App\Filament\App\Widgets\LatestProperties::class,
+                \App\Filament\App\Widgets\RecentBookings::class,
+                Widgets\AccountWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

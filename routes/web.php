@@ -85,17 +85,21 @@ Route::post('/properties/{property}/apply', [TenancyApplicationController::class
 Route::get('/properties/compare/{propertyIds}', PropertyComparison::class)->name('property.compare');
 
 Route::controller(ContactController::class)->group(function () {
-    Route::get('/contact', 'show')->name('contact.show');
+    Route::get('/contact', 'show')->name('contact');
+    Route::get('/contact-us', 'show')->name('contact.show');
     Route::post('/contact', 'submit')->name('contact.submit');
 });
 
 Route::get('/about', [PageController::class, 'about'])->name('about');
-Route::get('/terms-and-conditions', [PageController::class, 'terms'])->name('termsandconditions');
-Route::get('/privacy', [PageController::class, 'privacy'])->name('privacypolicy');
+Route::get('/terms-and-conditions', [PageController::class, 'terms'])->name('terms-and-conditions');
+Route::get('/terms', [PageController::class, 'terms'])->name('termsandconditions');
+Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
+Route::get('/privacy-policy', [PageController::class, 'privacy'])->name('privacypolicy');
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/calculators', CalculatorsComponent::class)->name('calculators');
 
-Route::get('/news', NewsList::class)->name('news.list');
+Route::get('/news', NewsList::class)->name('news');
+Route::get('/news-list', NewsList::class)->name('news.list');
 Route::get('/news/{slug}', NewsDetail::class)->name('news.detail');
 
 Route::get('/properties/{propertyId}/valuation', PropertyValuationComponent::class)->name('property.valuation');

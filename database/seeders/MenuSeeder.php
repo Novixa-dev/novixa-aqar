@@ -4,50 +4,59 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Menu;
+use Illuminate\Support\Facades\Schema;
 
 class MenuSeeder extends Seeder
 {
     public function run()
     {
+        Schema::disableForeignKeyConstraints();
+        Menu::truncate();
+        Schema::enableForeignKeyConstraints();
+
         $menus = [
             [
-                'name' => 'الرئيسية',
+                'name' => 'Home',
                 'url' => '/',
                 'order' => 1
             ],
             [
-                'name' => 'العقارات',
+                'name' => 'Properties',
                 'url' => '/properties',
                 'order' => 2,
                 'children' => [
-                    ['name' => 'للبيع', 'url' => '/properties?status=For+Sale', 'order' => 1],
-                    ['name' => 'للايجار', 'url' => '/properties?status=For+Rent', 'order' => 2],
+                    ['name' => 'For Sale', 'url' => '/properties?status=For+Sale', 'order' => 1],
+                    ['name' => 'For Rent', 'url' => '/properties?status=For+Rent', 'order' => 2],
                 ]
             ],
             [
-                'name' => 'الخدمات',
+                'name' => 'Services',
                 'url' => '/services',
                 'order' => 3,
                 'children' => [
-                    ['name' => 'الشراء', 'url' => '/services#buying', 'order' => 1],
-                    ['name' => 'البيع', 'url' => '/services#selling', 'order' => 2],
-                    ['name' => 'الاستئجار', 'url' => '/services#renting', 'order' => 3],
+                    ['name' => 'Property Sales', 'url' => '/services#buying', 'order' => 1],
+                    ['name' => 'Property Rental & Leasing', 'url' => '/services#renting', 'order' => 2],
                 ]
             ],
             [
-                'name' => 'عن الشركة',
-                'url' => '/about',
+                'name' => 'Calculators',
+                'url' => '/calculators',
                 'order' => 4
             ],
             [
-                'name' => 'اتصل بنا',
-                'url' => '/contact',
+                'name' => 'News',
+                'url' => '/news',
                 'order' => 5
             ],
             [
-                'name' => 'الحاسبات',
-                'url' => '/calculators',
+                'name' => 'About Us',
+                'url' => '/about',
                 'order' => 6
+            ],
+            [
+                'name' => 'Contact Us',
+                'url' => '/contact',
+                'order' => 7
             ],
         ];
 
@@ -62,13 +71,10 @@ class MenuSeeder extends Seeder
         unset($menuData['children']);
 
         $menuData['parent_id'] = $parentId;
-        $menu = Menu::firstOrCreate(
-            ['name' => $menuData['name'], 'parent_id' => $parentId],
-            $menuData
-        );
+        $menu = Menu::create($menuData);
 
         foreach ($children as $childData) {
             $this->createMenu($childData, $menu->id);
         }
     }
-}
+}

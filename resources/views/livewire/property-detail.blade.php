@@ -7,7 +7,7 @@
     <!-- OpenGraph Tags -->
     <meta property="og:title" content="{{ $property->title }}">
     <meta property="og:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 200) }}">
-    <meta property="og:image" content="{{ $property->getFirstMediaUrl('images') ?: asset('build/images/property-placeholder.png') }}">
+    <meta property="og:image" content="{{ $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="article">
 
@@ -15,7 +15,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $property->title }}">
     <meta name="twitter:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 200) }}">
-    <meta name="twitter:image" content="{{ $property->getFirstMediaUrl('images') ?: asset('build/images/property-placeholder.png') }}">
+    <meta name="twitter:image" content="{{ $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png') }}">
 
     <!-- Schema.org JSON-LD Structured Data -->
     @php
@@ -25,7 +25,7 @@
             'name' => $property->title,
             'description' => \Illuminate\Support\Str::limit(strip_tags($property->description), 250),
             'url' => url()->current(),
-            'image' => $property->getFirstMediaUrl('images') ?: asset('build/images/property-placeholder.png'),
+            'image' => $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png'),
             'offers' => [
                 '@type' => 'Offer',
                 'price' => $property->price,
@@ -45,9 +45,9 @@
                 <div class="max-w-(--breakpoint-xl) px-4 mx-auto 2xl:px-0">
                     <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
                         <div class="shrink-0 max-w-md lg:max-w-lg mx-auto">
-                            <img src="{{ $property->getFirstMediaUrl('images') ?? asset('build/images/property-placeholder.png') }}"
+                            <img src="{{ $property->getFirstMediaUrl('images') ?? asset('images/property-placeholder.png') }}"
                                 alt="{{ $property->title }}"
-                                onerror="this.onerror=null; this.src='{{ asset('build/images/property-placeholder.png') }}';"
+                                onerror="this.onerror=null; this.src='{{ asset('images/property-placeholder.png') }}';"
                                 class="w-full dark:hidden">
                             
                             @if($property->hasMedia('3d_models'))

@@ -1,215 +1,94 @@
-@extends('layouts.app')
-@section('content')
-    <div class="">
-        <div class="bg-white dark:bg-gray-900">
-            <div class="grid max-w-(--breakpoint-xl) px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-                <div class="mr-auto place-self-center lg:col-span-7">
-                    <h1
-                        class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
-                        Properties for Sale & Rent</h1>
-                    <p class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
-                        Welcome to our comprehensive real estate platform, where you can explore an extensive range of
-                        properties available for sale and rent. Our goal is to provide a seamless and efficient experience
-                        for
-                        buyers, sellers, landlords, and tenants alike. Whether you're looking for your dream home, an
-                        investment
-                        property, or a rental residence, we have a diverse selection to cater to your needs</p>
-                    <a href="/contact"
-                        class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900">
-                        Contact us
-                        <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                    </a>
-                </div>
-                <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
-                    <img src="https://static.vecteezy.com/system/resources/previews/025/442/517/original/house-for-rent-real-estate-business-concept-with-houses-tiny-real-estate-agent-or-broker-looking-for-house-in-website-modern-flat-cartoon-style-illustration-on-white-background-vector.jpg"
-                        alt="mockup">
-                </div>
-            </div>
-
-
-    <div class="container mx-auto px-4 py-8">
-        <div class="bg-gray-50 py-8 antialiased dark:bg-gray-900 md:py-12">
-            <div class="mx-auto max-w-(--breakpoint-xl) px-0 2xl:px-0">
-                <div class="d-flex mb-5">
-                    <div class="w-full md:w-1/2">
-                        <form class="flex items-center">
-                            <label for="simple-search" class="sr-only">Search</label>
-                            <div class="relative w-full mr-2">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400"
-                                        fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
-                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <input type="text" id="simple-search" wire:model.live.debounce.300ms="search"
-                                    class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Looking for a house, apartment, or commercial space? ...">
-                            </div>
-
-                            <button type="button"
-                                class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
-                                <svg class="h-3.5 w-3.5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                    width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
-                                        d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
-                                </svg>
-                                search
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                <div class="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-                    @forelse($properties as $property)
-                        <div
-                            class="property-card-hover rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 dark:border-gray-700 dark:bg-gray-800">
-                            <div class="relative h-56 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
-                                <a href="{{ route('property.detail', $property->id) }}">
-                                    <img src="{{ $property->getFirstMediaUrl('images') ?: asset('build/images/property-placeholder.png') }}"
-                                        alt="{{ $property->title }}" class="h-full w-full object-cover transition-transform duration-500 hover:scale-105">
-                                </a>
-                                <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                                    <span class="rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $property->status === 'For Rent' ? 'badge-rent' : 'badge-sale' }}">
-                                        {{ $property->status === 'For Rent' ? 'للإيجار' : 'للبيع' }}
-                                    </span>
-                                    @if($property->is_featured)
-                                        <span class="badge-featured rounded-full px-2.5 py-0.5 text-xs font-semibold">
-                                            مميز
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="pt-4">
-                                <div class="mb-3 flex items-center justify-between gap-2">
-                                    <span
-                                        class="rounded-lg bg-emerald-50 px-3 py-1 text-base font-extrabold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
-                                        {{ number_format($property->price) }} {{ app(\App\Settings\GeneralSettings::class)->site_currency }}
-                                    </span>
-                                    <div class="flex items-center justify-end gap-1">
-                                        <a href="{{ \App\Helpers\AqarContactHelper::getWhatsAppUrl($property->contact_phone ?? null, $property->title, $property->id) }}"
-                                             target="_blank" rel="noopener noreferrer"
-                                             title="تواصل عبر الواتساب"
-                                             class="whatsapp-btn rounded-lg p-2 transition-transform hover:scale-110">
-                                             <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24">
-                                                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
-                                             </svg>
-                                         </a>
-                                        <button type="button" 
-                                            wire:click="toggleFavorite({{ $property->id }})"
-                                            title="إضافة للمفضلة"
-                                            class="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700 
-                                            {{ $this->isFavorited($property->id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500' }}">
-                                            <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                                fill="{{ $this->isFavorited($property->id) ? 'currentColor' : 'none' }}" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M12 6C6.5 1 1 8 5.8 13l6.2 7 6.2-7C23 8 17.5 1 12 6Z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <a href="{{ route('property.detail', $property->id) }}"
-                                    class="text-lg font-bold leading-snug text-gray-900 hover:text-emerald-600 dark:text-white dark:hover:text-emerald-400">
-                                    {{ Str::limit($property->title, 35) }}</a>
-
-                                <p class="text-xs  text-gray-500 dark:text-gray-400">
-                                    {{ Str::limit($property->description, 70   ) }}
-                                </p>
-
-                                <ul class="mt-2">
-                                    <li class="flex items-center gap-2">
-                                        <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z" />
-                                        </svg>
-
-                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Bedrooms :
-                                            {{ $property->bedrooms }}</p>
-                                    </li>
-
-                                    <li class="flex items-center gap-2">
-                                        <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M8 8v8m0-8h8M8 8H6a2 2 0 1 1 2-2v2Zm0 8h8m-8 0H6a2 2 0 1 0 2 2v-2Zm8 0V8m0 8h2a2 2 0 1 1-2 2v-2Zm0-8h2a2 2 0 1 0-2-2v2Z" />
-                                        </svg>
-
-                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Bathrooms :
-                                            {{ $property->bathrooms }}</p>
-                                    </li>
-
-                                    <li class="flex items-center gap-2">
-                                        <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M9 7H7m2 3H7m2 3H7m4 2v2m3-2v2m3-2v2M4 5v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-9a1 1 0 0 1-1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1Z" />
-                                        </svg>
-
-                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Square Foot :
-                                            {{ $property->area_sqft }}</p>
-                                    </li>
-                                </ul>
-
-
-                                <div class="mt-4 flex items-center justify-between gap-4">
-                                    <p class="text-sm font-extrabold leading-tight text-gray-900 dark:text-white">
-
-                                    </p>
-
-                                    <a href="{{ route('property.detail', $property->id) }}"
-                                        class="inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                                        <svg class="-ms-2 me-2 h-5 w-5" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-width="2"
-                                                d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z" />
-                                            <path stroke="currentColor" stroke-width="2"
-                                                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                        </svg>
-
-                                        VIEW DETAILS
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-gray-50 py-8 antialiased dark:bg-gray-900 md:py-12">
-            <div class="flex items-center justify-between border-gray-100 bg-white px-4 py-3 sm:px-6">
-                <div class="flex flex-1 justify-between sm:hidden">
-                    <a href="#"
-                        class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
-                    <a href="#"
-                        class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
-                </div>
-                <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                    <div>
-
-                    </div>
-                    <div>
-                        <div class="">
-                            {{ $properties->links() }}
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div>
+    <!-- Hero Banner -->
+    <div class="bg-gradient-to-b from-blue-50/50 to-white dark:from-gray-900 dark:to-gray-800 py-12 border-b border-gray-100 dark:border-gray-800">
+        <div class="container mx-auto px-4 lg:px-8 text-center max-w-3xl">
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider mb-4 border border-blue-100 dark:border-blue-800">
+                {{ __('Properties') }}
+            </span>
+            <h1 class="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-4">
+                {{ app()->getLocale() === 'ar' ? 'العقارات المتاحة للبيع والإيجار' : 'Properties for Sale & Rent' }}
+            </h1>
+            <p class="text-base sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed font-light">
+                {{ app()->getLocale() === 'ar' ? 'استعرض أحدث الفرص العقارية السكنية والتجارية المفحوصة مع خيارات فلترة متقدمة وتواصل مباشر.' : 'Explore verified residential and commercial properties with smart filtering and direct booking.' }}
+            </p>
         </div>
     </div>
-@endsection
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 lg:px-8 py-10">
+        <!-- Search Bar -->
+        <div class="mb-8 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <div class="relative w-full">
+                <input type="text" wire:model.live.debounce.300ms="search"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white"
+                    placeholder="{{ __('Search properties...') }}">
+            </div>
+        </div>
+
+        <!-- Property Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            @forelse($properties as $property)
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col justify-between group">
+                    <div>
+                        <div class="relative h-52 w-full overflow-hidden bg-gray-100 dark:bg-gray-700">
+                            <a href="{{ route('property.detail', $property->id) }}">
+                                <img src="{{ $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png') }}"
+                                    alt="{{ $property->title }}" 
+                                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                            </a>
+                            <div class="absolute top-3 start-3 flex flex-wrap gap-1.5">
+                                <span class="rounded-lg px-2.5 py-1 text-xs font-bold bg-blue-600/90 text-white backdrop-blur-md shadow-xs">
+                                    {{ $property->status === 'For Rent' ? __('For Rent') : __('For Sale') }}
+                                </span>
+                                @if($property->is_featured)
+                                    <span class="rounded-lg px-2.5 py-1 text-xs font-bold bg-amber-500 text-white shadow-xs">
+                                        {{ __('Featured') }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="p-5">
+                            <div class="text-xl font-black text-blue-600 dark:text-blue-400 mb-2">
+                                ${{ number_format($property->price, 0) }}
+                            </div>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors">
+                                <a href="{{ route('property.detail', $property->id) }}">
+                                    {{ $property->title }}
+                                </a>
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 line-clamp-2 leading-relaxed">
+                                {{ $property->description }}
+                            </p>
+
+                            <div class="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-gray-400 py-2.5 border-t border-gray-100 dark:border-gray-700">
+                                <span>🛏️ {{ $property->bedrooms ?? 0 }} {{ __('Beds') }}</span>
+                                <span>🚿 {{ $property->bathrooms ?? 0 }} {{ __('Baths') }}</span>
+                                <span>📐 {{ $property->area_sqft ?? 0 }} {{ __('Sq Ft') }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 pt-0">
+                        <a href="{{ route('property.detail', $property->id) }}"
+                           class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-50 dark:bg-gray-700/60 hover:bg-blue-600 hover:text-white text-gray-700 dark:text-gray-200 font-semibold rounded-xl text-xs transition-all duration-200">
+                            <span>{{ __('View Details') }}</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">
+                        {{ app()->getLocale() === 'ar' ? 'لا توجد عقارات مطابقة لخيارات البحث.' : 'No properties found matching your criteria.' }}
+                    </p>
+                </div>
+            @endforelse
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-8">
+            {{ $properties->links() }}
+        </div>
+    </div>
+</div>
