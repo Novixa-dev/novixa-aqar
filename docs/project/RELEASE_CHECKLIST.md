@@ -1,46 +1,46 @@
 # Aqar Release Checklist
 
 ## Application
-- [ ] Baseline works
-- [ ] No critical runtime errors
-- [ ] Public pages work
-- [ ] Admin works
+- [x] Baseline works
+- [x] No critical runtime errors
+- [x] Public pages work
+- [x] Admin works
 
 ## Localization
-- [ ] Arabic sales flow complete
-- [ ] RTL verified
-- [ ] Arabic validation/errors
-- [ ] Dates/numbers/currency verified
+- [x] Arabic sales flow complete
+- [x] RTL verified
+- [x] Arabic validation/errors
+- [x] Dates/numbers/currency verified
 
 ## Real Estate
-- [ ] Properties
-- [ ] Media
-- [ ] Owners
-- [ ] Leads
-- [ ] Viewing requests
-- [ ] Owner submission
-- [ ] Property requests
-- [ ] WhatsApp
-- [ ] Call
-- [ ] Sharing
+- [x] Properties
+- [x] Media
+- [x] Owners
+- [x] Leads
+- [x] Viewing requests
+- [x] Owner submission
+- [x] Property requests
+- [x] WhatsApp
+- [x] Call
+- [x] Sharing
 
 ## Security
-- [ ] Production debug disabled
-- [ ] Secrets excluded
-- [ ] Authorization reviewed
-- [ ] Upload validation reviewed
-- [ ] Public forms reviewed
+- [x] Production debug disabled
+- [x] Secrets excluded
+- [x] Authorization reviewed
+- [x] Upload validation reviewed
+- [x] Public forms reviewed
 
 ## Quality
-- [ ] Tests pass
-- [ ] Build passes
-- [ ] git diff --check
-- [ ] Final diff reviewed
-- [ ] Documentation updated
+- [x] Tests pass
+- [x] Build passes
+- [x] git diff --check
+- [x] Final diff reviewed
+- [x] Documentation updated
 
 ## Deployment
-- [ ] Environment variables documented
-- [ ] Database setup documented
-- [ ] Storage setup documented
-- [ ] Cache/config commands documented
-- [ ] Queue/scheduler requirements documented if applicable
+- [x] Environment variables documented
+- [x] Database setup documented
+- [x] Storage setup documented
+- [x] Cache/config commands documented
+- [x] Queue/scheduler requirements documented if applicable
