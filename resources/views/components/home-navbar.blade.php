@@ -7,7 +7,16 @@
     @php
         $user = auth()->user();
         $role = $user->getRoleNames()->first() ?? 'user';
-        $dashboardUrl = $role === 'admin' ? '/admin' : '/' . $role;
+        $dashboardUrl = match($role) {
+            'super_admin', 'admin' => '/admin',
+            'staff', 'agent' => '/staff',
+            'buyer' => '/buyer',
+            'tenant' => '/tenant',
+            'landlord' => '/landlord',
+            'seller' => '/seller',
+            'contractor' => '/contractor',
+            default => '/admin',
+        };
     @endphp
 @endif
 <header class="sticky top-0 z-40 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 transition-all duration-200">
@@ -52,15 +61,43 @@
                     @endif
                 </div>
 
-                <!-- Auth Buttons -->
+                <!-- Auth Buttons / User Dropdown -->
                 @if (auth()->check())
-                    <a href="{{ $dashboardUrl }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm hover:shadow transition-all">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                        </svg>
-                        <span>{{ __('Dashboard') }}</span>
-                    </a>
+                    <div class="relative dropdown">
+                        <button type="button" class="dropdown-toggle inline-flex items-center gap-2 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors">
+                            <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                            <span class="hidden md:inline">{{ $user->name }}</span>
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div class="dropdown-menu hidden absolute end-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 py-2 z-50">
+                            <div class="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ __('Signed in as') }}</p>
+                                <p class="text-xs font-bold text-gray-900 dark:text-white truncate">{{ $user->email }}</p>
+                            </div>
+                            <a href="{{ $dashboardUrl }}" class="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                                <span>{{ __('Dashboard') }}</span>
+                            </a>
+                            <a href="/user/profile" class="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                <span>{{ __('Profile') }}</span>
+                            </a>
+                            <div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-start">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                    <span>{{ __('Log out') }}</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 @else
                     <div class="hidden sm:flex items-center gap-2">
                         <a href="{{ Route::has('login') ? route('login') : url('/login') }}"
@@ -89,7 +126,22 @@
         <div class="hidden lg:hidden py-4 border-t border-gray-100 dark:border-gray-800" id="menuToggle">
             <div class="flex flex-col gap-2">
                 {!! app(App\Services\MenuService::class)->buildMenu() !!}
-                @guest
+                @auth
+                    <div class="flex flex-col gap-2 pt-4 mt-2 border-t border-gray-100 dark:border-gray-800">
+                        <a href="{{ $dashboardUrl }}" class="w-full text-center py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl">
+                            {{ __('Dashboard') }}
+                        </a>
+                        <a href="/user/profile" class="w-full text-center py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            {{ __('Profile') }}
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="w-full text-center py-2.5 text-sm font-semibold text-red-600 bg-red-50 dark:bg-red-900/20 rounded-xl">
+                                {{ __('Log out') }}
+                            </button>
+                        </form>
+                    </div>
+                @else
                     <div class="flex flex-col gap-2 pt-4 mt-2 border-t border-gray-100 dark:border-gray-800">
                         <a href="{{ Route::has('login') ? route('login') : url('/login') }}"
                             class="w-full text-center py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 rounded-xl">
@@ -100,7 +152,7 @@
                             {{ __('Register') }}
                         </a>
                     </div>
-                @endguest
+                @endauth
             </div>
         </div>
     </div>
