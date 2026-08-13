@@ -99,7 +99,7 @@ class NeighborhoodSeeder extends Seeder
         ];
 
         foreach ($neighborhoods as $neighborhood) {
-            Neighborhood::create($neighborhood);
+            Neighborhood::firstOrCreate(['name' => $neighborhood['name']], $neighborhood);
         }
     }
 }

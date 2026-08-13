@@ -2,10 +2,10 @@
     <div class="mx-auto max-w-(--breakpoint-xl)">
         <div class="md:flex md:justify-between">
             <div class="mb-6 md:mb-0">
-                <a href="#" class="flex items-center">
-                    <img src="{{ asset('build/images/logo.png') }}" class="mr-3 h-8" alt="{{ config('app.name') }}" />
-                    <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                        {{ app(\App\Settings\GeneralSettings::class)->site_name }}
+                <a href="/" class="flex items-center space-x-2 rtl:space-x-reverse">
+                    <img src="{{ asset('images/logo.png') }}" class="mr-3 h-8 rounded" alt="Novixa Aqar" />
+                    <span class="self-center text-2xl font-bold whitespace-nowrap dark:text-white">
+                        نوفيكسا عقار <span class="text-sm font-normal text-gray-400">| Novixa Aqar</span>
                      </span>
                 </a>
                
@@ -14,11 +14,10 @@
                 <div></div>
                 <div></div>
                 <div>
-                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Contact Details</h2>
-                    <span class="text-xs text-gray-600">Address :  {{ app(\App\Settings\GeneralSettings::class)->site_address }} </span> <br>
-                    <span class="text-xs text-gray-600">UK Non-geographic: {{ app(\App\Settings\GeneralSettings::class)->site_phone }} </span>  <br>
-                    <span class="text-xs text-gray-600">UK London:  </span>  <br>
-                    <span class="text-xs text-gray-600">UK Mobile:  </span>  <br>
+                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">معلومات الاتصال</h2>
+                    <span class="text-xs text-gray-600 dark:text-gray-300">العنوان: {{ app(\App\Settings\GeneralSettings::class)->site_address }} </span> <br>
+                    <span class="text-xs text-gray-600 dark:text-gray-300">الهاتف: {{ app(\App\Settings\GeneralSettings::class)->site_phone }} </span>  <br>
+                    <span class="text-xs text-gray-600 dark:text-gray-300">البريد: {{ app(\App\Settings\GeneralSettings::class)->site_email }} </span>  <br>
                 </div>
             </div>
         </div>

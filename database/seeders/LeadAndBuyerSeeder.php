@@ -51,7 +51,7 @@ class LeadAndBuyerSeeder extends Seeder
         ];
 
         foreach ($demoLeads as $leadData) {
-            Lead::create($leadData);
+            Lead::firstOrCreate(['email' => $leadData['email']], $leadData);
         }
 
         $demoBuyers = [
@@ -88,7 +88,7 @@ class LeadAndBuyerSeeder extends Seeder
         ];
 
         foreach ($demoBuyers as $buyerData) {
-            Buyer::create($buyerData);
+            Buyer::firstOrCreate(['email' => $buyerData['email']], $buyerData);
         }
     }
 }

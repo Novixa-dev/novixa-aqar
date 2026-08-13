@@ -15,12 +15,14 @@ class PropertyCategorySeeder extends Seeder
         $categories = ['sales', 'lettings', 'hmo'];
 
         foreach ($categories as $category) {
-            DB::table('property_categories')->insert([
-                'name' => $category,
-                'slug' => $category,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            DB::table('property_categories')->updateOrInsert(
+                ['slug' => $category],
+                [
+                    'name' => $category,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         }
     }
 }

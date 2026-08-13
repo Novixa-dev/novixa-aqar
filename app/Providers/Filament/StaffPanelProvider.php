@@ -49,11 +49,11 @@ class StaffPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         $panel
-            ->default()
             ->id('staff')
             ->path('staff')
-            // ->login([AuthenticatedSessionController::class, 'create'])
-            // ->loginRouteSlug('login')
+            ->brandName('نوفيكسا عقار | Novixa Aqar')
+            ->login([AuthenticatedSessionController::class, 'create'])
+            ->loginRouteSlug('login')
             ->homeUrl('/staff')
             // ->registration()
             // ->passwordReset()

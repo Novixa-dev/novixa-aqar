@@ -16,6 +16,7 @@ class PermissionsSeeder extends Seeder
                 '--all' => true,
                 '--panel' => $panel,
                 '--ignore-existing-policies' => true,
+                '--option' => 'permissions',
             ]);
         }
     }

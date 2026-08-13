@@ -22,7 +22,7 @@ class AppointmentTypeSeeder extends Seeder
         ];
 
         foreach ($appointmentTypes as $type) {
-            DB::table('appointment_types')->insert($type);
+            DB::table('appointment_types')->updateOrInsert(['name' => $type['name']], $type);
         }
     }
 }

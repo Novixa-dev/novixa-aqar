@@ -63,7 +63,7 @@ class PropertySeeder extends Seeder
                 'title' => $title,
                 'description' => $desc,
                 'location' => 'المكلا - ' . ($neighborhood ? $neighborhood->name : 'حضرموت'),
-                'price' => $type === 'sales' ? $faker->numberBetween(25000000, 180000000) : $faker->numberBetween(250000, 1500000),
+                'price' => $type === 'sales' ? $faker->numberBetween(2500000, 95000000) : $faker->numberBetween(250000, 1500000),
                 'bedrooms' => $faker->numberBetween(1, 6),
                 'bathrooms' => $faker->numberBetween(1, 4),
                 'area_sqft' => $faker->numberBetween(120, 600),

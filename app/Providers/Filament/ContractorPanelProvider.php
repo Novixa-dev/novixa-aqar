@@ -43,11 +43,11 @@ class ContractorPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         $panel
-            ->default()
             ->id('contractor')
             ->path('contractor')
-            // ->login([AuthenticatedSessionController::class, 'create'])
-            // ->loginRouteSlug('login')
+            ->brandName('نوفيكسا عقار | Novixa Aqar')
+            ->login([AuthenticatedSessionController::class, 'create'])
+            ->loginRouteSlug('login')
             ->homeUrl('/contractor')
             // ->registration()
             // ->passwordReset()

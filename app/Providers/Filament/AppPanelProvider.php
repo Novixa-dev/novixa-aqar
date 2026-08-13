@@ -44,10 +44,9 @@ class AppPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         $panel
-            ->default()
             ->id('app')
             ->path('app')
-            ->brandName('عقاري | Aqar')
+            ->brandName('نوفيكسا عقار | Novixa Aqar')
             ->login([AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/app')

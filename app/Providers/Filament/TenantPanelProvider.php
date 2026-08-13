@@ -43,11 +43,11 @@ class TenantPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         $panel
-            ->default()
             ->id('tenant')
             ->path('tenant')
-            // ->login([AuthenticatedSessionController::class, 'create'])
-            // ->loginRouteSlug('login')
+            ->brandName('نوفيكسا عقار | Novixa Aqar')
+            ->login([AuthenticatedSessionController::class, 'create'])
+            ->loginRouteSlug('login')
             ->homeUrl('/tenant')
             // ->registration()
             // ->passwordReset()

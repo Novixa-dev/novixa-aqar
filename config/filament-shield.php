@@ -179,14 +179,15 @@ return [
     ],
 
     'panels' => [
-        "admin" => ['admin'],
-        "app" => ['admin'],
-        "staff" => ['admin', 'staff'],
-        "buyer" => ['admin'],
-        "contractor" => ['admin'],
-        "landlord" => ['admin'],
-        "seller" => ['admin'],
-        "tenant" => ['admin'],
+        "admin" => ['admin', 'super_admin'],
+        "app" => ['admin', 'super_admin', 'staff'],
+        "staff" => ['admin', 'super_admin', 'staff'],
+        "agent" => ['admin', 'super_admin', 'agent'],
+        "buyer" => ['admin', 'super_admin', 'buyer'],
+        "contractor" => ['admin', 'super_admin', 'contractor'],
+        "landlord" => ['admin', 'super_admin', 'landlord'],
+        "seller" => ['admin', 'super_admin', 'seller'],
+        "tenant" => ['admin', 'super_admin', 'tenant'],
     ],
 
     /*

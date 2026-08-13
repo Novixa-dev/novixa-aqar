@@ -63,7 +63,7 @@
                         </div>
                     </div>
                     <div class="mt-4">
-                        <x-socialstream::components.socialstream />
+                        <x-socialstream />
                     </div>
                 </div>
             @endif

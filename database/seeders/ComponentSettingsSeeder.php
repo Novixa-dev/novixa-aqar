@@ -18,8 +18,9 @@ class ComponentSettingsSeeder extends Seeder
         ];
 
         foreach ($components as $component) {
-            ComponentSettings::create([
+            ComponentSettings::firstOrCreate([
                 'component_name' => $component,
+            ], [
                 'is_enabled' => true,
             ]);
         }

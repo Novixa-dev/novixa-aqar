@@ -13,13 +13,13 @@
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
     <div class="max-w-(--breakpoint-xl) flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="{{ asset('build/images/logo.png') }}" class="h-8" alt="{{ config('app.name') }}" />
-            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                {{ Str::upper(config('app.name')) }}</span>
+            <img src="{{ asset('images/logo.png') }}" class="h-8 rounded" alt="Novixa Aqar" />
+            <span class="self-center text-2xl font-bold whitespace-nowrap dark:text-white">
+                نوفيكسا عقار <span class="text-sm font-normal text-gray-400">| Novixa Aqar</span></span>
         </a>
 
 
-        <div class="items-center hidden justify-between w-full  lg:flex lg:w-auto" id="navbar-cta">
+        <div class="items-center hidden justify-between w-full lg:flex lg:w-auto" id="navbar-cta">
             <ul
                 class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                 {!! app(App\Services\MenuService::class)->buildMenu() !!}
@@ -27,6 +27,19 @@
         </div>
 
         <div class="flex items-center space-x-3 rtl:space-x-reverse">
+            <!-- Language Switcher -->
+            <div class="inline-flex rounded-md shadow-xs">
+                @if(app()->getLocale() === 'ar')
+                    <a href="{{ route('lang.switch', 'en') }}" class="px-3 py-1.5 text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors border border-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">
+                        🌐 English
+                    </a>
+                @else
+                    <a href="{{ route('lang.switch', 'ar') }}" class="px-3 py-1.5 text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors border border-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">
+                        🌐 العربية
+                    </a>
+                @endif
+            </div>
+
             @if (auth()->check())
                 @php
                     $user = auth()->user();
@@ -35,14 +48,14 @@
                 @endphp
 
                 <a href="{{ $dashboardUrl }}"
-                    class="hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium lg:hidden">
-                    {{ ucfirst($role) }} Dashboard
+                    class="hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium">
+                    {{ __('Dashboard') }} ({{ ucfirst($role) }})
                 </a>
             @else
-                <a href="{{ Route::has('login') ? route('login') : url('/app/login') }}"
-                    class="hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium">Login</a>
-                <a href="{{ Route::has('register') ? route('register') : url('/app/register') }}"
-                    class="hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium ml-2">Register</a>
+                <a href="{{ Route::has('login') ? route('login') : url('/login') }}"
+                    class="hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium">{{ __('Log in') }}</a>
+                <a href="{{ Route::has('register') ? route('register') : url('/register') }}"
+                    class="hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium">{{ __('Register') }}</a>
             @endif
 
             <button id="menuToggleButton" data-collapse-toggle="menuToggle" type="button"
@@ -56,12 +69,6 @@
                 </svg>
             </button>
         </div>
-        @if (auth()->check())
-            <a href="{{ $dashboardUrl }}"
-                class="hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium hidden lg:block">
-                {{ ucfirst($role) }} Dashboard
-            </a>
-        @endif
     </div>
 
     <div class="hidden lg:hidden" id="menuToggle">

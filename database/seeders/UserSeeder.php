@@ -18,21 +18,46 @@ class UserSeeder extends Seeder
     public function run(): void
     {
 
-        $adminPassword = Str::random(12);
-        $adminUser = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => Hash::make($adminPassword),
-            'email_verified_at' => now(),
-        ]);
+        $adminPassword = 'password';
+        $adminUser = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make($adminPassword),
+                'email_verified_at' => now(),
+            ]
+        );
 
-        $team = Team::firstOrFail();
-        $adminUser->teams()->syncWithoutDetaching([$team->id]);
+        $team = Team::first();
+        if ($team) {
+            $adminUser->teams()->syncWithoutDetaching([$team->id]);
+        }
 
-        $role = Role::where('name', 'super_admin')->firstOrFail();
-        $adminUser->assignRole($role);
+        $role = Role::where('name', 'super_admin')->first();
+        if ($role) {
+            $adminUser->assignRole($role);
+        }
 
-        // Print passwords to console
-        echo "Admin password: {$adminPassword}\n";
+        // Create standard test users for other roles
+        $roles = ['staff', 'agent', 'buyer', 'seller', 'landlord', 'tenant', 'contractor'];
+        foreach ($roles as $roleName) {
+            $user = User::firstOrCreate(
+                ['email' => "{$roleName}@example.com"],
+                [
+                    'name' => ucfirst($roleName) . ' User',
+                    'password' => Hash::make('password'),
+                    'email_verified_at' => now(),
+                ]
+            );
+            if ($team) {
+                $user->teams()->syncWithoutDetaching([$team->id]);
+            }
+            $r = Role::where('name', $roleName)->first();
+            if ($r) {
+                $user->assignRole($r);
+            }
+        }
+
+        echo "Seeded users successfully. Default password for all users: password\n";
     }
 }

@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ app(\App\Settings\GeneralSettings::class)->site_name }}</title>
-    <meta name="description" content="عقاري - المنصة العقارية الرائدة لشراء، بيع، وإيجار العقارات والأراضي في المكلا وحضرموت واليمن.">
+    <meta name="description" content="نوفيكسا عقار (Novixa Aqar) - المنصة العقارية الذكية لإيجار وشراء العقارات والأراضي والحلول العقارية المتقدمة، تطوير Novixa و AK01REDWAN.">
     <meta property="og:site_name" content="{{ app(\App\Settings\GeneralSettings::class)->site_name }}">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
@@ -45,7 +45,6 @@
     @include('components.chatbot-widget')
 
     <!-- Scripts -->
-    @vite('resources/js/app.js')
     @livewireScripts
 
     <script>

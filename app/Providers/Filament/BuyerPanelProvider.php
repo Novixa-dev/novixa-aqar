@@ -43,11 +43,11 @@ class BuyerPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         $panel
-            ->default()
             ->id('buyer')
             ->path('buyer')
-            // ->login([AuthenticatedSessionController::class, 'create'])
-            // ->loginRouteSlug('login')
+            ->brandName('نوفيكسا عقار | Novixa Aqar')
+            ->login([AuthenticatedSessionController::class, 'create'])
+            ->loginRouteSlug('login')
             ->homeUrl('/buyer')
             // ->registration()
             // ->passwordReset()

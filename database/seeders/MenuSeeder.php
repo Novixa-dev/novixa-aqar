@@ -11,41 +11,41 @@ class MenuSeeder extends Seeder
     {
         $menus = [
             [
-                'name' => 'Home',
+                'name' => 'الرئيسية',
                 'url' => '/',
                 'order' => 1
             ],
             [
-                'name' => 'Properties',
+                'name' => 'العقارات',
                 'url' => '/properties',
                 'order' => 2,
                 'children' => [
-                    ['name' => 'For Sale', 'url' => '/properties/for-sale', 'order' => 1],
-                    ['name' => 'For Rent', 'url' => '/properties/for-rent', 'order' => 2],
+                    ['name' => 'للبيع', 'url' => '/properties?status=For+Sale', 'order' => 1],
+                    ['name' => 'للايجار', 'url' => '/properties?status=For+Rent', 'order' => 2],
                 ]
             ],
             [
-                'name' => 'Services',
+                'name' => 'الخدمات',
                 'url' => '/services',
                 'order' => 3,
                 'children' => [
-                    ['name' => 'Buying', 'url' => '/services/buying', 'order' => 1],
-                    ['name' => 'Selling', 'url' => '/services/selling', 'order' => 2],
-                    ['name' => 'Renting', 'url' => '/services/renting', 'order' => 3],
+                    ['name' => 'الشراء', 'url' => '/services#buying', 'order' => 1],
+                    ['name' => 'البيع', 'url' => '/services#selling', 'order' => 2],
+                    ['name' => 'الاستئجار', 'url' => '/services#renting', 'order' => 3],
                 ]
             ],
             [
-                'name' => 'About',
+                'name' => 'عن الشركة',
                 'url' => '/about',
                 'order' => 4
             ],
             [
-                'name' => 'Contact',
+                'name' => 'اتصل بنا',
                 'url' => '/contact',
                 'order' => 5
             ],
             [
-                'name' => 'Calculators',
+                'name' => 'الحاسبات',
                 'url' => '/calculators',
                 'order' => 6
             ],
@@ -62,7 +62,10 @@ class MenuSeeder extends Seeder
         unset($menuData['children']);
 
         $menuData['parent_id'] = $parentId;
-        $menu = Menu::create($menuData);
+        $menu = Menu::firstOrCreate(
+            ['name' => $menuData['name'], 'parent_id' => $parentId],
+            $menuData
+        );
 
         foreach ($children as $childData) {
             $this->createMenu($childData, $menu->id);
