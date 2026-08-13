@@ -1,23 +1,20 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="bg-white dark:bg-gray-900">
-    <div class="container mx-auto px-4 py-8">
+<div class="bg-white dark:bg-gray-900 py-8">
+    <div class="container mx-auto px-4">
         <div class="max-w-7xl mx-auto">
             <!-- Header -->
             <div class="mb-8">
                 <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-2">
-                    My Wishlist
+                    قائمة المفضلة
                 </h1>
                 <p class="text-lg text-gray-600 dark:text-gray-400">
-                    {{ $totalFavorites }} {{ Str::plural('property', $totalFavorites) }} saved
+                    {{ $totalFavorites }} {{ Str::plural('عقار', $totalFavorites) }} محفظة
                 </p>
             </div>
 
             <!-- Search and Sort -->
             <div class="mb-6 flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
-                    <label for="search" class="sr-only">Search</label>
+                    <label for="search" class="sr-only">البحث</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -25,21 +22,21 @@
                             </svg>
                         </div>
                         <input type="text" 
-                               wire:model.debounce.300ms="search" 
+                               wire:model.live.debounce.300ms="search" 
                                id="search"
                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                               placeholder="Search properties...">
+                               placeholder="البحث في القائمة المفضلة...">
                     </div>
                 </div>
                 
                 <div class="flex gap-2">
                     <button wire:click="sortByColumn('created_at')" 
                             class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
-                        Date Added @if($sortBy === 'created_at') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
+                        تاريخ الإضافة @if($sortBy === 'created_at') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
                     </button>
                     <button wire:click="sortByColumn('price')" 
                             class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
-                        Price @if($sortBy === 'price') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
+                        السعر @if($sortBy === 'price') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
                     </button>
                 </div>
             </div>
@@ -58,7 +55,7 @@
                             <!-- Remove from Wishlist Button -->
                             <button wire:click="removeFavorite({{ $property->id }})"
                                     class="absolute top-3 right-3 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-red-50 transition-colors"
-                                    title="Remove from wishlist">
+                                    title="إزالة من المفضلة">
                                 <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
                                 </svg>
@@ -71,7 +68,7 @@
                                          alt="{{ $property->title }}">
                                 @else
                                     <div class="rounded-t-lg w-full h-48 bg-gray-300 flex items-center justify-center">
-                                        <span class="text-gray-500">No image</span>
+                                        <span class="text-gray-500">لا توجد صورة</span>
                                     </div>
                                 @endif
                             </a>
@@ -91,20 +88,14 @@
                                 </p>
 
                                 <div class="mb-3 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                                    <span>{{ $property->bedrooms }} beds</span>
-                                    <span>{{ $property->bathrooms }} baths</span>
-                                    <span>{{ number_format($property->area_sqft) }} sqft</span>
+                                    <span>{{ $property->bedrooms }} غرف</span>
+                                    <span>{{ $property->bathrooms }} حمامات</span>
+                                    <span>{{ number_format($property->area_sqft) }} م²</span>
                                 </div>
 
-                                <p class="text-2xl font-bold text-primary-600 dark:text-primary-400">
-                                    ${{ number_format($property->price) }}
+                                <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                                    {{ number_format($property->price) }} {{ app(\App\Settings\GeneralSettings::class)->site_currency }}
                                 </p>
-
-                                @if(isset($property->favorited_at))
-                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                        Added {{ $property->favorited_at->diffForHumans() }}
-                                    </p>
-                                @endif
                             </div>
                         </div>
                     @endforeach
@@ -119,12 +110,12 @@
                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                     </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No properties in your wishlist</h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by adding properties you're interested in.</p>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">لا توجد عقارات في المفضلة</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">تصفح العقارات وأضف ما يعجبك لقائمة المفضلة.</p>
                     <div class="mt-6">
                         <a href="{{ route('property.list') }}" 
-                           class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                            Browse Properties
+                           class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                            تصفح العقارات
                         </a>
                     </div>
                 </div>
@@ -132,4 +123,3 @@
         </div>
     </div>
 </div>
-@endsection

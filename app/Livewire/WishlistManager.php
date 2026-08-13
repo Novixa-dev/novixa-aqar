@@ -71,15 +71,12 @@ class WishlistManager extends Component
 
         // Apply sorting
         if ($this->sortBy === 'price') {
-            $query->orderBy('price', $this->sortDirection);
+            $query->orderBy('properties.price', $this->sortDirection);
         } elseif ($this->sortBy === 'title') {
-            $query->orderBy('title', $this->sortDirection);
+            $query->orderBy('properties.title', $this->sortDirection);
         } else {
             // Default: sort by when it was added to favorites
-            $query->join('favorites', 'properties.id', '=', 'favorites.property_id')
-                  ->where('favorites.user_id', $user->id)
-                  ->orderBy('favorites.created_at', $this->sortDirection)
-                  ->select('properties.*', 'favorites.created_at as favorited_at');
+            $query->orderBy('favorites.created_at', $this->sortDirection);
         }
 
         $favorites = $query->paginate(12);
