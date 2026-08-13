@@ -79,11 +79,7 @@ class TenantPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/Tenant/Resources'), for: 'App\\Filament\\Tenant\\Resources')
             ->discoverPages(in: app_path('Filament/Tenant/Pages'), for: 'App\\Filament\\Tenant\\Pages')
-            ->pages([
-                Dashboard::class,
-                Pages\EditProfile::class,
-                Profile::class,
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Tenant/Widgets/Home'), for: 'App\\Filament\\Tenant\\Widgets\\Home')
             ->widgets([
                 Widgets\AccountWidget::class,

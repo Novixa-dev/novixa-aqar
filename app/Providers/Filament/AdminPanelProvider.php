@@ -61,7 +61,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Staff/Widgets'), for: 'App\\Filament\\Staff\\Widgets')
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->pages([
-                \App\Filament\Admin\Pages\Dashboard::class,
                 Pages\EditProfile::class,
             ])->widgets([
                 \App\Filament\Staff\Widgets\StatsOverview::class,

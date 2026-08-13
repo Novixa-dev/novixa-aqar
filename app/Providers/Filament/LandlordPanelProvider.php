@@ -79,12 +79,7 @@ class LandlordPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/Landlord/Resources'), for: 'App\\Filament\\Landlord\\Resources')
             ->discoverPages(in: app_path('Filament/Landlord/Pages'), for: 'App\\Filament\\Landlord\\Pages')
-            ->pages([
-                // \App\Filament\Landlord\Pages\Dashboard::class,
-                Dashboard::class,
-                Pages\EditProfile::class,
-                Profile::class,
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Landlord/Widgets/Home'), for: 'App\\Filament\\Landlord\\Widgets\\Home')
             ->widgets([
                 Widgets\AccountWidget::class,

@@ -84,11 +84,7 @@ class StaffPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/Staff/Resources'), for: 'App\\Filament\\Staff\\Resources')
             ->discoverPages(in: app_path('Filament/Staff/Pages'), for: 'App\\Filament\\Staff\\Pages')
-            ->pages([
-                Dashboard::class,
-                Pages\EditProfile::class,
-                Profile::class,
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Staff/Widgets/Home'), for: 'App\\Filament\\Staff\\Widgets\\Home')
             ->widgets([
                 PropertyStatsOverview::class,

@@ -72,11 +72,7 @@ class AppPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
-            ->pages([
-                Dashboard::class,
-                Pages\EditProfile::class,
-                Profile::class,
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/App/Widgets/Home'), for: 'App\\Filament\\App\\Widgets\\Home')
             ->widgets([
                 Widgets\AccountWidget::class,

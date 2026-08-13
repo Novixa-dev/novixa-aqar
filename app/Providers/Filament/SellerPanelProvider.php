@@ -79,11 +79,7 @@ class SellerPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/Seller/Resources'), for: 'App\\Filament\\Seller\\Resources')
             ->discoverPages(in: app_path('Filament/Seller/Pages'), for: 'App\\Filament\\Seller\\Pages')
-            ->pages([
-                \App\Filament\Seller\Pages\Dashboard::class,
-                Pages\EditProfile::class,
-                Profile::class,
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Seller/Widgets/Home'), for: 'App\\Filament\\Seller\\Widgets\\Home')
             ->widgets([
                 Widgets\AccountWidget::class,
