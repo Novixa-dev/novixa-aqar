@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PropertyCategorySeeder::class,
             NeighborhoodSeeder::class,
             PropertySeeder::class,
+            LeadAndBuyerSeeder::class,
             AppointmentTypeSeeder::class,
             VirtualTourAppointmentTypeSeeder::class,
             MenuSeeder::class,
