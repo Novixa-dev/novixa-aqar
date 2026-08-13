@@ -1,7 +1,7 @@
 # TASK-014 — Public UI & Component Polish
 
 ## Status
-IN_PROGRESS
+COMPLETED
 
 ## Objective
 Enhance and refine the public UI components, responsive layout drawers, Arabic typography alignment, property card micro-animations, and CTA buttons to deliver a state-of-the-art visual experience localized for Yemen & Hadramout real estate clients.
@@ -38,11 +38,11 @@ Delivering an aesthetically pleasing, modern, and perfectly aligned RTL user exp
 - 100% Arabic/RTL visual symmetry across all viewports.
 
 ## Acceptance Criteria
-- [ ] Custom CSS styling in `app.css` loaded cleanly.
-- [ ] Mobile navbar toggle drawer opens and closes smoothly.
-- [ ] Property cards display clear badges (`للبيع` / `للإيجار`), Yemeni Rial formatting, and location icons.
-- [ ] WhatsApp CTA buttons use distinct brand styling.
-- [ ] Feature test `UiPolishTest.php` passes cleanly.
+- [x] Custom CSS styling in `app.css` loaded cleanly.
+- [x] Mobile navbar toggle drawer opens and closes smoothly.
+- [x] Property cards display clear badges (`للبيع` / `للإيجار`), Yemeni Rial formatting, and location icons.
+- [x] WhatsApp CTA buttons use distinct brand styling.
+- [x] Feature test `UiPolishTest.php` passes cleanly.
 
 ## Verification
 ```bash

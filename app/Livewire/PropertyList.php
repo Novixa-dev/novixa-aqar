@@ -19,7 +19,7 @@ class PropertyList extends Component
 
     public $search = '';
     public $minPrice = 0;
-    public $maxPrice = 1000000;
+    public $maxPrice = 1000000000;
     public $minBedrooms = 0;
     public $maxBedrooms = 10;
     public $minBathrooms = 0;
@@ -54,7 +54,7 @@ class PropertyList extends Component
     protected $queryString = [
         'search' => ['except' => ''],
         'minPrice' => ['except' => 0],
-        'maxPrice' => ['except' => 10000000],
+        'maxPrice' => ['except' => 1000000000],
         'minBedrooms' => ['except' => 0],
         'maxBedrooms' => ['except' => 10],
         'minBathrooms' => ['except' => 0],

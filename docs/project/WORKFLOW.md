@@ -15,8 +15,8 @@
 | TASK-011 | Property requests | COMPLETED | 2026-08-11 | 2026-08-11 | property-requests | PASS (710 tests) |
 | TASK-012 | SEO / OpenGraph | COMPLETED | 2026-08-11 | 2026-08-11 | seo-opengraph | PASS (712 tests) |
 | TASK-013 | Demo data | COMPLETED | 2026-08-11 | 2026-08-12 | demo-data-seeders | PASS (713 tests) |
-| TASK-014 | UI polish | IN_PROGRESS | 2026-08-12 | | | |
-| TASK-015 | Security review | NOT_STARTED | | | | |
+| TASK-014 | UI polish | COMPLETED | 2026-08-12 | 2026-08-13 | ui-polish | PASS (716 tests) |
+| TASK-015 | Security review | IN_PROGRESS | 2026-08-13 | | | |
 | TASK-016 | Testing / QA | NOT_STARTED | | | | |
 | TASK-017 | Deployment preparation | NOT_STARTED | | | | |
 | TASK-018 | Final release audit | NOT_STARTED | | | | |

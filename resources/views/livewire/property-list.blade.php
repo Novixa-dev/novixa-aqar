@@ -68,52 +68,43 @@
                 <div class="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
                     @forelse($properties as $property)
                         <div
-                            class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div class="h-56 w-full">
+                            class="property-card-hover rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 dark:border-gray-700 dark:bg-gray-800">
+                            <div class="relative h-56 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
                                 <a href="{{ route('property.detail', $property->id) }}">
                                     <img src="{{ $property->getFirstMediaUrl('images') ?: asset('build/images/property-placeholder.png') }}"
-                                        alt="{{ $property->title }}" class="mx-auto h-full dark:hidden">
+                                        alt="{{ $property->title }}" class="h-full w-full object-cover transition-transform duration-500 hover:scale-105">
                                 </a>
+                                <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                                    <span class="rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $property->status === 'For Rent' ? 'badge-rent' : 'badge-sale' }}">
+                                        {{ $property->status === 'For Rent' ? 'للإيجار' : 'للبيع' }}
+                                    </span>
+                                    @if($property->is_featured)
+                                        <span class="badge-featured rounded-full px-2.5 py-0.5 text-xs font-semibold">
+                                            مميز
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
-                            <div class="pt-6">
-                                <div class="mb-4 flex items-center justify-between gap-4">
+                            <div class="pt-4">
+                                <div class="mb-3 flex items-center justify-between gap-2">
                                     <span
-                                        class="me-2 rounded bg-primary-100 px-2.5 py-0.5 text-md font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-300">
-                                        {{ app(\App\Settings\GeneralSettings::class)->site_currency . ' ' . number_format($property->price, 2) }}
+                                        class="rounded-lg bg-emerald-50 px-3 py-1 text-base font-extrabold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+                                        {{ number_format($property->price) }} {{ app(\App\Settings\GeneralSettings::class)->site_currency }}
                                     </span>
                                     <div class="flex items-center justify-end gap-1">
                                         <a href="{{ \App\Helpers\AqarContactHelper::getWhatsAppUrl($property->contact_phone ?? null, $property->title, $property->id) }}"
                                              target="_blank" rel="noopener noreferrer"
                                              title="تواصل عبر الواتساب"
-                                             class="rounded-lg p-2 text-green-600 hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors">
-                                             <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                                             class="whatsapp-btn rounded-lg p-2 transition-transform hover:scale-110">
+                                             <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24">
                                                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
                                              </svg>
                                          </a>
-                                        <button type="button" data-tooltip-target="tooltip-quick-look"
-                                            class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                            <span class="sr-only"> Quick look </span>
-                                            <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                                width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-width="2"
-                                                    d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z" />
-                                                <path stroke="currentColor" stroke-width="2"
-                                                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                            </svg>
-                                        </button>
-                                        <div id="tooltip-quick-look" role="tooltip"
-                                            class="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700"
-                                            data-popper-placement="top">
-                                            Quick look
-                                            <div class="tooltip-arrow" data-popper-arrow=""></div>
-                                        </div>
-
                                         <button type="button" 
                                             wire:click="toggleFavorite({{ $property->id }})"
-                                            data-tooltip-target="tooltip-add-to-favorites-{{ $property->id }}"
+                                            title="إضافة للمفضلة"
                                             class="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700 
-                                            {{ $this->isFavorited($property->id) ? 'text-red-500' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' }}">
-                                            <span class="sr-only"> {{ $this->isFavorited($property->id) ? 'Remove from' : 'Add to' }} Favorites </span>
+                                            {{ $this->isFavorited($property->id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500' }}">
                                             <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                                                 fill="{{ $this->isFavorited($property->id) ? 'currentColor' : 'none' }}" viewBox="0 0 24 24">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -121,18 +112,12 @@
                                                     d="M12 6C6.5 1 1 8 5.8 13l6.2 7 6.2-7C23 8 17.5 1 12 6Z" />
                                             </svg>
                                         </button>
-                                        <div id="tooltip-add-to-favorites-{{ $property->id }}" role="tooltip"
-                                            class="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700"
-                                            data-popper-placement="top">
-                                            {{ $this->isFavorited($property->id) ? 'Remove from wishlist' : 'Add to wishlist' }}
-                                            <div class="tooltip-arrow" data-popper-arrow=""></div>
-                                        </div>
                                     </div>
                                 </div>
 
-                                <a href="#"
-                                    class="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white">
-                                    {{ Str::limit($property->title, 25) }}</a>
+                                <a href="{{ route('property.detail', $property->id) }}"
+                                    class="text-lg font-bold leading-snug text-gray-900 hover:text-emerald-600 dark:text-white dark:hover:text-emerald-400">
+                                    {{ Str::limit($property->title, 35) }}</a>
 
                                 <p class="text-xs  text-gray-500 dark:text-gray-400">
                                     {{ Str::limit($property->description, 70   ) }}
