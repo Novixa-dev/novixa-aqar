@@ -3,37 +3,44 @@
 namespace App\Filament\Staff\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Card;
 use App\Models\Property;
 use App\Models\Booking;
 use App\Models\Transaction;
-use Filament\Widgets\Widget;
-use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class PropertyStatsOverview extends BaseWidget
 {
+    protected static ?int $sort = 1;
+    protected int | string | array $columnSpan = 'full';
+
+    public static function canView(): bool
+    {
+        return true;
+    }
+
     protected function getStats(): array
     {
-        $startDate = Carbon::now()->startOfMonth();
-        $endDate = Carbon::now()->endOfMonth();
+        $totalProperties = Property::count();
+        $activeListings = Property::whereIn('status', ['active', 'For Sale', 'For Rent', 'available'])->count() ?: $totalProperties;
+        $totalBookings = Booking::count();
+        $totalRevenue = Transaction::sum('amount') ?: 0;
 
         return [
-            Stat::make('Total Properties', Property::count())
-                ->description('Overall property count')
-                ->descriptionIcon('heroicon-s-home')
+            Stat::make('Total Properties', $totalProperties)
+                ->description('All listings in system')
+                ->descriptionIcon('heroicon-m-home')
                 ->color('primary'),
-            Stat::make('Active Listings', Property::where('status', 'active')->count())
-                ->description('Active properties')
-                ->descriptionIcon('heroicon-s-clipboard-document-check')
+            Stat::make('Active Listings', $activeListings)
+                ->description('Published & available')
+                ->descriptionIcon('heroicon-m-check-badge')
                 ->color('success'),
-            Stat::make('Total Bookings', Booking::whereBetween('date', [$startDate, $endDate])->count())
-                ->description('Bookings this month')
-                ->descriptionIcon('heroicon-s-calendar')
+            Stat::make('Total Bookings', $totalBookings)
+                ->description('Customer visits & tours')
+                ->descriptionIcon('heroicon-m-calendar-days')
                 ->color('warning'),
-            Stat::make('Total Revenue', Transaction::whereBetween('date', [$startDate, $endDate])->sum('amount'))
-                ->description('Revenue this month')
-                ->descriptionIcon('heroicon-s-currency-dollar')
+            Stat::make('Total Revenue', '$' . number_format($totalRevenue, 2))
+                ->description('Total financial transactions')
+                ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
         ];
     }

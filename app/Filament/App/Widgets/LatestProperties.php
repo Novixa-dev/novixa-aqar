@@ -9,6 +9,8 @@ class LatestProperties extends Widget
 {
     protected string $view = 'filament.widgets.latest-properties';
 
+    protected static ?int $sort = 3;
+
     public function getLatestProperties()
     {
         return Property::latest()->take(5)->get();

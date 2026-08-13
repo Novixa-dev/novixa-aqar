@@ -61,7 +61,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Staff/Widgets'), for: 'App\\Filament\\Staff\\Widgets')
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->pages([
-                FilamentPage\Dashboard::class,
+                \App\Filament\Admin\Pages\Dashboard::class,
                 Pages\EditProfile::class,
             ])->widgets([
                 \App\Filament\Staff\Widgets\StatsOverview::class,
@@ -74,6 +74,7 @@ class AdminPanelProvider extends PanelProvider
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
+                \App\Http\Middleware\SetLocaleMiddleware::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,

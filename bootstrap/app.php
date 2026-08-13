@@ -17,8 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->append([
+        $middleware->web(append: [
             \App\Http\Middleware\SetLocaleMiddleware::class,
+        ]);
+
+        $middleware->append([
             \App\Http\Middleware\RoleBasedRedirect::class,
             \App\Http\Middleware\SecurityHeaders::class,
         ]);
