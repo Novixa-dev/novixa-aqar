@@ -37,6 +37,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('شركة الأفق العقارية | لوحة التحكم الإدارية')
+            ->darkMode(true)
+            ->sidebarCollapsibleOnDesktop()
             ->login([AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/admin')

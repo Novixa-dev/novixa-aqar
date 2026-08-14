@@ -40,8 +40,27 @@
             box-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
         }
     </style>
+    <!-- Theme Initialization Script (Prevent Flash) -->
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        window.toggleTheme = function() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+            window.dispatchEvent(new CustomEvent('theme-changed', { detail: { isDark: document.documentElement.classList.contains('dark') } }));
+        };
+    </script>
 </head>
-<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 selection:bg-blue-600 selection:text-white">
+<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 selection:bg-blue-600 selection:text-white transition-colors duration-200">
     <!-- Top Progress Bar Element -->
     <div id="top-progress-bar"></div>
 
