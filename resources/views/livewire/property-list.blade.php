@@ -37,12 +37,19 @@
                     <label class="block text-xs font-bold text-gray-400 mb-1.5">
                         {{ app()->getLocale() === 'ar' ? 'نوع العملية' : 'Purpose' }}
                     </label>
-                    <select wire:model.live="status"
-                        class="w-full px-4 py-3 bg-gray-800/80 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer">
-                        <option value="">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
-                        <option value="For Sale">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
-                        <option value="For Rent">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
-                    </select>
+                    <div class="relative">
+                        <select wire:model.live="status"
+                            class="w-full ps-4 pe-10 py-3 bg-gray-800/80 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer">
+                            <option value="">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
+                            <option value="For Sale">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
+                            <option value="For Rent">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
+                        </select>
+                        <div class="absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Property Type Filter -->
@@ -50,15 +57,22 @@
                     <label class="block text-xs font-bold text-gray-400 mb-1.5">
                         {{ app()->getLocale() === 'ar' ? 'نوع العقار' : 'Property Type' }}
                     </label>
-                    <select wire:model.live="propertyType"
-                        class="w-full px-4 py-3 bg-gray-800/80 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer">
-                        <option value="">{{ app()->getLocale() === 'ar' ? 'جميع الأنواع' : 'All Types' }}</option>
-                        <option value="Apartment">{{ app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment' }}</option>
-                        <option value="Villa">{{ app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Luxury Villa' }}</option>
-                        <option value="Land">{{ app()->getLocale() === 'ar' ? 'أرض سكنية / تجارية' : 'Land / Plot' }}</option>
-                        <option value="Commercial">{{ app()->getLocale() === 'ar' ? 'عقار تجاري / مكتب' : 'Commercial / Office' }}</option>
-                        <option value="Building">{{ app()->getLocale() === 'ar' ? 'عمارة استثمارية' : 'Building' }}</option>
-                    </select>
+                    <div class="relative">
+                        <select wire:model.live="propertyType"
+                            class="w-full ps-4 pe-10 py-3 bg-gray-800/80 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer">
+                            <option value="">{{ app()->getLocale() === 'ar' ? 'جميع الأنواع' : 'All Types' }}</option>
+                            <option value="Apartment">{{ app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment' }}</option>
+                            <option value="Villa">{{ app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Luxury Villa' }}</option>
+                            <option value="Land">{{ app()->getLocale() === 'ar' ? 'أرض سكنية / تجارية' : 'Land / Plot' }}</option>
+                            <option value="Commercial">{{ app()->getLocale() === 'ar' ? 'عقار تجاري / مكتب' : 'Commercial / Office' }}</option>
+                            <option value="Building">{{ app()->getLocale() === 'ar' ? 'عمارة استثمارية' : 'Building' }}</option>
+                        </select>
+                        <div class="absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -68,27 +82,41 @@
                     <label class="block font-bold text-gray-400 mb-1">
                         {{ app()->getLocale() === 'ar' ? 'غرف النوم (الحد الأدنى)' : 'Min Bedrooms' }}
                     </label>
-                    <select wire:model.live="minBedrooms"
-                        class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs">
-                        <option value="0">{{ app()->getLocale() === 'ar' ? 'أي عدد' : 'Any' }}</option>
-                        <option value="1">1+ {{ app()->getLocale() === 'ar' ? 'غرفة' : 'Bed' }}</option>
-                        <option value="2">2+ {{ app()->getLocale() === 'ar' ? 'غرف' : 'Beds' }}</option>
-                        <option value="3">3+ {{ app()->getLocale() === 'ar' ? 'غرف' : 'Beds' }}</option>
-                        <option value="4">4+ {{ app()->getLocale() === 'ar' ? 'غرف' : 'Beds' }}</option>
-                    </select>
+                    <div class="relative">
+                        <select wire:model.live="minBedrooms"
+                            class="w-full ps-3 pe-8 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs appearance-none cursor-pointer">
+                            <option value="0">{{ app()->getLocale() === 'ar' ? 'أي عدد' : 'Any' }}</option>
+                            <option value="1">1+ {{ app()->getLocale() === 'ar' ? 'غرفة' : 'Bed' }}</option>
+                            <option value="2">2+ {{ app()->getLocale() === 'ar' ? 'غرف' : 'Beds' }}</option>
+                            <option value="3">3+ {{ app()->getLocale() === 'ar' ? 'غرف' : 'Beds' }}</option>
+                            <option value="4">4+ {{ app()->getLocale() === 'ar' ? 'غرف' : 'Beds' }}</option>
+                        </select>
+                        <div class="absolute end-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
                 <div>
                     <label class="block font-bold text-gray-400 mb-1">
                         {{ app()->getLocale() === 'ar' ? 'دورات المياه' : 'Min Bathrooms' }}
                     </label>
-                    <select wire:model.live="minBathrooms"
-                        class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs">
-                        <option value="0">{{ app()->getLocale() === 'ar' ? 'أي عدد' : 'Any' }}</option>
-                        <option value="1">1+ {{ app()->getLocale() === 'ar' ? 'حمام' : 'Bath' }}</option>
-                        <option value="2">2+ {{ app()->getLocale() === 'ar' ? 'حمامات' : 'Baths' }}</option>
-                        <option value="3">3+ {{ app()->getLocale() === 'ar' ? 'حمامات' : 'Baths' }}</option>
-                    </select>
+                    <div class="relative">
+                        <select wire:model.live="minBathrooms"
+                            class="w-full ps-3 pe-8 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-xs appearance-none cursor-pointer">
+                            <option value="0">{{ app()->getLocale() === 'ar' ? 'أي عدد' : 'Any' }}</option>
+                            <option value="1">1+ {{ app()->getLocale() === 'ar' ? 'حمام' : 'Bath' }}</option>
+                            <option value="2">2+ {{ app()->getLocale() === 'ar' ? 'حمامات' : 'Baths' }}</option>
+                            <option value="3">3+ {{ app()->getLocale() === 'ar' ? 'حمامات' : 'Baths' }}</option>
+                        </select>
+                        <div class="absolute end-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
                 <div>

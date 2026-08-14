@@ -36,7 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('نوفيكسا عقار | Novixa Aqar')
+            ->brandName('شركة الأفق العقارية | لوحة التحكم الإدارية')
             ->login([AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/admin')
