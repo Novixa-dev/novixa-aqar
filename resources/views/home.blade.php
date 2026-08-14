@@ -21,29 +21,40 @@
             </p>
 
             <!-- Search Form Card -->
-            <form action="{{ route('property.list') }}" method="GET" class="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-2xl shadow-xl text-gray-900 dark:text-white flex flex-col md:flex-row gap-3 border border-gray-100 dark:border-gray-700">
+            <form action="{{ route('property.list') }}" method="GET" class="bg-gray-900/90 backdrop-blur-xl p-4 sm:p-6 rounded-3xl shadow-2xl text-white flex flex-col md:flex-row gap-3 border border-gray-700/80">
                 <div class="flex-1 relative">
                     <input type="text" name="search" 
-                           placeholder="{{ __('Search properties...') }}" 
-                           class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm dark:placeholder-gray-400">
+                           placeholder="{{ app()->getLocale() === 'ar' ? 'ابحث عن عقارات، مناطق، أحياء...' : 'Search properties, areas, neighborhoods...' }}" 
+                           class="w-full px-4 py-3.5 bg-gray-800 border border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm text-white placeholder-gray-400">
                 </div>
-                <div class="w-full md:w-48">
-                    <select name="property_type" 
-                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-700 dark:text-gray-200">
-                        <option value="">{{ __('All Types') }}</option>
-                        <option value="apartment">{{ __('Apartment') }}</option>
-                        <option value="house">{{ __('House') }}</option>
-                        <option value="condo">{{ __('Condo') }}</option>
-                        <option value="villa">{{ __('Villa') }}</option>
-                        <option value="land">{{ __('Land') }}</option>
+                
+                <div class="w-full md:w-44">
+                    <select name="status" 
+                            class="w-full px-4 py-3.5 bg-gray-800 border border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer">
+                        <option value="">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
+                        <option value="For Sale">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
+                        <option value="For Rent">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
                     </select>
                 </div>
+
+                <div class="w-full md:w-48">
+                    <select name="property_type" 
+                            class="w-full px-4 py-3.5 bg-gray-800 border border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer">
+                        <option value="">{{ app()->getLocale() === 'ar' ? 'جميع الأنواع' : 'All Types' }}</option>
+                        <option value="Apartment">{{ app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment' }}</option>
+                        <option value="Villa">{{ app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Villa' }}</option>
+                        <option value="Land">{{ app()->getLocale() === 'ar' ? 'أرض سكنية / تجارية' : 'Land / Plot' }}</option>
+                        <option value="Commercial">{{ app()->getLocale() === 'ar' ? 'عقار تجاري' : 'Commercial' }}</option>
+                        <option value="Building">{{ app()->getLocale() === 'ar' ? 'عمارة استثمارية' : 'Building' }}</option>
+                    </select>
+                </div>
+
                 <button type="submit" 
-                        class="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
+                        class="px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 text-sm shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    <span>{{ __('Search') }}</span>
+                    <span>{{ app()->getLocale() === 'ar' ? 'بحث' : 'Search' }}</span>
                 </button>
             </form>
         </div>
@@ -53,60 +64,92 @@
     <section class="mb-16">
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-2">{{ __('Featured Properties') }}</h2>
-                <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ __('Explore our handpicked premium listings') }}</p>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-2">{{ app()->getLocale() === 'ar' ? 'عقارات مميزة ومختارة' : 'Featured Properties' }}</h2>
+                <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ app()->getLocale() === 'ar' ? 'استكشف نخبة العروض العقارية المفحوصة والموثقة' : 'Explore our handpicked verified premium listings' }}</p>
             </div>
             <a href="{{ route('property.list') }}" class="inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">
                 <span>{{ app()->getLocale() === 'ar' ? 'عرض كافة العقارات' : 'Browse All Properties' }}</span>
-                <span>&rarr;</span>
+                <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
             </a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($featuredProperties as $property)
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col group">
-                    <div class="relative h-56 w-full overflow-hidden bg-gray-100 dark:bg-gray-700">
-                        <img src="{{ $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png') }}" 
-                             alt="{{ $property->title }}" 
-                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-3 start-3">
-                            <span class="px-3 py-1 bg-blue-600/90 backdrop-blur-md text-white text-xs font-bold rounded-lg shadow-sm">
-                                {{ $property->type ?: __('Featured') }}
+                <div class="bg-gray-800 rounded-3xl shadow-lg hover:shadow-2xl hover:border-blue-500/50 transition-all duration-300 border border-gray-700/80 overflow-hidden flex flex-col group">
+                    <div class="relative h-60 w-full overflow-hidden bg-gray-900">
+                        <a href="{{ route('property.detail', $property->id) }}">
+                            <img src="{{ $property->image_url }}" 
+                                 alt="{{ $property->title }}" 
+                                 loading="lazy"
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </a>
+                        <div class="absolute top-3 start-3 flex gap-1.5 z-10">
+                            <span class="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-lg shadow-sm">
+                                {{ $property->status === 'For Rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
+                            </span>
+                            @if($property->is_featured)
+                                <span class="px-2.5 py-1 bg-amber-500 text-gray-900 text-xs font-black rounded-lg shadow-sm">
+                                    {{ app()->getLocale() === 'ar' ? 'مميز' : 'Featured' }}
+                                </span>
+                            @endif
+                        </div>
+                        <div class="absolute bottom-3 start-3 end-3 flex justify-between items-center z-10">
+                            <span class="bg-gray-900/80 backdrop-blur-md text-gray-200 text-xs px-2.5 py-1 rounded-md font-medium">
+                                {{ $property->translated_type }}
+                            </span>
+                            <span class="bg-gray-900/80 backdrop-blur-md text-blue-400 text-xs px-2.5 py-1 rounded-md font-semibold">
+                                📍 {{ Str::limit($property->location, 20) }}
                             </span>
                         </div>
                     </div>
 
                     <div class="p-6 flex-1 flex flex-col justify-between">
                         <div>
-                            <div class="text-2xl font-black text-blue-600 dark:text-blue-400 mb-2">
-                                ${{ number_format($property->price, 0) }}
+                            <div class="flex items-baseline justify-between mb-2">
+                                <div class="text-2xl font-black text-emerald-400">
+                                    {{ number_format($property->price, 0) }} <span class="text-xs font-normal text-gray-400">{{ app()->getLocale() === 'ar' ? 'ر.ي' : 'YER' }}</span>
+                                </div>
+                                <div class="text-xs text-gray-400 font-mono">
+                                    ≈ ${{ number_format($property->price / 530, 0) }}
+                                </div>
                             </div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors">
-                                {{ $property->title }}
+                            <h3 class="text-lg font-bold text-white mb-2 line-clamp-1 group-hover:text-blue-400 transition-colors">
+                                <a href="{{ route('property.detail', $property->id) }}">
+                                    {{ $property->title }}
+                                </a>
                             </h3>
-                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">
+                            <p class="text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">
                                 {{ $property->description }}
                             </p>
                         </div>
 
                         <div>
-                            <div class="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-gray-400 py-3 border-t border-gray-100 dark:border-gray-700/80 mb-4">
-                                <span class="flex items-center gap-1">🛏️ {{ $property->bedrooms ?? 0 }} {{ __('Beds') }}</span>
-                                <span class="flex items-center gap-1">🚿 {{ $property->bathrooms ?? 0 }} {{ __('Baths') }}</span>
-                                <span class="flex items-center gap-1">📐 {{ $property->area_sqft ?? 0 }} {{ __('Sq Ft') }}</span>
+                            <div class="grid grid-cols-3 gap-2 text-center text-xs text-gray-300 py-3 border-t border-gray-700/80 bg-gray-900/40 rounded-xl px-2 mb-4">
+                                <div>
+                                    <span class="block text-gray-500 text-[10px]">{{ app()->getLocale() === 'ar' ? 'الغرف' : 'Beds' }}</span>
+                                    <span class="font-bold">🛏️ {{ $property->bedrooms ?? 1 }}</span>
+                                </div>
+                                <div>
+                                    <span class="block text-gray-500 text-[10px]">{{ app()->getLocale() === 'ar' ? 'الحمامات' : 'Baths' }}</span>
+                                    <span class="font-bold">🚿 {{ $property->bathrooms ?? 1 }}</span>
+                                </div>
+                                <div>
+                                    <span class="block text-gray-500 text-[10px]">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
+                                    <span class="font-bold">📐 {{ $property->area_sqft ?? 150 }} م²</span>
+                                </div>
                             </div>
 
                             <a href="{{ route('property.detail', $property->id) }}" 
-                               class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-50 dark:bg-gray-700/60 hover:bg-blue-600 hover:text-white text-gray-700 dark:text-gray-200 font-semibold rounded-xl text-sm transition-all duration-200">
-                                <span>{{ __('View Details') }}</span>
-                                <span>&rarr;</span>
+                               class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl text-xs transition-all duration-200 shadow-md">
+                                <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
+                                <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
                             </a>
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
-                    <p class="text-gray-500 dark:text-gray-400">{{ __('No featured properties available at the moment.') }}</p>
+                <div class="col-span-full text-center py-16 bg-gray-800/50 rounded-3xl border border-dashed border-gray-700">
+                    <p class="text-gray-400 text-sm">{{ app()->getLocale() === 'ar' ? 'لا توجد عقارات مميزة حالياً.' : 'No featured properties available.' }}</p>
                 </div>
             @endforelse
         </div>

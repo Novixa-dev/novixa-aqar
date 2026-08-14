@@ -41,14 +41,24 @@
     @endphp
     
         <section>
-            <section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
-                <div class="max-w-(--breakpoint-xl) px-4 mx-auto 2xl:px-0">
-                    <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
-                        <div class="shrink-0 max-w-md lg:max-w-lg mx-auto">
-                            <img src="{{ $property->getFirstMediaUrl('images') ?? asset('images/property-placeholder.png') }}"
-                                alt="{{ $property->title }}"
-                                onerror="this.onerror=null; this.src='{{ asset('images/property-placeholder.png') }}';"
-                                class="w-full dark:hidden">
+            <section class="py-8 bg-white md:py-12 dark:bg-gray-900 antialiased">
+                <div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
+                    <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-12 items-start">
+                        <!-- Left: Property Hero Media -->
+                        <div class="shrink-0 w-full mx-auto space-y-4">
+                            <div class="relative overflow-hidden rounded-3xl shadow-2xl bg-gray-900 border border-gray-800">
+                                <img src="{{ $property->image_url }}"
+                                    alt="{{ $property->title }}"
+                                    class="w-full h-80 sm:h-96 md:h-[450px] object-cover transition-transform duration-500 hover:scale-105">
+                                <div class="absolute top-4 start-4 flex gap-2">
+                                    <span class="px-3.5 py-1.5 rounded-xl text-xs font-black shadow-lg {{ $property->status === 'For Rent' ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white' }}">
+                                        {{ $property->status === 'For Rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
+                                    </span>
+                                    <span class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gray-900/80 backdrop-blur-md text-white shadow-lg">
+                                        {{ $property->translated_type }}
+                                    </span>
+                                </div>
+                            </div>
                             
                             @if($property->hasMedia('3d_models'))
                                 <div class="mt-6">
@@ -59,210 +69,75 @@
                                             </svg>
                                             3D Property Model
                                         </h3>
-                                        @if($arTourAvailable)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
-                                                </svg>
-                                                AR Available
-                                            </span>
-                                        @endif
                                     </div>
                                     <model-viewer 
                                         src="{{ $property->getFirstMediaUrl('3d_models') }}"
                                         alt="3D model of {{ $property->title }}"
-                                        @if($arTourAvailable && $arTourConfig)
-                                            ar
-                                            ar-modes="{{ implode(' ', $arTourConfig['ar_modes'] ?? ['webxr', 'scene-viewer', 'quick-look']) }}"
-                                            ar-scale="{{ $arTourConfig['placement_guide'] ?? 'auto' }}"
-                                            camera-orbit="{{ $arTourConfig['camera_orbit'] ?? '0deg 75deg 2.5m' }}"
-                                            min-camera-orbit="{{ $arTourConfig['min_camera_orbit'] ?? 'auto auto 1m' }}"
-                                            max-camera-orbit="{{ $arTourConfig['max_camera_orbit'] ?? 'auto auto 10m' }}"
-                                            @if($arTourConfig['enable_controls'] ?? true)
-                                                camera-controls
-                                            @endif
-                                            @if($arTourConfig['auto_rotate'] ?? true)
-                                                auto-rotate
-                                            @endif
-                                            shadow-intensity="{{ $arTourConfig['shadow_intensity'] ?? 1 }}"
-                                            interaction-prompt="{{ $arTourConfig['interaction_prompt'] ?? 'auto' }}"
-                                            @php
-                                                $scale = $property->ar_model_scale ?? 1.0;
-                                            @endphp
-                                            scale="{{ $scale }} {{ $scale }} {{ $scale }}"
-                                        @else
-                                            camera-controls
-                                            touch-action="pan-y"
-                                            auto-rotate
-                                            shadow-intensity="1"
-                                        @endif
-                                        class="w-full h-96 bg-gray-100 dark:bg-gray-800 rounded-lg"
-                                        style="--poster-color: #f3f4f6;">
+                                        camera-controls
+                                        touch-action="pan-y"
+                                        auto-rotate
+                                        shadow-intensity="1"
+                                        class="w-full h-80 bg-gray-100 dark:bg-gray-800 rounded-2xl">
                                     </model-viewer>
-                                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 text-center">
-                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
-                                        </svg>
-                                        @if($arTourAvailable)
-                                            Drag to rotate • Pinch to zoom • <strong>Tap AR icon for immersive augmented reality tour</strong>
-                                        @else
-                                            Drag to rotate • Pinch to zoom • Tap AR icon for augmented reality
-                                        @endif
-                                    </p>
-                                    @if($arTourAvailable)
-                                        <div class="mt-3 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-lg border border-blue-200 dark:border-gray-600">
-                                            <div class="flex items-start">
-                                                <div class="flex-shrink-0">
-                                                    <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                </div>
-                                                <div class="ml-3">
-                                                    <h4 class="text-sm font-medium text-gray-900 dark:text-white">AR Tour Instructions</h4>
-                                                    <div class="mt-2 text-sm text-gray-700 dark:text-gray-300">
-                                                        <ul class="list-disc list-inside space-y-1">
-                                                            <li>Tap the AR icon (cube with camera) in the bottom right corner</li>
-                                                            <li>Point your camera at a flat surface like a floor or table</li>
-                                                            <li>The property model will appear in your real space</li>
-                                                            <li>Walk around to view the property from all angles</li>
-                                                            <li>Use pinch gestures to scale the model</li>
-                                                        </ul>
-                                                    </div>
-                                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                                        <strong>Note:</strong> AR features require a compatible mobile device with AR support (ARCore for Android, ARKit for iOS)
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                            @endif
-
-                            {{-- Holographic Tour Section --}}
-                            @if($holographicTourAvailable || $property->hasMedia('3d_models') || $property->model_3d_url)
-                                <div class="mt-6">
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                                        <svg class="w-5 h-5 inline mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                        </svg>
-                                        Holographic Property Tour
-                                    </h3>
-                                    
-                                    @if($holographicTourAvailable)
-                                        <div class="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg p-6 border-2 border-purple-200 dark:border-purple-800">
-                                            <div class="flex items-start justify-between mb-4">
-                                                <div class="flex-1">
-                                                    <p class="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                                                        Experience this property in stunning holographic detail
-                                                    </p>
-                                                    <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-                                                        <span class="flex items-center gap-1">
-                                                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                                            </svg>
-                                                            360° Interactive View
-                                                        </span>
-                                                        <span class="flex items-center gap-1">
-                                                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                                            </svg>
-                                                            Multi-Device Support
-                                                        </span>
-                                                        <span class="flex items-center gap-1">
-                                                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                                            </svg>
-                                                            4K Resolution
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100">
-                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                                                    </svg>
-                                                    Premium Feature
-                                                </span>
-                                            </div>
-                                            
-                                            <button wire:click="toggleHolographicViewer" 
-                                                class="w-full inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-800 transition-all duration-200">
-                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                                Launch Holographic Tour
-                                            </button>
-
-                                            <div class="mt-4 pt-4 border-t border-purple-200 dark:border-purple-800">
-                                                <p class="text-xs text-gray-600 dark:text-gray-400 text-center">
-                                                    Supported on: Looking Glass Display • HoloFan • HoloLamp • Web Viewer
-                                                </p>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                                                Holographic tour not yet available for this property. Generate one now to provide an immersive viewing experience.
-                                            </p>
-                                            <button wire:click="generateHolographicTour" 
-                                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-purple-700 bg-purple-100 rounded-lg hover:bg-purple-200 focus:ring-4 focus:ring-purple-300 dark:bg-purple-900 dark:text-purple-200 dark:hover:bg-purple-800 dark:focus:ring-purple-800 transition-colors">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                                </svg>
-                                                Generate Holographic Tour
-                                            </button>
-                                        </div>
-                                    @endif
                                 </div>
                             @endif
                         </div>
 
+                        <!-- Right: Property Info & Actions -->
                         <div class="mt-6 sm:mt-8 lg:mt-0">
-                            <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                                {{ $property->title }}
-                            </h1>
-                            <div class="flex items-center gap-2 mt-2">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200">
-                                    {{ strtolower($property->status ?? '') === 'rent' || strtolower($property->listing_type ?? '') === 'rent' ? __('property.listing_types.rent') : __('property.listing_types.sale') }}
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="text-xs font-bold text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 px-3 py-1 rounded-lg">
+                                    {{ $property->translated_type }}
                                 </span>
-                                @if($property->type)
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200">
-                                        {{ __('property.types.' . strtolower($property->type)) ?? $property->type }}
-                                    </span>
-                                @endif
+                                <span class="text-xs text-gray-400">
+                                    {{ app()->getLocale() === 'ar' ? 'كود العقار:' : 'Ref ID:' }} #{{ $property->id }}
+                                </span>
                             </div>
 
-                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                                {{ $property->location ?? $property->city ?? 'المكلا، حضرموت' }}
+                            <h1 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white leading-snug mb-3">
+                                {{ $property->title }}
+                            </h1>
+
+                            <p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1.5 mb-4">
+                                <span class="text-blue-500">📍</span>
+                                <span>{{ $property->location ?: 'المكلا - حضرموت' }}</span>
                             </p>
 
-                            <div class="mt-4 sm:items-center sm:gap-4 sm:flex">
-                                <p class="text-3xl font-black text-emerald-600 dark:text-emerald-400">
-                                    {{ number_format($property->price, 0) . ' ' . $currency }}
-                                </p>
+                            <!-- Price Display -->
+                            <div class="p-4 bg-gray-900/90 rounded-2xl border border-gray-800 mb-6">
+                                <div class="flex items-baseline justify-between">
+                                    <div>
+                                        <span class="text-xs text-gray-400 block mb-1">{{ app()->getLocale() === 'ar' ? 'السعر المطلوب' : 'Asking Price' }}</span>
+                                        <span class="text-3xl font-black text-emerald-400">
+                                            {{ number_format($property->price, 0) }} <span class="text-sm font-normal text-gray-400">{{ app()->getLocale() === 'ar' ? 'ر.ي' : 'YER' }}</span>
+                                        </span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-xs text-gray-400 block mb-1">{{ app()->getLocale() === 'ar' ? 'المعادل بالدولار' : 'USD Equivalent' }}</span>
+                                        <span class="text-base font-mono text-gray-300">
+                                            ≈ ${{ number_format($property->price / 530, 0) }}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
 
                             {{-- Key Specs Grid --}}
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6 p-4 bg-gray-50 dark:bg-gray-800/80 rounded-xl border border-gray-200 dark:border-gray-700">
-                                <div class="p-3 bg-white dark:bg-gray-900 rounded-lg shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">المساحة</p>
-                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ $property->size ?? $property->area ?? '150' }} م²</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 p-4 bg-gray-50 dark:bg-gray-800/80 rounded-2xl border border-gray-200 dark:border-gray-700">
+                                <div class="p-3 bg-white dark:bg-gray-900 rounded-xl shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</p>
+                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ $property->area_sqft ?? 150 }} م²</p>
                                 </div>
-                                <div class="p-3 bg-white dark:bg-gray-900 rounded-lg shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">غرف النوم</p>
-                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ $property->bedrooms ?? 3 }} غرف</p>
+                                <div class="p-3 bg-white dark:bg-gray-900 rounded-xl shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'غرف النوم' : 'Bedrooms' }}</p>
+                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ $property->bedrooms ?? 1 }} {{ app()->getLocale() === 'ar' ? 'غرف' : 'Beds' }}</p>
                                 </div>
-                                <div class="p-3 bg-white dark:bg-gray-900 rounded-lg shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">دورات المياه</p>
-                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ $property->bathrooms ?? 2 }} حمامات</p>
+                                <div class="p-3 bg-white dark:bg-gray-900 rounded-xl shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'دورات المياه' : 'Bathrooms' }}</p>
+                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ $property->bathrooms ?? 1 }} {{ app()->getLocale() === 'ar' ? 'حمامات' : 'Baths' }}</p>
                                 </div>
-                                <div class="p-3 bg-white dark:bg-gray-900 rounded-lg shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">نوع العقار</p>
-                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ __('property.types.' . strtolower($property->type ?? 'apartment')) ?? ($property->type ?? 'عقار') }}</p>
+                                <div class="p-3 bg-white dark:bg-gray-900 rounded-xl shadow-2xs border border-gray-100 dark:border-gray-800 text-center">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'نوع العقار' : 'Property Type' }}</p>
+                                    <p class="text-base font-bold text-gray-900 dark:text-white mt-1">{{ $property->translated_type }}</p>
                                 </div>
                             </div>
 
@@ -277,180 +152,122 @@
 
                                 <div class="flex flex-wrap gap-3 mb-4">
                                     <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer"
-                                        class="flex-1 min-w-[160px] inline-flex items-center justify-center py-3 px-4 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-md transition-all duration-150">
+                                        class="flex-1 min-w-[160px] inline-flex items-center justify-center py-3.5 px-5 text-sm font-bold text-white bg-green-600 hover:bg-green-500 rounded-2xl shadow-lg hover:shadow-green-600/30 transition-all duration-150">
                                         <svg class="w-5 h-5 me-2 fill-current" viewBox="0 0 24 24">
                                             <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
                                         </svg>
-                                        تواصل عبر الواتساب
+                                        {{ app()->getLocale() === 'ar' ? 'تواصل عبر الواتساب' : 'Chat on WhatsApp' }}
                                     </a>
 
                                     <a href="tel:{{ $callUrl }}"
-                                        class="flex-1 min-w-[140px] inline-flex items-center justify-center py-3 px-4 text-sm font-bold text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-xl shadow-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 transition-all duration-150">
+                                        class="flex-1 min-w-[140px] inline-flex items-center justify-center py-3.5 px-5 text-sm font-bold text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 rounded-2xl shadow-xs dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 transition-all duration-150">
                                         <svg class="w-5 h-5 me-2 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                         </svg>
-                                        اتصال بالمكتب
+                                        {{ app()->getLocale() === 'ar' ? 'اتصال بالمكتب' : 'Call Office' }}
                                     </a>
                                 </div>
 
                                 {{-- Social Sharing Toolbar --}}
-                                <div class="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-200/80 dark:border-gray-700/80 flex items-center justify-between gap-2 flex-wrap">
+                                <div class="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 flex items-center justify-between gap-2 flex-wrap">
                                     <span class="text-xs font-semibold text-gray-600 dark:text-gray-300 me-2 flex items-center">
                                         <svg class="w-4 h-4 me-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
                                         </svg>
-                                        مشاركة العقار:
+                                        {{ app()->getLocale() === 'ar' ? 'مشاركة العقار:' : 'Share Property:' }}
                                     </span>
                                     <div class="flex items-center gap-1.5" x-data="{ copied: false }">
-                                        <a href="{{ $shareUrls['whatsapp'] }}" target="_blank" rel="noopener noreferrer" title="مشاركة عبر الواتساب"
+                                        <a href="{{ $shareUrls['whatsapp'] }}" target="_blank" rel="noopener noreferrer" title="WhatsApp"
                                             class="p-2 text-green-600 hover:bg-green-100 rounded-lg dark:hover:bg-green-900/40 transition-colors">
                                             <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
                                                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
                                             </svg>
                                         </a>
-                                        <a href="{{ $shareUrls['twitter'] }}" target="_blank" rel="noopener noreferrer" title="مشاركة عبر X / منصة تويتر"
+                                        <a href="{{ $shareUrls['twitter'] }}" target="_blank" rel="noopener noreferrer" title="Twitter / X"
                                             class="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-200 rounded-lg dark:hover:bg-gray-700 transition-colors">
                                             <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
                                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                                             </svg>
                                         </a>
-                                        <a href="{{ $shareUrls['facebook'] }}" target="_blank" rel="noopener noreferrer" title="مشاركة عبر فيسبوك"
-                                            class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg dark:hover:bg-blue-900/40 transition-colors">
-                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                            </svg>
-                                        </a>
                                         <button @click="navigator.clipboard.writeText(window.location.href); copied = true; setTimeout(() => copied = false, 2000)" 
-                                            title="نسخ رابط العقار"
                                             class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 rounded-lg dark:hover:bg-gray-700 transition-colors flex items-center gap-1 text-xs">
                                             <svg class="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                                             </svg>
-                                            <span x-text="copied ? 'تم النسخ!' : 'نسخ الرابط'" class="font-medium text-xs"></span>
+                                            <span x-text="copied ? ({{ app()->getLocale() === 'ar' ? '\'تم النسخ!\'' : '\'Copied!\'' }}) : ({{ app()->getLocale() === 'ar' ? '\'نسخ الرابط\'' : '\'Copy Link\'' }})" class="font-medium text-xs"></span>
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
+                            <!-- Interactive Buttons Bar -->
+                            <div class="mt-6 flex flex-wrap items-center gap-3">
                                 <button wire:click="toggleFavorite" 
-                                    class="flex items-center justify-center py-2.5 px-5 text-sm font-medium focus:outline-none rounded-lg border focus:z-10 focus:ring-4 
+                                    class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold rounded-2xl border transition-all 
                                     {{ $isFavorited 
-                                        ? 'text-white bg-red-600 border-red-600 hover:bg-red-700 focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800' 
-                                        : 'text-gray-900 bg-white border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700' 
-                                    }}"
-                                    title="{{ $isFavorited ? 'Remove from wishlist' : 'Add to wishlist' }}">
-                                    <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        width="24" height="24" fill="{{ $isFavorited ? 'currentColor' : 'none' }}" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2"
+                                        ? 'text-white bg-red-600 border-red-600 hover:bg-red-700 shadow-md' 
+                                        : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700' 
+                                    }}">
+                                    <svg class="w-4 h-4 -ms-1 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                        fill="{{ $isFavorited ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
                                     </svg>
-                                    {{ $isFavorited ? 'In Wishlist' : 'Add to Wishlist' }}
+                                    {{ $isFavorited ? (app()->getLocale() === 'ar' ? 'في المفضلة' : 'In Wishlist') : (app()->getLocale() === 'ar' ? 'إضافة للمفضلة' : 'Add to Wishlist') }}
                                 </button>
                                 
                                 <button wire:click="openInquiryModal" type="button"
-                                     class="inline-flex items-center justify-center py-2.5 px-5 text-sm font-semibold text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 rounded-lg shadow-xs dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 mt-4 sm:mt-0 transition-colors">
-                                     <svg class="w-5 h-5 me-2 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                     class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-md transition-colors">
+                                     <svg class="w-4 h-4 me-1.5 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                                      </svg>
-                                     إرسال استفسار
+                                     {{ app()->getLocale() === 'ar' ? 'إرسال استفسار' : 'Send Inquiry' }}
                                  </button>
 
                                 <a href="#" title="" data-modal-target="scheduleViewingModal"
                                     data-modal-toggle="scheduleViewingModal"
-                                    class="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 mt-4 sm:mt-0"
+                                    class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-gray-800 bg-white dark:bg-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-2xl shadow-xs hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                     role="button">
-                                    <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                             stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-                                    حجز معاينة
-                                </a>
-
-                                <a href="#" title="" data-modal-target="bookValuationModal"
-                                    data-modal-toggle="bookValuationModal"
-                                    class="text-white mt-4 sm:mt-0 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 flex items-center justify-center"
-                                    role="button">
-                                    <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6" />
-                                    </svg>
-                                    Book valuation
+                                    {{ app()->getLocale() === 'ar' ? 'حجز معاينة' : 'Book Viewing' }}
                                 </a>
 
                                 <a href="{{ route('property.valuation', ['propertyId' => $property->id]) }}" 
-                                    class="text-white mt-4 sm:mt-0 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 flex items-center justify-center"
+                                    class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-2xl shadow-md transition-colors"
                                     role="button">
-                                    <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                             stroke-width="2"
                                             d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>
-                                    AI Valuation
+                                    {{ app()->getLocale() === 'ar' ? 'التقييم العقاري الذكي' : 'AI Property Valuation' }}
                                 </a>
                             </div>
 
-                            <!-- Virtual Tour Section -->
-                            @if($property->hasVirtualTour())
-                            <div class="mt-6">
-                                <div class="flex gap-4">
-                                    <button wire:click="toggleVirtualTour" 
-                                        class="flex-1 flex items-center justify-center py-2.5 px-5 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:ring-4 focus:ring-purple-300 rounded-lg dark:bg-purple-600 dark:hover:bg-purple-700 focus:outline-none dark:focus:ring-purple-800"
-                                        title="View 3D virtual tour">
-                                        <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                            width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                        </svg>
-                                        {{ $showVirtualTour ? 'Hide' : 'View' }} Virtual Tour
-                                    </button>
-
-                                    @if($property->live_tour_available)
-                                    <button wire:click="openScheduleLiveTourModal" 
-                                        class="flex-1 flex items-center justify-center py-2.5 px-5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 focus:ring-4 focus:ring-green-300 rounded-lg focus:outline-none"
-                                        title="Schedule a live virtual tour with an agent">
-                                        <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                            width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M14 6H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 11-6-2V9l6-2v10Z" />
-                                        </svg>
-                                        Schedule Live Tour
-                                    </button>
-                                    @endif
+                            <hr class="my-6 border-gray-200 dark:border-gray-800" />
+                            <div>
+                                <div class="flex items-center gap-2 mb-4">
+                                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'التصنيف:' : 'Category:' }}</span>
+                                    <span class="bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 text-xs font-bold px-3 py-1 rounded-lg">
+                                        {{ $property->category->name ?? ($property->status === 'For Rent' ? (app()->getLocale() === 'ar' ? 'إيجارات' : 'Rentals') : (app()->getLocale() === 'ar' ? 'مبيعات' : 'Sales')) }}
+                                    </span>
                                 </div>
-
-                                @if($showVirtualTour)
-                                <div class="mt-4 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden" style="height: 480px;">
-                                    <div class="w-full h-full">
-                                        {!! $property->getVirtualTourEmbed() !!}
-                                    </div>
-                                </div>
-                                @endif
-                            </div>
-                            @endif
-                            <hr class="my-2 md:my-2 border-gray-200 dark:border-gray-800" />
-                            <div class="">
-                                <div class="">
-                                    <span class="text-gray-500">Category</span>
-                                    <span
-                                        class="bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ $property->category->name ?? 'None' }}</span>
-                                </div>
-                                <hr class="my-2 md:my-2 border-gray-200 dark:border-gray-800" />
-                                <div class="my-2">
-                                    <span class="text-gray-500">Features & Amenities</span>
-                                    <ul class="list-disc list-inside grid grid-cols-2 gap-2">
+                                <div class="my-4">
+                                    <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-2">{{ app()->getLocale() === 'ar' ? 'المزايا والخدمات المتوفرة:' : 'Features & Amenities:' }}</h3>
+                                    <ul class="grid grid-cols-2 gap-2 text-xs text-gray-700 dark:text-gray-300">
                                         @forelse($property->features ?? [] as $feature)
-                                            <li>{{ $feature->name }}</li>
+                                            <li class="flex items-center gap-1.5">
+                                                <span class="text-emerald-500">✓</span>
+                                                <span>{{ $feature->name }}</span>
+                                            </li>
                                         @empty
-                                            <li class="text-gray-500">No features available</li>
+                                            <li class="text-gray-400 col-span-2">{{ app()->getLocale() === 'ar' ? 'تشمل: كهرباء، مياه، موقف سيارات، حراسة أمنية' : 'Includes: Electricity, Water, Parking, Security' }}</li>
                                         @endforelse
                                     </ul>
                                 </div>

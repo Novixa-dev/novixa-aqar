@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             DocumentTemplateSeeder::class,
             ComponentSettingsSeeder::class,
+            NewsSeeder::class,
             // Add other seeders here if needed
         ]);
     }

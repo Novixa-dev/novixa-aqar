@@ -4,13 +4,13 @@
             <!-- Col 1: Brand & Bio -->
             <div class="space-y-4">
                 <a href="/" class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo.png') }}" class="h-10 w-auto rounded-xl shadow-xs" alt="Novixa Aqar" />
+                    <img src="{{ asset('images/logo.png') }}" class="h-10 w-auto rounded-xl shadow-xs" alt="Al-Ofuq Real Estate" />
                     <span class="text-xl font-black text-white">
-                        {{ app()->getLocale() === 'ar' ? 'نوفيكسا عقار' : 'Novixa Aqar' }}
+                        {{ app()->getLocale() === 'ar' ? 'شركة الأفق العقارية' : 'Al-Ofuq Real Estate' }}
                     </span>
                 </a>
                 <p class="text-sm text-gray-400 leading-relaxed">
-                    {{ app()->getLocale() === 'ar' ? 'المنصة العقارية الذكية لإدارة وتسويق وتثمين العقارات والأراضي، تطوير وإشراف Novixa و AK01REDWAN.' : 'Smart real estate management, listing, and AI valuation platform. Owned by Novixa & developed by AK01REDWAN.' }}
+                    {{ app()->getLocale() === 'ar' ? 'بوابتكم الأولى للتملك والتطوير والاستثمار العقاري وإدارة الأملاك في اليمن، تطوير وإشراف Novixa و AK01REDWAN.' : 'Your premier gateway for real estate ownership, investment, and property management in Yemen. Developed & supervised by Novixa & AK01REDWAN.' }}
                 </p>
             </div>
 

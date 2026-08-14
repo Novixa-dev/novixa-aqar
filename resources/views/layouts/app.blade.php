@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', app()->getLocale() === 'ar' ? 'نوفيكسا عقار | Novixa Aqar - المنصة العقارية الذكية' : 'Novixa Aqar | Smart Real Estate Platform')</title>
-    <meta name="description" content="{{ app()->getLocale() === 'ar' ? 'نوفيكسا عقار (Novixa Aqar) - المنصة العقارية الذكية لإيجار وشراء العقارات والأراضي والحلول العقارية المتقدمة، تطوير Novixa و AK01REDWAN.' : 'Novixa Aqar - Smart real estate management, listing, and AI valuation platform. Owned by Novixa & developed by AK01REDWAN.' }}">
-    <meta property="og:site_name" content="Novixa Aqar">
+    <title>@yield('title', app()->getLocale() === 'ar' ? 'شركة الأفق العقارية | أفق اليمن للعقارات والاستثمار' : 'Al-Ofuq Real Estate | Yemen Horizon Properties')</title>
+    <meta name="description" content="{{ app()->getLocale() === 'ar' ? 'شركة الأفق العقارية - بوابتك الأولى للتملك والاستثمار العقاري في اليمن (حضرموت، صنعاء، عدن). وساطة عقارية، إدارة أملاك، وتثمين ذكي.' : 'Al-Ofuq Real Estate - Your premier gateway for real estate investment and ownership in Yemen. Property brokerage, management, and smart valuation.' }}">
+    <meta property="og:site_name" content="Al-Ofuq Real Estate | شركة الأفق العقارية">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
 
@@ -25,8 +25,26 @@
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+
+    <style>
+        /* Top Loading Bar */
+        #top-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa, #93c5fd);
+            z-index: 99999;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
+        }
+    </style>
 </head>
 <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 selection:bg-blue-600 selection:text-white">
+    <!-- Top Progress Bar Element -->
+    <div id="top-progress-bar"></div>
+
     @if(config('googletagmanager.id'))
         @include('googletagmanager::body')
     @endif
@@ -48,18 +66,60 @@
     @livewireScripts
 
     <script>
+        // Page Navigation Loading Indicator
+        window.startLoading = function() {
+            const bar = document.getElementById('top-progress-bar');
+            if (bar) {
+                bar.style.opacity = '1';
+                bar.style.width = '30%';
+                setTimeout(() => { bar.style.width = '70%'; }, 150);
+            }
+        };
+
+        window.finishLoading = function() {
+            const bar = document.getElementById('top-progress-bar');
+            if (bar) {
+                bar.style.width = '100%';
+                setTimeout(() => {
+                    bar.style.opacity = '0';
+                    setTimeout(() => { bar.style.width = '0%'; }, 300);
+                }, 200);
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
-            const dropdowns = document.querySelectorAll('.dropdown');
-            dropdowns.forEach(dropdown => {
-                const toggle = dropdown.querySelector('.dropdown-toggle');
-                const menu = dropdown.querySelector('.dropdown-menu');
-                if (toggle && menu) {
-                    toggle.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        menu.classList.toggle('hidden');
-                    });
+            finishLoading();
+
+            // Intercept internal links for top bar effect
+            document.querySelectorAll('a[href]:not([target="_blank"]):not([href^="#"]):not([href^="javascript:"])').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
+                        startLoading();
+                    }
+                });
+            });
+
+            // Livewire hooks
+            if (window.Livewire) {
+                window.Livewire.hook('commit', ({ succeed, fail }) => {
+                    startLoading();
+                    succeed(() => finishLoading());
+                    fail(() => finishLoading());
+                });
+            }
+
+            // Close dropdowns on outside click
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown') && !e.target.closest('#userDropdownMenu') && !e.target.closest('#userDropdownBtn')) {
+                    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
+                    const userMenu = document.getElementById('userDropdownMenu');
+                    if (userMenu) userMenu.classList.add('hidden');
                 }
             });
+        });
+
+        window.addEventListener('pageshow', function() {
+            finishLoading();
         });
     </script>
 

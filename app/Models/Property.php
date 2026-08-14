@@ -679,4 +679,58 @@ class Property extends Model implements HasMedia
     {
         return ($this->property_type ?? '') === 'HMO';
     }
+
+    public function getImageUrlAttribute(): string
+    {
+        $media = $this->getFirstMediaUrl('images');
+        if (!empty($media)) {
+            return $media;
+        }
+
+        $stockImages = [
+            'Villa' => [
+                'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'Apartment' => [
+                'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'Land' => [
+                'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'Commercial' => [
+                'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'Building' => [
+                'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1555636222-cae831e670b3?auto=format&fit=crop&w=1200&q=80',
+            ],
+        ];
+
+        $type = $this->property_type ?? 'Apartment';
+        $images = $stockImages[$type] ?? $stockImages['Apartment'];
+        $index = abs(((int)($this->id ?? 1)) % count($images));
+
+        return $images[$index];
+    }
+
+    public function getTranslatedTypeAttribute(): string
+    {
+        $types = [
+            'Apartment' => app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment',
+            'Villa' => app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Luxury Villa',
+            'House' => app()->getLocale() === 'ar' ? 'منزل مستقل' : 'Independent House',
+            'Land' => app()->getLocale() === 'ar' ? 'أرض سكنية / تجارية' : 'Land / Plot',
+            'Commercial' => app()->getLocale() === 'ar' ? 'عقار تجاري / مكتب' : 'Commercial / Office',
+            'Building' => app()->getLocale() === 'ar' ? 'عمارة استثمارية' : 'Investment Building',
+            'HMO' => app()->getLocale() === 'ar' ? 'سكن مشترك' : 'Shared Living (HMO)',
+        ];
+
+        return $types[$this->property_type] ?? ($this->property_type ?: (app()->getLocale() === 'ar' ? 'عقار سكني' : 'Residential'));
+    }
 }

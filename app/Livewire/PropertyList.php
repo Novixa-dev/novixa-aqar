@@ -91,77 +91,51 @@ class PropertyList extends Component
 
     public function getPropertiesProperty()
     {
-        $cacheKey = $this->getCacheKey();
+        try {
+            $query = Property::query();
 
-        $properties = Cache::remember($cacheKey, now()->addMinutes(15), function () {
-            try {
-                $query = Property::query()
-                    ->search($this->search)
-                    ->priceRange($this->minPrice, $this->maxPrice)
-                    ->bedrooms($this->minBedrooms, $this->maxBedrooms)
-                    ->bathrooms($this->minBathrooms, $this->maxBathrooms)
-                    ->areaRange($this->minArea, $this->maxArea);
-
-                if ($this->propertyType) {
-                    $query->propertyType($this->propertyType);
-                }
-
-                if ($this->selectedAmenities) {
-                    $query->hasAmenities($this->selectedAmenities);
-                }
-
-                if ($this->energyRating) {
-                    $query->energyRating($this->energyRating);
-                }
-
-                if ($this->minEnergyScore > 0) {
-                    $query->minEnergyScore($this->minEnergyScore);
-                }
-
-                if ($this->minWalkabilityScore > 0) {
-                    $query->walkabilityScore($this->minWalkabilityScore);
-                }
-
-                if ($this->minTransitScore > 0) {
-                    $query->transitScore($this->minTransitScore);
-                }
-
-                if ($this->minBikeScore > 0) {
-                    $query->bikeScore($this->minBikeScore);
-                }
-
-                if ($this->featuredOnly) {
-                    $query->featured();
-                }
-
-                if ($this->country) {
-                    $query->country($this->country);
-                }
-
-                $query->with('features', 'images');
-
-                $properties = $query->paginate(12);
-
-                Log::info('Properties query executed', [
-                    'total' => $properties->total(),
-                    'current_page' => $properties->currentPage(),
-                    'last_page' => $properties->lastPage(),
-                    'per_page' => $properties->perPage(),
-                    'count' => $properties->count(),
-                ]);
-
-                return $properties;
-            } catch (Exception $e) {
-                session()->flash('error', 'An error occurred while fetching properties. Please try again.');
-                if (app()->environment('local')) {
-                    session()->flash('error_details', $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
-                }
-                return Property::paginate(0);
+            if (!empty($this->search)) {
+                $query->where(function ($q) {
+                    $q->where('title', 'like', '%' . $this->search . '%')
+                      ->orWhere('description', 'like', '%' . $this->search . '%')
+                      ->orWhere('location', 'like', '%' . $this->search . '%');
+                });
             }
-        });
 
-        $this->dispatch('propertiesUpdated', $properties->items());
-        return $properties;
+            if (!empty($this->status)) {
+                $query->where('status', $this->status);
+            }
+
+            if (!empty($this->propertyType)) {
+                $query->where('property_type', $this->propertyType);
+            }
+
+            if ($this->minPrice > 0) {
+                $query->where('price', '>=', $this->minPrice);
+            }
+
+            if ($this->maxPrice < 1000000000 && $this->maxPrice > 0) {
+                $query->where('price', '<=', $this->maxPrice);
+            }
+
+            if ($this->minBedrooms > 0) {
+                $query->where('bedrooms', '>=', $this->minBedrooms);
+            }
+
+            if ($this->minBathrooms > 0) {
+                $query->where('bathrooms', '>=', $this->minBathrooms);
+            }
+
+            if ($this->featuredOnly) {
+                $query->where('is_featured', true);
+            }
+
+            $query->latest();
+
+            return $query->paginate(12);
+        } catch (Exception $e) {
+            return Property::latest()->paginate(12);
+        }
     }
 
     public function updatedSearch()
