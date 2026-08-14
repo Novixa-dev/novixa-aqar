@@ -43,15 +43,15 @@
                 <ul class="space-y-3 text-sm text-gray-400">
                     <li class="flex items-start gap-2.5">
                         <span class="text-blue-400">📍</span>
-                        <span>{{ app(\App\Settings\GeneralSettings::class)->site_address ?: 'Yemen - Hadramout / Al-Mukalla' }}</span>
+                        <span>{{ app()->getLocale() === 'ar' ? 'اليمن - حضرموت / المكلا - شارع الستين، برج الأفق' : 'Yemen - Hadhramout / Mukalla - 60th St, Al-Ofuq Tower' }}</span>
                     </li>
                     <li class="flex items-center gap-2.5">
                         <span class="text-blue-400">📞</span>
-                        <span dir="ltr">{{ app(\App\Settings\GeneralSettings::class)->site_phone ?: '+967 770 000 000' }}</span>
+                        <span dir="ltr">+967 5 300 000 / +967 777 000 000</span>
                     </li>
                     <li class="flex items-center gap-2.5">
                         <span class="text-blue-400">✉️</span>
-                        <span>{{ app(\App\Settings\GeneralSettings::class)->site_email ?: 'info@novixaaqar.com' }}</span>
+                        <span>info@alofuq-aqar.ye</span>
                     </li>
                 </ul>
             </div>
