@@ -47,3 +47,13 @@
     color: #ffffff;
 }
 
+/* Fix double arrow on custom select dropdowns */
+select.appearance-none,
+select[style*="background-image: none"] {
+    background-image: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+

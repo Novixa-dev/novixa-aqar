@@ -9,7 +9,7 @@
     <!-- Hero Banner & Smart Search -->
     <div class="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 rounded-3xl p-8 lg:p-14 text-white shadow-2xl mb-12 relative overflow-hidden">
         <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="max-w-3xl mx-auto text-center relative z-10">
+        <div class="max-w-4xl lg:max-w-5xl mx-auto text-center relative z-10">
             <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-blue-200 text-xs font-semibold uppercase tracking-wider mb-6 border border-white/10">
                 ✨ {{ app()->getLocale() === 'ar' ? 'الجيل القادم من المنصات العقارية' : 'Next Generation Real Estate Platform' }}
             </span>
@@ -21,46 +21,57 @@
             </p>
 
             <!-- Search Form Card -->
-            <form action="{{ route('property.list') }}" method="GET" class="bg-gray-900/90 backdrop-blur-xl p-4 sm:p-6 rounded-3xl shadow-2xl text-white flex flex-col md:flex-row gap-3 border border-gray-700/80">
-                <div class="flex-1 relative">
+            <form action="{{ route('property.list') }}" method="GET" class="bg-gray-900/90 backdrop-blur-xl p-4 sm:p-6 rounded-3xl shadow-2xl text-white flex flex-col md:flex-row gap-3 border border-gray-700/80 items-center">
+                <!-- Keyword Input -->
+                <div class="flex-1 relative w-full">
+                    <div class="absolute start-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
                     <input type="text" name="search" 
                            placeholder="{{ app()->getLocale() === 'ar' ? 'ابحث عن عقارات، مناطق، أحياء...' : 'Search properties, areas, neighborhoods...' }}" 
-                           class="w-full px-4 py-3.5 bg-gray-800 border border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm text-white placeholder-gray-400">
+                           class="w-full ps-11 pe-4 py-3.5 bg-gray-800/90 border border-gray-700/80 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white placeholder-gray-400 transition-all">
                 </div>
                 
-                <div class="relative w-full md:w-44">
+                <!-- Status Select Dropdown -->
+                <div class="relative w-full md:w-48 group">
                     <select name="status" 
-                            class="w-full ps-4 pe-10 py-3.5 bg-gray-800 border border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer">
-                        <option value="">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
-                        <option value="For Sale">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
-                        <option value="For Rent">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
+                            style="background-image: none !important; -webkit-appearance: none; -moz-appearance: none; appearance: none;"
+                            class="w-full ps-4 pe-10 py-3.5 bg-gray-800/90 border border-gray-700/80 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer [background-image:none] transition-all">
+                        <option value="" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
+                        <option value="For Sale" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
+                        <option value="For Rent" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
                     </select>
-                    <div class="absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                    <div class="absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-white transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                         </svg>
                     </div>
                 </div>
 
-                <div class="relative w-full md:w-52">
+                <!-- Property Type Select Dropdown -->
+                <div class="relative w-full md:w-56 group">
                     <select name="property_type" 
-                            class="w-full ps-4 pe-10 py-3.5 bg-gray-800 border border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer">
-                        <option value="">{{ app()->getLocale() === 'ar' ? 'جميع الأنواع' : 'All Types' }}</option>
-                        <option value="Apartment">{{ app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment' }}</option>
-                        <option value="Villa">{{ app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Villa' }}</option>
-                        <option value="Land">{{ app()->getLocale() === 'ar' ? 'أرض سكنية / تجارية' : 'Land / Plot' }}</option>
-                        <option value="Commercial">{{ app()->getLocale() === 'ar' ? 'عقار تجاري' : 'Commercial' }}</option>
-                        <option value="Building">{{ app()->getLocale() === 'ar' ? 'عمارة استثمارية' : 'Building' }}</option>
+                            style="background-image: none !important; -webkit-appearance: none; -moz-appearance: none; appearance: none;"
+                            class="w-full ps-4 pe-10 py-3.5 bg-gray-800/90 border border-gray-700/80 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer [background-image:none] transition-all">
+                        <option value="" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'جميع الأنواع' : 'All Types' }}</option>
+                        <option value="Apartment" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment' }}</option>
+                        <option value="Villa" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Villa' }}</option>
+                        <option value="Land" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'أرض سكنية / تجارية' : 'Land / Plot' }}</option>
+                        <option value="Commercial" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'عقار تجاري' : 'Commercial' }}</option>
+                        <option value="Building" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'عمارة استثمارية' : 'Building' }}</option>
                     </select>
-                    <div class="absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                    <div class="absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-white transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                         </svg>
                     </div>
                 </div>
 
+                <!-- Submit Button -->
                 <button type="submit" 
-                        class="px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 text-sm shrink-0">
+                        class="w-full md:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 text-sm shrink-0 active:scale-95">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>

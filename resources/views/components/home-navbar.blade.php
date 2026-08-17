@@ -79,10 +79,12 @@
 
                 <!-- Auth Buttons / User Dropdown -->
                 @if (auth()->check())
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+                    <div class="relative dropdown" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
                         <button type="button" 
-                                @click="open = !open" 
-                                class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                id="userDropdownBtn"
+                                @click="open = !open"
+                                onclick="const m = document.getElementById('userDropdownMenu'); if (m) { m.classList.toggle('hidden'); }"
+                                class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                             <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
@@ -93,15 +95,16 @@
                         </button>
 
                         <!-- Dropdown Menu -->
-                        <div x-show="open" 
+                        <div id="userDropdownMenu"
+                             x-show="open" 
+                             x-cloak
                              x-transition:enter="transition ease-out duration-150"
                              x-transition:enter-start="opacity-0 scale-95"
                              x-transition:enter-end="opacity-100 scale-100"
                              x-transition:leave="transition ease-in duration-100"
                              x-transition:leave-start="opacity-100 scale-100"
                              x-transition:leave-end="opacity-0 scale-95"
-                             style="display: none;"
-                             class="absolute end-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 py-2 z-50">
+                             class="hidden absolute end-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 py-2 z-50 dropdown-menu">
                             <div class="px-4 py-2.5 border-b border-gray-100 dark:border-gray-700">
                                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'تم تسجيل الدخول كـ' : 'Signed in as' }}</p>
                                 <p class="text-xs font-bold text-gray-900 dark:text-white truncate">{{ $user->email }}</p>

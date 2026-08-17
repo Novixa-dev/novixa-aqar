@@ -11,6 +11,8 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
 
+    <meta name="google" content="notranslate">
+    <meta name="robots" content="notranslate">
     @stack('meta')
 
     @if(config('googletagmanager.id'))
