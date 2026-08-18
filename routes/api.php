@@ -49,8 +49,6 @@ use App\Http\Controllers\API\V1\ValuationController as ApiValuationController;
 use App\Http\Controllers\API\V1\VendorQuoteController as ApiVendorQuoteController;
 use App\Http\Controllers\API\V1\ViewingController as ApiViewingController;
 use App\Http\Controllers\API\V1\WorkOrderController as ApiWorkOrderController;
-use App\Http\Controllers\API\VirtualStagingController;
-use App\Http\Controllers\API\VRPropertyDesignController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\CommunityEventController;
 use App\Http\Controllers\FavoriteController;
@@ -256,44 +254,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('buyers/{buyer}/generate-matches', [ApiPropertyMatchController::class, 'forBuyer'])->name('buyers.generate-matches');
         Route::post('tenants/{tenant}/generate-matches', [ApiPropertyMatchController::class, 'forTenant'])->name('tenants.generate-matches');
         Route::post('properties/{property}/generate-matches', [ApiPropertyMatchController::class, 'forProperty'])->name('properties.generate-matches');
-    });
-
-    // Virtual Staging API Routes
-    Route::prefix('properties/{property}')->group(function () {
-        Route::post('images/upload', [VirtualStagingController::class, 'uploadImage']);
-        Route::get('images', [VirtualStagingController::class, 'getPropertyImages']);
-    });
-
-    Route::prefix('images')->group(function () {
-        Route::post('{image}/stage', [VirtualStagingController::class, 'stageImage']);
-        Route::delete('{image}', [VirtualStagingController::class, 'deleteImage']);
-    });
-
-    Route::get('staging/styles', [VirtualStagingController::class, 'getStagingStyles']);
-
-    // VR Property Design API Routes
-    Route::prefix('vr-design')->group(function () {
-        Route::get('styles', [VRPropertyDesignController::class, 'getStyles']);
-        Route::get('furniture-categories', [VRPropertyDesignController::class, 'getFurnitureCategories']);
-        Route::get('room-types', [VRPropertyDesignController::class, 'getRoomTypes']);
-        Route::get('devices', [VRPropertyDesignController::class, 'getSupportedDevices']);
-        Route::get('templates', [VRPropertyDesignController::class, 'getTemplates']);
-    });
-
-    Route::prefix('properties/{property}')->group(function () {
-        Route::post('vr-designs', [VRPropertyDesignController::class, 'createDesign']);
-        Route::get('vr-designs', [VRPropertyDesignController::class, 'getPropertyDesigns']);
-    });
-
-    Route::prefix('vr-designs')->group(function () {
-        Route::get('{design}', [VRPropertyDesignController::class, 'getDesign']);
-        Route::put('{design}', [VRPropertyDesignController::class, 'updateDesign']);
-        Route::delete('{design}', [VRPropertyDesignController::class, 'deleteDesign']);
-        Route::post('{design}/furniture', [VRPropertyDesignController::class, 'addFurniture']);
-        Route::delete('{design}/furniture/{furnitureId}', [VRPropertyDesignController::class, 'removeFurniture']);
-        Route::post('{design}/clone', [VRPropertyDesignController::class, 'cloneDesign']);
-        Route::post('{design}/thumbnail', [VRPropertyDesignController::class, 'uploadThumbnail']);
-        Route::get('{design}/export', [VRPropertyDesignController::class, 'exportDesign']);
     });
 
     // Wishlist/Favorites routes

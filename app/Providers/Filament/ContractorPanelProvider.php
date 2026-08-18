@@ -80,7 +80,7 @@ class ContractorPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Contractor/Resources'), for: 'App\\Filament\\Contractor\\Resources')
             ->discoverPages(in: app_path('Filament/Contractor/Pages'), for: 'App\\Filament\\Contractor\\Pages')
             ->pages([])
-            ->discoverWidgets(in: app_path('Filament/Contractor/Widgets/Home'), for: 'App\\Filament\\Contractor\\Widgets\\Home')
+            ->discoverWidgets(in: app_path('Filament/Contractor/Widgets'), for: 'App\\Filament\\Contractor\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,

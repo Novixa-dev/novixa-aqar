@@ -16,7 +16,6 @@ return new class extends Migration
             $table->date('end_date');
             $table->decimal('rent_amount', 10, 2);
             $table->string('status');
-            $table->string('smart_contract_address')->nullable();
             $table->decimal('security_deposit', 10, 2)->nullable();
             $table->text('terms')->nullable();
             $table->timestamps();

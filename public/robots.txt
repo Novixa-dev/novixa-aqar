@@ -1,2 +1,11 @@
 User-agent: *
-Disallow:
+Disallow: /admin
+Disallow: /app
+Disallow: /buyer
+Disallow: /contractor
+Disallow: /landlord
+Disallow: /seller
+Disallow: /staff
+Disallow: /tenant
+Disallow: /api
+Disallow: /livewire

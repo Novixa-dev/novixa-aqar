@@ -35,7 +35,6 @@ class RentalApplication extends Model
         'decided_at',
         'decided_by',
         'decision_notes',
-        'smart_contract_address',
     ];
 
     protected $casts = [

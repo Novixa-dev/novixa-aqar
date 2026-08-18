@@ -59,7 +59,7 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ __('Property Valuation & Analytics') }}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-6">
-                    {{ app()->getLocale() === 'ar' ? 'تقييم عقاري فوري ومتقدم مدعوم بنماذج الذكاء الاصطناعي وتحليل مقارن لبيانات السوق التاريخية.' : 'Instant AI-powered property valuations backed by comparative market analysis and historical transaction data.' }}
+                    {{ app()->getLocale() === 'ar' ? 'تقييم عقاري دقيق مدعوم بتحليل مقارن لبيانات السوق والمعاملات التاريخية في المنطقة.' : 'Accurate property valuations backed by comparative market analysis and historical transaction data for the area.' }}
                 </p>
             </div>
             <a href="{{ route('calculators') }}" class="inline-flex items-center gap-1 text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
@@ -68,15 +68,15 @@
             </a>
         </div>
 
-        <!-- Service 4: Smart Contracts -->
+        <!-- Service 4: Legal & Documentation -->
         <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
             <div>
                 <div class="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-3xl mb-6">
                     📜
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ __('Legal & Smart Contracts') }}</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ __('Legal & Documentation') }}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-6">
-                    {{ app()->getLocale() === 'ar' ? 'عقود موثقة وإلكترونية ذكية تضمن حقوق جميع الأطراف من ملاك ومستأجرين ومشترين وفق القوانين.' : 'Legally-binding smart digital contracts protecting all stakeholders (landlords, tenants, buyers) with complete compliance.' }}
+                    {{ app()->getLocale() === 'ar' ? 'عقود موثقة وتوقيع إلكتروني آمن يضمن حقوق جميع الأطراف من ملاك ومستأجرين ومشترين وفق القوانين.' : 'Documented contracts and secure digital signatures protecting all stakeholders (landlords, tenants, buyers) with complete compliance.' }}
                 </p>
             </div>
             <a href="{{ route('contact') }}" class="inline-flex items-center gap-1 text-sm font-bold text-amber-600 dark:text-amber-400 hover:underline">
@@ -102,15 +102,15 @@
             </a>
         </div>
 
-        <!-- Service 6: 3D & Hologram -->
+        <!-- Service 6: Virtual Tours & 3D Models -->
         <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
             <div>
                 <div class="w-14 h-14 rounded-2xl bg-cyan-50 dark:bg-cyan-900/40 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-3xl mb-6">
                     🕶️
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ __('Virtual Staging & 3D Tours') }}</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ __('Virtual Tours & 3D Models') }}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-6">
-                    {{ app()->getLocale() === 'ar' ? 'استعراض العقارات بتقنيات الواقع الافتراضي والهولوجرام وجولات تفاعلية تتيح المعاينة من أي مكان.' : 'Virtual tours, 3D holographic models, and virtual staging enabling buyers to tour properties from anywhere in the world.' }}
+                    {{ app()->getLocale() === 'ar' ? 'جولات افتراضية تفاعلية ونماذج ثلاثية الأبعاد تتيح لك معاينة العقار من أي مكان قبل الزيارة.' : 'Interactive virtual tours and 3D property models letting you preview a listing from anywhere before visiting.' }}
                 </p>
             </div>
             <a href="{{ route('property.list') }}" class="inline-flex items-center gap-1 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline">

@@ -62,9 +62,6 @@ class RentalApplicationResource extends Resource
                     ->required()
                     ->numeric()
                     ->prefix('$'),
-                TextInput::make('ethereum_address')
-                    ->required()
-                    ->maxLength(255),
                 DatePicker::make('lease_start_date')
                     ->required(),
                 DatePicker::make('lease_end_date')
@@ -90,8 +87,6 @@ class RentalApplicationResource extends Resource
                         'poor' => 'Poor',
                         'pending' => 'Pending',
                     ]),
-                TextInput::make('smart_contract_address')
-                    ->maxLength(255),
             ]);
     }
 

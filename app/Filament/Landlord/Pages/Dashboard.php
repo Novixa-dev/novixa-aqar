@@ -8,17 +8,19 @@ use App\Models\Tenant;
 
 class Dashboard extends Page
 {
-    protected static string $view = 'filament.landlord.dashboard';
+    protected string $view = 'filament.landlord.dashboard';
+
+    public $totalProperties;
+    public $occupiedProperties;
+    public $totalTenants;
 
     public function mount(): void
     {
         $this->totalProperties = Property::where('user_id', auth()->id())->count();
         $this->occupiedProperties = Property::where('user_id', auth()->id())->where('status', 'occupied')->count();
-        $this->totalTenants = 0;
-        
-        // Tenant::whereHas('property', function ($query) {
-        //     $query->where('user_id', auth()->id());
-        // })->count();
+        $this->totalTenants = Tenant::whereHas('leases.property', function ($query) {
+            $query->where('user_id', auth()->id());
+        })->count();
     }
 
     protected function getHeaderWidgets(): array

@@ -36,7 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('شركة الأفق العقارية | لوحة التحكم الإدارية')
+            ->brandName('Novixa Aqar | لوحة التحكم الإدارية')
             ->darkMode(true)
             ->sidebarCollapsibleOnDesktop()
             ->login([AuthenticatedSessionController::class, 'create'])

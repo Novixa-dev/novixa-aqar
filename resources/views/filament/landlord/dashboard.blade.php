@@ -1,26 +1,26 @@
 <x-filament-panels::page>
-    <x-filament::grid columns="3">
-        <x-filament::grid.column>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
             <x-filament::card>
                 <h2 class="text-lg font-semibold">Total Properties</h2>
                 <p class="text-3xl font-bold">{{ $this->totalProperties }}</p>
             </x-filament::card>
-        </x-filament::grid.column>
+        </div>
 
-        <x-filament::grid.column>
+        <div>
             <x-filament::card>
                 <h2 class="text-lg font-semibold">Occupied Properties</h2>
                 <p class="text-3xl font-bold">{{ $this->occupiedProperties }}</p>
             </x-filament::card>
-        </x-filament::grid.column>
+        </div>
 
-        <x-filament::grid.column>
+        <div>
             <x-filament::card>
                 <h2 class="text-lg font-semibold">Total Tenants</h2>
                 <p class="text-3xl font-bold">{{ $this->totalTenants }}</p>
             </x-filament::card>
-        </x-filament::grid.column>
-    </x-filament::grid>
+        </div>
+    </div>
 
     <x-filament::card class="mt-6">
         <h2 class="text-lg font-semibold mb-4">Landlord Recent Activity</h2>

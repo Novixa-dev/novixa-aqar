@@ -1,14 +1,15 @@
 {
-    "name": "liberu-real-estate/real-estate-laravel",
+    "name": "novixa/aqar",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Novixa Aqar (عقاري) — bilingual real-estate platform for the Yemeni market, built on a customized Laravel/Filament foundation.",
     "keywords": [
         "laravel",
-        "framework"
+        "real-estate",
+        "novixa"
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.5",
+        "php": "^8.4|^8.5",
         "bezhansalleh/filament-shield": "~4.0",
         "bursteri/socialstream": "^7.0",
         "docusign/esign-client": "^8.0",

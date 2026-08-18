@@ -107,15 +107,6 @@ class Property extends Model implements HasMedia
         'insurance_expiry_date',
         'floor_plan_data',
         'floor_plan_image',
-        'model_3d_url',
-        'ar_tour_enabled',
-        'ar_tour_settings',
-        'ar_placement_guide',
-        'ar_model_scale',
-        'holographic_tour_url',
-        'holographic_provider',
-        'holographic_metadata',
-        'holographic_enabled',
         'jupix_id',
     ];
 
@@ -130,31 +121,11 @@ class Property extends Model implements HasMedia
         'longitude' => 'float',
         'walkability_updated_at' => 'datetime',
         'floor_plan_data' => 'array',
-        'ar_tour_enabled' => 'boolean',
-        'ar_tour_settings' => 'array',
-        'ar_model_scale' => 'float',
-        'holographic_metadata' => 'array',
-        'holographic_enabled' => 'boolean',
         'structured_address' => 'array',
         'parking' => 'array',
         'gardens' => 'array',
         'epc' => 'array',
     ];
-
-    public function auctions()
-    {
-        return $this->hasMany(Auction::class);
-    }
-
-    public function currentAuction()
-    {
-        return $this->auctions()->where('status', 'active')->first();
-    }
-
-    public function isInAuction()
-    {
-        return $this->currentAuction() !== null;
-    }
 
     public function insurancePolicy()
     {
@@ -331,11 +302,6 @@ class Property extends Model implements HasMedia
     public function histories()
     {
         return $this->hasMany(PropertyHistory::class)->orderBy('event_date', 'desc');
-    }
-
-    public function vrDesigns()
-    {
-        return $this->hasMany(VRDesign::class);
     }
 
     public function favorites()
@@ -648,14 +614,6 @@ class Property extends Model implements HasMedia
         $this->addMediaCollection('3d_models')
             ->acceptsMimeTypes(['model/gltf-binary', 'model/gltf+json', 'application/octet-stream', 'application/x-empty'])
             ->singleFile();
-    }
-
-    /**
-     * Check if property has holographic tour available
-     */
-    public function hasHolographicTour(): bool
-    {
-        return $this->holographic_enabled && ! empty($this->holographic_tour_url);
     }
 
     protected static function boot()

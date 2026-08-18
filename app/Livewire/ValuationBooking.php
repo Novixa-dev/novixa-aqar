@@ -47,7 +47,7 @@ class ValuationBooking extends Component
 
     public function mount()
     {
-        $this->appointmentType = AppointmentType::where('name', 'Valuation')->firstOrFail();
+        $this->appointmentType = AppointmentType::firstOrCreate(['name' => 'Valuation']);
         $this->availableDates = $this->getAvailableDates();
     }
 

@@ -33,6 +33,13 @@ class RightMoveSettingsResource extends Resource
 
     protected static string | \UnitEnum | null $navigationGroup = 'Settings';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Hidden: UK property-portal integration, not relevant to the Yemen demo.
+        // The underlying model/table/scheduled sync job are kept intentionally.
+        return false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema

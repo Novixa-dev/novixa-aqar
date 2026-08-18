@@ -17,6 +17,12 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        if (app()->environment('production')) {
+            throw new \RuntimeException(
+                'UserSeeder creates demo accounts with default passwords and must never run in production. '
+                . 'Create the first admin via `php artisan make:filament-user` instead.'
+            );
+        }
 
         $adminPassword = 'password';
         $adminUser = User::firstOrCreate(

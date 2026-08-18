@@ -199,7 +199,7 @@
                     🤖
                 </div>
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('Smart Solutions') }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ __('Cutting-edge AI valuations, holographic tours and virtual staging.') }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ __('Interactive virtual tours, 3D property models and expert valuations.') }}</p>
             </div>
 
             <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xs border border-gray-100 dark:border-gray-700">

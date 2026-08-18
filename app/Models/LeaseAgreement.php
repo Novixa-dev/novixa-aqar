@@ -25,13 +25,8 @@ class LeaseAgreement extends Model
         'content',
         'terms_and_conditions',
         'is_signed',
-        'smart_contract_address',
-        'contract_status',
         'landlord_signed',
         'tenant_signed',
-        'contract_deployed_at',
-        'agreement_hash',
-        'blockchain_network',
         'team_id',
         'deposit_scheme',
         'deposit_reference',
@@ -49,7 +44,6 @@ class LeaseAgreement extends Model
         'is_signed' => 'boolean',
         'landlord_signed' => 'boolean',
         'tenant_signed' => 'boolean',
-        'contract_deployed_at' => 'datetime',
         'monthly_rent' => 'decimal:2',
         'security_deposit' => 'decimal:2',
         'notice_served_at' => 'date',
@@ -72,11 +66,6 @@ class LeaseAgreement extends Model
         return $this->belongsTo(Team::class, 'team_id');
     }
 
-    public function smartContract()
-    {
-        return $this->hasOne(SmartContract::class);
-    }
-
     public function setContentAttribute($value)
     {
         $this->attributes['content'] = filled($value) ? Crypt::encryptString($value) : null;
@@ -87,22 +76,8 @@ class LeaseAgreement extends Model
         return filled($value) ? Crypt::decryptString($value) : null;
     }
 
-    // Helper methods for smart contract integration
-    public function hasSmartContract(): bool
-    {
-        return !empty($this->smart_contract_address);
-    }
-
     public function isFullySigned(): bool
     {
         return $this->landlord_signed && $this->tenant_signed;
-    }
-
-    public function canDeploySmartContract(): bool
-    {
-        return !$this->hasSmartContract() && 
-               $this->start_date && 
-               $this->end_date && 
-               $this->monthly_rent > 0;
     }
 }

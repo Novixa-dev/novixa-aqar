@@ -78,10 +78,13 @@ class SecurityRemediationTest extends TestCase
         $ownerTeam = Team::factory()->create();
         $property = Property::factory()->create(['team_id' => $ownerTeam->id]);
         $outsider = User::factory()->create();
+        $outsiderTeam = Team::factory()->create();
+        $outsider->teams()->attach($outsiderTeam);
+        $outsider->forceFill(['current_team_id' => $outsiderTeam->id])->save();
 
         $this->actingAs($outsider)
-            ->getJson("/api/properties/{$property->id}/images")
-            ->assertForbidden();
+            ->getJson("/api/v1/properties/{$property->id}/media")
+            ->assertNotFound();
     }
 
     public function test_chat_history_requires_the_conversation_secret(): void

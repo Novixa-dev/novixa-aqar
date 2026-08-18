@@ -80,7 +80,7 @@ class BuyerPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Buyer/Resources'), for: 'App\\Filament\\Buyer\\Resources')
             ->discoverPages(in: app_path('Filament/Buyer/Pages'), for: 'App\\Filament\\Buyer\\Pages')
             ->pages([])
-            ->discoverWidgets(in: app_path('Filament/Buyer/Widgets/Home'), for: 'App\\Filament\\Buyer\\Widgets\\Home')
+            ->discoverWidgets(in: app_path('Filament/Buyer/Widgets'), for: 'App\\Filament\\Buyer\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,

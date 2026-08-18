@@ -1,5 +1,7 @@
 <?php
 
+use App\Jobs\SendEmailCampaign;
+use App\Models\EmailCampaign;
 use App\Models\Neighborhood;
 use App\Models\RightMoveSettings;
 use App\Models\ZooplaSettings;
@@ -68,6 +70,17 @@ Schedule::command('zoopla:sync-properties')
     ->onSuccess(fn () => Log::info('Zoopla weekly sync completed'));
 
 Schedule::job(new \App\Jobs\LeaseRenewalReminder)->daily();
+
+Schedule::call(function () {
+    $campaigns = EmailCampaign::where('status', 'scheduled')
+        ->where('scheduled_at', '<=', now())
+        ->get();
+
+    foreach ($campaigns as $campaign) {
+        $campaign->update(['status' => 'sending']);
+        dispatch(new SendEmailCampaign($campaign));
+    }
+})->everyMinute();
 
 Schedule::call(function () {
     $neighborhoods = Neighborhood::all();

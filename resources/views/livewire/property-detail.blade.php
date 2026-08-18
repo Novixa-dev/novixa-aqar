@@ -236,18 +236,6 @@
                                     </svg>
                                     {{ app()->getLocale() === 'ar' ? 'حجز معاينة' : 'Book Viewing' }}
                                 </a>
-
-                                <a href="{{ route('property.valuation', ['propertyId' => $property->id]) }}" 
-                                    class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-2xl shadow-md transition-colors"
-                                    role="button">
-                                    <svg class="w-4 h-4 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                    </svg>
-                                    {{ app()->getLocale() === 'ar' ? 'التقييم العقاري الذكي' : 'AI Property Valuation' }}
-                                </a>
                             </div>
 
                             <hr class="my-6 border-gray-200 dark:border-gray-800" />
@@ -580,6 +568,32 @@
                         </p>
                     </div>
 
+                    {{-- Virtual Tour Section --}}
+                    @if($property->virtual_tour_url)
+                        <div class="w-full mt-8 mb-8">
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Virtual Tour') }}</h2>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" wire:click="toggleVirtualTour"
+                                        class="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">
+                                        {{ $showVirtualTour ? __('Hide Virtual Tour') : __('View Virtual Tour') }}
+                                    </button>
+                                    @if($property->live_tour_available)
+                                        <button type="button" wire:click="openScheduleLiveTourModal"
+                                            class="inline-flex items-center px-4 py-2 rounded-lg border border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 text-sm font-medium transition-colors">
+                                            {{ __('Schedule Live Tour') }}
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                            @if($showVirtualTour)
+                                <div class="aspect-video w-full rounded-lg overflow-hidden bg-black">
+                                    {!! $property->getVirtualTourEmbed() !!}
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
                     {{-- 3D Model Viewer Section --}}
                     @if($property->model_3d_url)
                         <div class="w-full mt-8 mb-8">
@@ -899,13 +913,13 @@
                             </button>
                         </div>
                         <div class="p-4 md:p-5 space-y-4">
-                            @if (false && App\Providers\AppServiceProvider::isComponentEnabled('valuation-booking'))
+                            @if (app(\App\Services\ComponentSettingsService::class)->isEnabled('valuation-booking'))
                                 @livewire('valuation-booking')
                             @endif
 
                             @if ($isLettingsProperty)
                                 <div class="mt-8">
-                                    <a href="{{ route('tenancy.apply', $property->id) }}"
+                                    <a href="{{ route('rental.apply', ['property_id' => $property->id]) }}"
                                         class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
                                         Apply for Tenancy
                                     </a>
@@ -927,47 +941,36 @@
                 class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                 <div class="relative p-4 w-full max-w-2xl max-h-full">
                     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                        <form wire:submit.prevent="bookViewing" class="space-y-4">
-                            <div
-                                class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Schedule viewing
-                                </h3>
-                                <button type="button"
-                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                    data-modal-hide="scheduleViewingModal">
-                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        fill="none" viewBox="0 0 14 14">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                    </svg>
-                                    <span class="sr-only">Close modal</span>
-                                </button>
-                            </div>
-                            <div class="p-4 md:p-5 space-y-4">
-                                @if (false && App\Providers\AppServiceProvider::isComponentEnabled('property-booking'))
-                                    @livewire('property-booking', ['propertyId' => $property->id])
-                                @endif
+                        <div
+                            class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                Schedule viewing
+                            </h3>
+                            <button type="button"
+                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                data-modal-hide="scheduleViewingModal">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+                        <div class="p-4 md:p-5 space-y-4">
+                            @if (app(\App\Services\ComponentSettingsService::class)->isEnabled('property-booking'))
+                                @livewire('property-booking', ['propertyId' => $property->id])
+                            @endif
 
-                                @if ($isLettingsProperty)
-                                    <div class="mt-8">
-                                        <a href="{{ route('tenancy.apply', $property->id) }}"
-                                            class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                                            Apply for Tenancy
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                            <div
-                                class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                <button type="submit" data-modal-hide="scheduleViewingModal" type="button"
-                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    Schedule Viewing
-                                </button>
-                                <button data-modal-hide="scheduleViewingModal" type="button"
-                                    class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Decline</button>
-                            </div>
-                        </form>
+                            @if ($isLettingsProperty)
+                                <div class="mt-8">
+                                    <a href="{{ route('rental.apply', ['property_id' => $property->id]) }}"
+                                        class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                                        Apply for Tenancy
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

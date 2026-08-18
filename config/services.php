@@ -103,11 +103,4 @@ return [
         'api_key' => env('ZOOPLA_API_KEY'),
         'sync_frequency' => env('ZOOPLA_SYNC_FREQUENCY', 'daily'),
     ],
-
-    'holographic' => [
-        'provider' => env('HOLOGRAPHIC_PROVIDER', 'looking_glass'),
-        'api_key' => env('HOLOGRAPHIC_API_KEY'),
-        'base_uri' => env('HOLOGRAPHIC_BASE_URI', 'https://api.lookingglassfactory.com'),
-        'enable_web_viewer' => env('HOLOGRAPHIC_WEB_VIEWER', true),
-    ],
 ];

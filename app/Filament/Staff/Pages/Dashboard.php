@@ -9,48 +9,26 @@ use App\Models\Transaction;
 use App\Filament\Staff\Widgets\PropertyStatsOverview;
 use App\Filament\Staff\Widgets\RecentTransactions;
 use App\Filament\Staff\Widgets\TopPerformingProperties;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Components\DatePicker;
 
 class Dashboard extends Page
 {
-    use InteractsWithForms;
-
-    protected static string $view = 'filament.staff.dashboard';
+    protected string $view = 'filament.staff.dashboard';
 
     protected static bool $shouldRegisterNavigation = false;
 
-    //public static function getUrl(array $parameters = []): string
-    //{
-    //    return route('filament.staff.pages.dashboard', ['tenant' => auth()->user()->currentTeam->id]);
-    //}
-
     public $startDate;
     public $endDate;
+    public $totalProperties;
+    public $activeListings;
+    public $totalBookings;
+    public $totalRevenue;
 
     public function mount(): void
     {
         $this->startDate = now()->startOfMonth();
         $this->endDate = now()->endOfMonth();
 
-        $this->form->fill([
-            'startDate' => $this->startDate,
-            'endDate' => $this->endDate,
-        ]);
-
         $this->loadDashboardData();
-    }
-
-    protected function getFormSchema(): array
-    {
-        return [
-            DatePicker::make('startDate')
-                ->label('Start Date')
-                ->default(now()->startOfMonth()),
-            DatePicker::make('endDate')
-                ->label('End Date')
-                ->default(now()->endOfMonth()),
-        ];
     }
 
     public function loadDashboardData(): void
@@ -69,16 +47,15 @@ class Dashboard extends Page
     protected function getHeaderWidgets(): array
     {
         return [
-//            PropertyStatsOverview::class,
-           // BookingStatsOverview::class,
+            PropertyStatsOverview::class,
         ];
     }
 
     protected function getFooterWidgets(): array
     {
         return [
-//            RecentBookings::class,
-//            TopPerformingProperties::class,
+            RecentTransactions::class,
+            TopPerformingProperties::class,
         ];
     }
 }

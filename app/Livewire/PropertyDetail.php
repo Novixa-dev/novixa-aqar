@@ -6,7 +6,6 @@ use Livewire\Component;
 use App\Models\Property;
 use App\Models\Favorite;
 use App\Services\NeighborhoodDataService;
-use App\Services\ARTourService;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Lead;
@@ -31,12 +30,8 @@ class PropertyDetail extends Component
     public $communityEvents = [];
     public $selectedMonth;
     public $selectedYear;
-    public $arTourAvailable = false;
-    public $arTourConfig = null;
     public $showVirtualTour = false;
     public $showScheduleLiveTourModal = false;
-    public $holographicTourAvailable = false;
-    public $showHolographicViewer = false;
 
     // Lead capture form fields
     public $name;
@@ -51,7 +46,6 @@ class PropertyDetail extends Component
 
     protected $neighborhoodDataService;
     protected $leadScoringService;
-    protected $arTourService;
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -60,11 +54,10 @@ class PropertyDetail extends Component
         'message' => 'nullable|string',
     ];
 
-    public function boot(NeighborhoodDataService $neighborhoodDataService, LeadScoringService $leadScoringService, ARTourService $arTourService)
+    public function boot(NeighborhoodDataService $neighborhoodDataService, LeadScoringService $leadScoringService)
     {
         $this->neighborhoodDataService = $neighborhoodDataService;
         $this->leadScoringService = $leadScoringService;
-        $this->arTourService = $arTourService;
     }
 
     public function mount($propertyId)
@@ -106,8 +99,6 @@ class PropertyDetail extends Component
         $this->updateWalkabilityScores();
         $this->loadInvestmentAnalytics();
         $this->loadCommunityEvents();
-        $this->loadARTourData();
-        $this->checkHolographicTourAvailability();
     }
 
     public function toggleFavorite()
@@ -294,15 +285,6 @@ class PropertyDetail extends Component
         });
     }
 
-    public function loadARTourData()
-    {
-        $this->arTourAvailable = $this->arTourService->isARTourAvailable($this->property);
-        
-        if ($this->arTourAvailable) {
-            $this->arTourConfig = $this->arTourService->getARTourConfig($this->property);
-        }
-    }
-
     public function toggleVirtualTour()
     {
         $this->showVirtualTour = !$this->showVirtualTour;
@@ -379,38 +361,4 @@ class PropertyDetail extends Component
         $this->dispatch('tourScheduled');
     }
 
-    public function checkHolographicTourAvailability()
-    {
-        $holographicService = app(\App\Services\HolographicTourService::class);
-        $this->holographicTourAvailable = $holographicService->isAvailable($this->property);
-    }
-
-    public function toggleHolographicViewer()
-    {
-        $this->showHolographicViewer = !$this->showHolographicViewer;
-        
-        if ($this->showHolographicViewer) {
-            $this->dispatch('holographicViewerOpened');
-        }
-    }
-
-    public function generateHolographicTour()
-    {
-        try {
-            $holographicService = app(\App\Services\HolographicTourService::class);
-            $url = $holographicService->getHolographicTourUrl($this->property);
-            
-            if ($url) {
-                $this->property->refresh();
-                $this->holographicTourAvailable = true;
-                session()->flash('message', 'Holographic tour generated successfully!');
-                $this->dispatch('holographicTourGenerated');
-            } else {
-                session()->flash('error', 'Failed to generate holographic tour. Please ensure a 3D model is available.');
-            }
-        } catch (\Exception $e) {
-            \Log::error('Failed to generate holographic tour: ' . $e->getMessage());
-            session()->flash('error', 'An error occurred while generating the holographic tour.');
-        }
-    }
 }

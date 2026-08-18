@@ -4,23 +4,19 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class AdminDashboardTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_admin_can_access_dashboard_and_see_widgets_and_resources(): void
     {
-        if (!\Illuminate\Support\Facades\Schema::hasTable('users')) {
-            $this->markTestSkipped('Database tables not migrated in test environment');
-        }
+        $role = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
 
-        $user = User::where('email', 'admin@example.com')->first();
-        if (!$user) {
-            $user = User::factory()->create([
-                'email' => 'admin@example.com',
-                'role' => 'admin'
-            ]);
-        }
+        $user = User::factory()->create(['email' => 'admin@example.com']);
+        $user->assignRole($role);
 
         $response = $this->actingAs($user)->get('/admin');
 
@@ -29,6 +25,6 @@ class AdminDashboardTest extends TestCase
 
         // Check that page is not blank
         $this->assertNotEmpty($content);
-        $this->assertStringContainsString('Admin Panel', $content);
+        $this->assertStringContainsString('Novixa Aqar', $content);
     }
 }

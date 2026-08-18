@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Services\BlockchainService;
 
 class Lease extends Model
 {
@@ -17,7 +16,6 @@ class Lease extends Model
         'end_date',
         'rent_amount',
         'status',
-        'smart_contract_address',
     ];
 
     protected $casts = [
@@ -72,12 +70,6 @@ class Lease extends Model
     {
         $maxSecurityDeposit = config('leases.max_security_deposit') * $this->rent_amount;
         return $this->security_deposit <= $maxSecurityDeposit;
-    }
-
-    public function getSmartContractData()
-    {
-        $blockchainService = new BlockchainService();
-        return $blockchainService->callContractMethod($this->smart_contract_address, 'getContractDetails', []);
     }
 
     public function team()
