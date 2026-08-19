@@ -21,6 +21,16 @@ class AgentPerformanceResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'أداء الوكيل' : 'Agent Performance';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'أداء الوكلاء' : 'Agent Performances';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
 
     protected static ?string $navigationLabel = 'Agent Performance';
@@ -55,21 +65,21 @@ class AgentPerformanceResource extends Resource
                 TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('listings_count')
-                    ->label('Listings')
+                    ->label(__('filament.fields.listings'))
                     ->counts('properties')
                     ->sortable(),
                 TextColumn::make('properties_sold_count')
-                    ->label('Properties Sold')
+                    ->label(__('filament.fields.properties_sold'))
                     ->counts('properties', function (Builder $query) {
                         $query->where('status', 'sold');
                     })
                     ->sortable(),
                 TextColumn::make('appointments_count')
-                    ->label('Appointments')
+                    ->label(__('filament.fields.appointments'))
                     ->counts('appointments')
                     ->sortable(),
                 TextColumn::make('average_rating')
-                    ->label('Avg. Rating')
+                    ->label(__('filament.fields.avg_rating'))
                     ->avg('reviews', 'rating')
                     ->sortable(),
             ])

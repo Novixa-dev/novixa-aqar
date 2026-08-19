@@ -21,11 +21,14 @@ class PropertyTaxEstimatorService
      * @param array $options (buyer_type, is_first_time_buyer, etc.)
      * @return array
      */
-    public function estimatePropertyTax(float $purchasePrice, string $country = 'UK', array $options = []): array
+    public function estimatePropertyTax(float $purchasePrice, string $country = 'YE', array $options = []): array
     {
         $country = strtoupper($country);
 
         switch ($country) {
+            case 'YE':
+            case 'YEMEN':
+                return $this->calculateYemenFees($purchasePrice, $options);
             case 'UK':
             case 'GB':
             case 'UNITED KINGDOM':
@@ -37,6 +40,50 @@ class PropertyTaxEstimatorService
             default:
                 return $this->calculateGenericTaxes($purchasePrice, $options);
         }
+    }
+
+    /**
+     * Estimate Yemeni property registration/transfer fees.
+     *
+     * These are illustrative demo figures (a percentage-based registration
+     * fee plus a flat notary/registration-office charge), not sourced from
+     * an authoritative fee schedule — the UI must label this as illustrative,
+     * not legal or financial advice.
+     */
+    protected function calculateYemenFees(float $purchasePrice, array $options): array
+    {
+        $registrationFeeRate = $options['registration_fee_rate'] ?? 0.03; // 3% illustrative registration/transfer fee
+        $registrationFee = $purchasePrice * $registrationFeeRate;
+
+        $brokerFeeRate = $options['broker_fee_rate'] ?? 0.01; // 1% illustrative broker/agent fee
+        $brokerFee = $purchasePrice * $brokerFeeRate;
+
+        $notaryFee = 25000; // Flat illustrative notary/registration-office charge, in YER
+
+        $totalTax = $registrationFee;
+        $totalAdditionalCosts = $brokerFee + $notaryFee;
+        $totalCost = $purchasePrice + $totalTax + $totalAdditionalCosts;
+
+        return [
+            'country' => 'Yemen',
+            'purchase_price' => round($purchasePrice, 2),
+            'registration_fee' => round($registrationFee, 2),
+            'effective_tax_rate' => round($registrationFeeRate * 100, 2),
+            'additional_costs' => [
+                'broker_fee' => round($brokerFee, 2),
+                'notary_fee' => round($notaryFee, 2),
+            ],
+            'total_tax' => round($totalTax, 2),
+            'total_additional_costs' => round($totalAdditionalCosts, 2),
+            'total_cost' => round($totalCost, 2),
+            'breakdown' => [
+                'Purchase Price' => round($purchasePrice, 2),
+                'Registration Fee (est.)' => round($registrationFee, 2),
+                'Broker Fee (est.)' => round($brokerFee, 2),
+                'Notary / Registration Office Fee' => round($notaryFee, 2),
+                'Total Cost' => round($totalCost, 2),
+            ],
+        ];
     }
 
     /**

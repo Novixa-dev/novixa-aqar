@@ -6,7 +6,7 @@
 
 @if($floorPlanData && is_array($floorPlanData) && isset($floorPlanData['image']))
 <div class="floor-plan-viewer my-6">
-    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Interactive Floor Plan</h3>
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ app()->getLocale() === 'ar' ? 'المخطط التفاعلي' : 'Interactive Floor Plan' }}</h3>
     
     <div x-data="floorPlanViewer(@js($floorPlanData))" class="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 p-4">
         <div class="relative">
@@ -26,7 +26,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <span class="text-2xl" x-text="selectedAnnotation?.type === 'room' ? '🏠' : '📍'"></span>
-                    <span class="ml-2 font-semibold text-gray-900 dark:text-white" x-text="selectedAnnotation?.label"></span>
+                    <span class="ms-2 font-semibold text-gray-900 dark:text-white" x-text="selectedAnnotation?.label"></span>
                 </div>
                 <button @click="selectedAnnotation = null" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,11 +40,11 @@
         <div class="mt-4 flex gap-4 flex-wrap">
             <div class="flex items-center gap-2">
                 <div class="w-6 h-6 rounded-full bg-blue-500 border-2 border-blue-800"></div>
-                <span class="text-sm text-gray-700 dark:text-gray-300">Room</span>
+                <span class="text-sm text-gray-700 dark:text-gray-300">{{ app()->getLocale() === 'ar' ? 'غرفة' : 'Room' }}</span>
             </div>
             <div class="flex items-center gap-2">
                 <div class="w-6 h-6 rounded-full bg-red-500 border-2 border-red-800"></div>
-                <span class="text-sm text-gray-700 dark:text-gray-300">Point of Interest</span>
+                <span class="text-sm text-gray-700 dark:text-gray-300">{{ app()->getLocale() === 'ar' ? 'نقطة اهتمام' : 'Point of Interest' }}</span>
             </div>
         </div>
     </div>

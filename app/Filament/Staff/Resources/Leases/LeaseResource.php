@@ -32,6 +32,16 @@ class LeaseResource extends Resource
 {
     protected static ?string $model = Lease::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إيجار' : 'Lease';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إيجارات' : 'Leases';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
     public static function form(Schema $schema): Schema
@@ -55,7 +65,11 @@ class LeaseResource extends Resource
                     ->numeric()
                     ->prefix('$'),
                 Select::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'active' => 'ساري',
+                        'expired' => 'منتهي',
+                        'terminated' => 'مفسوخ',
+                    ] : [
                         'active' => 'Active',
                         'expired' => 'Expired',
                         'terminated' => 'Terminated',
@@ -91,7 +105,11 @@ class LeaseResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'active' => 'ساري',
+                        'expired' => 'منتهي',
+                        'terminated' => 'مفسوخ',
+                    ] : [
                         'active' => 'Active',
                         'expired' => 'Expired',
                         'terminated' => 'Terminated',

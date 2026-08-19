@@ -18,20 +18,30 @@ class BranchResource extends Resource
 {
     protected static ?string $model = Branch::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'فرع' : 'Branch';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'فروع' : 'Branches';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->label('Name'),
+                    ->label(__('filament.fields.name')),
                 TextInput::make('address')
                     ->required()
-                    ->label('Address'),
+                    ->label(__('filament.fields.address')),
                 TextInput::make('phone_number')
                     ->tel()
                     ->required()
-                    ->label('Phone Number'),
+                    ->label(__('filament.fields.phone_number')),
             ]);
     }
 
@@ -42,12 +52,12 @@ class BranchResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->label('Name'),
+                    ->label(__('filament.fields.name')),
                 TextColumn::make('address')
                     ->searchable()
-                    ->label('Address'),
+                    ->label(__('filament.fields.address')),
                 TextColumn::make('phone_number')
-                    ->label('Phone Number'),
+                    ->label(__('filament.fields.phone_number')),
             ])
             ->filters([
                 //

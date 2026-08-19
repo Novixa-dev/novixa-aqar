@@ -23,6 +23,16 @@ class EmailCampaignResource extends Resource
 {
     protected static ?string $model = EmailCampaign::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'حملة بريدية' : 'Email Campaign';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'حملات بريدية' : 'Email Campaigns';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-envelope';
 
     public static function form(Schema $schema): Schema
@@ -37,7 +47,11 @@ class EmailCampaignResource extends Resource
                     ->required()
                     ->columnSpanFull(),
                 Select::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'draft' => 'مسودة',
+                        'scheduled' => 'مجدولة',
+                        'sent' => 'تم الإرسال',
+                    ] : [
                         'draft' => 'Draft',
                         'scheduled' => 'Scheduled',
                         'sent' => 'Sent',
@@ -64,7 +78,11 @@ class EmailCampaignResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'draft' => 'مسودة',
+                        'scheduled' => 'مجدولة',
+                        'sent' => 'تم الإرسال',
+                    ] : [
                         'draft' => 'Draft',
                         'scheduled' => 'Scheduled',
                         'sent' => 'Sent',

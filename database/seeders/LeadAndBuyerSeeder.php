@@ -13,14 +13,14 @@ class LeadAndBuyerSeeder extends Seeder
 {
     public function run()
     {
-        $user = User::first() ?? User::factory()->create();
+        $user = User::role('agent')->first() ?? User::first() ?? User::factory()->create();
         $team = Team::first() ?? Team::factory()->create();
         $neighborhood = Neighborhood::first();
 
         $demoLeads = [
             [
                 'name' => 'عمر عبد الله باحشوان',
-                'email' => 'omar.bahashwan@example.com',
+                'email' => 'omar.bahashwan@gmail.com',
                 'phone' => '+967 777 123 456',
                 'message' => 'أود الاستفسار عن الشقة المعروضة للبيع في حي السلام بالمكلا وتحديد موعد للمعاينة.',
                 'status' => 'new',
@@ -30,7 +30,7 @@ class LeadAndBuyerSeeder extends Seeder
             ],
             [
                 'name' => 'خالد سعيد بن ماضي',
-                'email' => 'khaled.madi@example.com',
+                'email' => 'khaled.madi@gmail.com',
                 'phone' => '+967 770 987 654',
                 'message' => 'يبحث عن أرض سكنية بمساحة لا تقل عن 400 متر في حي فوه المساكن.',
                 'status' => 'contacted',
@@ -40,7 +40,7 @@ class LeadAndBuyerSeeder extends Seeder
             ],
             [
                 'name' => 'فهد بن الشيخ أبو بكر',
-                'email' => 'fahad.abubakr@example.com',
+                'email' => 'fahad.abubakr@gmail.com',
                 'phone' => '+967 733 456 789',
                 'message' => 'راغب في استئجار محل تجاري بحي الشرج للأنشطة التجارية.',
                 'status' => 'qualified',
@@ -58,7 +58,7 @@ class LeadAndBuyerSeeder extends Seeder
             [
                 'name' => 'سالم أحمد العمودي',
                 'phone' => '+967 771 111 222',
-                'email' => 'salem.alamoudi@example.com',
+                'email' => 'salem.alamoudi@gmail.com',
                 'status' => 'active',
                 'user_id' => $user->id,
                 'team_id' => $team->id,
@@ -73,7 +73,7 @@ class LeadAndBuyerSeeder extends Seeder
             [
                 'name' => 'حسن حسين باوزير',
                 'phone' => '+967 772 333 444',
-                'email' => 'hassan.bawazir@example.com',
+                'email' => 'hassan.bawazir@gmail.com',
                 'status' => 'active',
                 'user_id' => $user->id,
                 'team_id' => $team->id,

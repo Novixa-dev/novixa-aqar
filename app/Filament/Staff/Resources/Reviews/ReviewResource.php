@@ -29,6 +29,16 @@ class ReviewResource extends Resource
 {
     protected static ?string $model = Review::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'تقييم' : 'Review';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'تقييمات' : 'Reviews';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
@@ -42,10 +52,10 @@ class ReviewResource extends Resource
                     ->relationship('property', 'title')
                     ->required(),
                 Textarea::make('comment')
-                    ->label('Comment')
+                    ->label(__('filament.fields.comment'))
                     ->required(),
                 DatePicker::make('review_date')
-                    ->label('Review Date')
+                    ->label(__('filament.fields.review_date'))
                     ->required(),
             ]);
     }

@@ -16,7 +16,7 @@ class ListAgentPerformance extends ListRecords
     {
         return [
             Action::make('generateReport')
-                ->label('Generate Report')
+                ->label(__('filament.fields.generate_report'))
                 ->action(function (): StreamedResponse {
                     $agents = AgentPerformanceResource::getEloquentQuery()
                         ->withCount(['properties as listings_count'])

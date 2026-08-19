@@ -33,7 +33,7 @@ class PropertyBrochureService
                 'description' => $property->description,
                 'location' => $property->location,
                 'price' => $property->price,
-                'formatted_price' => '£' . number_format($property->price, 0),
+                'formatted_price' => $property->formatted_price,
                 'bedrooms' => $property->bedrooms,
                 'bathrooms' => $property->bathrooms,
                 'area_sqft' => $property->area_sqft,
@@ -131,7 +131,7 @@ class PropertyBrochureService
     {
         $title = htmlspecialchars($property->title, ENT_QUOTES, 'UTF-8');
         $location = htmlspecialchars($property->location ?? '', ENT_QUOTES, 'UTF-8');
-        $price = '£' . number_format($property->price, 0);
+        $price = $property->formatted_price;
         $images = $property->getMedia('images');
         $heroImage = $images->isNotEmpty() ? $images->first()->getUrl() : '';
 

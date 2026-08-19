@@ -19,18 +19,18 @@ class ViewAgentPerformance extends ViewRecord
                 Section::make('Performance Metrics')
                     ->schema([
                         TextEntry::make('listings_count')
-                            ->label('Total Listings'),
+                            ->label(__('filament.fields.total_listings')),
                         TextEntry::make('properties_sold_count')
-                            ->label('Properties Sold'),
+                            ->label(__('filament.fields.properties_sold')),
                         TextEntry::make('appointments_count')
-                            ->label('Total Appointments'),
+                            ->label(__('filament.fields.total_appointments')),
                         TextEntry::make('average_rating')
-                            ->label('Average Rating'),
+                            ->label(__('filament.fields.average_rating')),
                     ]),
                 Section::make('Recent Reviews')
                     ->schema([
                         TextEntry::make('reviews.comment')
-                            ->label('Review')
+                            ->label(__('filament.fields.review'))
                             ->listWithLineBreaks()
                             ->limitList(5),
                     ]),

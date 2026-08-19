@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Aqar / عقاري'),
+    'name' => env('APP_NAME', 'Novixa Aqar'),
     'version' => '1.7.3',
 
     /*

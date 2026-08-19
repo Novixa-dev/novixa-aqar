@@ -36,7 +36,7 @@ class UserForm
                                             ->placeholder('Enter full name'),
                                         
                                         TextInput::make('email')
-                                            ->label('Email Address')
+                                            ->label(__('filament.fields.email_address'))
                                             ->email()
                                             ->required()
                                             ->unique(ignoreRecord: true)
@@ -53,7 +53,7 @@ class UserForm
                                             ->helperText('Leave blank to keep current password (when editing)'),
                                         
                                         FileUpload::make('profile_photo_path')
-                                            ->label('Profile Photo')
+                                            ->label(__('filament.fields.profile_photo'))
                                             ->image()
                                             ->imageEditor()
                                             ->maxSize(2048)

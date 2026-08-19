@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('properties', function (Blueprint $table) {
-            $table->char('currency', 3)->default('GBP')->after('price');
+            $table->char('currency', 3)->default('YER')->after('price');
             $table->index(['team_id', 'branch_id', 'status']);
         });
     }

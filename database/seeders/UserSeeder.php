@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
 
         $adminPassword = 'password';
         $adminUser = User::firstOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'admin@darhadhramaut.ye'],
             [
                 'name' => 'Admin User',
                 'password' => Hash::make($adminPassword),
@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
         $roles = ['staff', 'agent', 'buyer', 'seller', 'landlord', 'tenant', 'contractor'];
         foreach ($roles as $roleName) {
             $user = User::firstOrCreate(
-                ['email' => "{$roleName}@example.com"],
+                ['email' => "{$roleName}@darhadhramaut.ye"],
                 [
                     'name' => ucfirst($roleName) . ' User',
                     'password' => Hash::make('password'),

@@ -88,7 +88,7 @@ class SendToFriendService
         $escapedTitle = htmlspecialchars($property->title, ENT_QUOTES, 'UTF-8');
         $escapedLocation = htmlspecialchars($property->location ?? '', ENT_QUOTES, 'UTF-8');
         $escapedMessage = $personalMessage ? htmlspecialchars($personalMessage, ENT_QUOTES, 'UTF-8') : '';
-        $formattedPrice = '£' . number_format($property->price, 0);
+        $formattedPrice = $property->formatted_price;
 
         $personalMessageHtml = $escapedMessage
             ? "<p><em>\"{$escapedMessage}\"</em></p>"

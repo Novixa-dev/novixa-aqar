@@ -24,6 +24,16 @@ class AlertResource extends Resource
 {
     protected static ?string $model = Alert::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'تنبيه' : 'Alert';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'تنبيهات' : 'Alerts';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-bell';
 
     public static function form(Schema $schema): Schema
@@ -34,7 +44,11 @@ class AlertResource extends Resource
                     ->relationship('user', 'name')
                     ->required(),
                 Select::make('property_type')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'house' => 'منزل',
+                        'apartment' => 'شقة',
+                        'condo' => 'شقة سكنية',
+                    ] : [
                         'house' => 'House',
                         'apartment' => 'Apartment',
                         'condo' => 'Condo',
@@ -42,10 +56,10 @@ class AlertResource extends Resource
                     ->required(),
                 TextInput::make('min_price')
                     ->numeric()
-                    ->prefix('$'),
+                    ->suffix(config('currencies.default')),
                 TextInput::make('max_price')
                     ->numeric()
-                    ->prefix('$'),
+                    ->suffix(config('currencies.default')),
                 TextInput::make('min_bedrooms')
                     ->numeric(),
                 TextInput::make('max_bedrooms')
@@ -53,14 +67,23 @@ class AlertResource extends Resource
                 TextInput::make('location')
                     ->required(),
                 Select::make('notification_frequency')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'immediately' => 'فوراً',
+                        'daily' => 'يومياً',
+                        'weekly' => 'أسبوعياً',
+                    ] : [
                         'immediately' => 'Immediately',
                         'daily' => 'Daily',
                         'weekly' => 'Weekly',
                     ])
                     ->required(),
                 MultiSelect::make('alert_types')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'price_change' => 'تغيّر السعر',
+                        'new_listing' => 'إعلان جديد',
+                        'open_house' => 'يوم مفتوح',
+                        'status_change' => 'تغيّر الحالة',
+                    ] : [
                         'price_change' => 'Price Change',
                         'new_listing' => 'New Listing',
                         'open_house' => 'Open House',

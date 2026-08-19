@@ -21,21 +21,33 @@ class RoomsRelationManager extends RelationManager
 {
     protected static string $relationship = 'rooms';
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'غرفة' : 'Room';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'الغرف' : 'Rooms';
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('room_number')
+                    ->label(__('filament.fields.name'))
                     ->required()
                     ->maxLength(255),
                 TextInput::make('size')
+                    ->label(__('filament.fields.area_sqft'))
                     ->required()
                     ->numeric()
-                    ->suffix('sq ft'),
+                    ->suffix('m²'),
                 TextInput::make('rent')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->suffix(config('currencies.default')),
                 Toggle::make('is_available')
                     ->required(),
             ]);
@@ -45,11 +57,13 @@ class RoomsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                TextColumn::make('room_number'),
+                TextColumn::make('room_number')
+                    ->label(__('filament.fields.name')),
                 TextColumn::make('size')
-                    ->suffix(' sq ft'),
+                    ->label(__('filament.fields.area_sqft'))
+                    ->suffix(' m²'),
                 TextColumn::make('rent')
-                    ->money('USD'),
+                    ->formatStateUsing(fn ($state) => app(\App\Services\CurrencyService::class)->format($state)),
                 IconColumn::make('is_available')
                     ->boolean(),
             ])

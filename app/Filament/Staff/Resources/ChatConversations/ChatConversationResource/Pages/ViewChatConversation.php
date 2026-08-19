@@ -19,9 +19,9 @@ class ViewChatConversation extends ViewRecord
                 Components\Section::make('Conversation Info')
                     ->schema([
                         Components\TextEntry::make('session_id')
-                            ->label('Session ID'),
+                            ->label(__('filament.fields.session_id')),
                         Components\TextEntry::make('user.name')
-                            ->label('User'),
+                            ->label(__('filament.fields.user')),
                         Components\TextEntry::make('status')
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {
@@ -30,13 +30,13 @@ class ViewChatConversation extends ViewRecord
                                 'closed' => 'gray',
                             }),
                         Components\TextEntry::make('assignedAgent.name')
-                            ->label('Assigned Agent')
+                            ->label(__('filament.fields.assigned_agent'))
                             ->default('Not assigned'),
                         Components\TextEntry::make('created_at')
-                            ->label('Started At')
+                            ->label(__('filament.fields.started_at'))
                             ->dateTime(),
                         Components\TextEntry::make('escalated_at')
-                            ->label('Escalated At')
+                            ->label(__('filament.fields.escalated_at'))
                             ->dateTime()
                             ->default('—'),
                     ])
@@ -46,7 +46,7 @@ class ViewChatConversation extends ViewRecord
                         Components\RepeatableEntry::make('messages')
                             ->schema([
                                 Components\TextEntry::make('sender_type')
-                                    ->label('From')
+                                    ->label(__('filament.fields.from'))
                                     ->badge()
                                     ->color(fn (string $state): string => match ($state) {
                                         'user' => 'primary',
@@ -55,10 +55,10 @@ class ViewChatConversation extends ViewRecord
                                         default => 'gray',
                                     }),
                                 Components\TextEntry::make('message')
-                                    ->label('Message')
+                                    ->label(__('filament.fields.message'))
                                     ->columnSpanFull(),
                                 Components\TextEntry::make('created_at')
-                                    ->label('Time')
+                                    ->label(__('filament.fields.time'))
                                     ->dateTime(),
                             ])
                             ->columns(3),

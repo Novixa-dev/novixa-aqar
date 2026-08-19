@@ -21,7 +21,7 @@ class UsersTable
         return $table
             ->columns([
                 ImageColumn::make('profile_photo_url')
-                    ->label('Photo')
+                    ->label(__('filament.fields.photo'))
                     ->circular()
                     ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&color=7F9CF5&background=EBF4FF'),
                 
@@ -32,7 +32,7 @@ class UsersTable
                     ->description(fn ($record) => $record->email, position: 'below'),
                 
                 TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->label(__('filament.fields.roles'))
                     ->badge()
                     ->color('success')
                     ->searchable()
@@ -41,7 +41,7 @@ class UsersTable
                     ->placeholder('No roles assigned'),
                 
                 IconColumn::make('email_verified_at')
-                    ->label('Verified')
+                    ->label(__('filament.fields.verified'))
                     ->boolean()
                     ->trueIcon('heroicon-o-check-badge')
                     ->falseIcon('heroicon-o-x-circle')
@@ -53,20 +53,20 @@ class UsersTable
                         : 'Not verified'),
                 
                 TextColumn::make('teams_count')
-                    ->label('Teams')
+                    ->label(__('filament.fields.teams'))
                     ->counts('teams')
                     ->badge()
                     ->color('info')
                     ->sortable(),
                 
                 TextColumn::make('created_at')
-                    ->label('Joined')
+                    ->label(__('filament.fields.joined'))
                     ->dateTime('M d, Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 
                 TextColumn::make('updated_at')
-                    ->label('Last Updated')
+                    ->label(__('filament.fields.last_updated'))
                     ->dateTime('M d, Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -80,15 +80,15 @@ class UsersTable
                     ->placeholder('Filter by role'),
                 
                 Filter::make('verified')
-                    ->label('Email Verified')
+                    ->label(__('filament.fields.email_verified'))
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
                 
                 Filter::make('unverified')
-                    ->label('Email Unverified')
+                    ->label(__('filament.fields.email_unverified'))
                     ->query(fn (Builder $query): Builder => $query->whereNull('email_verified_at')),
                 
                 Filter::make('created_at')
-                    ->label('Recently Joined')
+                    ->label(__('filament.fields.recently_joined'))
                     ->query(fn (Builder $query): Builder => $query->where('created_at', '>=', now()->subDays(30))),
             ])
             ->recordActions([

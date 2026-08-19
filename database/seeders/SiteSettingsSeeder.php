@@ -11,9 +11,9 @@ class SiteSettingsSeeder extends Seeder
     {
         $settings = app(GeneralSettings::class);
 
-        $settings->site_name = config('app.name', 'Aqar / عقاري');
-        $settings->site_email = 'info@aqar.ye';
-        $settings->site_phone = '+967 770 000 000';
+        $settings->site_name = 'Dar Hadhramaut Real Estate | دار حضرموت العقارية';
+        $settings->site_email = 'info@darhadhramaut.ye';
+        $settings->site_phone = '+967 776 248 526';
         $settings->site_address = 'Al-Mukalla, Hadhramaut, Yemen';
         $settings->site_country = 'Yemen';
         $settings->site_currency = 'ر.ي';
@@ -22,7 +22,7 @@ class SiteSettingsSeeder extends Seeder
         $settings->twitter_url = null;
         $settings->github_url = null;
         $settings->youtube_url = null;
-        $settings->footer_copyright = '© ' . date('Y') . ' ' . config('app.name', 'Aqar / عقاري') . '. All rights reserved.';
+        $settings->footer_copyright = '© ' . date('Y') . ' Dar Hadhramaut Real Estate. All rights reserved. Developed by Novixa.';
 
         $settings->save();
     }

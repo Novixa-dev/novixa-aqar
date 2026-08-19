@@ -1,7 +1,7 @@
 <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
     <div class="p-6 bg-indigo-600 text-white">
-        <h2 class="text-2xl font-bold">{{ $appointmentType->name ?? 'Appointment' }} Calendar</h2>
-        <p class="mt-1 text-indigo-100 text-sm">Select an available date and time to schedule your appointment.</p>
+        <h2 class="text-2xl font-bold">{{ app()->getLocale() === 'ar' ? 'تقويم' : 'Calendar' }} {{ $appointmentType->name ?? (app()->getLocale() === 'ar' ? 'الموعد' : 'Appointment') }}</h2>
+        <p class="mt-1 text-indigo-100 text-sm">{{ app()->getLocale() === 'ar' ? 'اختر تاريخاً ووقتاً متاحين لتحديد موعدك.' : 'Select an available date and time to schedule your appointment.' }}</p>
     </div>
 
     @if(session()->has('message'))
@@ -13,7 +13,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-0">
         {{-- Calendar --}}
-        <div class="lg:col-span-2 p-6 border-r border-gray-100">
+        <div class="lg:col-span-2 p-6 border-e border-gray-100">
             {{-- Month navigation --}}
             <div class="flex items-center justify-between mb-4">
                 <button wire:click="previousMonth"
@@ -31,7 +31,7 @@
 
             {{-- Day headers --}}
             <div class="grid grid-cols-7 text-center mb-2">
-                @foreach(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $dow)
+                @foreach((app()->getLocale() === 'ar' ? ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'] : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']) as $dow)
                     <div class="text-xs font-medium text-gray-400 py-1">{{ $dow }}</div>
                 @endforeach
             </div>
@@ -57,9 +57,9 @@
             </div>
 
             <div class="mt-4 flex items-center gap-4 text-xs text-gray-500">
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-indigo-600 inline-block"></span> Selected</span>
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded border border-indigo-400 inline-block"></span> Today</span>
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-gray-100 inline-block"></span> Unavailable</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-indigo-600 inline-block"></span> {{ app()->getLocale() === 'ar' ? 'محدد' : 'Selected' }}</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded border border-indigo-400 inline-block"></span> {{ app()->getLocale() === 'ar' ? 'اليوم' : 'Today' }}</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-gray-100 inline-block"></span> {{ app()->getLocale() === 'ar' ? 'غير متاح' : 'Unavailable' }}</span>
             </div>
         </div>
 
@@ -67,7 +67,7 @@
         <div class="p-6 flex flex-col">
             @if($selectedDate)
                 <h3 class="text-sm font-semibold text-gray-700 mb-3">
-                    Available times for {{ \Carbon\Carbon::parse($selectedDate)->format('D, d M Y') }}
+                    {{ app()->getLocale() === 'ar' ? 'الأوقات المتاحة ليوم' : 'Available times for' }} {{ \Carbon\Carbon::parse($selectedDate)->format('D, d M Y') }}
                 </h3>
 
                 @if(count($availableTimeSlots) > 0)
@@ -84,21 +84,21 @@
                     </div>
                 @else
                     <div class="flex-1 flex items-center justify-center">
-                        <p class="text-sm text-gray-400 text-center">No available time slots for this date.<br>Please select another date.</p>
+                        <p class="text-sm text-gray-400 text-center">{{ app()->getLocale() === 'ar' ? 'لا توجد أوقات متاحة لهذا التاريخ.' : 'No available time slots for this date.' }}<br>{{ app()->getLocale() === 'ar' ? 'يرجى اختيار تاريخ آخر.' : 'Please select another date.' }}</p>
                     </div>
                 @endif
 
                 @if($selectedTimeSlot)
                     <div class="mt-auto">
                         <div class="rounded-lg bg-indigo-50 p-3 mb-4 text-sm text-indigo-800">
-                            <p class="font-medium">Your selection:</p>
-                            <p>{{ \Carbon\Carbon::parse($selectedDate)->format('D, d M Y') }} at {{ \Carbon\Carbon::createFromFormat('H:i', $selectedTimeSlot)->format('g:i A') }}</p>
+                            <p class="font-medium">{{ app()->getLocale() === 'ar' ? 'اختيارك:' : 'Your selection:' }}</p>
+                            <p>{{ \Carbon\Carbon::parse($selectedDate)->format('D, d M Y') }} {{ app()->getLocale() === 'ar' ? 'الساعة' : 'at' }} {{ \Carbon\Carbon::createFromFormat('H:i', $selectedTimeSlot)->format('g:i A') }}</p>
                         </div>
                         <button wire:click="bookAppointment"
-                            class="w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            class="w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow transition focus:outline-none focus:ring-2 focus:ring-offset-2"
                             wire:loading.attr="disabled" wire:loading.class="opacity-75 cursor-not-allowed">
-                            <span wire:loading.remove>Confirm Appointment</span>
-                            <span wire:loading>Confirming...</span>
+                            <span wire:loading.remove>{{ app()->getLocale() === 'ar' ? 'تأكيد الموعد' : 'Confirm Appointment' }}</span>
+                            <span wire:loading>{{ app()->getLocale() === 'ar' ? 'جارٍ التأكيد...' : 'Confirming...' }}</span>
                         </button>
                     </div>
                 @endif
@@ -110,7 +110,7 @@
                         <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"/>
                         <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor"/>
                     </svg>
-                    <p class="text-sm">Select a date from the calendar to see available times.</p>
+                    <p class="text-sm">{{ app()->getLocale() === 'ar' ? 'اختر تاريخاً من التقويم لعرض الأوقات المتاحة.' : 'Select a date from the calendar to see available times.' }}</p>
                 </div>
             @endif
         </div>

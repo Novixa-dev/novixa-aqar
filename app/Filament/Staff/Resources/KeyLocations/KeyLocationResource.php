@@ -19,6 +19,16 @@ class KeyLocationResource extends Resource
 {
     protected static ?string $model = KeyLocation::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'موقع رئيسي' : 'Key Location';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مواقع رئيسية' : 'Key Locations';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-key';
 
     public static function form(Schema $schema): Schema
@@ -27,10 +37,10 @@ class KeyLocationResource extends Resource
             ->components([
                 TextInput::make('location_name')
                     ->required()
-                    ->label('Location Name'),
+                    ->label(__('filament.fields.location_name')),
                 TextInput::make('address')
                     ->required()
-                    ->label('Address'),
+                    ->label(__('filament.fields.address')),
             ]);
     }
 
@@ -38,8 +48,8 @@ class KeyLocationResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('location_name')->label('Location Name'),
-                TextColumn::make('address')->label('Address'),
+                TextColumn::make('location_name')->label(__('filament.fields.location_name')),
+                TextColumn::make('address')->label(__('filament.fields.address')),
             ])
             ->filters([
                 //

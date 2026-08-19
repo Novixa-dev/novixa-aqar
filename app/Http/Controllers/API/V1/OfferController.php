@@ -40,7 +40,7 @@ class OfferController extends TenantCrudController
                 Rule::exists('team_user', 'user_id')->where('team_id', $teamId),
             ],
             'amount' => [$record ? 'sometimes' : 'required', 'numeric', 'min:0'],
-            'currency' => ['sometimes', 'string', 'size:3'],
+            'currency' => ['sometimes', 'string', 'size:3', Rule::in(collect(config('countries', []))->pluck('currency')->unique()->values()->all())],
             'status' => ['sometimes', Rule::in(['pending', 'accepted', 'rejected', 'withdrawn', 'superseded'])],
             'mortgage_status' => ['nullable', Rule::in(['cash', 'agreement_in_principle', 'approved', 'required', 'unknown'])],
             'chain_information' => ['nullable', 'string'],
@@ -56,7 +56,7 @@ class OfferController extends TenantCrudController
         $attributes = $request->validate($this->rules($request));
         $note = Arr::pull($attributes, 'negotiation_note');
         $attributes['team_id'] = $this->teamId($request);
-        $attributes['currency'] ??= 'GBP';
+        $attributes['currency'] ??= config('currencies.default');
         $attributes['status'] ??= 'pending';
 
         $offer = DB::transaction(function () use ($request, $attributes, $note): Offer {

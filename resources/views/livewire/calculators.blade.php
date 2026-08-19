@@ -145,27 +145,15 @@
     <div x-show="calculatorType === 'stampDuty'" class="max-w-3xl mx-auto bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-3xl p-6 sm:p-10 mb-8" style="display: none;">
         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
             <span>📑</span>
-            <span>{{ app()->getLocale() === 'ar' ? 'حاسبة رسوم التسجيل ونقل الملكية' : 'Registration & Stamp Duty Calculator' }}</span>
+            <span>{{ app()->getLocale() === 'ar' ? 'حاسبة رسوم التسجيل ونقل الملكية' : 'Registration & Transfer Fee Calculator' }}</span>
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+        <div class="grid grid-cols-1 gap-6 mb-6">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
-                    {{ app()->getLocale() === 'ar' ? 'سعر شراء العقار ($)' : 'Purchase Price ($)' }}
+                    {{ app()->getLocale() === 'ar' ? 'سعر شراء العقار' : 'Purchase Price' }}
                 </label>
-                <input wire:model="purchasePrice" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white" type="number" placeholder="250000">
+                <input wire:model="purchasePrice" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white" type="number" placeholder="25000000">
                 @error('purchasePrice') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
-            </div>
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
-                    {{ app()->getLocale() === 'ar' ? 'نوع المشتري' : 'Buyer Type' }}
-                </label>
-                <select wire:model="buyerType" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white">
-                    <option value="">{{ app()->getLocale() === 'ar' ? 'اختر نوع المشتري' : 'Select buyer type' }}</option>
-                    <option value="first_time_buyer">{{ app()->getLocale() === 'ar' ? 'مشتري للمرة الأولى' : 'First Time Buyer' }}</option>
-                    <option value="home_mover">{{ app()->getLocale() === 'ar' ? 'ناقل سكن (عقار رئيسي)' : 'Home Mover' }}</option>
-                    <option value="additional_property">{{ app()->getLocale() === 'ar' ? 'عقار إضافي / استثمار' : 'Additional Property / Investment' }}</option>
-                </select>
-                @error('buyerType') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
             </div>
         </div>
         <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
@@ -176,8 +164,8 @@
 
         @if($stampDutyResult)
             <div class="mt-8 p-6 bg-blue-50 dark:bg-blue-900/30 rounded-2xl border border-blue-100 dark:border-blue-800">
-                <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">{{ app()->getLocale() === 'ar' ? 'رسوم التسجيل التقديرية:' : 'Estimated Registration / Stamp Duty:' }}</span>
-                <span class="text-3xl font-black text-blue-600 dark:text-blue-400">${{ number_format($stampDutyResult['tax_amount'] ?? 0, 2) }}</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">{{ app()->getLocale() === 'ar' ? 'إجمالي الرسوم التقديرية:' : 'Estimated Total Fees:' }}</span>
+                <span class="text-3xl font-black text-blue-600 dark:text-blue-400">{{ app(\App\Services\CurrencyService::class)->format($stampDutyResult['total_tax'] ?? 0, 'YER') }}</span>
             </div>
         @endif
     </div>

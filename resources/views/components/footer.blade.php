@@ -4,13 +4,13 @@
             <!-- Col 1: Brand & Bio -->
             <div class="space-y-4">
                 <a href="/" class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo.png') }}" class="h-10 w-auto rounded-xl shadow-xs" alt="Al-Ofuq Real Estate" />
+                    <img src="{{ asset('images/logo.png') }}" class="h-10 w-auto rounded-xl shadow-xs" alt="Dar Hadhramaut Real Estate" />
                     <span class="text-xl font-black text-white">
-                        {{ app()->getLocale() === 'ar' ? 'شركة الأفق العقارية' : 'Al-Ofuq Real Estate' }}
+                        {{ app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut Real Estate' }}
                     </span>
                 </a>
                 <p class="text-sm text-gray-400 leading-relaxed">
-                    {{ app()->getLocale() === 'ar' ? 'بوابتكم الأولى للتملك والتطوير والاستثمار العقاري وإدارة الأملاك في اليمن، تطوير وإشراف Novixa و AK01REDWAN.' : 'Your premier gateway for real estate ownership, investment, and property management in Yemen. Developed & supervised by Novixa & AK01REDWAN.' }}
+                    {{ app()->getLocale() === 'ar' ? 'بوابتكم الأولى للتملك والتطوير والاستثمار العقاري وإدارة الأملاك في اليمن.' : 'Your premier gateway for real estate ownership, investment, and property management in Yemen.' }}
                 </p>
             </div>
 
@@ -43,15 +43,15 @@
                 <ul class="space-y-3 text-sm text-gray-400">
                     <li class="flex items-start gap-2.5">
                         <span class="text-blue-400">📍</span>
-                        <span>{{ app()->getLocale() === 'ar' ? 'اليمن - حضرموت / المكلا - شارع الستين، برج الأفق' : 'Yemen - Hadhramout / Mukalla - 60th St, Al-Ofuq Tower' }}</span>
+                        <span>{{ app()->getLocale() === 'ar' ? 'اليمن - حضرموت / المكلا - شارع الستين، برج حضرموت التجاري' : 'Yemen - Hadhramout / Mukalla - 60th St, Hadhramaut Commercial Tower' }}</span>
                     </li>
                     <li class="flex items-center gap-2.5">
                         <span class="text-blue-400">📞</span>
-                        <span dir="ltr">+967 5 300 000 / +967 777 000 000</span>
+                        <span dir="ltr">+967 776 248 526</span>
                     </li>
                     <li class="flex items-center gap-2.5">
                         <span class="text-blue-400">✉️</span>
-                        <span>info@alofuq-aqar.ye</span>
+                        <span>info@darhadhramaut.ye</span>
                     </li>
                 </ul>
             </div>
@@ -59,10 +59,10 @@
 
         <div class="pt-8 mt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
             <div>
-                &copy; {{ date('Y') }} <strong>Novixa Aqar</strong>. {{ __('All rights reserved.') }}
+                &copy; {{ date('Y') }} <strong>{{ app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut Real Estate' }}</strong>. {{ __('All rights reserved.') }}
             </div>
             <div class="flex items-center gap-4">
-                <span>{{ app()->getLocale() === 'ar' ? 'تطوير وإشراف:' : 'Developed by:' }} <strong>Novixa & AK01REDWAN</strong></span>
+                <span>{{ app()->getLocale() === 'ar' ? 'تطوير:' : 'Powered by:' }} <strong>Novixa Aqar</strong></span>
             </div>
         </div>
     </div>

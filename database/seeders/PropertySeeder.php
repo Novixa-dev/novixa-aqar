@@ -5,24 +5,53 @@ namespace Database\Seeders;
 use App\Models\Neighborhood;
 use App\Models\Property;
 use App\Models\PropertyCategory;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 
 class PropertySeeder extends Seeder
 {
+    /** The seeded demo agent that properties should be attributed to, rather than the admin account. */
+    private ?int $agentUserId = null;
+
     public function run()
     {
         $faker = Faker::create('ar_SA');
+        $this->agentUserId = User::role('agent')->first()?->id ?? User::where('email', 'admin@darhadhramaut.ye')->first()?->id;
         $salesCategory = PropertyCategory::where('name', 'sales')->first();
         $lettingsCategory = PropertyCategory::where('name', 'lettings')->first();
         $hmoCategory = PropertyCategory::where('name', 'hmo')->first();
 
         $this->createArabicProperties($salesCategory, 12, 'sales');
         $this->createArabicProperties($lettingsCategory, 12, 'lettings');
-        
+
         if ($hmoCategory) {
             $this->createHmoProperties($hmoCategory, 4);
         }
+    }
+
+    /**
+     * Realistic per-listing currency: most Al-Mukalla listings are priced in
+     * YER, but investment-oriented commercial listings are plausibly marketed
+     * in USD or SAR to attract regional/diaspora investors. Returns
+     * [currency, price] using a price range sensible for that currency —
+     * never derived from a converted YER figure.
+     */
+    private function priceFor(string $type, int $index, $faker): array
+    {
+        if ($type === 'sales' && $index === 6) { // عمارة استثمارية (investment building)
+            return ['USD', $faker->numberBetween(150000, 400000)];
+        }
+        if ($type === 'sales' && $index === 7) { // أرض تجارية (commercial land, two main streets)
+            return ['SAR', $faker->numberBetween(400000, 1200000)];
+        }
+        if ($type === 'lettings' && $index === 8) { // شقة مفروشة للإيجار السنوي (furnished annual rental)
+            return ['USD', $faker->numberBetween(300, 800)];
+        }
+
+        return $type === 'sales'
+            ? ['YER', $faker->numberBetween(2500000, 95000000)]
+            : ['YER', $faker->numberBetween(250000, 1500000)];
     }
 
     private function createArabicProperties($category, $count, $type)
@@ -58,12 +87,14 @@ class PropertySeeder extends Seeder
             $title = $arabicTitles[$i % count($arabicTitles)];
             $desc = $arabicDescriptions[$i % count($arabicDescriptions)];
             $neighborhood = $neighborhoods->count() > 0 ? $neighborhoods->get($i % $neighborhoods->count()) : null;
+            [$currency, $price] = $this->priceFor($type, $i, $faker);
 
             Property::create([
                 'title' => $title,
                 'description' => $desc,
                 'location' => 'المكلا - ' . ($neighborhood ? $neighborhood->name : 'حضرموت'),
-                'price' => $type === 'sales' ? $faker->numberBetween(2500000, 95000000) : $faker->numberBetween(250000, 1500000),
+                'price' => $price,
+                'currency' => $currency,
                 'bedrooms' => $faker->numberBetween(1, 6),
                 'bathrooms' => $faker->numberBetween(1, 4),
                 'area_sqft' => $faker->numberBetween(120, 600),
@@ -72,7 +103,8 @@ class PropertySeeder extends Seeder
                 'status' => $type === 'sales' ? 'For Sale' : 'For Rent',
                 'is_featured' => $i % 3 === 0,
                 'list_date' => now()->subDays($i * 3),
-                'user_id' => 1,
+                'user_id' => $this->agentUserId,
+                'agent_id' => $this->agentUserId,
                 'property_category_id' => $category?->id,
                 'latitude' => 14.5385 + ($i * 0.002),
                 'longitude' => 49.1235 + ($i * 0.002),
@@ -98,6 +130,7 @@ class PropertySeeder extends Seeder
                 'description' => 'مجمع غرف سكنية مجهزة بتكييف وخدمات مشتركة وانترنت مجاني بالقرب من كليات جامعة حضرموت.',
                 'location' => 'المكلا - فوه',
                 'price' => $faker->numberBetween(80000, 200000),
+                'currency' => 'YER',
                 'bedrooms' => 6,
                 'bathrooms' => 3,
                 'area_sqft' => 250,
@@ -106,7 +139,8 @@ class PropertySeeder extends Seeder
                 'status' => 'For Rent',
                 'is_featured' => false,
                 'list_date' => now(),
-                'user_id' => 1,
+                'user_id' => $this->agentUserId,
+                'agent_id' => $this->agentUserId,
                 'property_category_id' => $category->id,
                 'latitude' => 14.5385,
                 'longitude' => 49.1235,

@@ -20,6 +20,16 @@ class MenuResource extends Resource
 {
     protected static ?string $model = Menu::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'قائمة' : 'Menu';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'قوائم' : 'Menus';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-bars-4';
 
     public static function form(Schema $schema): Schema
@@ -28,17 +38,17 @@ class MenuResource extends Resource
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->label('Name'),
+                    ->label(__('filament.fields.name')),
                 TextInput::make('url')
                     ->required()
-                    ->label('URL'),
+                    ->label(__('filament.fields.url')),
                 Select::make('parent_id')
-                    ->label('Parent Menu')
+                    ->label(__('filament.fields.parent_menu'))
                     ->options(Menu::pluck('name', 'id'))
                     ->nullable(),
                 TextInput::make('order')
                     ->integer()
-                    ->label('Order')
+                    ->label(__('filament.fields.order'))
                     ->default(0),
             ]);
     }
@@ -50,14 +60,14 @@ class MenuResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->label('Name'),
+                    ->label(__('filament.fields.name')),
                 TextColumn::make('url')
-                    ->label('URL'),
+                    ->label(__('filament.fields.url')),
                 TextColumn::make('parent.name')
-                    ->label('Parent Menu'),
+                    ->label(__('filament.fields.parent_menu')),
                 TextColumn::make('order')
                     ->sortable()
-                    ->label('Order'),
+                    ->label(__('filament.fields.order')),
             ])
             ->filters([
                 //

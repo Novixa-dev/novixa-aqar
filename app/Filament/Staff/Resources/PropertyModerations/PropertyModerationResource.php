@@ -27,6 +27,16 @@ class PropertyModerationResource extends Resource
 {
     protected static ?string $model = Property::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مراجعة عقار' : 'Property Moderation';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مراجعات عقارات' : 'Property Moderations';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     protected static ?string $navigationLabel = 'Property Moderation';
@@ -41,7 +51,11 @@ class PropertyModerationResource extends Resource
                 Textarea::make('description')
                     ->maxLength(65535),
                 Select::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد المراجعة',
+                        'approved' => 'موافق عليه',
+                        'rejected' => 'مرفوض',
+                    ] : [
                         'pending' => 'Pending',
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
@@ -63,7 +77,11 @@ class PropertyModerationResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد المراجعة',
+                        'approved' => 'موافق عليه',
+                        'rejected' => 'مرفوض',
+                    ] : [
                         'pending' => 'Pending',
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',

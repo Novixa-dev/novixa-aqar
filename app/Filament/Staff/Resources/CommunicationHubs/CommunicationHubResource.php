@@ -24,6 +24,16 @@ class CommunicationHubResource extends Resource
 {
     protected static ?string $model = Message::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مراسلة' : 'Communication';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مراسلات' : 'Communications';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static ?string $navigationLabel = 'Communication Hub';
@@ -47,8 +57,8 @@ class CommunicationHubResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('sender.name')->label('From'),
-                TextColumn::make('recipient.name')->label('To'),
+                TextColumn::make('sender.name')->label(__('filament.fields.from')),
+                TextColumn::make('recipient.name')->label(__('filament.fields.to')),
                 TextColumn::make('content')->limit(50),
                 TextColumn::make('created_at')->dateTime(),
             ])

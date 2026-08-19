@@ -24,6 +24,16 @@ class MarketAnalysisResource extends Resource
 {
     protected static ?string $model = Property::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'تحليل السوق' : 'Market Analysis';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'تحليلات السوق' : 'Market Analyses';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
 
     protected static ?string $navigationLabel = 'Market Analysis';

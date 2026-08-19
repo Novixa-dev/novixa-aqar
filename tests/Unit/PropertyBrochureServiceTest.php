@@ -45,7 +45,7 @@ class PropertyBrochureServiceTest extends TestCase
         $this->assertArrayHasKey('options', $data);
         $this->assertArrayHasKey('generated_at', $data);
         $this->assertEquals('Beautiful Family Home', $data['property']['title']);
-        $this->assertEquals('£450,000', $data['property']['formatted_price']);
+        $this->assertEquals('450,000 ر.ي', $data['property']['formatted_price']);
         $this->assertEquals(4, $data['property']['bedrooms']);
     }
 
@@ -54,7 +54,7 @@ class PropertyBrochureServiceTest extends TestCase
         $html = $this->service->generateHtmlBrochure($this->property);
 
         $this->assertStringContainsString('Beautiful Family Home', $html);
-        $this->assertStringContainsString('£450,000', $html);
+        $this->assertStringContainsString('450,000 ر.ي', $html);
         $this->assertStringContainsString('4', $html);
         $this->assertStringContainsString('<!DOCTYPE html>', $html);
     }
@@ -64,7 +64,7 @@ class PropertyBrochureServiceTest extends TestCase
         $html = $this->service->generateWindowCard($this->property);
 
         $this->assertStringContainsString('Beautiful Family Home', $html);
-        $this->assertStringContainsString('£450,000', $html);
+        $this->assertStringContainsString('450,000 ر.ي', $html);
         $this->assertStringContainsString('<!DOCTYPE html>', $html);
         $this->assertStringContainsString('card', $html);
     }

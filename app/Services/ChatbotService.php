@@ -85,7 +85,7 @@ class ChatbotService
                 
                 $response = "I can help you find properties! Here are some of our latest listings:\n\n";
                 foreach ($properties as $property) {
-                    $response .= "• {$property->title} - £" . number_format($property->price, 2) . "\n";
+                    $response .= "• {$property->title} - " . app(\App\Services\CurrencyService::class)->format($property->price, $property->currency) . "\n";
                 }
                 $response .= "\nWould you like to know more about any of these, or shall I help you with specific requirements?";
                 return $response;

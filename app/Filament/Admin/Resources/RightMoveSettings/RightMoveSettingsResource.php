@@ -23,6 +23,16 @@ class RightMoveSettingsResource extends Resource
 {
     protected static ?string $model = RightMoveSettings::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إعداد RightMove' : 'RightMove Setting';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إعدادات RightMove' : 'RightMove Settings';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
     protected static ?string $navigationLabel = 'RightMove Settings';
@@ -46,40 +56,50 @@ class RightMoveSettingsResource extends Resource
             ->components([
                 TextInput::make('api_key')
                     ->required()
-                    ->label('RightMove API Key')
+                    ->label(__('filament.fields.rightmove_api_key'))
                     ->password(),
                 TextInput::make('base_uri')
                     ->nullable()
-                    ->label('RightMove API Base URI')
+                    ->label(__('filament.fields.rightmove_base_uri'))
                     ->url(),
                 Select::make('channel')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'sales' => 'مبيعات',
+                        'lettings' => 'إيجارات',
+                    ] : [
                         'sales' => 'Sales',
                         'lettings' => 'Lettings',
                     ])
                     ->required()
-                    ->label('Channel'),
+                    ->label(__('filament.fields.channel')),
                 Select::make('feed_type')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'full' => 'كامل',
+                        'incremental' => 'تزايدي',
+                    ] : [
                         'full' => 'Full',
                         'incremental' => 'Incremental',
                     ])
                     ->required()
-                    ->label('Feed Type'),
+                    ->label(__('filament.fields.feed_type')),
                 Select::make('sync_frequency')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'hourly' => 'كل ساعة',
+                        'daily' => 'يومياً',
+                        'weekly' => 'أسبوعياً',
+                    ] : [
                         'hourly' => 'Hourly',
                         'daily' => 'Daily',
                         'weekly' => 'Weekly',
                     ])
                     ->required()
-                    ->label('Sync Frequency'),
+                    ->label(__('filament.fields.sync_frequency')),
                 TextInput::make('feed_url')
                     ->nullable()
-                    ->label('Feed URL')
+                    ->label(__('filament.fields.feed_url'))
                     ->url(),
                 Toggle::make('is_active')
-                    ->label('Active')
+                    ->label(__('filament.fields.active'))
                     ->default(true),
             ]);
     }
@@ -88,11 +108,11 @@ class RightMoveSettingsResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('base_uri')->label('Base URI'),
-                TextColumn::make('channel')->label('Channel'),
-                TextColumn::make('feed_type')->label('Feed Type'),
-                TextColumn::make('sync_frequency')->label('Sync Frequency'),
-                ToggleColumn::make('is_active')->label('Active'),
+                TextColumn::make('base_uri')->label(__('filament.fields.base_uri')),
+                TextColumn::make('channel')->label(__('filament.fields.channel')),
+                TextColumn::make('feed_type')->label(__('filament.fields.feed_type')),
+                TextColumn::make('sync_frequency')->label(__('filament.fields.sync_frequency')),
+                ToggleColumn::make('is_active')->label(__('filament.fields.active')),
             ])
             ->recordActions([
                 EditAction::make(),

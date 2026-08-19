@@ -39,6 +39,16 @@ class PropertyResource extends Resource
 {
     protected static ?string $model = Property::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'عقار' : 'Property';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'عقارات' : 'Properties';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office-2';
 
     public static function form(Schema $schema): Schema
@@ -46,7 +56,7 @@ class PropertyResource extends Resource
         return $schema
             ->components([
                 Select::make('property_template_id')
-                    ->label('Template')
+                    ->label(__('filament.fields.template'))
                     ->relationship('template', 'name')
                     ->createOptionForm([
                         TextInput::make('name')
@@ -54,7 +64,7 @@ class PropertyResource extends Resource
                             ->maxLength(255),
                         Textarea::make('content')
                             ->required()
-                            ->label('Template Content')
+                            ->label(__('filament.fields.template_content'))
                             ->helperText('Use placeholders like {title}, {description}, {price}, etc.')
                             ->rows(10),
                     ])
@@ -73,8 +83,12 @@ class PropertyResource extends Resource
                     ->maxLength(255),
                 TextInput::make('price')
                     ->required()
-                    ->numeric()
-                    ->prefix('$'),
+                    ->numeric(),
+                Select::make('currency')
+                    ->label(__('filament.fields.currency'))
+                    ->required()
+                    ->default(config('currencies.default'))
+                    ->options(app(\App\Services\CurrencyService::class)->options(app()->getLocale() === 'ar')),
                 TextInput::make('bedrooms')
                     ->required()
                     ->numeric(),
@@ -84,16 +98,21 @@ class PropertyResource extends Resource
                 TextInput::make('area_sqft')
                     ->required()
                     ->numeric()
-                    ->label('Area (sq ft)'),
+                    ->label(__('filament.fields.area_sqft')),
                 TextInput::make('year_built')
                     ->required()
                     ->numeric()
                     ->minValue(1800)
                     ->maxValue(date('Y'))
-                    ->label('Year Built'),
+                    ->label(__('filament.fields.year_built')),
                 Select::make('property_type')
                     ->required()
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'house' => 'منزل',
+                        'apartment' => 'شقة',
+                        'condo' => 'شقة سكنية',
+                        'townhouse' => 'منزل متصل',
+                    ] : [
                         'house' => 'House',
                         'apartment' => 'Apartment',
                         'condo' => 'Condo',
@@ -101,7 +120,12 @@ class PropertyResource extends Resource
                     ]),
                 Select::make('status')
                     ->required()
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'for_sale' => 'للبيع',
+                        'for_rent' => 'للإيجار',
+                        'sold' => 'تم البيع',
+                        'rented' => 'تم التأجير',
+                    ] : [
                         'for_sale' => 'For Sale',
                         'for_rent' => 'For Rent',
                         'sold' => 'Sold',
@@ -113,29 +137,29 @@ class PropertyResource extends Resource
                 TextInput::make('virtual_tour_url')
                     ->url()
                     ->maxLength(255)
-                    ->label('Virtual Tour URL')
+                    ->label(__('filament.fields.virtual_tour_url'))
                     ->helperText('Enter the URL for the virtual tour (Matterport, Kuula, etc.)'),
                 Select::make('virtual_tour_provider')
-                    ->options([
+                    ->options(fn () => [
                         'matterport' => 'Matterport',
                         'kuula' => 'Kuula',
                         '3d_vista' => '3D Vista',
                         'seekbeak' => 'Seekbeak',
-                        'other' => 'Other',
+                        'other' => app()->getLocale() === 'ar' ? 'أخرى' : 'Other',
                     ])
-                    ->label('Virtual Tour Provider')
+                    ->label(__('filament.fields.virtual_tour_provider'))
                     ->helperText('Select the provider of your virtual tour'),
                 Textarea::make('virtual_tour_embed_code')
                     ->rows(3)
                     ->maxLength(2000)
-                    ->label('Virtual Tour Embed Code')
+                    ->label(__('filament.fields.virtual_tour_embed_code'))
                     ->helperText('Paste custom embed code if auto-generation from URL doesn\'t work'),
                 Toggle::make('live_tour_available')
-                    ->label('Live Virtual Tours Available')
+                    ->label(__('filament.fields.live_virtual_tours_available'))
                     ->helperText('Enable this to allow users to schedule live virtual tours with agents')
                     ->default(false),
                 TextInput::make('model_3d_url')
-                    ->label('3D Model URL')
+                    ->label(__('filament.fields.3d_model_url'))
                     ->url()
                     ->maxLength(255)
                     ->helperText('URL to GLB/GLTF 3D model file'),
@@ -144,7 +168,7 @@ class PropertyResource extends Resource
                 Select::make('property_category_id')
                     ->relationship('category', 'name')
                     ->required()
-                    ->label('Property Category'),
+                    ->label(__('filament.fields.property_category')),
                 Select::make('energy_rating')
                     ->options([
                         'A' => 'A',
@@ -155,14 +179,14 @@ class PropertyResource extends Resource
                         'F' => 'F',
                         'G' => 'G',
                     ])
-                    ->label('Energy Efficiency Rating'),
+                    ->label(__('filament.fields.energy_rating')),
                 TextInput::make('energy_score')
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(100)
-                    ->label('Energy Efficiency Score'),
+                    ->label(__('filament.fields.energy_score')),
                 DatePicker::make('energy_rating_date')
-                    ->label('Energy Rating Date'),
+                    ->label(__('filament.fields.energy_rating_date')),
                 Repeater::make('features')
                     ->relationship()
                     ->schema([
@@ -175,10 +199,10 @@ class PropertyResource extends Resource
                     ->collection('property_images')
                     ->multiple()
                     ->maxFiles(5)
-                    ->label('Property Images')
+                    ->label(__('filament.fields.property_images'))
                     ->columnSpanFull(),
                 Textarea::make('custom_description')
-                    ->label('Custom Description')
+                    ->label(__('filament.fields.custom_description'))
                     ->maxLength(1000),
                 SpatieMediaLibraryFileUpload::make('video')
                     ->collection('videos')
@@ -190,11 +214,11 @@ class PropertyResource extends Resource
                     ->maxFiles(1)
                     ->acceptedFileTypes(['model/gltf-binary', 'model/gltf+json', 'application/octet-stream'])
                     ->maxSize(51200) // 50MB
-                    ->label('3D Model (.glb or .gltf)')
+                    ->label(__('filament.fields.3d_model'))
                     ->helperText('Upload a 3D model file in GLB or GLTF format for interactive viewing')
                     ->columnSpanFull(),
                 FloorPlanEditor::make('floor_plan_data')
-                    ->label('Interactive Floor Plan')
+                    ->label(__('filament.fields.interactive_floor_plan'))
                     ->columnSpanFull()
             ]);
     }
@@ -205,7 +229,7 @@ class PropertyResource extends Resource
             ->columns([
                 SpatieMediaLibraryImageColumn::make('images')
                     ->collection('property_images')
-                    ->label('Preview')
+                    ->label(__('filament.fields.preview'))
                     ->circular()
                     ->stacked()
                     ->limit(3),
@@ -214,8 +238,10 @@ class PropertyResource extends Resource
                 TextColumn::make('location')
                     ->searchable(),
                 TextColumn::make('price')
-                    ->money()
+                    ->formatStateUsing(fn (Property $record): string => $record->formatted_price)
                     ->sortable(),
+                TextColumn::make('currency')
+                    ->badge(),
                 TextColumn::make('bedrooms')
                     ->numeric()
                     ->sortable(),
@@ -229,16 +255,16 @@ class PropertyResource extends Resource
                 IconColumn::make('is_featured')
                     ->boolean(),
                 TextColumn::make('custom_description')
-                    ->label('Custom Description')
+                    ->label(__('filament.fields.custom_description'))
                     ->limit(50),
                 IconColumn::make('has_video')
-                    ->label('Has Video')
+                    ->label(__('filament.fields.has_video'))
                     ->boolean()
                     ->trueIcon('heroicon-o-video-camera')
                     ->falseIcon('heroicon-o-x-circle')
                     ->getStateUsing(fn (Property $record): bool => $record->hasMedia('videos')),
                 IconColumn::make('has_3d_model')
-                    ->label('Has 3D Model')
+                    ->label(__('filament.fields.has_3d_model'))
                     ->boolean()
                     ->trueIcon('heroicon-o-cube')
                     ->falseIcon('heroicon-o-x-circle')
@@ -257,7 +283,7 @@ class PropertyResource extends Resource
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     BulkAction::make('updateFeatured')
-                        ->label('Update Featured Status')
+                        ->label(__('filament.fields.update_featured_status'))
                         ->action(function (Collection $records, array $data): void {
                             $records->each(function ($record) use ($data) {
                                 $record->update(['is_featured' => $data['is_featured']]);
@@ -265,7 +291,7 @@ class PropertyResource extends Resource
                         })
                         ->schema([
                             Toggle::make('is_featured')
-                                ->label('Featured')
+                                ->label(__('filament.fields.featured'))
                                 ->required(),
                         ]),
                 ]),

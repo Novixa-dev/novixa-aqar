@@ -29,6 +29,16 @@ class RentalApplicationResource extends Resource
 {
     protected static ?string $model = RentalApplication::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'طلب استئجار' : 'Rental Application';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'طلبات استئجار' : 'Rental Applications';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     public static function form(Schema $schema): Schema
@@ -44,14 +54,23 @@ class RentalApplicationResource extends Resource
                     ->required()
                     ->searchable(),
                 Select::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد المراجعة',
+                        'approved' => 'موافق عليه',
+                        'rejected' => 'مرفوض',
+                    ] : [
                         'pending' => 'Pending',
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
                     ])
                     ->required(),
                 Select::make('employment_status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'employed' => 'موظف',
+                        'self_employed' => 'يعمل لحسابه الخاص',
+                        'unemployed' => 'عاطل عن العمل',
+                        'student' => 'طالب',
+                    ] : [
                         'employed' => 'Employed',
                         'self_employed' => 'Self-employed',
                         'unemployed' => 'Unemployed',
@@ -67,13 +86,23 @@ class RentalApplicationResource extends Resource
                 DatePicker::make('lease_end_date')
                     ->required(),
                 Select::make('background_check_status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد المراجعة',
+                        'passed' => 'ناجح',
+                        'failed' => 'فاشل',
+                    ] : [
                         'pending' => 'Pending',
                         'passed' => 'Passed',
                         'failed' => 'Failed',
                     ]),
                 Select::make('credit_report_status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'excellent' => 'ممتاز',
+                        'good' => 'جيد',
+                        'fair' => 'متوسط',
+                        'poor' => 'ضعيف',
+                        'pending' => 'قيد المراجعة',
+                    ] : [
                         'excellent' => 'Excellent',
                         'good' => 'Good',
                         'fair' => 'Fair',
@@ -81,7 +110,12 @@ class RentalApplicationResource extends Resource
                         'pending' => 'Pending',
                     ]),
                 Select::make('rental_history_status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'good' => 'جيد',
+                        'fair' => 'متوسط',
+                        'poor' => 'ضعيف',
+                        'pending' => 'قيد المراجعة',
+                    ] : [
                         'good' => 'Good',
                         'fair' => 'Fair',
                         'poor' => 'Poor',
@@ -101,7 +135,11 @@ class RentalApplicationResource extends Resource
                     ->searchable()
                     ->sortable(),
                 SelectColumn::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد المراجعة',
+                        'approved' => 'موافق عليه',
+                        'rejected' => 'مرفوض',
+                    ] : [
                         'pending' => 'Pending',
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
@@ -146,19 +184,31 @@ class RentalApplicationResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد المراجعة',
+                        'approved' => 'موافق عليه',
+                        'rejected' => 'مرفوض',
+                    ] : [
                         'pending' => 'Pending',
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
                     ]),
                 SelectFilter::make('background_check_status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'passed' => 'ناجح',
+                        'failed' => 'فاشل',
+                        'pending' => 'قيد المراجعة',
+                    ] : [
                         'passed' => 'Passed',
                         'failed' => 'Failed',
                         'pending' => 'Pending',
                     ]),
                 SelectFilter::make('credit_report_status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'good' => 'جيد',
+                        'poor' => 'ضعيف',
+                        'pending' => 'قيد المراجعة',
+                    ] : [
                         'good' => 'Good',
                         'poor' => 'Poor',
                         'pending' => 'Pending',
@@ -177,13 +227,22 @@ class RentalApplicationResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد المراجعة',
+                        'approved' => 'موافق عليه',
+                        'rejected' => 'مرفوض',
+                    ] : [
                         'pending' => 'Pending',
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
                     ]),
                 SelectFilter::make('employment_status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'employed' => 'موظف',
+                        'self_employed' => 'يعمل لحسابه الخاص',
+                        'unemployed' => 'عاطل عن العمل',
+                        'student' => 'طالب',
+                    ] : [
                         'employed' => 'Employed',
                         'self_employed' => 'Self-employed',
                         'unemployed' => 'Unemployed',

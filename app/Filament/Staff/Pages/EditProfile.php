@@ -31,11 +31,11 @@ class EditProfile extends Page
     {
         return [
             TextInput::make('name')
-                ->label('Name')
+                ->label(__('filament.fields.name'))
                 ->required()
                 ->maxLength(255),
             TextInput::make('email')
-                ->label('Email Address')
+                ->label(__('filament.fields.email_address'))
                 ->required()
                 ->maxLength(255),
         ];

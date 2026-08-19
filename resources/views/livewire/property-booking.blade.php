@@ -1,7 +1,7 @@
 <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8">
     <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-900">Book a Property Viewing</h2>
-        <p class="mt-1 text-sm text-gray-500">Select your preferred date and time to view this property.</p>
+        <h2 class="text-2xl font-bold text-gray-900">{{ app()->getLocale() === 'ar' ? 'حجز موعد لمعاينة العقار' : 'Book a Property Viewing' }}</h2>
+        <p class="mt-1 text-sm text-gray-500">{{ app()->getLocale() === 'ar' ? 'اختر التاريخ والوقت المناسبين لمعاينة هذا العقار.' : 'Select your preferred date and time to view this property.' }}</p>
     </div>
 
     @if (session()->has('message'))
@@ -15,21 +15,21 @@
                             <a href="{{ $googleCalendarUrl }}" target="_blank" rel="noopener"
                                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                                Add to Google Calendar
+                                {{ app()->getLocale() === 'ar' ? 'إضافة إلى تقويم Google' : 'Add to Google Calendar' }}
                             </a>
                         @endif
                         @if ($outlookCalendarUrl)
                             <a href="{{ $outlookCalendarUrl }}" target="_blank" rel="noopener"
                                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                                Add to Outlook
+                                {{ app()->getLocale() === 'ar' ? 'إضافة إلى Outlook' : 'Add to Outlook' }}
                             </a>
                         @endif
                         @if ($confirmedBookingId)
                             <a href="{{ route('booking.ics', $confirmedBookingId) }}"
                                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                Download .ics (Apple / Other)
+                                {{ app()->getLocale() === 'ar' ? 'تحميل ملف .ics (Apple / أخرى)' : 'Download .ics (Apple / Other)' }}
                             </a>
                         @endif
                     </div>
@@ -50,11 +50,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
                 <label for="selectedDate" class="block text-sm font-medium text-gray-700 mb-1">
-                    Preferred Date <span class="text-red-500">*</span>
+                    {{ app()->getLocale() === 'ar' ? 'التاريخ المفضل' : 'Preferred Date' }} <span class="text-red-500">*</span>
                 </label>
                 <select id="selectedDate" wire:model.live="selectedDate"
                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                    <option value="">— Choose a date —</option>
+                    <option value="">{{ app()->getLocale() === 'ar' ? '— اختر تاريخاً —' : '— Choose a date —' }}</option>
                     @foreach($availableDates as $date)
                         <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('D, d M Y') }}</option>
                     @endforeach
@@ -64,13 +64,13 @@
 
             <div>
                 <label for="selectedTime" class="block text-sm font-medium text-gray-700 mb-1">
-                    Preferred Time <span class="text-red-500">*</span>
+                    {{ app()->getLocale() === 'ar' ? 'الوقت المفضل' : 'Preferred Time' }} <span class="text-red-500">*</span>
                 </label>
                 <select id="selectedTime" wire:model="selectedTime"
                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm
                     {{ empty($availableTimeSlots) ? 'bg-gray-100 cursor-not-allowed' : '' }}"
                     {{ empty($availableTimeSlots) ? 'disabled' : '' }}>
-                    <option value="">{{ $selectedDate ? '— Choose a time —' : '— Select a date first —' }}</option>
+                    <option value="">{{ $selectedDate ? (app()->getLocale() === 'ar' ? '— اختر وقتاً —' : '— Choose a time —') : (app()->getLocale() === 'ar' ? '— اختر تاريخاً أولاً —' : '— Select a date first —') }}</option>
                     @foreach($availableTimeSlots as $slot)
                         <option value="{{ $slot }}">{{ \Carbon\Carbon::createFromFormat('H:i', $slot)->format('g:i A') }}</option>
                     @endforeach
@@ -86,15 +86,15 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
                 <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name <span class="text-red-500">*</span>
+                    {{ app()->getLocale() === 'ar' ? 'الاسم الكامل' : 'Full Name' }} <span class="text-red-500">*</span>
                 </label>
-                <input type="text" id="userName" wire:model="userName" placeholder="John Smith"
+                <input type="text" id="userName" wire:model="userName" placeholder="{{ app()->getLocale() === 'ar' ? 'محمد أحمد' : 'John Smith' }}"
                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 @error('userName') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <div>
-                <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-1">{{ app()->getLocale() === 'ar' ? 'البريد الإلكتروني' : 'Email Address' }}</label>
                 <input type="email" id="userEmail" wire:model="userEmail" placeholder="you@example.com"
                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 @error('userEmail') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
@@ -102,33 +102,33 @@
 
             <div class="sm:col-span-2">
                 <label for="userContact" class="block text-sm font-medium text-gray-700 mb-1">
-                    Phone Number <span class="text-red-500">*</span>
+                    {{ app()->getLocale() === 'ar' ? 'رقم الهاتف' : 'Phone Number' }} <span class="text-red-500">*</span>
                 </label>
-                <input type="tel" id="userContact" wire:model="userContact" placeholder="+44 7700 900000"
+                <input type="tel" id="userContact" wire:model="userContact" placeholder="+967 77X XXX XXX"
                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 @error('userContact') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <div class="sm:col-span-2">
-                <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
-                <textarea id="notes" wire:model="notes" rows="3" placeholder="Any special requirements or questions..."
+                <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">{{ app()->getLocale() === 'ar' ? 'ملاحظات إضافية' : 'Additional Notes' }}</label>
+                <textarea id="notes" wire:model="notes" rows="3" placeholder="{{ app()->getLocale() === 'ar' ? 'أي متطلبات أو أسئلة خاصة...' : 'Any special requirements or questions...' }}"
                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
                 @error('notes') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
         </div>
 
         <div class="flex items-center justify-between pt-2">
-            <p class="text-xs text-gray-500">Fields marked <span class="text-red-500">*</span> are required.</p>
+            <p class="text-xs text-gray-500">{{ app()->getLocale() === 'ar' ? 'الحقول المميزة بـ' : 'Fields marked' }} <span class="text-red-500">*</span> {{ app()->getLocale() === 'ar' ? 'مطلوبة.' : 'are required.' }}</p>
             <button type="submit"
                 class="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 wire:loading.attr="disabled" wire:loading.class="opacity-75 cursor-not-allowed">
-                <span wire:loading.remove>Book Viewing</span>
+                <span wire:loading.remove>{{ app()->getLocale() === 'ar' ? 'حجز الموعد' : 'Book Viewing' }}</span>
                 <span wire:loading class="flex items-center gap-1.5">
                     <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                     </svg>
-                    Submitting...
+                    {{ app()->getLocale() === 'ar' ? 'جارٍ الإرسال...' : 'Submitting...' }}
                 </span>
             </button>
         </div>

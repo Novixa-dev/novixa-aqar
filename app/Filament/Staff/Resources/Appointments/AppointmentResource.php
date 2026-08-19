@@ -28,6 +28,16 @@ class AppointmentResource extends Resource
 {
     protected static ?string $model = Appointment::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'موعد' : 'Appointment';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مواعيد' : 'Appointments';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
@@ -44,11 +54,15 @@ class AppointmentResource extends Resource
                     ->relationship('property', 'title')
                     ->required(),
                 DatePicker::make('appointment_date')
-                    ->label('Appointment Date')
+                    ->label(__('filament.fields.appointment_date'))
                     ->required(),
                 Select::make('status')
-                    ->label('Status')
-                    ->options([
+                    ->label(__('filament.fields.status'))
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'requested' => 'مطلوب',
+                        'confirmed' => 'مؤكد',
+                        'canceled' => 'ملغى',
+                    ] : [
                         'requested' => 'Requested',
                         'confirmed' => 'Confirmed',
                         'canceled' => 'Canceled',
@@ -62,24 +76,24 @@ class AppointmentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('appointment_date')
-                    ->label('Date')
+                    ->label(__('filament.fields.date'))
                     ->date('d/m/Y')
                     ->sortable(),
                 TextColumn::make('user.name')
-                    ->label('User')
+                    ->label(__('filament.fields.user'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('property.title')
-                    ->label('Property')
+                    ->label(__('filament.fields.property'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('agent.name')
-                    ->label('Agent')
+                    ->label(__('filament.fields.agent'))
                     ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
-                    ->label('Status')
+                    ->label(__('filament.fields.status'))
                     ->searchable()
                     ->sortable(),
             ])

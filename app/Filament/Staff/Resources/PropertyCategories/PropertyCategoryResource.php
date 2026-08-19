@@ -25,6 +25,16 @@ class PropertyCategoryResource extends Resource
 {
     protected static ?string $model = PropertyCategory::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'فئة عقار' : 'Property Category';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'فئات عقارات' : 'Property Categories';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
@@ -53,7 +63,7 @@ class PropertyCategoryResource extends Resource
                     ->searchable(),
                 TextColumn::make('properties_count')
                     ->counts('properties')
-                    ->label('Properties'),
+                    ->label(__('filament.fields.properties')),
             ])
             ->filters([
                 //

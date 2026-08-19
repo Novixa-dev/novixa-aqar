@@ -20,13 +20,13 @@ class RecentTransactions extends TableWidget
     {
         return [
             TextColumn::make('property.title')
-                ->label('Property'),
+                ->label(__('filament.fields.property')),
             TextColumn::make('transaction_date')
                 ->date(),
             TextColumn::make('transaction_amount')
                 ->money('usd'),
             TextColumn::make('buyer.name')
-                ->label('Buyer'),
+                ->label(__('filament.fields.buyer')),
         ];
     }
 }

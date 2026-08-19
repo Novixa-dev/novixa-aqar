@@ -24,6 +24,16 @@ class PropertyTemplateResource extends Resource
 {
     protected static ?string $model = PropertyTemplate::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'قالب عقار' : 'Property Template';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'قوالب عقارات' : 'Property Templates';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document';
 
     public static function form(Schema $schema): Schema
@@ -35,7 +45,7 @@ class PropertyTemplateResource extends Resource
                     ->maxLength(255),
                 Textarea::make('content')
                     ->required()
-                    ->label('Template Content')
+                    ->label(__('filament.fields.template_content'))
                     ->helperText('Use placeholders like {title}, {description}, {price}, etc.')
                     ->rows(10),
             ]);

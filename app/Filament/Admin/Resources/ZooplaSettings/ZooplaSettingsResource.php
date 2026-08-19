@@ -23,6 +23,16 @@ class ZooplaSettingsResource extends Resource
 {
     protected static ?string $model = ZooplaSettings::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إعداد Zoopla' : 'Zoopla Setting';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إعدادات Zoopla' : 'Zoopla Settings';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
     protected static ?string $navigationLabel = 'Zoopla Settings';
@@ -46,25 +56,29 @@ class ZooplaSettingsResource extends Resource
             ->components([
                 TextInput::make('api_key')
                     ->required()
-                    ->label('Zoopla API Key')
+                    ->label(__('filament.fields.zoopla_api_key'))
                     ->password(),
                 TextInput::make('base_uri')
                     ->required()
-                    ->label('Zoopla API Base URI')
+                    ->label(__('filament.fields.zoopla_base_uri'))
                     ->url(),
                 TextInput::make('feed_id')
                     ->nullable()
-                    ->label('Feed ID'),
+                    ->label(__('filament.fields.feed_id')),
                 Select::make('sync_frequency')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'hourly' => 'كل ساعة',
+                        'daily' => 'يومياً',
+                        'weekly' => 'أسبوعياً',
+                    ] : [
                         'hourly' => 'Hourly',
                         'daily' => 'Daily',
                         'weekly' => 'Weekly',
                     ])
                     ->required()
-                    ->label('Sync Frequency'),
+                    ->label(__('filament.fields.sync_frequency')),
                 Toggle::make('is_active')
-                    ->label('Active')
+                    ->label(__('filament.fields.active'))
                     ->default(true),
             ]);
     }
@@ -73,10 +87,10 @@ class ZooplaSettingsResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('base_uri')->label('Base URI'),
-                TextColumn::make('feed_id')->label('Feed ID'),
-                TextColumn::make('sync_frequency')->label('Sync Frequency'),
-                ToggleColumn::make('is_active')->label('Active'),
+                TextColumn::make('base_uri')->label(__('filament.fields.base_uri')),
+                TextColumn::make('feed_id')->label(__('filament.fields.feed_id')),
+                TextColumn::make('sync_frequency')->label(__('filament.fields.sync_frequency')),
+                ToggleColumn::make('is_active')->label(__('filament.fields.active')),
             ])
             ->recordActions([
                 EditAction::make(),

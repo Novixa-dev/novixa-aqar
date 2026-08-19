@@ -30,29 +30,29 @@ class ManageGeneralSettings extends SettingsPage
                 Section::make('Site Information')
                     ->schema([
                         TextInput::make('site_name')
-                            ->label('Site Name')
+                            ->label(__('filament.fields.site_name'))
                             ->required()
                             ->maxLength(255),
                         TextInput::make('site_email')
-                            ->label('Site Email')
+                            ->label(__('filament.fields.site_email'))
                             ->email()
                             ->required()
                             ->maxLength(255),
                         TextInput::make('site_phone')
-                            ->label('Site Phone')
+                            ->label(__('filament.fields.site_phone'))
                             ->tel()
                             ->maxLength(255),
                         TextInput::make('site_address')
-                            ->label('Site Address')
+                            ->label(__('filament.fields.site_address'))
                             ->maxLength(255),
                         TextInput::make('site_country')
-                            ->label('Country')
+                            ->label(__('filament.fields.country'))
                             ->maxLength(255),
                         TextInput::make('site_currency')
-                            ->label('Currency Symbol')
+                            ->label(__('filament.fields.currency_symbol'))
                             ->maxLength(10),
                         TextInput::make('site_default_language')
-                            ->label('Default Language')
+                            ->label(__('filament.fields.default_language'))
                             ->maxLength(10)
                             ->default('en'),
                     ])
@@ -62,19 +62,19 @@ class ManageGeneralSettings extends SettingsPage
                     ->description('Add your social media profile URLs')
                     ->schema([
                         TextInput::make('facebook_url')
-                            ->label('Facebook URL')
+                            ->label(__('filament.fields.facebook_url'))
                             ->url()
                             ->maxLength(255),
                         TextInput::make('twitter_url')
-                            ->label('Twitter URL')
+                            ->label(__('filament.fields.twitter_url'))
                             ->url()
                             ->maxLength(255),
                         TextInput::make('github_url')
-                            ->label('GitHub URL')
+                            ->label(__('filament.fields.github_url'))
                             ->url()
                             ->maxLength(255),
                         TextInput::make('youtube_url')
-                            ->label('YouTube URL')
+                            ->label(__('filament.fields.youtube_url'))
                             ->url()
                             ->maxLength(255),
                     ])
@@ -83,7 +83,7 @@ class ManageGeneralSettings extends SettingsPage
                 Section::make('Footer')
                     ->schema([
                         Textarea::make('footer_copyright')
-                            ->label('Copyright Text')
+                            ->label(__('filament.fields.copyright_text'))
                             ->required()
                             ->maxLength(500)
                             ->rows(2),

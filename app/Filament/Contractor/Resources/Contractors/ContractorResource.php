@@ -27,6 +27,16 @@ class ContractorResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مقاول' : 'Contractor';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مقاولون' : 'Contractors';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user';
 
     protected static ?string $modelLabel = 'Contractor';

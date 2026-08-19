@@ -14,9 +14,9 @@ class ListBranches extends ListRecords
     protected function getTableColumns(): array
     {
         return [
-            TextColumn::make('name')->label('Name')->sortable(),
-            TextColumn::make('address')->label('Address')->sortable(),
-            TextColumn::make('phone_number')->label('Phone Number')->sortable(),
+            TextColumn::make('name')->label(__('filament.fields.name'))->sortable(),
+            TextColumn::make('address')->label(__('filament.fields.address'))->sortable(),
+            TextColumn::make('phone_number')->label(__('filament.fields.phone_number'))->sortable(),
         ];
     }
 }

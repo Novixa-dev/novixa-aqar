@@ -23,6 +23,16 @@ class PropertyFeatureResource extends Resource
 {
     protected static ?string $model = PropertyFeature::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'ميزة عقار' : 'Property Feature';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'ميزات عقارات' : 'Property Features';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema

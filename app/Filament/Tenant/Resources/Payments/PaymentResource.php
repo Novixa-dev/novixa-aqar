@@ -24,6 +24,16 @@ class PaymentResource extends Resource
 {
     protected static ?string $model = Payment::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'دفعة' : 'Payment';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'دفعات' : 'Payments';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-credit-card';
 
     protected static ?string $navigationLabel = 'Payments';
@@ -40,14 +50,22 @@ class PaymentResource extends Resource
                     ->required(),
                 Select::make('status')
                     ->required()
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد الانتظار',
+                        'completed' => 'مكتمل',
+                        'failed' => 'فشل',
+                    ] : [
                         'pending' => 'Pending',
                         'completed' => 'Completed',
                         'failed' => 'Failed',
                     ]),
                 Select::make('payment_method')
                     ->required()
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'credit_card' => 'بطاقة ائتمان',
+                        'bank_transfer' => 'تحويل بنكي',
+                        'paypal' => 'PayPal',
+                    ] : [
                         'credit_card' => 'Credit Card',
                         'bank_transfer' => 'Bank Transfer',
                         'paypal' => 'PayPal',
@@ -71,7 +89,11 @@ class PaymentResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد الانتظار',
+                        'completed' => 'مكتمل',
+                        'failed' => 'فشل',
+                    ] : [
                         'pending' => 'Pending',
                         'completed' => 'Completed',
                         'failed' => 'Failed',

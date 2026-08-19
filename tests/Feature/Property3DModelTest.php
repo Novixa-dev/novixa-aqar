@@ -68,7 +68,7 @@ class Property3DModelTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('3D Property Model');
-        $response->assertSee('3D Model View');
+        $response->assertSee('model-3d-container', false);
     }
 
     public function test_3d_model_viewer_does_not_appear_when_url_is_null()
@@ -85,7 +85,7 @@ class Property3DModelTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertDontSee('3D Property Model');
-        $response->assertDontSee('3D Model View');
+        $response->assertDontSee('model-3d-container', false);
     }
 
     public function test_property_model_3d_url_is_fillable()

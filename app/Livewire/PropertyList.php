@@ -110,6 +110,15 @@ class PropertyList extends Component
                 $query->where('property_type', $this->propertyType);
             }
 
+            $priceFilterActive = $this->minPrice > 0 || ($this->maxPrice < 1000000000 && $this->maxPrice > 0);
+
+            if ($priceFilterActive) {
+                // A price range only makes sense within one currency — comparing a raw
+                // number against listings priced in YER, SAR, and USD alike would be
+                // misleading. Scope to the app's default currency rather than mixing them.
+                $query->where('currency', config('currencies.default'));
+            }
+
             if ($this->minPrice > 0) {
                 $query->where('price', '>=', $this->minPrice);
             }

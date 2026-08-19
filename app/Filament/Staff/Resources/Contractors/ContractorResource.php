@@ -26,6 +26,16 @@ class ContractorResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مقاول' : 'Contractor';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مقاولون' : 'Contractors';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
 
     protected static ?string $modelLabel = 'Contractor';
@@ -36,31 +46,34 @@ public static function form(Schema $schema): Schema
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->label('Name'),
+                    ->label(__('filament.fields.name')),
                 TextInput::make('email')
                     ->email()
                     ->required()
-                    ->label('Email'),
+                    ->label(__('filament.fields.email')),
                 TextInput::make('password')
                     ->password()
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $context): bool => $context === 'create')
-                    ->label('Password'),
+                    ->label(__('filament.fields.password')),
                 TextInput::make('phone')
                     ->tel()
-                    ->label('Phone Number'),
+                    ->label(__('filament.fields.phone_number')),
                 Textarea::make('address')
                     ->rows(5)
-                    ->label('Address'),
+                    ->label(__('filament.fields.address')),
                 Select::make('role')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'contractor' => 'مقاول',
+                        'landlord' => 'مالك عقار',
+                    ] : [
                         'contractor' => 'Contractor',
                         'landlord' => 'Landlord',
                     ])
                     ->default('contractor')
                     ->required()
-                    ->label('Role'),
+                    ->label(__('filament.fields.role')),
             ]);
     }
 

@@ -17,7 +17,7 @@
                 {{ __('Find Your Dream Property in Yemen & Beyond') }}
             </h1>
             <p class="text-base sm:text-lg text-blue-100/90 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-                {{ __('Explore wide range of residential and commercial properties with Novixa Aqar.') }}
+                {{ __('Explore wide range of residential and commercial properties with Dar Hadhramaut Real Estate.') }}
             </p>
 
             <!-- Search Form Card -->
@@ -128,10 +128,7 @@
                         <div>
                             <div class="flex items-baseline justify-between mb-2">
                                 <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-                                    {{ number_format($property->price, 0) }} <span class="text-xs font-normal text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'ر.ي' : 'YER' }}</span>
-                                </div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400 font-mono">
-                                    ≈ ${{ number_format($property->price / 530, 0) }}
+                                    {{ $property->formatted_price }}
                                 </div>
                             </div>
                             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -189,7 +186,7 @@
     <!-- Why Choose Us Features Grid -->
     <section class="mb-12 py-12 bg-gray-50 dark:bg-gray-800/40 rounded-3xl p-8 lg:p-12 border border-gray-100 dark:border-gray-800">
         <div class="text-center max-w-2xl mx-auto mb-12">
-            <h2 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-3">{{ __('Why Choose Novixa Aqar?') }}</h2>
+            <h2 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-3">{{ __('Why Choose Dar Hadhramaut?') }}</h2>
             <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ __('We provide comprehensive real estate management and marketing solutions') }}</p>
         </div>
 

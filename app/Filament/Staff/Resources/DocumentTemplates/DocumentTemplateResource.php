@@ -21,6 +21,16 @@ class DocumentTemplateResource extends Resource
 {
     protected static ?string $model = DocumentTemplate::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'قالب مستند' : 'Document Template';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'قوالب مستندات' : 'Document Templates';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document';
 
     public static function form(Schema $schema): Schema
@@ -29,15 +39,15 @@ class DocumentTemplateResource extends Resource
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->label('Template Name'),
+                    ->label(__('filament.fields.template_name')),
                 FileUpload::make('file_path')
                     ->required()
-                    ->label('Template File')
+                    ->label(__('filament.fields.template_file'))
                     ->disk('public')
                     ->directory('document_templates')
                     ->acceptedFileTypes(['.doc', '.docx', '.pdf']),
                 Textarea::make('description')
-                    ->label('Description'),
+                    ->label(__('filament.fields.description')),
             ]);
     }
 
@@ -45,9 +55,9 @@ class DocumentTemplateResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Name'),
-                TextColumn::make('file_path')->label('File Path'),
-                TextColumn::make('description')->label('Description'),
+                TextColumn::make('name')->label(__('filament.fields.name')),
+                TextColumn::make('file_path')->label(__('filament.fields.file_path')),
+                TextColumn::make('description')->label(__('filament.fields.description')),
             ])
             ->filters([
                 //

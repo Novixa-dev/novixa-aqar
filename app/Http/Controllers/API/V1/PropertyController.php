@@ -18,17 +18,26 @@ class PropertyController
             ->where('team_id', $this->teamId($request))
             ->with(['images', 'features']);
 
-        foreach (['status', 'property_type', 'branch_id', 'bedrooms', 'country', 'is_featured'] as $field) {
+        foreach (['status', 'property_type', 'branch_id', 'bedrooms', 'country', 'currency', 'is_featured'] as $field) {
             if ($request->filled("filter.$field")) {
                 $query->where($field, $request->input("filter.$field"));
             }
         }
 
-        if ($request->filled('filter.min_price')) {
-            $query->where('price', '>=', $request->input('filter.min_price'));
-        }
-        if ($request->filled('filter.max_price')) {
-            $query->where('price', '<=', $request->input('filter.max_price'));
+        // A price range only means something within a single currency — 50,000 YER
+        // and 50,000 USD are not comparable numbers. If the caller didn't scope the
+        // range to one currency explicitly, scope it to the app default rather than
+        // silently comparing raw numbers across currencies.
+        if ($request->filled('filter.min_price') || $request->filled('filter.max_price')) {
+            if (! $request->filled('filter.currency')) {
+                $query->where('currency', config('currencies.default'));
+            }
+            if ($request->filled('filter.min_price')) {
+                $query->where('price', '>=', $request->input('filter.min_price'));
+            }
+            if ($request->filled('filter.max_price')) {
+                $query->where('price', '<=', $request->input('filter.max_price'));
+            }
         }
         if ($request->filled('search')) {
             $term = '%'.$request->string('search')->trim().'%';
@@ -65,12 +74,12 @@ class PropertyController
         $attributes['status'] ??= 'draft';
         $attributes['list_date'] ??= now()->toDateString();
         $profile = OrganisationProfile::where('team_id', $attributes['team_id'])->first();
-        $attributes['country'] = strtoupper($attributes['country'] ?? $profile?->primary_country ?? 'GB');
+        $attributes['country'] = strtoupper($attributes['country'] ?? $profile?->primary_country ?? 'YE');
         $attributes['currency'] = strtoupper(
             $attributes['currency']
                 ?? config("countries.{$attributes['country']}.currency")
                 ?? $profile?->currency
-                ?? 'GBP',
+                ?? config('currencies.default'),
         );
 
         $property = DB::transaction(function () use ($attributes, $featureNames) {

@@ -175,10 +175,7 @@
                         <div class="p-5">
                             <div class="flex items-baseline justify-between mb-2">
                                 <div class="text-xl font-black text-emerald-600 dark:text-emerald-400">
-                                    {{ number_format($property->price, 0) }} <span class="text-xs font-normal text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'ر.ي' : 'YER' }}</span>
-                                </div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400 font-mono">
-                                    ≈ ${{ number_format($property->price / 530, 0) }}
+                                    {{ $property->formatted_price }}
                                 </div>
                             </div>
 

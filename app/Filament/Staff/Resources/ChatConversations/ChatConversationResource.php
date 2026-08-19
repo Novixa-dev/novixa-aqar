@@ -18,6 +18,16 @@ class ChatConversationResource extends Resource
 {
     protected static ?string $model = ChatConversation::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'محادثة' : 'Chat Conversation';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'محادثات' : 'Chat Conversations';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static string | \UnitEnum | null $navigationGroup = 'Support';
@@ -32,13 +42,17 @@ class ChatConversationResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('user_id')
                             ->relationship('user', 'name')
-                            ->label('User')
+                            ->label(__('filament.fields.user'))
                             ->disabled(),
                         Forms\Components\TextInput::make('session_id')
-                            ->label('Session ID')
+                            ->label(__('filament.fields.session_id'))
                             ->disabled(),
                         Forms\Components\Select::make('status')
-                            ->options([
+                            ->options(fn () => app()->getLocale() === 'ar' ? [
+                                'active' => 'نشط',
+                                'escalated' => 'تم تصعيده',
+                                'closed' => 'مغلق',
+                            ] : [
                                 'active' => 'Active',
                                 'escalated' => 'Escalated',
                                 'closed' => 'Closed',
@@ -46,10 +60,10 @@ class ChatConversationResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('assigned_agent_id')
                             ->relationship('assignedAgent', 'name')
-                            ->label('Assigned Agent')
+                            ->label(__('filament.fields.assigned_agent'))
                             ->searchable(),
                         Forms\Components\DateTimePicker::make('escalated_at')
-                            ->label('Escalated At')
+                            ->label(__('filament.fields.escalated_at'))
                             ->disabled(),
                     ])
                     ->columns(2),
@@ -61,10 +75,10 @@ class ChatConversationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
+                    ->label(__('filament.fields.id'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('User')
+                    ->label(__('filament.fields.user'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
@@ -76,26 +90,30 @@ class ChatConversationResource extends Resource
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('assignedAgent.name')
-                    ->label('Assigned Agent')
+                    ->label(__('filament.fields.assigned_agent'))
                     ->searchable()
                     ->default('—'),
                 Tables\Columns\TextColumn::make('messages_count')
                     ->counts('messages')
-                    ->label('Messages')
+                    ->label(__('filament.fields.messages'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('escalated_at')
-                    ->label('Escalated At')
+                    ->label(__('filament.fields.escalated_at'))
                     ->dateTime()
                     ->sortable()
                     ->default('—'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Started At')
+                    ->label(__('filament.fields.started_at'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'active' => 'نشط',
+                        'escalated' => 'تم تصعيده',
+                        'closed' => 'مغلق',
+                    ] : [
                         'active' => 'Active',
                         'escalated' => 'Escalated',
                         'closed' => 'Closed',

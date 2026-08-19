@@ -27,6 +27,16 @@ class ReviewsRelationManager extends RelationManager
 {
     protected static string $relationship = 'reviews';
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'تقييم' : 'Review';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'التقييمات' : 'Reviews';
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -49,7 +59,7 @@ class ReviewsRelationManager extends RelationManager
         return $table
             ->columns([
                 TextColumn::make('user.name')
-                    ->label('User'),
+                    ->label(__('filament.fields.user')),
                 TextColumn::make('rating'),
                 TextColumn::make('comment')
                     ->limit(50),
@@ -61,8 +71,8 @@ class ReviewsRelationManager extends RelationManager
             ->filters([
                 SelectFilter::make('approved')
                     ->options([
-                        '1' => 'Approved',
-                        '0' => 'Not Approved',
+                        '1' => app()->getLocale() === 'ar' ? 'موافق عليه' : 'Approved',
+                        '0' => app()->getLocale() === 'ar' ? 'غير موافق عليه' : 'Not Approved',
                     ]),
             ])
             ->headerActions([

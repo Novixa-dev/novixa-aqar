@@ -18,8 +18,8 @@ class BranchSeeder extends Seeder
         foreach ($teams as $team) {
             Branch::create([
                 'name' => $team->name . ' Branch',
-                'address' => '456 Oak St, City, Country',
-                'phone_number' => '+1987654321',
+                'address' => 'شارع الملكة أروى، حي فوه، المكلا، حضرموت، اليمن',
+                'phone_number' => '+967 776 248 526',
                 'team_id' => $team->id,
             ]);
         }

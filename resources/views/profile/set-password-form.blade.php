@@ -22,7 +22,7 @@
     </x-slot>
 
     <x-slot name="actions">
-        <x-action-message class="mr-3" on="saved">
+        <x-action-message class="me-3" on="saved">
             {{ __('Password saved, please refresh.') }}
         </x-action-message>
 

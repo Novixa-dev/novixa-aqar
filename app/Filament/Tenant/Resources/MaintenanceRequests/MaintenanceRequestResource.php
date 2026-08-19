@@ -30,6 +30,16 @@ class MaintenanceRequestResource extends Resource
 {
     protected static ?string $model = MaintenanceRequest::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'طلب صيانة' : 'Maintenance Request';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'طلبات صيانة' : 'Maintenance Requests';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-wrench';
 
     public static function form(Schema $schema): Schema
@@ -42,7 +52,11 @@ class MaintenanceRequestResource extends Resource
                 Textarea::make('description')
                     ->required(),
                 Select::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد الانتظار',
+                        'in_progress' => 'قيد التنفيذ',
+                        'completed' => 'مكتمل',
+                    ] : [
                         'pending' => 'Pending',
                         'in_progress' => 'In Progress',
                         'completed' => 'Completed',
@@ -59,7 +73,11 @@ class MaintenanceRequestResource extends Resource
                         TextInput::make('description')
                             ->required(),
                         Select::make('status')
-                            ->options([
+                            ->options(fn () => app()->getLocale() === 'ar' ? [
+                                'pending' => 'قيد الانتظار',
+                                'in_progress' => 'قيد التنفيذ',
+                                'completed' => 'مكتمل',
+                            ] : [
                                 'pending' => 'Pending',
                                 'in_progress' => 'In Progress',
                                 'completed' => 'Completed',
@@ -80,13 +98,17 @@ class MaintenanceRequestResource extends Resource
                 TextColumn::make('requested_date')
                     ->date(),
                 TextColumn::make('property.title')
-                    ->label('Property'),
+                    ->label(__('filament.fields.property')),
                 TextColumn::make('workOrders.status')
-                    ->label('Work Order Status'),
+                    ->label(__('filament.fields.work_order_status')),
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد الانتظار',
+                        'in_progress' => 'قيد التنفيذ',
+                        'completed' => 'مكتمل',
+                    ] : [
                         'pending' => 'Pending',
                         'in_progress' => 'In Progress',
                         'completed' => 'Completed',
@@ -108,7 +130,7 @@ class MaintenanceRequestResource extends Resource
                             ->success()
                             ->send();
                     })
-                    ->label('Create Work Order'),
+                    ->label(__('filament.fields.create_work_order')),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

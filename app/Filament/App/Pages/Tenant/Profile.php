@@ -36,7 +36,7 @@ class Profile extends Page
                     ->required()
                     ->maxLength(255),
                 TextInput::make('average_rating')
-                    ->label('Average Rating')
+                    ->label(__('filament.fields.average_rating'))
                     ->disabled()
                     ->afterStateHydrated(function (TextInput $component, $state) {
                         $component->state(number_format($state, 2));

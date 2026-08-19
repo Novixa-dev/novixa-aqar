@@ -75,7 +75,7 @@ return new class extends Migration
             $table->foreignId('contact_id')->constrained()->cascadeOnDelete();
             $table->foreignId('negotiator_id')->nullable()->constrained('users')->nullOnDelete();
             $table->decimal('amount', 14, 2);
-            $table->char('currency', 3)->default('GBP');
+            $table->char('currency', 3)->default('YER');
             $table->string('status')->default('pending');
             $table->string('mortgage_status')->nullable();
             $table->text('chain_information')->nullable();

@@ -20,7 +20,7 @@ class PropertyTaxEstimator extends Component
     public function mount($property)
     {
         $this->property = $property;
-        $this->country = $property->country ?? 'UK';
+        $this->country = $property->country ?? 'YE';
     }
 
     public function calculateTax()

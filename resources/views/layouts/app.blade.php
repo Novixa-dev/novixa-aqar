@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', app()->getLocale() === 'ar' ? 'شركة الأفق العقارية | أفق اليمن للعقارات والاستثمار' : 'Al-Ofuq Real Estate | Yemen Horizon Properties')</title>
-    <meta name="description" content="{{ app()->getLocale() === 'ar' ? 'شركة الأفق العقارية - بوابتك الأولى للتملك والاستثمار العقاري في اليمن (حضرموت، صنعاء، عدن). وساطة عقارية، إدارة أملاك، وتثمين ذكي.' : 'Al-Ofuq Real Estate - Your premier gateway for real estate investment and ownership in Yemen. Property brokerage, management, and smart valuation.' }}">
-    <meta property="og:site_name" content="Al-Ofuq Real Estate | شركة الأفق العقارية">
+    <title>@yield('title', app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut Real Estate')</title>
+    <meta name="description" content="{{ app()->getLocale() === 'ar' ? 'دار حضرموت العقارية - بوابتك الأولى للتملك والاستثمار العقاري في اليمن (حضرموت، صنعاء، عدن). وساطة عقارية، إدارة أملاك، وتثمين عادل.' : 'Dar Hadhramaut Real Estate - Your premier gateway for real estate investment and ownership in Yemen. Property brokerage, management, and fair valuation.' }}">
+    <meta property="og:site_name" content="Dar Hadhramaut Real Estate | دار حضرموت العقارية">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
 

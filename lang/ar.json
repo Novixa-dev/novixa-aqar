@@ -19,7 +19,7 @@
     "Search properties...": "ابحث عن عقارات، مناطق، أحياء...",
     "Search": "بحث",
     "Find Your Dream Property in Yemen & Beyond": "اعثر على عقارك المثالي بكل سهولة وذكاء",
-    "Explore wide range of residential and commercial properties with Novixa Aqar.": "استكشف أوسع تشكيلة من العقارات السكنية والتجارية والاستثمارية مع منصة نوفيكسا عقار الذكية.",
+    "Explore wide range of residential and commercial properties with Dar Hadhramaut Real Estate.": "استكشف أوسع تشكيلة من العقارات السكنية والتجارية والاستثمارية مع دار حضرموت العقارية.",
     "Property Type": "نوع العقار",
     "All Types": "جميع الأنواع",
     "Location": "الموقع والمدينة",
@@ -38,7 +38,7 @@
     "Sq Ft": "م²",
     "Interactive Property Map": "خريطة العقارات التفاعلية",
     "Explore listings geographically across cities and neighborhoods": "استعرض العقارات جغرافياً في المدن والمناطق مع تفاصيل حية ومباشرة",
-    "Why Choose Novixa Aqar?": "لماذا تختار منصة نوفيكسا عقار؟",
+    "Why Choose Dar Hadhramaut?": "لماذا تختار دار حضرموت العقارية؟",
     "Smart Solutions": "حلول عقارية ذكية",
     "Interactive virtual tours, 3D property models and expert valuations.": "جولات افتراضية تفاعلية، نماذج ثلاثية الأبعاد للعقارات، وتقييمات دقيقة من خبراء.",
     "Verified Listings": "عقارات موثوقة ومفحوصة",
@@ -78,5 +78,11 @@
     "Stay Updated with Market Insights": "ابق على اطلاع بآخر أخبار وتحليلات السوق العقاري",
     "Read More": "اقرأ المزيد",
     "Featured": "مميز",
-    "All rights reserved.": "جميع الحقوق محفوظة."
+    "All rights reserved.": "جميع الحقوق محفوظة.",
+    "Select a role": "اختر نوع الحساب",
+    "Tenant": "مستأجر",
+    "Buyer": "مشتري",
+    "Seller": "بائع",
+    "Landlord": "مالك عقار",
+    "Contractor": "مقاول"
 }

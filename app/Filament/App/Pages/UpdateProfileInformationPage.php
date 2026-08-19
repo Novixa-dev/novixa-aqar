@@ -34,10 +34,10 @@ class UpdateProfileInformationPage extends Page
     {
         return [
             TextInput::make('name')
-                ->label('Name')
+                ->label(__('filament.fields.name'))
                 ->required(),
             TextInput::make('email')
-                ->label('Email Address')
+                ->label(__('filament.fields.email_address'))
                 ->required(),
         ];
     }

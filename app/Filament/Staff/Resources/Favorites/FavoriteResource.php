@@ -25,6 +25,16 @@ class FavoriteResource extends Resource
 {
     protected static ?string $model = Favorite::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مفضلة' : 'Favorite';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مفضلات' : 'Favorites';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-star';
 
     public static function form(Schema $schema): Schema
@@ -43,11 +53,11 @@ class FavoriteResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('property.title')
-                    ->label('Properties')
+                    ->label(__('filament.fields.properties'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('user.name')
-                    ->label('User')
+                    ->label(__('filament.fields.user'))
                     ->searchable()
                     ->sortable(),
                 

@@ -23,6 +23,16 @@ class LeaseAgreementResource extends Resource
 {
     protected static ?string $model = LeaseAgreement::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'عقد إيجار' : 'Lease Agreement';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'عقود إيجار' : 'Lease Agreements';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
     public static function form(Schema $schema): Schema

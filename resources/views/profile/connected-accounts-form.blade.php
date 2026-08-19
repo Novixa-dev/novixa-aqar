@@ -8,7 +8,7 @@
     </x-slot>
 
     <x-slot name="content">
-        <div class="p-4 bg-red-500/10 text-red-500 border-l-4 border-red-600 rounded font-medium text-sm">
+        <div class="p-4 bg-red-500/10 text-red-500 border-s-4 border-red-600 rounded font-medium text-sm">
             {{ __('If you feel any of your connected accounts have been compromised, you should disconnect them immediately and change your password.') }}
         </div>
 
@@ -72,7 +72,7 @@
                     {{ __('Cancel') }}
                 </x-secondary-button>
 
-                <x-danger-button class="ml-2" wire:click="removeConnectedAccount" wire:loading.attr="disabled">
+                <x-danger-button class="ms-2" wire:click="removeConnectedAccount" wire:loading.attr="disabled">
                     {{ __('Remove Account') }}
                 </x-danger-button>
             </x-slot>

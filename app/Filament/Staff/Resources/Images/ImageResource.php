@@ -28,6 +28,16 @@ class ImageResource extends Resource
 {
     protected static ?string $model = Image::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'صورة' : 'Image';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'صور' : 'Images';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
@@ -47,11 +57,11 @@ class ImageResource extends Resource
             ->columns([
                 ImageColumn::make('image'),
                 TextColumn::make('property.title')
-                    ->label('Property')
+                    ->label(__('filament.fields.property'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('user.name')
-                    ->label('User')
+                    ->label(__('filament.fields.user'))
                     ->searchable()
                     ->sortable(),
             ])

@@ -217,6 +217,7 @@ class Property extends Model implements HasMedia
     {
         return Property::where('id', '!=', $this->id)
             ->where('property_type', $this->property_type)
+            ->where('currency', $this->currency)
             ->whereBetween('price', [$this->price * 0.8, $this->price * 1.2])
             ->whereBetween('bedrooms', [$this->bedrooms - 1, $this->bedrooms + 1])
             ->whereBetween('bathrooms', [$this->bathrooms - 1, $this->bathrooms + 1])
@@ -450,9 +451,16 @@ class Property extends Model implements HasMedia
         return $query->where('category', $category);
     }
 
-    public function scopePriceRange(Builder $query, $min, $max): Builder
+    /**
+     * A numeric price range only makes sense within one currency — comparing
+     * raw numbers across YER/SAR/USD would be misleading — so this always
+     * scopes to a single currency (the app default unless one is given).
+     */
+    public function scopePriceRange(Builder $query, $min, $max, ?string $currency = null): Builder
     {
-        return $query->whereBetween('price', [$min, $max]);
+        return $query
+            ->where('currency', $currency ?? config('currencies.default'))
+            ->whereBetween('price', [$min, $max]);
     }
 
     public function scopeBedrooms(Builder $query, $min, $max): Builder
@@ -690,5 +698,14 @@ class Property extends Model implements HasMedia
         ];
 
         return $types[$this->property_type] ?? ($this->property_type ?: (app()->getLocale() === 'ar' ? 'عقار سكني' : 'Residential'));
+    }
+
+    /**
+     * The listing price formatted with its own currency's symbol/decimals —
+     * never assumes every property shares one global site currency.
+     */
+    public function getFormattedPriceAttribute(): string
+    {
+        return app(\App\Services\CurrencyService::class)->format($this->price, $this->currency);
     }
 }

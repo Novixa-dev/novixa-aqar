@@ -27,6 +27,16 @@ class DocumentResource extends Resource
 {
     protected static ?string $model = Document::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مستند' : 'Document';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مستندات' : 'Documents';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document';
 
     public static function form(Schema $schema): Schema

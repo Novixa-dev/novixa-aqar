@@ -14,7 +14,7 @@ class AdvancedPropertySearch extends Component
 
     public $search = '';
     public $minPrice = 0;
-    public $maxPrice = 1000000;
+    public $maxPrice = 200000000; // Realistic ceiling for YER-denominated listings, the app default currency
     public $minBedrooms = 0;
     public $maxBedrooms = 10;
     public $minBathrooms = 0;

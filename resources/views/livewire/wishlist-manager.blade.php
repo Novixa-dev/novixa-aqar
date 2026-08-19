@@ -4,39 +4,43 @@
             <!-- Header -->
             <div class="mb-8">
                 <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-2">
-                    قائمة المفضلة
+                    {{ app()->getLocale() === 'ar' ? 'قائمة المفضلة' : 'My Wishlist' }}
                 </h1>
                 <p class="text-lg text-gray-600 dark:text-gray-400">
-                    {{ $totalFavorites }} {{ Str::plural('عقار', $totalFavorites) }} محفظة
+                    @if(app()->getLocale() === 'ar')
+                        {{ $totalFavorites }} {{ Str::plural('عقار', $totalFavorites) }} محفظة
+                    @else
+                        {{ $totalFavorites }} saved {{ Str::plural('property', $totalFavorites) }}
+                    @endif
                 </p>
             </div>
 
             <!-- Search and Sort -->
             <div class="mb-6 flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
-                    <label for="search" class="sr-only">البحث</label>
+                    <label for="search" class="sr-only">{{ app()->getLocale() === 'ar' ? 'البحث' : 'Search' }}</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <input type="text" 
-                               wire:model.live.debounce.300ms="search" 
+                        <input type="text"
+                               wire:model.live.debounce.300ms="search"
                                id="search"
-                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                               placeholder="البحث في القائمة المفضلة...">
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                               placeholder="{{ app()->getLocale() === 'ar' ? 'البحث في القائمة المفضلة...' : 'Search your wishlist...' }}">
                     </div>
                 </div>
-                
+
                 <div class="flex gap-2">
-                    <button wire:click="sortByColumn('created_at')" 
+                    <button wire:click="sortByColumn('created_at')"
                             class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
-                        تاريخ الإضافة @if($sortBy === 'created_at') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
+                        {{ app()->getLocale() === 'ar' ? 'تاريخ الإضافة' : 'Date Added' }} @if($sortBy === 'created_at') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
                     </button>
-                    <button wire:click="sortByColumn('price')" 
+                    <button wire:click="sortByColumn('price')"
                             class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
-                        السعر @if($sortBy === 'price') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
+                        {{ app()->getLocale() === 'ar' ? 'السعر' : 'Price' }} @if($sortBy === 'price') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
                     </button>
                 </div>
             </div>
@@ -54,8 +58,8 @@
                         <div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 relative">
                             <!-- Remove from Wishlist Button -->
                             <button wire:click="removeFavorite({{ $property->id }})"
-                                    class="absolute top-3 right-3 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-red-50 transition-colors"
-                                    title="إزالة من المفضلة">
+                                    class="absolute top-3 end-3 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-red-50 transition-colors"
+                                    title="{{ app()->getLocale() === 'ar' ? 'إزالة من المفضلة' : 'Remove from wishlist' }}">
                                 <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
                                 </svg>
@@ -68,7 +72,7 @@
                                          alt="{{ $property->title }}">
                                 @else
                                     <div class="rounded-t-lg w-full h-48 bg-gray-300 flex items-center justify-center">
-                                        <span class="text-gray-500">لا توجد صورة</span>
+                                        <span class="text-gray-500">{{ app()->getLocale() === 'ar' ? 'لا توجد صورة' : 'No image' }}</span>
                                     </div>
                                 @endif
                             </a>
@@ -81,20 +85,20 @@
                                 </a>
                                 
                                 <p class="mb-2 text-sm text-gray-600 dark:text-gray-400">
-                                    <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="inline w-4 h-4 me-1" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
                                     </svg>
                                     {{ $property->location }}
                                 </p>
 
                                 <div class="mb-3 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                                    <span>{{ $property->bedrooms }} غرف</span>
-                                    <span>{{ $property->bathrooms }} حمامات</span>
-                                    <span>{{ number_format($property->area_sqft) }} م²</span>
+                                    <span>{{ $property->bedrooms }} {{ app()->getLocale() === 'ar' ? 'غرف' : 'beds' }}</span>
+                                    <span>{{ $property->bathrooms }} {{ app()->getLocale() === 'ar' ? 'حمامات' : 'baths' }}</span>
+                                    <span>{{ number_format($property->area_sqft) }} {{ app()->getLocale() === 'ar' ? 'م²' : 'm²' }}</span>
                                 </div>
 
                                 <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                                    {{ number_format($property->price) }} {{ app(\App\Settings\GeneralSettings::class)->site_currency }}
+                                    {{ $property->formatted_price }}
                                 </p>
                             </div>
                         </div>
@@ -110,12 +114,12 @@
                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                     </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">لا توجد عقارات في المفضلة</h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">تصفح العقارات وأضف ما يعجبك لقائمة المفضلة.</p>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'لا توجد عقارات في المفضلة' : 'No properties in your wishlist' }}</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'تصفح العقارات وأضف ما يعجبك لقائمة المفضلة.' : 'Browse properties and add the ones you like to your wishlist.' }}</p>
                     <div class="mt-6">
-                        <a href="{{ route('property.list') }}" 
+                        <a href="{{ route('property.list') }}"
                            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                            تصفح العقارات
+                            {{ app()->getLocale() === 'ar' ? 'تصفح العقارات' : 'Browse Properties' }}
                         </a>
                     </div>
                 </div>

@@ -6,16 +6,16 @@
             <!-- Floor Plan Image Upload -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Floor Plan Image
+                    {{ app()->getLocale() === 'ar' ? 'صورة المخطط' : 'Floor Plan Image' }}
                 </label>
-                <input 
-                    type="file" 
+                <input
+                    type="file"
                     @change="handleImageUpload($event)"
                     accept="image/*"
                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 />
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Upload a floor plan image (PNG, JPG, or SVG)
+                    {{ app()->getLocale() === 'ar' ? 'ارفع صورة المخطط (PNG أو JPG أو SVG)' : 'Upload a floor plan image (PNG, JPG, or SVG)' }}
                 </p>
             </div>
 
@@ -36,46 +36,46 @@
                     :class="currentTool === 'room' ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'"
                     class="px-4 py-2 rounded-lg font-medium hover:opacity-80 transition"
                 >
-                    Add Room
+                    {{ app()->getLocale() === 'ar' ? 'إضافة غرفة' : 'Add Room' }}
                 </button>
-                <button 
+                <button
                     type="button"
                     @click="setTool('marker')"
                     :class="currentTool === 'marker' ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'"
                     class="px-4 py-2 rounded-lg font-medium hover:opacity-80 transition"
                 >
-                    Add Marker
+                    {{ app()->getLocale() === 'ar' ? 'إضافة علامة' : 'Add Marker' }}
                 </button>
-                <button 
+                <button
                     type="button"
                     @click="clearAnnotations()"
                     class="px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition"
                 >
-                    Clear All
+                    {{ app()->getLocale() === 'ar' ? 'مسح الكل' : 'Clear All' }}
                 </button>
             </div>
 
             <!-- Annotation List -->
             <div x-show="annotations.length > 0" class="space-y-2">
-                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Annotations:</h4>
+                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ app()->getLocale() === 'ar' ? 'العلامات:' : 'Annotations:' }}</h4>
                 <template x-for="(annotation, index) in annotations" :key="index">
                     <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
                         <div class="flex items-center gap-2">
                             <span class="text-sm font-medium" x-text="annotation.type === 'room' ? '🏠' : '📍'"></span>
-                            <input 
-                                type="text" 
+                            <input
+                                type="text"
                                 x-model="annotation.label"
                                 @input="updateState()"
-                                placeholder="Label"
+                                placeholder="{{ app()->getLocale() === 'ar' ? 'التسمية' : 'Label' }}"
                                 class="text-sm border-gray-300 dark:border-gray-600 rounded px-2 py-1"
                             />
                         </div>
-                        <button 
+                        <button
                             type="button"
                             @click="removeAnnotation(index)"
                             class="text-red-500 hover:text-red-700"
                         >
-                            Remove
+                            {{ app()->getLocale() === 'ar' ? 'إزالة' : 'Remove' }}
                         </button>
                     </div>
                 </template>

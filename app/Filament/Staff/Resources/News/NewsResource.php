@@ -34,6 +34,16 @@ class NewsResource extends Resource
 {
     protected static ?string $model = News::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مقال إخباري' : 'News Article';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مقالات إخبارية' : 'News Articles';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-newspaper';
 
     protected static string | \UnitEnum | null $navigationGroup = 'Content';
@@ -73,16 +83,16 @@ class NewsResource extends Resource
                         'codeBlock',
                     ]),
                 DateTimePicker::make('published_at')
-                    ->label('Publish Date & Time')
+                    ->label(__('filament.fields.publish_date_time'))
                     ->helperText('Leave empty to save as draft'),
                 Select::make('author_id')
-                    ->label('Author')
+                    ->label(__('filament.fields.author'))
                     ->relationship('author', 'name')
                     ->searchable()
                     ->preload()
                     ->default(fn () => auth()->id()),
                 Toggle::make('is_featured')
-                    ->label('Featured Article')
+                    ->label(__('filament.fields.featured_article'))
                     ->helperText('Featured articles will be highlighted on the homepage'),
             ]);
     }
@@ -101,12 +111,12 @@ class NewsResource extends Resource
                     ->toggleable(),
                 IconColumn::make('is_featured')
                     ->boolean()
-                    ->label('Featured')
+                    ->label(__('filament.fields.featured'))
                     ->toggleable(),
                 TextColumn::make('published_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Published')
+                    ->label(__('filament.fields.published'))
                     ->badge()
                     ->color(fn ($state) => $state === null ? 'gray' : ($state->isFuture() ? 'warning' : 'success'))
                     ->formatStateUsing(fn ($state) => $state === null ? 'Draft' : $state->format('M d, Y H:i')),
@@ -121,13 +131,13 @@ class NewsResource extends Resource
             ])
             ->filters([
                 TernaryFilter::make('is_featured')
-                    ->label('Featured'),
+                    ->label(__('filament.fields.featured')),
                 SelectFilter::make('author')
                     ->relationship('author', 'name')
                     ->searchable()
                     ->preload(),
                 TernaryFilter::make('published')
-                    ->label('Published Status')
+                    ->label(__('filament.fields.published_status'))
                     ->queries(
                         true: fn ($query) => $query->published(),
                         false: fn ($query) => $query->whereNull('published_at'),

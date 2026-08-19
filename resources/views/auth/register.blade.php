@@ -32,12 +32,12 @@
                 <div class="mt-4">
                     <x-label for="role" value="{{ __('Role') }}" />
                     <select id="role" name="role" class="block mt-1 w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" required>
-                        <option value="">Select a role</option>
-                        <option value="tenant">Tenant</option>
-                        <option value="buyer">Buyer</option>
-                        <option value="seller">Seller</option>
-                        <option value="landlord">Landlord</option>
-                        <option value="contractor">Contractor</option>
+                        <option value="">{{ __('Select a role') }}</option>
+                        <option value="tenant">{{ __('Tenant') }}</option>
+                        <option value="buyer">{{ __('Buyer') }}</option>
+                        <option value="seller">{{ __('Seller') }}</option>
+                        <option value="landlord">{{ __('Landlord') }}</option>
+                        <option value="contractor">{{ __('Contractor') }}</option>
                     </select>
                 </div>
 
@@ -46,7 +46,7 @@
                         {{ __('Already registered?') }}
                     </a>
 
-                    <x-button class="inline-flex items-center px-4 py-2 bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150 ml-4">
+                    <x-button class="inline-flex items-center px-4 py-2 bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150 ms-4">
                         {{ __('Register') }}
                     </x-button>
                 </div>

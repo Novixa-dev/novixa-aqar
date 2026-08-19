@@ -31,23 +31,23 @@ class ViewUser extends ViewRecord
                     ->columns(2)
                     ->schema([
                         ImageEntry::make('profile_photo_url')
-                            ->label('Profile Photo')
+                            ->label(__('filament.fields.profile_photo'))
                             ->circular()
                             ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&color=7F9CF5&background=EBF4FF')
                             ->columnSpanFull(),
                         
                         TextEntry::make('name')
-                            ->label('Full Name')
+                            ->label(__('filament.fields.full_name'))
                             ->size('lg')
                             ->weight('bold'),
                         
                         TextEntry::make('email')
-                            ->label('Email Address')
+                            ->label(__('filament.fields.email_address'))
                             ->copyable()
                             ->icon('heroicon-o-envelope'),
                         
                         IconEntry::make('email_verified_at')
-                            ->label('Email Verified')
+                            ->label(__('filament.fields.email_verified'))
                             ->boolean()
                             ->trueIcon('heroicon-o-check-badge')
                             ->falseIcon('heroicon-o-x-circle')
@@ -55,7 +55,7 @@ class ViewUser extends ViewRecord
                             ->falseColor('danger'),
                         
                         TextEntry::make('email_verified_at')
-                            ->label('Verified At')
+                            ->label(__('filament.fields.verified_at'))
                             ->dateTime('M d, Y H:i')
                             ->placeholder('Not verified'),
                     ]),
@@ -64,7 +64,7 @@ class ViewUser extends ViewRecord
                     ->columns(2)
                     ->schema([
                         TextEntry::make('roles.name')
-                            ->label('Assigned Roles')
+                            ->label(__('filament.fields.assigned_roles'))
                             ->badge()
                             ->color('success')
                             ->formatStateUsing(fn ($state) => ucfirst($state))
@@ -72,7 +72,7 @@ class ViewUser extends ViewRecord
                             ->columnSpanFull(),
                         
                         TextEntry::make('permissions.name')
-                            ->label('Direct Permissions')
+                            ->label(__('filament.fields.direct_permissions'))
                             ->badge()
                             ->color('info')
                             ->placeholder('No direct permissions')
@@ -83,18 +83,18 @@ class ViewUser extends ViewRecord
                     ->columns(2)
                     ->schema([
                         TextEntry::make('teams.name')
-                            ->label('Teams')
+                            ->label(__('filament.fields.teams'))
                             ->badge()
                             ->color('primary')
                             ->placeholder('No teams')
                             ->columnSpanFull(),
                         
                         TextEntry::make('currentTeam.name')
-                            ->label('Current Team')
+                            ->label(__('filament.fields.current_team'))
                             ->placeholder('No current team'),
                         
                         TextEntry::make('ownedTeams.name')
-                            ->label('Owned Teams')
+                            ->label(__('filament.fields.owned_teams'))
                             ->badge()
                             ->color('warning')
                             ->placeholder('No owned teams'),
@@ -104,24 +104,24 @@ class ViewUser extends ViewRecord
                     ->columns(2)
                     ->schema([
                         TextEntry::make('created_at')
-                            ->label('Account Created')
+                            ->label(__('filament.fields.account_created'))
                             ->dateTime('M d, Y H:i')
                             ->icon('heroicon-o-calendar'),
                         
                         TextEntry::make('updated_at')
-                            ->label('Last Updated')
+                            ->label(__('filament.fields.last_updated'))
                             ->dateTime('M d, Y H:i')
                             ->since()
                             ->icon('heroicon-o-clock'),
                         
                         TextEntry::make('two_factor_confirmed_at')
-                            ->label('Two-Factor Enabled')
+                            ->label(__('filament.fields.two_factor_enabled'))
                             ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No')
                             ->badge()
                             ->color(fn ($state) => $state ? 'success' : 'gray'),
                         
                         TextEntry::make('profile_photo_path')
-                            ->label('Profile Photo Path')
+                            ->label(__('filament.fields.profile_photo_path'))
                             ->placeholder('No custom photo')
                             ->limit(50),
                     ]),

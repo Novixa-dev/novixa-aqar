@@ -24,6 +24,16 @@ class LeadResource extends Resource
 {
     protected static ?string $model = Lead::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'عميل محتمل' : 'Lead';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'عملاء محتملون' : 'Leads';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
     public static function form(Schema $schema): Schema
@@ -34,7 +44,12 @@ class LeadResource extends Resource
                 TextInput::make('email')->email()->required(),
                 TextInput::make('phone'),
                 Select::make('interest')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'buying' => 'شراء',
+                        'selling' => 'بيع',
+                        'renting' => 'إيجار',
+                        'other' => 'أخرى',
+                    ] : [
                         'buying' => 'Buying',
                         'selling' => 'Selling',
                         'renting' => 'Renting',
@@ -42,7 +57,13 @@ class LeadResource extends Resource
                     ]),
                 Textarea::make('message'),
                 Select::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'new' => 'جديد',
+                        'contacted' => 'تم التواصل',
+                        'qualified' => 'مؤهل',
+                        'lost' => 'ملغي',
+                        'converted' => 'تم التحويل',
+                    ] : [
                         'new' => 'New',
                         'contacted' => 'Contacted',
                         'qualified' => 'Qualified',
@@ -54,7 +75,11 @@ class LeadResource extends Resource
                     ->disabled()
                     ->helperText('Score is automatically calculated'),
                 Select::make('category')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'hot' => 'مرتفع الاهتمام',
+                        'warm' => 'متوسط الاهتمام',
+                        'cold' => 'منخفض الاهتمام',
+                    ] : [
                         'hot' => 'Hot',
                         'warm' => 'Warm',
                         'cold' => 'Cold',
@@ -87,7 +112,13 @@ class LeadResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'new' => 'جديد',
+                        'contacted' => 'تم التواصل',
+                        'qualified' => 'مؤهل',
+                        'lost' => 'ملغي',
+                        'converted' => 'تم التحويل',
+                    ] : [
                         'new' => 'New',
                         'contacted' => 'Contacted',
                         'qualified' => 'Qualified',
@@ -95,7 +126,12 @@ class LeadResource extends Resource
                         'converted' => 'Converted',
                     ]),
                 SelectFilter::make('interest')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'buying' => 'شراء',
+                        'selling' => 'بيع',
+                        'renting' => 'إيجار',
+                        'other' => 'أخرى',
+                    ] : [
                         'buying' => 'Buying',
                         'selling' => 'Selling',
                         'renting' => 'Renting',

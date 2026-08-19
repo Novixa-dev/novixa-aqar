@@ -24,6 +24,16 @@ class TeamResource extends Resource
 {
     protected static ?string $model = Team::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'فريق' : 'Team';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'فرق' : 'Teams';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
     protected static string | \UnitEnum | null $navigationGroup = 'Administration';
@@ -46,7 +56,7 @@ class TeamResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('owner.name')->label('Owner'),
+                TextColumn::make('owner.name')->label(__('filament.fields.owner')),
                 TextColumn::make('created_at')
                     ->dateTime(),
             ])

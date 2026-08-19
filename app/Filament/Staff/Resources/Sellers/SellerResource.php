@@ -24,6 +24,16 @@ class SellerResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'بائع' : 'Seller';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'بائعون' : 'Sellers';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
 
     protected static ?string $modelLabel = 'Seller';

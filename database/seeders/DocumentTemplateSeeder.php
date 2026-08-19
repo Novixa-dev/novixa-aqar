@@ -11,22 +11,22 @@ class DocumentTemplateSeeder extends Seeder
     {
         $templates = [
             [
-                'type' => 'uk_ast_agreement',
-                'name' => 'UK Assured Shorthold Tenancy Agreement',
-                'description' => 'UK-specific Assured Shorthold Tenancy agreement template compliant with Housing Act 1988',
-                'view_path' => 'document_templates.uk_ast_agreement',
+                'type' => 'yemen_residential_lease_agreement',
+                'name' => 'Yemeni Residential Lease Agreement (Demo Template)',
+                'description' => 'Illustrative Yemen-appropriate residential lease agreement template — demo only, not legal advice',
+                'view_path' => 'document_templates.yemen_residential_lease_agreement',
             ],
             [
-                'type' => 'section_8_notice',
-                'name' => 'Section 8 Notice',
-                'description' => 'Notice seeking possession of a property let on an assured tenancy or an assured agricultural occupancy',
-                'view_path' => 'document_templates.section_8_notice',
+                'type' => 'lease_breach_notice',
+                'name' => 'Lease Breach Notice (Demo Template)',
+                'description' => 'Illustrative notice for a tenant breach of lease terms — demo only, not legal advice',
+                'view_path' => 'document_templates.lease_breach_notice',
             ],
             [
-                'type' => 'section_21_notice',
-                'name' => 'Section 21 Notice',
-                'description' => 'Notice requiring possession of a property let on an assured shorthold tenancy',
-                'view_path' => 'document_templates.section_21_notice',
+                'type' => 'end_of_lease_notice',
+                'name' => 'End of Lease Notice (Demo Template)',
+                'description' => 'Illustrative notice for end-of-term lease vacation — demo only, not legal advice',
+                'view_path' => 'document_templates.end_of_lease_notice',
             ],
             // Add more templates here as needed
         ];

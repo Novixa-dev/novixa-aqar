@@ -24,6 +24,16 @@ class BuyerResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مشتري' : 'Buyer';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مشترون' : 'Buyers';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user';
 
     protected static ?string $modelLabel = 'Buyer';

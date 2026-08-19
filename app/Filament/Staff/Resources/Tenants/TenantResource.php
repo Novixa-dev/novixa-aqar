@@ -26,6 +26,16 @@ class TenantResource extends Resource
 {
     protected static ?string $model = Tenant::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مستأجر' : 'Tenant';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مستأجرون' : 'Tenants';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
     public static function form(Schema $schema): Schema
@@ -56,7 +66,7 @@ class TenantResource extends Resource
                 TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('averageRating')
-                    ->label('Average Rating')
+                    ->label(__('filament.fields.average_rating'))
                     ->formatStateUsing(fn ($state) => number_format($state, 2))
                     ->sortable(),
                 TextColumn::make('created_at')

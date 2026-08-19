@@ -5,7 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Services\MortgageCalculatorService;
 use App\Services\CostOfMovingCalculatorService;
-use App\Services\StampDutyCalculatorService;
+use App\Services\PropertyTaxEstimatorService;
 use App\Services\RentalYieldCalculatorService;
 use App\Services\HomeValuationService;
 
@@ -116,14 +116,10 @@ class CalculatorsComponent extends Component
     {
         $this->validate([
             'purchasePrice' => $this->rules['purchasePrice'],
-            'buyerType' => $this->rules['buyerType'],
         ]);
 
-        $stampDutyCalculator = new StampDutyCalculatorService();
-        $this->stampDutyResult = $stampDutyCalculator->calculateStampDuty(
-            $this->purchasePrice,
-            $this->buyerType
-        );
+        $this->stampDutyResult = app(PropertyTaxEstimatorService::class)
+            ->estimatePropertyTax($this->purchasePrice, 'YE');
     }
 
     public function calculateRentalYield()

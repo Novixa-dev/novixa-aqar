@@ -25,6 +25,16 @@ class UtilityPaymentResource extends Resource
 {
     protected static ?string $model = UtilityPayment::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'دفعة خدمات' : 'Utility Payment';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'دفعات خدمات' : 'Utility Payments';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
 
     public static function form(Schema $schema): Schema
@@ -41,7 +51,11 @@ class UtilityPaymentResource extends Resource
                 DatePicker::make('payment_date')
                     ->required(),
                 Select::make('payment_method')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'credit_card' => 'بطاقة ائتمان',
+                        'bank_transfer' => 'تحويل بنكي',
+                        'cash' => 'نقداً',
+                    ] : [
                         'credit_card' => 'Credit Card',
                         'bank_transfer' => 'Bank Transfer',
                         'cash' => 'Cash',

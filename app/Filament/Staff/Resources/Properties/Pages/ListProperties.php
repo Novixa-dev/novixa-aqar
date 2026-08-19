@@ -17,10 +17,10 @@ class ListProperties extends ListRecords
         return [
             CreateAction::make(),
             Action::make('importCsv')
-                ->label('Import CSV')
+                ->label(__('filament.fields.import_csv'))
                 ->action(fn () => $this->importCsv()),
             Action::make('syncPortals')
-                ->label('Sync Portals')
+                ->label(__('filament.fields.sync_portals'))
                 ->action(fn () => $this->syncPortals()),
         ];
     }

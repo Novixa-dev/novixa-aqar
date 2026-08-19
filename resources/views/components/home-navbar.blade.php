@@ -24,13 +24,13 @@
         <div class="flex items-center justify-between h-20">
             <!-- Brand Logo & Identity -->
             <a href="/" class="flex items-center gap-3 group">
-                <img src="{{ asset('images/logo.png') }}" class="h-10 w-auto rounded-xl shadow-xs transition-transform group-hover:scale-105" alt="Al-Ofuq Real Estate" />
+                <img src="{{ asset('images/logo.png') }}" class="h-10 w-auto rounded-xl shadow-xs transition-transform group-hover:scale-105" alt="Dar Hadhramaut Real Estate" />
                 <div class="flex flex-col">
                     <span class="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center gap-1.5">
-                        {{ app()->getLocale() === 'ar' ? 'شركة الأفق العقارية' : 'Al-Ofuq Real Estate' }}
+                        {{ app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut' }}
                     </span>
                     <span class="text-[11px] font-medium text-blue-600 dark:text-blue-400">
-                        {{ app()->getLocale() === 'ar' ? 'أفق اليمن للعقارات والاستثمار' : 'Yemen Horizon Properties' }}
+                        {{ app()->getLocale() === 'ar' ? 'للعقارات والاستثمار' : 'Real Estate & Investment' }}
                     </span>
                 </div>
             </a>

@@ -8,7 +8,7 @@
             {{ __('Contact Us') }}
         </span>
         <h1 class="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-4">
-            {{ app()->getLocale() === 'ar' ? 'تواصل مع شركة الأفق العقارية' : 'Contact Al-Ofuq Real Estate' }}
+            {{ app()->getLocale() === 'ar' ? 'تواصل مع دار حضرموت العقارية' : 'Contact Dar Hadhramaut Real Estate' }}
         </h1>
         <p class="text-base sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed font-light">
             {{ app()->getLocale() === 'ar' ? 'مستشارونا العقاريون في خدمتكم على مدار الساعة للإجابة عن استفسارات البيع، الشراء، التثمين، وتوثيق العقود.' : 'Our dedicated real estate advisors are available 24/7 to assist with property acquisitions, sales, valuations, and contract documentation.' }}
@@ -26,25 +26,25 @@
                 </p>
 
                 <div class="space-y-4">
-                    <a href="https://wa.me/967777000000?text={{ urlencode(app()->getLocale() === 'ar' ? 'مرحباً، أود الاستفسار عن عروض وخدمات شركة الأفق العقارية' : 'Hello, I would like to inquire about Al-Ofuq Real Estate listings.') }}" 
-                       target="_blank" 
+                    <a href="https://wa.me/967776248526?text={{ urlencode(app()->getLocale() === 'ar' ? 'مرحباً، أود الاستفسار عن عروض وخدمات دار حضرموت العقارية' : 'Hello, I would like to inquire about Dar Hadhramaut Real Estate listings.') }}"
+                       target="_blank"
                        rel="noopener noreferrer"
                        class="flex items-center gap-3 p-3.5 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold text-xs transition-all shadow-md">
                         <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
                             <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
                         </svg>
-                        <span>{{ app()->getLocale() === 'ar' ? 'محادثة فورية عبر الواتساب (+967 777 000 000)' : 'Live WhatsApp Support (+967 777 000 000)' }}</span>
+                        <span>{{ app()->getLocale() === 'ar' ? 'محادثة فورية عبر الواتساب (776 248 526 967+)' : 'Live WhatsApp Support (+967 776 248 526)' }}</span>
                     </a>
 
-                    <a href="tel:+9675300000" 
+                    <a href="tel:+967776248526"
                        class="flex items-center gap-3 p-3.5 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-semibold text-xs transition-all border border-white/20">
                         <span class="text-base">📞</span>
-                        <span>{{ app()->getLocale() === 'ar' ? 'الهاتف الموحد: +967 5 300 000' : 'Phone: +967 5 300 000' }}</span>
+                        <span>{{ app()->getLocale() === 'ar' ? 'الهاتف الموحد: 776 248 526 967+' : 'Phone: +967 776 248 526' }}</span>
                     </a>
 
                     <div class="flex items-center gap-3 p-3.5 bg-white/10 rounded-2xl text-white text-xs border border-white/20">
                         <span class="text-base">✉️</span>
-                        <span>info@alofuq-aqar.ye / contact@novixa.com</span>
+                        <span>info@darhadhramaut.ye</span>
                     </div>
 
                     <div class="flex items-center gap-3 p-3.5 bg-white/10 rounded-2xl text-white text-xs border border-white/20">
@@ -64,7 +64,7 @@
                     <span class="text-blue-600 font-bold">📍</span>
                     <div>
                         <strong class="text-gray-900 dark:text-white block mb-0.5">{{ app()->getLocale() === 'ar' ? 'المكلا (المقر الرئيسي):' : 'Mukalla (HQ):' }}</strong>
-                        <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'شارع الستين - برج الأفق التجاري، الدور الرابع.' : '60th Street - Al-Ofuq Commercial Tower, 4th Floor.' }}</span>
+                        <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'شارع الستين - برج حضرموت التجاري، الدور الرابع.' : '60th Street - Hadhramaut Commercial Tower, 4th Floor.' }}</span>
                     </div>
                 </div>
 
@@ -72,7 +72,7 @@
                     <span class="text-blue-600 font-bold">📍</span>
                     <div>
                         <strong class="text-gray-900 dark:text-white block mb-0.5">{{ app()->getLocale() === 'ar' ? 'صنعاء:' : 'Sana\'a:' }}</strong>
-                        <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'شارع حدة - مجمع الأفق الاستثماري.' : 'Hadda Street - Al-Ofuq Investment Complex.' }}</span>
+                        <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'شارع حدة - مجمع حضرموت الاستثماري.' : 'Hadda Street - Hadhramaut Investment Complex.' }}</span>
                     </div>
                 </div>
 

@@ -37,7 +37,7 @@
     <script type="application/ld+json">{!! $jsonLd !!}</script>
 @endpush
     @php
-        $currency = app(\App\Settings\GeneralSettings::class)->site_currency;
+        $currency = app(\App\Services\CurrencyService::class)->symbol($property->currency);
     @endphp
     
         <section>
@@ -64,7 +64,7 @@
                                 <div class="mt-6">
                                     <div class="flex items-center justify-between mb-3">
                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                            <svg class="w-5 h-5 inline mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5 inline me-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                                             </svg>
                                             3D Property Model
@@ -109,15 +109,17 @@
                                     <div>
                                         <span class="text-xs text-gray-400 block mb-1">{{ app()->getLocale() === 'ar' ? 'السعر المطلوب' : 'Asking Price' }}</span>
                                         <span class="text-3xl font-black text-emerald-400">
-                                            {{ number_format($property->price, 0) }} <span class="text-sm font-normal text-gray-400">{{ app()->getLocale() === 'ar' ? 'ر.ي' : 'YER' }}</span>
+                                            {{ $property->formatted_price }}
                                         </span>
                                     </div>
-                                    <div class="text-right">
-                                        <span class="text-xs text-gray-400 block mb-1">{{ app()->getLocale() === 'ar' ? 'المعادل بالدولار' : 'USD Equivalent' }}</span>
-                                        <span class="text-base font-mono text-gray-300">
-                                            ≈ ${{ number_format($property->price / 530, 0) }}
-                                        </span>
-                                    </div>
+                                    @if($property->area_sqft)
+                                        <div class="text-end">
+                                            <span class="text-xs text-gray-400 block mb-1">{{ app()->getLocale() === 'ar' ? 'السعر لكل م²' : 'Price per m²' }}</span>
+                                            <span class="text-base font-mono text-gray-300">
+                                                {{ app(\App\Services\CurrencyService::class)->format($property->price / $property->area_sqft, $property->currency) }}
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -261,25 +263,25 @@
                                 </div>
                                 <hr class="my-2 md:my-2 border-gray-200 dark:border-gray-800" />
                                 <div class="my-2">
-                                    <span class="text-gray-500">Neighborhood</span>
+                                    <span class="text-gray-500">{{ app()->getLocale() === 'ar' ? 'الحي' : 'Neighborhood' }}</span>
                                     @if ($neighborhood)
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <h3 class="text-lg font-semibold">Overview</h3>
+                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'نظرة عامة' : 'Overview' }}</h3>
                                                 <p class="text-gray-600">{{ $neighborhood->description }}</p>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-semibold">Key Statistics</h3>
+                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'إحصائيات رئيسية' : 'Key Statistics' }}</h3>
                                                 <ul class="list-disc list-inside">
-                                                    <li>Population: {{ number_format($neighborhood->population) }}</li>
-                                                    <li>Median Income: ${{ number_format($neighborhood->median_income) }}
+                                                    <li>{{ app()->getLocale() === 'ar' ? 'عدد السكان' : 'Population' }}: {{ number_format($neighborhood->population) }}</li>
+                                                    <li>{{ app()->getLocale() === 'ar' ? 'متوسط الدخل' : 'Median Income' }}: ${{ number_format($neighborhood->median_income) }}
                                                     </li>
-                                                    <li>Walk Score: {{ $neighborhood->walk_score }}/100</li>
-                                                    <li>Transit Score: {{ $neighborhood->transit_score }}/100</li>
+                                                    <li>{{ app()->getLocale() === 'ar' ? 'مؤشر إمكانية المشي' : 'Walk Score' }}: {{ $neighborhood->walk_score }}/100</li>
+                                                    <li>{{ app()->getLocale() === 'ar' ? 'مؤشر النقل العام' : 'Transit Score' }}: {{ $neighborhood->transit_score }}/100</li>
                                                 </ul>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-semibold">Schools</h3>
+                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'المدارس' : 'Schools' }}</h3>
                                                 <ul class="list-disc list-inside">
                                                     @foreach ($neighborhood->schools as $school)
                                                         <li>{{ $school['name'] }} - {{ $school['rating'] }}/10</li>
@@ -287,7 +289,7 @@
                                                 </ul>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-semibold">Amenities</h3>
+                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'المرافق' : 'Amenities' }}</h3>
                                                 <ul class="list-disc list-inside">
                                                     @foreach ($neighborhood->amenities as $amenity)
                                                         <li>{{ $amenity }}</li>
@@ -296,13 +298,13 @@
                                             </div>
                                         </div>
 
-                                        <p class="text-sm text-gray-500 mt-2">Last updated:
+                                        <p class="text-sm text-gray-500 mt-2">{{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}:
                                             {{ $neighborhood->last_updated->format('M d, Y H:i') }}</p>
-                                        
+
                                         <!-- Neighborhood Reviews Section -->
                                         <div class="mt-6">
                                             <div class="flex items-center justify-between mb-4">
-                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Neighborhood Reviews</h3>
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'تقييمات الحي' : 'Neighborhood Reviews' }}</h3>
                                                 @if($neighborhoodReviews && $neighborhoodReviews->count() > 0)
                                                     <div class="flex items-center gap-2">
                                                         <div class="flex items-center">
@@ -349,7 +351,7 @@
                                             @auth
                                                 @livewire('neighborhood-review-form', ['neighborhoodId' => $neighborhood->id])
                                             @else
-                                                <p class="mt-4 text-gray-600 dark:text-gray-400">Please <a href="{{ url('/login') }}" class="text-primary-600 hover:underline">login</a> to leave a neighborhood review.</p>
+                                                <p class="mt-4 text-gray-600 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'يرجى' : 'Please' }} <a href="{{ url('/login') }}" class="text-primary-600 hover:underline">{{ app()->getLocale() === 'ar' ? 'تسجيل الدخول' : 'login' }}</a> {{ app()->getLocale() === 'ar' ? 'لإضافة تقييم عن الحي.' : 'to leave a neighborhood review.' }}</p>
                                             @endauth
                                         </div>
                                     @else
@@ -366,7 +368,7 @@
                                         <div class="mt-3 space-y-3">
                                             <!-- Walk Score -->
                                             <div class="flex items-center">
-                                                <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white font-bold mr-4"
+                                                <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white font-bold me-4"
                                                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                                     <span class="text-2xl">{{ $property->walkability_score }}</span>
                                                     <span class="text-xs">Walk</span>
@@ -380,7 +382,7 @@
                                             <!-- Transit Score -->
                                             @if ($property->transit_score)
                                             <div class="flex items-center">
-                                                <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white font-bold mr-4"
+                                                <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white font-bold me-4"
                                                     style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                                                     <span class="text-2xl">{{ $property->transit_score }}</span>
                                                     <span class="text-xs">Transit</span>
@@ -395,7 +397,7 @@
                                             <!-- Bike Score -->
                                             @if ($property->bike_score)
                                             <div class="flex items-center">
-                                                <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white font-bold mr-4"
+                                                <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white font-bold me-4"
                                                     style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                                                     <span class="text-2xl">{{ $property->bike_score }}</span>
                                                     <span class="text-xs">Bike</span>
@@ -421,7 +423,7 @@
                                     <span class="text-gray-500">Energy Efficiency</span>
                                     @if ($property->energy_rating && $property->energy_score)
                                         <div class="flex items-center">
-                                            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4"
+                                            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl me-4"
                                                 style="background-color: {{ $this->getEnergyRatingColor($property->energy_rating) }}">
                                                 {{ $property->energy_rating }}
                                             </div>
@@ -457,62 +459,62 @@
                                 <hr class="my-2 md:my-2 border-gray-200 dark:border-gray-800" />
                                 <div class="my-2">
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-gray-500 font-semibold">Investment Analytics</span>
-                                        <span class="text-xs text-gray-400">AI-Powered Insights</span>
+                                        <span class="text-gray-500 font-semibold">{{ app()->getLocale() === 'ar' ? 'تحليلات الاستثمار' : 'Investment Analytics' }}</span>
+                                        <span class="text-xs text-gray-400">{{ app()->getLocale() === 'ar' ? 'رؤى مدعومة بالذكاء الاصطناعي' : 'AI-Powered Insights' }}</span>
                                     </div>
                                     
                                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 space-y-4">
                                         <!-- Investment Prediction -->
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-                                                <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Predicted ROI</h4>
+                                                <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ app()->getLocale() === 'ar' ? 'العائد المتوقع' : 'Predicted ROI' }}</h4>
                                                 <p class="text-3xl font-bold {{ $investmentAnalytics['prediction']['predicted_roi'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
                                                     {{ number_format($investmentAnalytics['prediction']['predicted_roi'], 2) }}%
                                                 </p>
-                                                <p class="text-xs text-gray-500 mt-1">Expected return over 5 years</p>
+                                                <p class="text-xs text-gray-500 mt-1">{{ app()->getLocale() === 'ar' ? 'العائد المتوقع خلال 5 سنوات' : 'Expected return over 5 years' }}</p>
                                             </div>
-                                            
+
                                             <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-                                                <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Risk Score</h4>
+                                                <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ app()->getLocale() === 'ar' ? 'مؤشر المخاطرة' : 'Risk Score' }}</h4>
                                                 <div class="flex items-center">
                                                     <p class="text-3xl font-bold text-gray-900 dark:text-white">
                                                         {{ number_format($investmentAnalytics['prediction']['risk_score'], 1) }}/10
                                                     </p>
-                                                    <div class="ml-3 flex-1">
+                                                    <div class="ms-3 flex-1">
                                                         <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                                                             <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ ($investmentAnalytics['prediction']['risk_score'] / 10) * 100 }}%"></div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <p class="text-xs text-gray-500 mt-1">Lower is better</p>
+                                                <p class="text-xs text-gray-500 mt-1">{{ app()->getLocale() === 'ar' ? 'كلما قلّ كان أفضل' : 'Lower is better' }}</p>
                                             </div>
                                         </div>
 
                                         <!-- Cash Flow Analysis -->
                                         @if(isset($investmentAnalytics['cash_flow_analysis']))
                                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-                                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Cash Flow Projection</h4>
+                                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{{ app()->getLocale() === 'ar' ? 'توقعات التدفق النقدي' : 'Cash Flow Projection' }}</h4>
                                             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                                                 <div>
-                                                    <p class="text-xs text-gray-500">Est. Annual Rent</p>
+                                                    <p class="text-xs text-gray-500">{{ app()->getLocale() === 'ar' ? 'الإيجار السنوي المقدر' : 'Est. Annual Rent' }}</p>
                                                     <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                                         {{ $currency }}{{ number_format($investmentAnalytics['cash_flow_analysis']['estimated_annual_rent'], 0) }}
                                                     </p>
                                                 </div>
                                                 <div>
-                                                    <p class="text-xs text-gray-500">Est. Expenses</p>
+                                                    <p class="text-xs text-gray-500">{{ app()->getLocale() === 'ar' ? 'المصاريف المقدرة' : 'Est. Expenses' }}</p>
                                                     <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                                         {{ $currency }}{{ number_format($investmentAnalytics['cash_flow_analysis']['estimated_expenses'], 0) }}
                                                     </p>
                                                 </div>
                                                 <div>
-                                                    <p class="text-xs text-gray-500">Net Cash Flow</p>
+                                                    <p class="text-xs text-gray-500">{{ app()->getLocale() === 'ar' ? 'صافي التدفق النقدي' : 'Net Cash Flow' }}</p>
                                                     <p class="text-lg font-semibold text-green-600">
                                                         {{ $currency }}{{ number_format($investmentAnalytics['cash_flow_analysis']['net_cash_flow'], 0) }}
                                                     </p>
                                                 </div>
                                                 <div>
-                                                    <p class="text-xs text-gray-500">Cash-on-Cash</p>
+                                                    <p class="text-xs text-gray-500">{{ app()->getLocale() === 'ar' ? 'عائد نقدي على نقدي' : 'Cash-on-Cash' }}</p>
                                                     <p class="text-lg font-semibold text-blue-600">
                                                         {{ number_format($investmentAnalytics['cash_flow_analysis']['cash_on_cash_return'], 2) }}%
                                                     </p>
@@ -524,13 +526,13 @@
                                         <!-- Market Position -->
                                         @if(isset($investmentAnalytics['market_position']))
                                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-                                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Market Position</h4>
+                                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ app()->getLocale() === 'ar' ? 'الموقع في السوق' : 'Market Position' }}</h4>
                                             <div class="flex items-center justify-between mb-2">
                                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $this->getPositionBadgeClass($investmentAnalytics['market_position']['position']) }}">
                                                     {{ ucfirst(str_replace('_', ' ', $investmentAnalytics['market_position']['position'])) }}
                                                 </span>
                                                 <span class="text-sm {{ $investmentAnalytics['market_position']['price_vs_market'] < 0 ? 'text-green-600' : 'text-red-600' }} font-semibold">
-                                                    {{ $investmentAnalytics['market_position']['price_vs_market'] >= 0 ? '+' : '' }}{{ number_format($investmentAnalytics['market_position']['price_vs_market'], 1) }}% vs market
+                                                    {{ $investmentAnalytics['market_position']['price_vs_market'] >= 0 ? '+' : '' }}{{ number_format($investmentAnalytics['market_position']['price_vs_market'], 1) }}% {{ app()->getLocale() === 'ar' ? 'مقارنة بالسوق' : 'vs market' }}
                                                 </span>
                                             </div>
                                             <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -543,7 +545,7 @@
                                         <div class="text-center pt-2">
                                             <button wire:click="toggleInvestmentSimulation" 
                                                 class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-150 ease-in-out">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="w-4 h-4 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                                 </svg>
                                                 {{ $showInvestmentSimulation ? 'Hide' : 'Show' }} Advanced Investment Simulator
@@ -611,7 +613,7 @@
                             @if($priceHistory->count() > 0)
                                 <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-5 h-5 me-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
                                         </svg>
                                         Price Changes
@@ -622,14 +624,14 @@
                                                 <div class="flex-1">
                                                     <p class="text-sm text-gray-600 dark:text-gray-400">{{ $history->event_date->format('M d, Y') }}</p>
                                                     <p class="text-gray-900 dark:text-white font-medium">
-                                                        {{ app(\App\Settings\GeneralSettings::class)->site_currency }} {{ number_format($history->old_price, 2) }}
+                                                        {{ app(\App\Services\CurrencyService::class)->format($history->old_price, $property->currency) }}
                                                         <svg class="w-4 h-4 inline mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                                         </svg>
-                                                        {{ app(\App\Settings\GeneralSettings::class)->site_currency }} {{ number_format($history->new_price, 2) }}
+                                                        {{ app(\App\Services\CurrencyService::class)->format($history->new_price, $property->currency) }}
                                                     </p>
                                                 </div>
-                                                <div class="text-right">
+                                                <div class="text-end">
                                                     @php
                                                         $change = $history->getPriceChangePercentage();
                                                         $isIncrease = $change >= 0;
@@ -648,10 +650,10 @@
                             @if($salesHistory->count() > 0)
                                 <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                                        <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-5 h-5 me-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
-                                        Past Sales
+                                        {{ app()->getLocale() === 'ar' ? 'المبيعات السابقة' : 'Past Sales' }}
                                     </h3>
                                     <div class="space-y-3">
                                         @foreach($salesHistory as $sale)
@@ -660,9 +662,9 @@
                                                     <p class="text-sm text-gray-600 dark:text-gray-400">{{ $sale->event_date->format('M d, Y') }}</p>
                                                     <p class="text-gray-900 dark:text-white">{{ $sale->description }}</p>
                                                 </div>
-                                                <div class="text-right">
+                                                <div class="text-end">
                                                     <p class="text-lg font-bold text-green-600">
-                                                        {{ app(\App\Settings\GeneralSettings::class)->site_currency }} {{ number_format($sale->new_price, 2) }}
+                                                        {{ app(\App\Services\CurrencyService::class)->format($sale->new_price, $property->currency) }}
                                                     </p>
                                                 </div>
                                             </div>
@@ -675,7 +677,7 @@
                             @if($propertyHistory->count() > 0)
                                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                                        <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-5 h-5 me-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
                                         Activity Timeline
@@ -728,7 +730,7 @@
                     @if($communityEvents->count() > 0)
                         <div class="w-full mt-8 mb-8">
                             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 me-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
                                 Community Events Calendar
@@ -772,7 +774,7 @@
                                                     </h4>
                                                     
                                                     <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg class="w-4 h-4 me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                         </svg>
                                                         {{ $event->event_date->format('g:i A') }}
@@ -782,13 +784,13 @@
                                                     </div>
                                                     
                                                     <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg class="w-4 h-4 me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                         </svg>
                                                         {{ $event->location }}
                                                         @if(isset($event->distance_from_property))
-                                                            <span class="ml-2 text-xs text-blue-600 dark:text-blue-400">
+                                                            <span class="ms-2 text-xs text-blue-600 dark:text-blue-400">
                                                                 ({{ number_format($event->distance_from_property, 1) }} km away)
                                                             </span>
                                                         @endif
@@ -816,7 +818,7 @@
                                                         <a href="{{ $event->website_url }}" target="_blank" 
                                                            class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mt-2">
                                                             Learn more
-                                                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <svg class="w-4 h-4 ms-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                                                             </svg>
                                                         </a>
@@ -846,7 +848,7 @@
                     @endphp
                     @if($video)
                         <div class="w-full mb-8">
-                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Property Video</h2>
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{{ app()->getLocale() === 'ar' ? 'فيديو العقار' : 'Property Video' }}</h2>
                             {{-- 16:9 aspect ratio container (9/16 * 100 = 56.25%) --}}
                             <div class="relative w-full" style="padding-bottom: 56.25%;">
                                 <video 
@@ -871,24 +873,12 @@
                     @endif
                     
 
-                    @if($property->getFirstMediaUrl('videos'))
-                    <div class="w-full mb-8">
-                        <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Property Video</h2>
-                        <div class="max-w-4xl mx-auto">
-                            <video controls class="w-full rounded-lg shadow-lg" controlsList="nodownload" aria-label="Property video">
-                                <source src="{{ $property->getFirstMediaUrl('videos') }}">
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                    </div>
-                    @endif
-
                     <div class=""></div>
                     @auth
                         @livewire('property-review-form', ['propertyId' => $property->id])
                     @else
-                        <p class="mt-4 text-gray-600">Please <a href="{{ url('/login') }}"
-                                class="text-blue-500 hover:underline">login</a> to leave a review.</p>
+                        <p class="mt-4 text-gray-600">{{ app()->getLocale() === 'ar' ? 'يرجى' : 'Please' }} <a href="{{ url('/login') }}"
+                                class="text-blue-500 hover:underline">{{ app()->getLocale() === 'ar' ? 'تسجيل الدخول' : 'login' }}</a> {{ app()->getLocale() === 'ar' ? 'لإضافة تقييم.' : 'to leave a review.' }}</p>
                     @endauth
                 </div>
             </section>

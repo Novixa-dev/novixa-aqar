@@ -1804,7 +1804,7 @@ class CoreAgencyApiTest extends TestCase
             ->assertSee('Riverside Apartment');
         $this->get("/api/v1/marketing-assets/properties/{$property->id}/window-card")
             ->assertOk()
-            ->assertSee('£425,000', false);
+            ->assertSee('425,000 ر.ي', false);
         $this->getJson("/api/v1/marketing-assets/properties/{$property->id}/qr-code?size=300")
             ->assertOk()
             ->assertJsonPath('data.property_id', $property->id)

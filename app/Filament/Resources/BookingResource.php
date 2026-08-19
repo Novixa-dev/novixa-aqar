@@ -27,6 +27,16 @@ class BookingResource extends Resource
 {
     protected static ?string $model = Booking::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'حجز' : 'Booking';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'حجوزات' : 'Bookings';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calendar';
 
     public static function form(Schema $schema): Schema
@@ -52,7 +62,11 @@ class BookingResource extends Resource
                 Textarea::make('notes')
                     ->maxLength(65535),
                 Select::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'confirmed' => 'مؤكد',
+                        'cancelled' => 'ملغى',
+                        'rescheduled' => 'أعيدت جدولته',
+                    ] : [
                         'confirmed' => 'Confirmed',
                         'cancelled' => 'Cancelled',
                         'rescheduled' => 'Rescheduled',
@@ -75,7 +89,11 @@ class BookingResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'confirmed' => 'مؤكد',
+                        'cancelled' => 'ملغى',
+                        'rescheduled' => 'أعيدت جدولته',
+                    ] : [
                         'confirmed' => 'Confirmed',
                         'cancelled' => 'Cancelled',
                         'rescheduled' => 'Rescheduled',

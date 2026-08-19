@@ -23,6 +23,16 @@ class LeaseResource extends Resource
 {
     protected static ?string $model = Lease::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إيجار' : 'Lease';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إيجارات' : 'Leases';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationLabel = 'My Lease';
@@ -32,7 +42,7 @@ class LeaseResource extends Resource
         return $schema
             ->components([
                 TextInput::make('property.address')
-                    ->label('Property Address')
+                    ->label(__('filament.fields.property_address'))
                     ->disabled(),
                 DatePicker::make('start_date')
                     ->disabled(),
@@ -43,7 +53,11 @@ class LeaseResource extends Resource
                     ->prefix('$'),
                 Select::make('status')
                     ->disabled()
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'active' => 'ساري',
+                        'expired' => 'منتهي',
+                        'terminated' => 'مفسوخ',
+                    ] : [
                         'active' => 'Active',
                         'expired' => 'Expired',
                         'terminated' => 'Terminated',
@@ -59,7 +73,7 @@ class LeaseResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('property.address')
-                    ->label('Property Address'),
+                    ->label(__('filament.fields.property_address')),
                 TextColumn::make('start_date')
                     ->date(),
                 TextColumn::make('end_date')

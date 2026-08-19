@@ -30,6 +30,16 @@ class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'معاملة' : 'Transaction';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'معاملات' : 'Transactions';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Schema $schema): Schema
@@ -46,14 +56,19 @@ class TransactionResource extends Resource
                     ->relationship('seller', 'name')
                     ->required(),
                 DatePicker::make('transaction_date')
-                    ->label('Transaction Date')
+                    ->label(__('filament.fields.transaction_date'))
                     ->required(),
                 TextInput::make('transaction_amount')
                     ->type('number')
-                    ->label('Transaction Amount')
+                    ->label(__('filament.fields.transaction_amount'))
                     ->required(),
                 Select::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        Transaction::STATUS_PENDING => 'قيد الانتظار',
+                        Transaction::STATUS_IN_PROGRESS => 'قيد التنفيذ',
+                        Transaction::STATUS_COMPLETED => 'مكتملة',
+                        Transaction::STATUS_CANCELLED => 'ملغاة',
+                    ] : [
                         Transaction::STATUS_PENDING => 'Pending',
                         Transaction::STATUS_IN_PROGRESS => 'In Progress',
                         Transaction::STATUS_COMPLETED => 'Completed',
@@ -62,7 +77,7 @@ class TransactionResource extends Resource
                     ->required(),
                 TextInput::make('commission_amount')
                     ->type('number')
-                    ->label('Commission Amount')
+                    ->label(__('filament.fields.commission_amount'))
                     ->disabled(),
             ]);
     }
@@ -84,14 +99,14 @@ class TransactionResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('transaction_amount')
-                    ->money('gbp')
+                    ->money(strtolower(config('currencies.default')))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('status')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('commission_amount')
-                    ->money('gbp')
+                    ->money(strtolower(config('currencies.default')))
                     ->searchable()
                     ->sortable(),
             ])
@@ -101,7 +116,7 @@ class TransactionResource extends Resource
             ->recordActions([
                 EditAction::make(),
                 Action::make('generateDocument')
-                    ->label('Generate Document')
+                    ->label(__('filament.fields.generate_document'))
                     ->action(function (Transaction $record, TransactionService $transactionService) {
                         $document = $transactionService->generateContractualDocument($record);
                         // You might want to add a notification or redirect here

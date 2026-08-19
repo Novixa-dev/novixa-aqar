@@ -24,6 +24,16 @@ class EnergyConsumptionResource extends Resource
 {
     protected static ?string $model = EnergyConsumption::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'استهلاك الطاقة' : 'Energy Consumption';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'بيانات استهلاك الطاقة' : 'Energy Consumptions';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-bolt';
 
     public static function form(Schema $schema): Schema
@@ -52,7 +62,11 @@ class EnergyConsumptionResource extends Resource
                     ->numeric()
                     ->prefix('$'),
                 Select::make('status')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'pending' => 'قيد الانتظار',
+                        'paid' => 'مدفوع',
+                        'overdue' => 'متأخر',
+                    ] : [
                         'pending' => 'Pending',
                         'paid' => 'Paid',
                         'overdue' => 'Overdue',

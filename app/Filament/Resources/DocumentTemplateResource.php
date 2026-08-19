@@ -22,6 +22,16 @@ class DocumentTemplateResource extends Resource
 {
     protected static ?string $model = DocumentTemplate::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'قالب مستند' : 'Document Template';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'قوالب مستندات' : 'Document Templates';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
     public static function form(Schema $schema): Schema

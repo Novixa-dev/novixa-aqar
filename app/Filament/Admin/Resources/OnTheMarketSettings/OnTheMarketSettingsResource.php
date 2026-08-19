@@ -25,6 +25,16 @@ class OnTheMarketSettingsResource extends Resource
 {
     protected static ?string $model = OnTheMarketSettings::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إعداد OnTheMarket' : 'OnTheMarket Setting';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إعدادات OnTheMarket' : 'OnTheMarket Settings';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog';
     protected static ?string $navigationLabel = 'On The Market Settings';
 
@@ -47,22 +57,26 @@ class OnTheMarketSettingsResource extends Resource
             ->components([
                 TextInput::make('api_key')
                     ->required()
-                    ->label('OnTheMarket API Key')
+                    ->label(__('filament.fields.onthemarket_api_key'))
                     ->password(),
                 TextInput::make('base_uri')
                     ->required()
-                    ->label('OnTheMarket API Base URI')
+                    ->label(__('filament.fields.onthemarket_base_uri'))
                     ->url(),
                 Select::make('sync_frequency')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'hourly' => 'كل ساعة',
+                        'daily' => 'يومياً',
+                        'weekly' => 'أسبوعياً',
+                    ] : [
                         'hourly' => 'Hourly',
                         'daily' => 'Daily',
                         'weekly' => 'Weekly',
                     ])
                     ->required()
-                    ->label('Sync Frequency'),
+                    ->label(__('filament.fields.sync_frequency')),
                 Toggle::make('is_active')
-                    ->label('Active')
+                    ->label(__('filament.fields.active'))
                     ->default(true),
             ]);
     }
@@ -71,9 +85,9 @@ class OnTheMarketSettingsResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('base_uri')->label('Base URI'),
-                TextColumn::make('sync_frequency')->label('Sync Frequency'),
-                ToggleColumn::make('is_active')->label('Active'),
+                TextColumn::make('base_uri')->label(__('filament.fields.base_uri')),
+                TextColumn::make('sync_frequency')->label(__('filament.fields.sync_frequency')),
+                ToggleColumn::make('is_active')->label(__('filament.fields.active')),
             ])
             ->filters([
                 //

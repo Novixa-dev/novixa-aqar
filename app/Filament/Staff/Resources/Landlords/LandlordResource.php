@@ -26,6 +26,16 @@ class LandlordResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    public static function getModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مالك عقار' : 'Landlord';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'ملاك عقارات' : 'Landlords';
+    }
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-home';
 
     protected static ?string $modelLabel = 'Landlord';
@@ -48,18 +58,22 @@ class LandlordResource extends Resource
                     ->required(fn (string $context): bool => $context === 'create'),
                 TextInput::make('phone')
                     ->tel()
-                    ->label('Phone Number'),
+                    ->label(__('filament.fields.phone_number')),
                 Textarea::make('address')
                     ->rows(3)
-                    ->label('Address'),
+                    ->label(__('filament.fields.address')),
                 TextInput::make('company_name')
-                    ->label('Company Name (if applicable)')
+                    ->label(__('filament.fields.company_name'))
                     ->maxLength(255),
                 TextInput::make('tax_id')
-                    ->label('Tax ID')
+                    ->label(__('filament.fields.tax_id'))
                     ->maxLength(50),
                 Select::make('preferred_contact_method')
-                    ->options([
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'email' => 'البريد الإلكتروني',
+                        'phone' => 'الهاتف',
+                        'mail' => 'البريد',
+                    ] : [
                         'email' => 'Email',
                         'phone' => 'Phone',
                         'mail' => 'Mail',
@@ -75,8 +89,8 @@ class LandlordResource extends Resource
                 TextColumn::make('name')->sortable()->searchable(),
                 TextColumn::make('email')->searchable(),
                 TextColumn::make('phone'),
-                TextColumn::make('company_name')->label('Company'),
-                TextColumn::make('preferred_contact_method')->label('Preferred Contact'),
+                TextColumn::make('company_name')->label(__('filament.fields.company')),
+                TextColumn::make('preferred_contact_method')->label(__('filament.fields.preferred_contact')),
             ])
             ->filters([
                 //

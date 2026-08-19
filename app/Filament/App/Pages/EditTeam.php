@@ -26,7 +26,7 @@ class EditTeam extends EditTenantProfile
     {
         return [
             TextInput::make('name')
-                ->label('Team Name')
+                ->label(__('filament.fields.team_name'))
                 ->required()
                 ->maxLength(255),
         ];
