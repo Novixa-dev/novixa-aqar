@@ -72,6 +72,13 @@ Schedule::command('zoopla:sync-properties', ['--frequency' => 'weekly'])
 
 Schedule::job(new \App\Jobs\LeaseRenewalReminder)->daily();
 
+// Previously generated once and served forever - new/updated properties and
+// news articles never made it into the sitemap or search results.
+Schedule::command('sitemap:generate')
+    ->daily()
+    ->withoutOverlapping()
+    ->onFailure(fn () => Log::error('Sitemap generation failed'));
+
 Schedule::call(function () {
     $campaigns = EmailCampaign::where('status', 'scheduled')
         ->where('scheduled_at', '<=', now())

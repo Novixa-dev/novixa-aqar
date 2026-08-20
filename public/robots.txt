@@ -9,3 +9,5 @@ Disallow: /staff
 Disallow: /tenant
 Disallow: /api
 Disallow: /livewire
+
+Sitemap: http://localhost/sitemap.xml
