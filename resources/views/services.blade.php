@@ -30,7 +30,7 @@
             </div>
             <a href="{{ route('contact') }}" class="inline-flex items-center gap-1 text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">
                 <span>{{ __('Contact Us') }}</span>
-                <span>&rarr;</span>
+                <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
             </a>
         </div>
 
@@ -47,7 +47,7 @@
             </div>
             <a href="{{ route('property.list') }}" class="inline-flex items-center gap-1 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
                 <span>{{ __('Properties') }}</span>
-                <span>&rarr;</span>
+                <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
             </a>
         </div>
 
@@ -64,7 +64,7 @@
             </div>
             <a href="{{ route('calculators') }}" class="inline-flex items-center gap-1 text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
                 <span>{{ __('Calculators') }}</span>
-                <span>&rarr;</span>
+                <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
             </a>
         </div>
 
@@ -81,7 +81,7 @@
             </div>
             <a href="{{ route('contact') }}" class="inline-flex items-center gap-1 text-sm font-bold text-amber-600 dark:text-amber-400 hover:underline">
                 <span>{{ __('Contact Us') }}</span>
-                <span>&rarr;</span>
+                <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
             </a>
         </div>
 
@@ -98,7 +98,7 @@
             </div>
             <a href="{{ route('contact') }}" class="inline-flex items-center gap-1 text-sm font-bold text-rose-600 dark:text-rose-400 hover:underline">
                 <span>{{ __('Contact Us') }}</span>
-                <span>&rarr;</span>
+                <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
             </a>
         </div>
 
@@ -115,7 +115,7 @@
             </div>
             <a href="{{ route('property.list') }}" class="inline-flex items-center gap-1 text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:underline">
                 <span>{{ __('Properties') }}</span>
-                <span>&rarr;</span>
+                <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
             </a>
         </div>
     </div>

@@ -39,7 +39,7 @@
                             </div>
                             <div class="flex items-center justify-between text-xs text-gray-400 pt-4 border-t border-gray-100 dark:border-gray-700">
                                 <span>{{ $featured->published_at ? $featured->published_at->format('M d, Y') : now()->format('M d, Y') }}</span>
-                                <span class="text-blue-600 font-semibold">{{ __('Read More') }} &rarr;</span>
+                                <span class="text-blue-600 font-semibold">{{ __('Read More') }} <span class="inline-block {{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span></span>
                             </div>
                         </div>
                     @endforeach
@@ -84,7 +84,7 @@
                     <div class="flex items-center justify-between text-xs text-gray-400 pt-4 border-t border-gray-100 dark:border-gray-700">
                         <span>{{ $article->published_at ? $article->published_at->format('M d, Y') : now()->format('M d, Y') }}</span>
                         <a href="{{ route('news.detail', $article->slug) }}" class="text-blue-600 font-bold hover:underline">
-                            {{ __('Read More') }} &rarr;
+                            {{ __('Read More') }} <span class="inline-block {{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
                         </a>
                     </div>
                 </div>
