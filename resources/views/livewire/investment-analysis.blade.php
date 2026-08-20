@@ -5,30 +5,30 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label for="purchasePrice" class="block mb-2">{{ app()->getLocale() === 'ar' ? 'سعر الشراء' : 'Purchase Price' }}</label>
-                <input type="number" id="purchasePrice" wire:model="purchasePrice" class="w-full p-2 border rounded" step="0.01" required>
+                <input type="number" id="purchasePrice" wire:model="purchasePrice" class="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded" step="0.01" required>
             </div>
             <div>
                 <label for="annualRentalIncome" class="block mb-2">{{ app()->getLocale() === 'ar' ? 'الدخل الإيجاري السنوي' : 'Annual Rental Income' }}</label>
-                <input type="number" id="annualRentalIncome" wire:model="annualRentalIncome" class="w-full p-2 border rounded" step="0.01" required>
+                <input type="number" id="annualRentalIncome" wire:model="annualRentalIncome" class="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded" step="0.01" required>
             </div>
             <div>
                 <label for="annualExpenses" class="block mb-2">{{ app()->getLocale() === 'ar' ? 'المصاريف السنوية' : 'Annual Expenses' }}</label>
-                <input type="number" id="annualExpenses" wire:model="annualExpenses" class="w-full p-2 border rounded" step="0.01" required>
+                <input type="number" id="annualExpenses" wire:model="annualExpenses" class="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded" step="0.01" required>
             </div>
             <div>
                 <label for="appreciationRate" class="block mb-2">{{ app()->getLocale() === 'ar' ? 'معدل ارتفاع القيمة (%)' : 'Appreciation Rate (%)' }}</label>
-                <input type="number" id="appreciationRate" wire:model="appreciationRate" class="w-full p-2 border rounded" step="0.1" required>
+                <input type="number" id="appreciationRate" wire:model="appreciationRate" class="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded" step="0.1" required>
             </div>
             <div>
                 <label for="holdingPeriod" class="block mb-2">{{ app()->getLocale() === 'ar' ? 'مدة الاحتفاظ (بالسنوات)' : 'Holding Period (years)' }}</label>
-                <input type="number" id="holdingPeriod" wire:model="holdingPeriod" class="w-full p-2 border rounded" step="1" required>
+                <input type="number" id="holdingPeriod" wire:model="holdingPeriod" class="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded" step="1" required>
             </div>
         </div>
         <button type="submit" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">{{ app()->getLocale() === 'ar' ? 'تحليل الاستثمار' : 'Analyze Investment' }}</button>
     </form>
 
     @if($analysisResult)
-    <div class="bg-white shadow-md rounded-lg p-6">
+    <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-md rounded-lg p-6">
         <h3 class="text-xl font-semibold mb-4">{{ app()->getLocale() === 'ar' ? 'نتائج التحليل' : 'Analysis Results' }}</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
