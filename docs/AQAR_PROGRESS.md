@@ -89,3 +89,17 @@ Chronological. Anyone should be able to read this and know the actual current st
 Also synced `robots.txt`'s `Sitemap:` directive from the same command, since a plain static file can't read `config('app.url')` at request time the way the `sitemap.xml` route already does — this reuses the existing "fix `APP_URL`, regenerate the sitemap" deploy step already documented for P0-6, rather than adding a new step to forget.
 
 **Verification:** sitemap regenerated 3x confirming idempotency (stable at 44 URLs, 1 `Sitemap:` line in `robots.txt`, was 16 URLs/0 properties before); live `/sitemap.xml` and `/robots.txt` both serve correctly; `artisan schedule:list` confirms the new daily entry. Full test suite: 559 passed / 0 failed / 32 skipped, unchanged.
+
+---
+
+## 2026-08-20 — New directive: full production-readiness pass, user-flagged UI/translation/theme/docs issues
+
+User confirmed no further P0/P1 backend items take priority right now — the active mandate is broader: "make sure everything is ready for production," explicitly flagging (from live use of the app) bad/non-responsive UI, incomplete Arabic translation and RTL support "in many places, pages, sections, everywhere" (both DB-sourced content and app-internal strings), bad component design when switching light/dark theme, and unrefactored `.md` docs. Full authority granted to prioritize and execute as judged best.
+
+**Action taken in response, this session:**
+1. **Launched a background visual UI/UX audit agent** (general-purpose, explicitly not using `isolation: "worktree"` — see the standing lesson in `docs/AQAR_DECISIONS.md`) to screenshot and inspect ~18 pages/panels across light/dark theme × AR/EN × desktop/mobile, specifically hunting dark-mode component bugs, RTL layout issues, and untranslated text (categorized by DB vs. app-code source). **Still running as of this entry — no findings yet.**
+2. **Executed the documentation refactor** (Section 17 of the audit report, previously only recommended, now done) in parallel since it's independent of the visual audit. See the new decision log entry above for what moved and the concrete finding that validated doing it (`TASK-004`/`TASK-005` falsely claiming Arabic/RTL "COMPLETED & VERIFIED" on the strength of a passing test suite alone). Root `.md` count: 22 → 9. `docs/` top-level: 28 → 25 (net; added `docs/archive/README.md`, removed the 4 archived feature-summaries, renamed 2). Full inventory now: `docs/archive/2026-02-pre-rescue/{audit,project,tasks,root-reports,feature-summaries}/` (82 files) plus a README explaining why and pointing to the current source of truth.
+
+**Not yet done:** the actual UI/translation/theme fixes the user is waiting on — blocked on the visual audit agent's results, which will drive a prioritized fix list. Test suite not re-run this entry since no application code changed (docs-only).
+
+**Next:** synthesize the visual audit's findings into concrete fixes (dark-mode CSS/component issues, RTL layout bugs, translation-key gaps) the moment it completes; in parallel, start a systematic sweep for untranslated app-internal strings (Blade/Filament/Livewire) and DB-sourced content needing translation, since that doesn't require the audit's screenshots to begin.

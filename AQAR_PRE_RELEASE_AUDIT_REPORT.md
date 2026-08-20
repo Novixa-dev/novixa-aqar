@@ -263,13 +263,13 @@ This repo contains **five chronological "generations"** of audit/status document
 
 **The methodological lesson, stated plainly**: every "COMPLETE"/"VERIFIED"/"PASS" claim in this repo's documentation has been contradicted by a later, more rigorous check at least once, including this audit's own findings (e.g., TASK-018's false "all 18 tasks complete" claim, directly contradicted by P0-4 above). **Treat no status claim in this repo — including this report six months from now — as current without re-verifying against running code.**
 
-**Consolidation recommendations** (detail in the full doc-synthesis notes, available on request):
-- Archive `docs/audit/01`–`39`, all 8 `docs/project/*` files, and the 7 root Feb-2026 feature reports to a dated `docs/archive/` — they have no ongoing operational value and actively mislead if read at face value.
-- Delete `docs/project/RELEASE_CHECKLIST.md` outright (negative value — asserts things are done with zero evidence).
-- Rename two mislabeled files: `docs/ARCHITECTURE.md` actually contains Interactive-Floor-Plans architecture content; `docs/IMPLEMENTATION_SUMMARY.md` actually contains Walkability-Scores content. Neither is a general architecture/implementation doc despite the generic filename.
-- Merge the duplicate `TEST_USERS.md` (root) and `docs/TEST_USERS.md` — keep `docs/TEST_USERS.md` as canonical, delete the root copy.
-- Consolidate the 3+ conflicting "3D Property Models" docs down to the one implementation actually rendered on the property page (Three.js/URL-based); archive or clearly mark the orphaned Spatie-Media-Library upload docs.
-- This master report (`AQAR_PRE_RELEASE_AUDIT_REPORT.md`) should become the **single current-status document**; once its P0 items are resolved, update it in place rather than creating a sixth generation of parallel audit files.
+**Consolidation — DONE, 2026-08-20.** All recommendations below were executed; see `docs/archive/2026-02-pre-rescue/README.md` for the full rationale and `docs/AQAR_DECISIONS.md` for the specific finding that confirmed the "treat no status claim as current" lesson one more time (`TASK-004`/`TASK-005` falsely claimed Arabic/RTL "COMPLETED & VERIFIED").
+- ~~Archive `docs/audit/01`–`39`, all 8 `docs/project/*` files, and the 7 root Feb-2026 feature reports to a dated `docs/archive/`~~ — done: `docs/archive/2026-02-pre-rescue/{audit,project,root-reports}/`. Also archived the 17-file `docs/tasks/TASK-*-ANALYSIS.md` series (same failure mode, not originally itemized here) and 4 more per-feature "Implementation Summary" docs superseded by a genuine reference doc for the same feature (`docs/archive/2026-02-pre-rescue/feature-summaries/`).
+- ~~Delete `docs/project/RELEASE_CHECKLIST.md` outright~~ — archived with the rest of `docs/project/*` instead of hard-deleted, per this codebase's git-safety preference for reversible operations; it carries the same "no ongoing operational value" warning as its siblings in the archive README.
+- ~~Rename two mislabeled files~~ — done: `docs/ARCHITECTURE.md` → `docs/INTERACTIVE_FLOOR_PLANS_ARCHITECTURE.md`; `docs/IMPLEMENTATION_SUMMARY.md` (root-level implementation-summary content, not architecture) → archived to `feature-summaries/` since `docs/WALKABILITY_SCORES.md` already covers it as reference.
+- ~~Merge the duplicate `TEST_USERS.md`~~ — already done by prior work this session; `docs/TEST_USERS.md` is canonical, no root copy remains.
+- **3D Property Models docs — partially addressed, not fully consolidated.** Archived the two purely historical status reports (`3D_PROPERTY_MODELS_FINAL_REPORT.md`, `3D_PROPERTY_MODELS_SUMMARY.md`); kept `3D_PROPERTY_MODELS_QUICKSTART.md` (root) and `docs/3D_PROPERTY_MODELS.md` + `docs/3D_PROPERTY_VIEWER.md` as live reference docs, but did **not** verify whether these three overlap/conflict with each other or which upload mechanism (Three.js/URL-based vs. Spatie Media Library) is actually live — that content-level check was out of scope for this pass and should not be assumed done.
+- This master report is the single current-status document, updated in place — confirmed still true.
 
 ---
 
