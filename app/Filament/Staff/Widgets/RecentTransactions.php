@@ -21,9 +21,9 @@ class RecentTransactions extends TableWidget
         return [
             TextColumn::make('property.title')
                 ->label(__('filament.fields.property')),
-            TextColumn::make('transaction_date')
+            TextColumn::make('date')
                 ->date(),
-            TextColumn::make('transaction_amount')
+            TextColumn::make('amount')
                 ->money(strtolower(config('currencies.default'))),
             TextColumn::make('buyer.name')
                 ->label(__('filament.fields.buyer')),

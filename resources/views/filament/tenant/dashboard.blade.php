@@ -1,6 +1,4 @@
 <x-filament-panels::page>
-    {{ $this->getHeaderWidgets() }}
-
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
         <div>
             <x-filament::card>
@@ -22,9 +20,5 @@
                 <p class="text-3xl font-bold">{{ $this->openWorkOrders }}</p>
             </x-filament::card>
         </div>
-    </div>
-
-    <div class="mt-6">
-        {{ $this->getWidgets()['App\Filament\Tenant\Widgets\RecentMaintenanceRequests'] }}
     </div>
 </x-filament-panels::page>

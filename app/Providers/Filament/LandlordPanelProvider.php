@@ -2,8 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\App\Pages;
-use App\Filament\App\Pages\EditProfile;
+use App\Filament\Landlord\Pages;
 use App\Filament\App\Pages\CreateTeam;
 use App\Filament\App\Pages\EditTeam;
 use App\Filament\App\Pages\Tenant\Profile;
@@ -79,7 +78,9 @@ class LandlordPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/Landlord/Resources'), for: 'App\\Filament\\Landlord\\Resources')
             ->discoverPages(in: app_path('Filament/Landlord/Pages'), for: 'App\\Filament\\Landlord\\Pages')
-            ->pages([])
+            ->pages([
+                Pages\EditProfile::class,
+            ])
             ->discoverWidgets(in: app_path('Filament/Landlord/Widgets'), for: 'App\\Filament\\Landlord\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

@@ -3,7 +3,8 @@
 namespace App\Filament\Tenant\Pages;
 
 use Filament\Pages\Dashboard as BaseDashboard;
-use App\Models\Property;
+use App\Models\Lease;
+use App\Models\Tenant;
 use App\Models\WorkOrder;
 use App\Filament\Tenant\Widgets\DashboardStatsOverview;
 use App\Filament\Tenant\Widgets\RecentMaintenanceRequests;
@@ -20,14 +21,30 @@ class Dashboard extends BaseDashboard
 
     public function mount(): void
     {
-        $this->currentProperty = Property::where('tenant_id', auth()->id())->first();
-        $this->rentDueDate = $this->currentProperty ? $this->currentProperty->next_rent_due : null;
-        $this->openWorkOrders = WorkOrder::whereHas('maintenanceRequest', function ($query) {
-            $query->where('tenant_id', auth()->id());
-        })->whereIn('status', ['pending', 'in_progress'])->count();
-        $this->completedWorkOrders = WorkOrder::whereHas('maintenanceRequest', function ($query) {
-            $query->where('tenant_id', auth()->id());
-        })->where('status', 'completed')->count();
+        // `properties` has no `tenant_id` column — a property only relates to a
+        // tenant indirectly through an active Lease (Lease.tenant_id -> users.id).
+        $activeLease = Lease::where('tenant_id', auth()->id())
+            ->where('status', 'active')
+            ->latest('start_date')
+            ->first();
+
+        $this->currentProperty = $activeLease?->property;
+        $this->rentDueDate = null;
+
+        // MaintenanceRequest.tenant_id -> tenants.id, not users.id, so it must be
+        // resolved through the Tenant record, not auth()->id() directly.
+        $tenantId = Tenant::where('user_id', auth()->id())->value('id');
+
+        $this->openWorkOrders = $tenantId
+            ? WorkOrder::whereHas('maintenanceRequest', function ($query) use ($tenantId) {
+                $query->where('tenant_id', $tenantId);
+            })->whereIn('status', ['pending', 'in_progress'])->count()
+            : 0;
+        $this->completedWorkOrders = $tenantId
+            ? WorkOrder::whereHas('maintenanceRequest', function ($query) use ($tenantId) {
+                $query->where('tenant_id', $tenantId);
+            })->where('status', 'completed')->count()
+            : 0;
     }
 
     public function getHeaderWidgets(): array
@@ -37,7 +54,7 @@ class Dashboard extends BaseDashboard
         ];
     }
 
-    public function getWidgets(): array
+    public function getFooterWidgets(): array
     {
         return [
             RecentMaintenanceRequests::class,

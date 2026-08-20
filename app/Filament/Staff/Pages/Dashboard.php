@@ -36,7 +36,7 @@ class Dashboard extends Page
         $this->totalProperties = Property::count();
         $this->activeListings = Property::where('status', 'active')->count();
         $this->totalBookings = Booking::whereBetween('date', [$this->startDate, $this->endDate])->count();
-        $this->totalRevenue = Transaction::whereBetween('transaction_date', [$this->startDate, $this->endDate])->sum('transaction_amount');
+        $this->totalRevenue = Transaction::whereBetween('date', [$this->startDate, $this->endDate])->sum('amount');
     }
 
     public function refreshDashboard(): void

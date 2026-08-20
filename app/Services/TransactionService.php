@@ -35,8 +35,8 @@ class TransactionService
             'buyer' => $transaction->buyer->name,
             'seller' => $transaction->seller->name,
             'property' => $transaction->property->title,
-            'amount' => $transaction->transaction_amount,
-            'date' => $transaction->transaction_date->format('Y-m-d'),
+            'amount' => $transaction->amount,
+            'date' => $transaction->date->format('Y-m-d'),
         ]);
 
         $document = new Document([

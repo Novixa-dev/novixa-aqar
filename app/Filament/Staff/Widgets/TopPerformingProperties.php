@@ -17,9 +17,9 @@ class TopPerformingProperties extends ChartWidget
         $endDate = Carbon::now()->endOfMonth();
 
         $topProperties = Property::withSum(['transactions' => function ($query) use ($startDate, $endDate) {
-            $query->whereBetween('transaction_date', [$startDate, $endDate]);
-        }], 'transaction_amount')
-            ->orderByDesc('transactions_sum_transaction_amount')
+            $query->whereBetween('date', [$startDate, $endDate]);
+        }], 'amount')
+            ->orderByDesc('transactions_sum_amount')
             ->take(5)
             ->get();
 
@@ -27,7 +27,7 @@ class TopPerformingProperties extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Revenue',
-                    'data' => $topProperties->pluck('transactions_sum_transaction_amount')->toArray(),
+                    'data' => $topProperties->pluck('transactions_sum_amount')->toArray(),
                 ],
             ],
             'labels' => $topProperties->pluck('title')->toArray(),

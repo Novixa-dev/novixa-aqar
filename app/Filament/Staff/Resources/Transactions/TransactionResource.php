@@ -55,10 +55,10 @@ class TransactionResource extends Resource
                 Select::make('seller_id')
                     ->relationship('seller', 'name')
                     ->required(),
-                DatePicker::make('transaction_date')
+                DatePicker::make('date')
                     ->label(__('filament.fields.transaction_date'))
                     ->required(),
-                TextInput::make('transaction_amount')
+                TextInput::make('amount')
                     ->type('number')
                     ->label(__('filament.fields.transaction_amount'))
                     ->required(),
@@ -95,10 +95,10 @@ class TransactionResource extends Resource
                 TextColumn::make('seller.name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('transaction_date')
+                TextColumn::make('date')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('transaction_amount')
+                TextColumn::make('amount')
                     ->money(strtolower(config('currencies.default')))
                     ->searchable()
                     ->sortable(),

@@ -2,8 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\App\Pages;
-use App\Filament\App\Pages\EditProfile;
+use App\Filament\Seller\Pages;
 use App\Filament\App\Pages\CreateTeam;
 use App\Filament\App\Pages\EditTeam;
 use App\Filament\App\Pages\Tenant\Profile;
@@ -79,7 +78,9 @@ class SellerPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/Seller/Resources'), for: 'App\\Filament\\Seller\\Resources')
             ->discoverPages(in: app_path('Filament/Seller/Pages'), for: 'App\\Filament\\Seller\\Pages')
-            ->pages([])
+            ->pages([
+                Pages\EditProfile::class,
+            ])
             ->discoverWidgets(in: app_path('Filament/Seller/Widgets'), for: 'App\\Filament\\Seller\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

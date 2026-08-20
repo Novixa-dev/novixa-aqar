@@ -8,6 +8,7 @@ use App\Filament\Tenant\Resources\MaintenanceRequests\MaintenanceRequestResource
 use Filament\Tables;
 use Filament\Widgets\TableWidget;
 use App\Models\MaintenanceRequest;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -17,7 +18,10 @@ class RecentMaintenanceRequests extends TableWidget
 
     protected function getTableQuery(): Builder | Relation | null
     {
-        return MaintenanceRequest::where('tenant_id', auth()->id())->latest()->limit(5);
+        // MaintenanceRequest.tenant_id -> tenants.id, not users.id.
+        $tenantId = Tenant::where('user_id', auth()->id())->value('id');
+
+        return MaintenanceRequest::where('tenant_id', $tenantId)->latest()->limit(5);
     }
 
     protected function getTableColumns(): array

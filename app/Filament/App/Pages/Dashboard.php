@@ -16,7 +16,7 @@ class Dashboard extends Page
         $this->totalProperties = Property::count();
         $this->activeListings = Property::where('status', 'active')->count();
         $this->totalBookings = Booking::count();
-        $this->totalRevenue = Transaction::sum('transaction_amount');
+        $this->totalRevenue = Transaction::sum('amount');
     }
 
     protected function getHeaderWidgets(): array

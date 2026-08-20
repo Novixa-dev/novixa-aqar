@@ -18,7 +18,7 @@ class StatsOverview extends BaseWidget
             Stat::make($ar ? 'إجمالي العقارات' : 'Total Properties', Property::count()),
             Stat::make($ar ? 'الإعلانات النشطة' : 'Active Listings', Property::where('status', 'active')->count()),
             Stat::make($ar ? 'إجمالي الحجوزات' : 'Total Bookings', Booking::count()),
-            Stat::make($ar ? 'إجمالي الإيرادات' : 'Total Revenue', app(\App\Services\CurrencyService::class)->format(Transaction::sum('transaction_amount'))),
+            Stat::make($ar ? 'إجمالي الإيرادات' : 'Total Revenue', app(\App\Services\CurrencyService::class)->format(Transaction::sum('amount'))),
         ];
     }
 }
