@@ -17,6 +17,7 @@ use App\Filament\Tenant\Resources\MaintenanceRequests\Pages\ListMaintenanceReque
 use App\Filament\Tenant\Resources\MaintenanceRequests\Pages\CreateMaintenanceRequest;
 use App\Filament\Tenant\Resources\MaintenanceRequests\Pages\EditMaintenanceRequest;
 use App\Models\MaintenanceRequest;
+use App\Models\Tenant;
 use App\Models\WorkOrder;
 use App\Services\NotificationService;
 use Filament\Forms;
@@ -25,6 +26,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Notifications\Notification;
 use App\Filament\Tenant\Resources\MaintenanceRequestResource\Pages;
+use Illuminate\Database\Eloquent\Builder;
 
 class MaintenanceRequestResource extends Resource
 {
@@ -151,5 +153,15 @@ class MaintenanceRequestResource extends Resource
             'create' => CreateMaintenanceRequest::route('/create'),
             'edit' => EditMaintenanceRequest::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        // MaintenanceRequest.tenant_id -> tenants.id, not users.id, so this
+        // cannot be scoped the same way as LeaseResource/PaymentResource
+        // (whose tenant_id columns do point to users.id).
+        $tenantId = Tenant::where('user_id', auth()->id())->value('id');
+
+        return parent::getEloquentQuery()->where('tenant_id', $tenantId);
     }
 }
