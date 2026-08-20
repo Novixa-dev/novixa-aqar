@@ -34,7 +34,7 @@ class PropertyAlert extends Notification implements ShouldQueue
 
         foreach ($this->properties as $property) {
             $message->line('Title: ' . $property->title)
-                    ->line('Price: $' . number_format($property->price, 2))
+                    ->line('Price: ' . $property->formatted_price)
                     ->line('Location: ' . $property->location)
                     ->line('---');
         }

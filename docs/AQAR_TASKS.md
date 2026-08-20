@@ -22,8 +22,8 @@ Live tracker. Source of truth for priority/root-cause detail is `AQAR_PRE_RELEAS
 
 | ID | Problem | Status |
 |---|---|---|
-| P1-1 | No rate limiting on login/register | DISCOVERED |
-| P1-2 | `DigitalSignatureService` missing `LeaseAgreement` import — `is_signed` never updates | DISCOVERED |
+| P1-1 | No rate limiting on login/register | **FIXED** — `throttle:login`/`throttle:register` middleware applied to the manually-declared POST routes in `routes/web.php` (the well-designed limiters already existed in `FortifyServiceProvider.php`, just never applied to any route). Verified live via Playwright: 6th rapid login attempt in a minute correctly returns 429 |
+| P1-2 | `DigitalSignatureService` missing `LeaseAgreement` import — `is_signed` never updates | **PARTIALLY FIXED** — import added, but the check is structurally dead regardless: `Document`/`LeaseAgreement` are sibling models (neither extends the other, no polymorphic link), and `signDocument()` is only ever called with a real `Document`. Fixing the import alone doesn't make `is_signed` actually update — that needs a product decision on the real Document↔LeaseAgreement signing relationship (folds into P1-4/P1-5). Documented inline and in `docs/AQAR_DECISIONS.md`. |
 | P1-3 | E-signature flags directly PATCH-able via API | DISCOVERED |
 | P1-4 | No Filament action to trigger e-signature flow | DISCOVERED |
 | P1-5 | Deleted `LeaseAgreementService` template logic, no replacement | DISCOVERED — needs product decision first |
@@ -32,7 +32,7 @@ Live tracker. Source of truth for priority/root-cause detail is `AQAR_PRE_RELEAS
 | P1-8 | Agent Matching Service has zero UI entry point | DISCOVERED |
 | P1-9 | `Property::needsSyncing()` compares column to literal string | DISCOVERED |
 | P1-10 | Two non-integrated Lease/LeaseAgreement models | DISCOVERED — Large, needs design conversation |
-| P1-11/12 | Hardcoded `$`/USD in notifications & payment tables | DISCOVERED |
+| P1-11/12 | Hardcoded `$`/USD in notifications & payment tables | **FIXED** — `PriceAlertNotification`/`PropertyAlert` now use `$property->formatted_price` (the existing per-property-currency accessor, already used elsewhere); `PaymentRelationManager`/Tenant `PaymentResource` now use `strtolower(config('currencies.default'))` (Payment has no per-record currency, unlike Property, so the site default is correct here — same pattern already established in `RecentTransactions.php`). Verified `/tenant/payments` still loads with 0 errors |
 | P1-13 | No in-panel language switcher | DISCOVERED |
 | P1-14 | ~96% of Livewire flash messages untranslated | DISCOVERED |
 | P1-15/16 | Zero test coverage: Payments/Stripe, functional auth | DISCOVERED |

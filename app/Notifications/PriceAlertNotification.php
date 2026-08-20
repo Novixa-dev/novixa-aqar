@@ -34,7 +34,7 @@ class PriceAlertNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject("Price Alert: {$this->property->title}")
             ->line("The price of the property you're watching has {$changeType} by {$absoluteDifference}%.")
-            ->line("New price: $" . number_format($this->property->price, 2))
+            ->line("New price: " . $this->property->formatted_price)
             ->action('View Property', url("/properties/{$this->property->id}"));
     }
 

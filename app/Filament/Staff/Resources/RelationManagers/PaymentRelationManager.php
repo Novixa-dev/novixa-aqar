@@ -49,7 +49,7 @@ class PaymentRelationManager extends RelationManager
         return $table
             ->columns([
                 TextColumn::make('amount')
-                    ->money('USD')
+                    ->money(strtolower(config('currencies.default')))
                     ->sortable(),
                 TextColumn::make('payment_date')
                     ->date()

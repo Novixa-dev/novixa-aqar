@@ -6,6 +6,7 @@ use Exception;
 use App\Models\DigitalSignature;
 use App\Models\User;
 use App\Models\Document;
+use App\Models\LeaseAgreement;
 
 class DigitalSignatureService
 {
@@ -40,6 +41,15 @@ class DigitalSignatureService
             'envelope_id' => $envelope->getEnvelopeId(),
         ]);
 
+        // Currently unreachable: signDocument() is only ever called with a real
+        // Document instance (see DocumentSignatureController, TransactionService),
+        // and LeaseAgreement is a sibling model (extends Model directly), not a
+        // Document subclass or a documentable() polymorphic target - so this can
+        // never be true as written. Needs a product decision on the actual
+        // Document<->LeaseAgreement signing relationship before it can be fixed
+        // for real; see AQAR_PRE_RELEASE_AUDIT_REPORT.md P1-2/P1-4/P1-5 and
+        // docs/AQAR_DECISIONS.md. Import fixed so this at least references a
+        // real class instead of an undefined one.
         if ($document instanceof LeaseAgreement) {
             $document->update(['is_signed' => true]);
         }

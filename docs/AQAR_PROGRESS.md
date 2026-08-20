@@ -53,3 +53,17 @@ Chronological. Anyone should be able to read this and know the actual current st
 **Remaining P0s: P0-6 (`APP_URL`) and P0-8 (PHP version) are environment-provisioning tasks** — they depend on whatever host actually serves the public demo and can't be meaningfully "fixed" in this repo; they're a pre-launch checklist item, not a code change. All P0s that are genuine code fixes are now done.
 
 **Next:** P1 items (Section 5 of the audit report) — 21 items, none release-blocking but materially affecting reliability/UX/professionalism. Highest-value next: P1-21 (`APP_DEBUG`), P1-1 (rate limiting), P1-15/16 (Payments/auth test coverage).
+
+---
+
+## 2026-08-20 — P1 batch: rate limiting, e-signature import, hardcoded currency
+
+**P1-1 (no rate limiting) — FIXED.** Applied `throttle:login`/`throttle:register` to the manually-declared POST routes in `routes/web.php` — the limiters themselves (5/min login, 3/min register) already existed in `FortifyServiceProvider.php`, just orphaned. Verified live with a real Playwright browser session: attempts 1-5 return 302 (normal failed-login), attempt 6 returns 429.
+
+**P1-2 (e-signature `is_signed`) — PARTIALLY FIXED, honestly.** Added the missing `LeaseAgreement` import, but investigated further and found the check is structurally dead regardless of the import: `Document` and `LeaseAgreement` are sibling models with no shared hierarchy or polymorphic link, and `signDocument()` is only ever called with a `Document` instance (confirmed by checking both call sites). Fixing this for real needs a product decision about the actual Document↔LeaseAgreement signing relationship — documented inline in the service and in `docs/AQAR_DECISIONS.md` rather than claiming a fix that doesn't actually change behavior.
+
+**P1-11/P1-12 (hardcoded `$`/USD) — FIXED.** Notifications now use the existing `$property->formatted_price` accessor (per-property currency); payment tables now use `strtolower(config('currencies.default'))`, matching the pattern already established in `RecentTransactions.php` (Payment has no per-record currency, unlike Property).
+
+**Verification:** full test suite re-run 3x across this batch, consistently 559/0/32. Live: `/tenant/payments` still loads with 0 errors after the currency-column change.
+
+**Next:** continuing through P1 — P1-3/P1-4 (e-signature CRUD exposure + no Filament trigger action), P1-13 (in-panel language switcher), P1-19 (sitemap), P1-21 (`APP_DEBUG` — environment, checklist-only), then P1-15/16 (Payments/auth test coverage, larger effort).
