@@ -12,14 +12,29 @@ class PropertyPolicy
         return $user->hasAnyRole(['admin', 'super_admin']) ? true : null;
     }
 
+    public function viewAny(User $user): bool
+    {
+        return $user->can('view_any_property');
+    }
+
     public function view(User $user, Property $property): bool
     {
         return $this->belongsToPropertyTeam($user, $property);
     }
 
+    public function create(User $user): bool
+    {
+        return $user->can('create_property');
+    }
+
     public function update(User $user, Property $property): bool
     {
-        return $this->belongsToPropertyTeam($user, $property);
+        return $user->can('update_property') && $this->belongsToPropertyTeam($user, $property);
+    }
+
+    public function delete(User $user, Property $property): bool
+    {
+        return $user->can('delete_property') && $this->belongsToPropertyTeam($user, $property);
     }
 
     private function belongsToPropertyTeam(User $user, Property $property): bool

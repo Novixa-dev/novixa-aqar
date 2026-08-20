@@ -23,24 +23,24 @@ class RolesSeeder extends Seeder
         'agent' => [
             '_property', '_appointment', '_booking', '_lead',
             '_market_analysis', '_agent_performance', '_favorite',
-            '_communication_hub', '_chat_conversation', '_review',
+            '_message', '_chat_conversation', '_review',
             '_document', '_image', '_email_campaign',
         ],
         'buyer' => [
             'view_property', 'view_any_property',
-            'view_booking', 'create_booking', 'update_booking',
+            'view_booking', 'view_any_booking', 'create_booking', 'update_booking',
             'view_favorite', 'create_favorite', 'delete_favorite',
             'view_any_favorite', 'delete_any_favorite',
-            'view_review', 'create_review',
-            'view_communication_hub', 'create_communication_hub',
+            'view_review', 'view_any_review', 'create_review',
+            'view_message', 'view_any_message', 'create_message',
         ],
         'seller' => [
             'view_property', 'view_any_property', 'create_property', 'update_property',
             'view_document', 'view_any_document', 'create_document',
             'view_appointment', 'view_any_appointment',
             'view_review', 'view_any_review',
-            'view_image', 'create_image', 'update_image', 'delete_image',
-            'view_communication_hub', 'create_communication_hub',
+            'view_image', 'view_any_image', 'create_image', 'update_image', 'delete_image',
+            'view_message', 'view_any_message', 'create_message',
         ],
         'landlord' => [
             'view_property', 'view_any_property', 'create_property', 'update_property',
@@ -52,7 +52,7 @@ class RolesSeeder extends Seeder
             'view_utility_payment', 'view_any_utility_payment',
             'view_transaction', 'view_any_transaction',
             'view_document', 'create_document', 'view_any_document',
-            'view_communication_hub', 'create_communication_hub',
+            'view_message', 'view_any_message', 'create_message',
         ],
         'tenant' => [
             'view_property', 'view_any_property',
@@ -62,14 +62,18 @@ class RolesSeeder extends Seeder
             'create_maintenance_request', 'update_maintenance_request',
             'view_payment', 'view_any_payment', 'create_payment',
             'view_utility_payment', 'view_any_utility_payment',
-            'view_communication_hub', 'create_communication_hub',
-            'view_review', 'create_review',
+            'view_message', 'view_any_message', 'create_message',
+            'view_review', 'view_any_review', 'create_review',
         ],
         'contractor' => [
-            'view_contractor', 'view_any_contractor', 'update_contractor',
+            // ContractorResource's underlying model is App\Models\User (its own
+            // getEloquentQuery() scopes to auth()->id(), so this only ever grants
+            // self-access to that one resource) - the real permission names come
+            // from the User model, not a nonexistent "Contractor" model.
+            'view_user', 'view_any_user', 'update_user',
             'view_maintenance_request', 'view_any_maintenance_request', 'update_maintenance_request',
             'view_document', 'view_any_document',
-            'view_communication_hub', 'create_communication_hub',
+            'view_message', 'view_any_message', 'create_message',
         ],
     ];
 

@@ -101,6 +101,12 @@ return [
     */
 
     'permissions' => [
+        // The actual permission-key format (lower_snake_case joined by a single "_",
+        // e.g. "view_any_maintenance_request") is produced by the
+        // FilamentShield::buildPermissionKeyUsing() closure registered in
+        // AppServiceProvider::boot() - Shield's separator/case validation forbids
+        // "_" as a separator with any snake-family case, so these two values only
+        // need to be a validation-safe pair; they are not the actual output format.
         'separator' => ':',
         'case' => 'pascal',
         'generate' => true,
@@ -254,9 +260,9 @@ return [
     */
 
     'discovery' => [
-        'discover_all_resources' => false,
-        'discover_all_widgets' => false,
-        'discover_all_pages' => false,
+        'discover_all_resources' => true,
+        'discover_all_widgets' => true,
+        'discover_all_pages' => true,
     ],
 
     /*
