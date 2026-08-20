@@ -37,6 +37,14 @@ class UserSeeder extends Seeder
         $team = Team::first();
         if ($team) {
             $adminUser->teams()->syncWithoutDetaching([$team->id]);
+            // switchTeam() (not a raw current_team_id assignment) also
+            // verifies membership - without this, current_team_id stays null
+            // and every team-scoped feature (V1 API's TenantCrudController,
+            // any ->current_team_id lookup) throws "select an organisation"
+            // for every seeded demo account. Previously unset for all 8 roles.
+            if (is_null($adminUser->current_team_id)) {
+                $adminUser->switchTeam($team);
+            }
         }
 
         $role = Role::where('name', 'super_admin')->first();
@@ -57,6 +65,9 @@ class UserSeeder extends Seeder
             );
             if ($team) {
                 $user->teams()->syncWithoutDetaching([$team->id]);
+                if (is_null($user->current_team_id)) {
+                    $user->switchTeam($team);
+                }
             }
             $r = Role::where('name', $roleName)->first();
             if ($r) {

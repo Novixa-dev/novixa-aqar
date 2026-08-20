@@ -41,9 +41,12 @@ class TenancyAgreementController extends TenantCrudController
             'terms' => ['nullable', 'string'],
             'content' => ['nullable', 'string'],
             'terms_and_conditions' => ['nullable', 'string'],
-            'is_signed' => ['sometimes', 'boolean'],
-            'landlord_signed' => ['sometimes', 'boolean'],
-            'tenant_signed' => ['sometimes', 'boolean'],
+            // is_signed/landlord_signed/tenant_signed are deliberately not
+            // writable through this generic CRUD endpoint (P1-3) - they must
+            // only ever be set by a real signature-capture flow, not a plain
+            // PATCH. All three default to false at the DB level, so omitting
+            // them here doesn't affect create(); update() simply can no
+            // longer touch them.
             'renewal_of_id' => ['nullable', Rule::exists('lease_agreements', 'id')->where('team_id', $teamId)],
             'notice_type' => ['nullable', Rule::in(['landlord', 'tenant', 'mutual'])],
             'notice_served_at' => ['nullable', 'date'],

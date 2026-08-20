@@ -67,3 +67,13 @@ Chronological. Anyone should be able to read this and know the actual current st
 **Verification:** full test suite re-run 3x across this batch, consistently 559/0/32. Live: `/tenant/payments` still loads with 0 errors after the currency-column change.
 
 **Next:** continuing through P1 — P1-3/P1-4 (e-signature CRUD exposure + no Filament trigger action), P1-13 (in-panel language switcher), P1-19 (sitemap), P1-21 (`APP_DEBUG` — environment, checklist-only), then P1-15/16 (Payments/auth test coverage, larger effort).
+
+---
+
+## 2026-08-20 — P1-3 fixed; found and fixed a second seeded-data gap (`current_team_id`)
+
+**P1-3 (e-signature flags directly PATCH-able via API) — FIXED.** Removed `is_signed`/`landlord_signed`/`tenant_signed` from `TenancyAgreementController::rules()` — `Request::validate()` only ever returns keys present in its rules array, so these 3 fields are now unconditionally stripped from any request body regardless of what a client sends. All 3 default `false` at the DB level, so `store()` behavior is unchanged. `renew()`'s own direct reset of these flags (legitimate server-side logic, not user input) is untouched.
+
+**Found while verifying it, fixed the same session: `current_team_id` was `NULL` for all 8 seeded demo users.** `UserSeeder.php` attached each user to a team but never called Jetstream's `switchTeam()` to set the "active" team column — any code path reading `current_team_id` directly (confirmed for the V1 API's `teamId()` check) threw "Select an organisation you belong to" for every single seeded persona, including admin. Added `switchTeam()` calls to the seeder; re-ran it against the dev DB; confirmed all 8 users now resolve `current_team_id=1`. Not exhaustively audited for every other call site that might read this column directly — flagged in `docs/AQAR_DECISIONS.md` for a future session.
+
+**Verification:** `rules()` checked via reflection with a real authenticated, team-attached user — all 3 flags confirmed absent, `status` confirmed still present. Full test suite: 559 passed / 0 failed / 32 skipped, unchanged.
