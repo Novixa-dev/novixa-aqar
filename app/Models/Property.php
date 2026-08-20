@@ -494,7 +494,7 @@ class Property extends Model implements HasMedia
     {
         return $query->where(function ($query) {
             $query->whereNull('last_synced_at')
-                ->orWhere('updated_at', '>', 'last_synced_at');
+                ->orWhereColumn('updated_at', '>', 'last_synced_at');
         });
     }
 

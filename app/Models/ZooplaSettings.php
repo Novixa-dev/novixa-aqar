@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Represents the Zoopla API settings.
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string $sync_frequency
  * @property string|null $feed_id
  * @property bool $is_active
+ * @property int|null $team_id
  */
 class ZooplaSettings extends Model
 {
@@ -26,6 +28,7 @@ class ZooplaSettings extends Model
         'api_key',
         'feed_id',
         'is_active',
+        'team_id',
     ];
 
     protected $hidden = [
@@ -35,6 +38,11 @@ class ZooplaSettings extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
 
     public function scopeActive(Builder $query): Builder
     {

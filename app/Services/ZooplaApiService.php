@@ -7,22 +7,40 @@ use App\Models\ZooplaSettings;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use RuntimeException;
 
 class ZooplaApiService
 {
-    protected $baseUri;
-    protected $apiKey;
+    protected ?string $baseUri = null;
+    protected ?string $apiKey = null;
+    protected ?int $teamId = null;
 
-    public function __construct()
+    /**
+     * Configure this service instance for one team's Zoopla integration.
+     * The constructor previously always called ZooplaSettings::first() -
+     * a single global settings row/API key used for every team's properties.
+     * See RightMoveService::forSettings() for the same P0-5 fix, same shape.
+     */
+    public function forSettings(ZooplaSettings $settings): static
     {
-        $settings = ZooplaSettings::first();
+        $this->baseUri = $settings->base_uri;
+        $this->apiKey = $settings->api_key;
+        $this->teamId = $settings->team_id;
 
-        $this->baseUri = $settings ? $settings->base_uri : config('services.zoopla.base_uri');
-        $this->apiKey = $settings ? $settings->api_key : config('services.zoopla.api_key');
+        return $this;
+    }
+
+    protected function ensureConfigured(): void
+    {
+        if ($this->teamId === null) {
+            throw new RuntimeException('ZooplaApiService must be configured via forSettings() before use.');
+        }
     }
 
     public function uploadProperty(Property $property): bool
     {
+        $this->ensureConfigured();
+
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
@@ -57,6 +75,8 @@ class ZooplaApiService
 
     public function updateProperty(Property $property): bool
     {
+        $this->ensureConfigured();
+
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
@@ -89,6 +109,8 @@ class ZooplaApiService
 
     public function deleteProperty(Property $property): bool
     {
+        $this->ensureConfigured();
+
         if (!$property->zoopla_id) {
             return false;
         }

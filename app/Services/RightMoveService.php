@@ -3,25 +3,48 @@
 namespace App\Services;
 
 use App\Models\Property;
+use App\Models\RightMoveSettings;
 use App\Exceptions\RightMoveApiException;
 use App\Exceptions\PropertySyncException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use RuntimeException;
 
 class RightMoveService
 {
-    protected $baseUri;
-    protected $apiKey;
+    protected ?string $baseUri = null;
+    protected ?string $apiKey = null;
+    protected ?int $teamId = null;
 
-    public function __construct()
+    /**
+     * Configure this service instance for one team's RightMove integration.
+     * Each team has its own API key and base URI (RightMoveSettings.team_id) -
+     * previously this service read a single global config value, so the
+     * scheduled sync job pushed every team's properties to whichever one
+     * team's key happened to be configured. See AQAR_PRE_RELEASE_AUDIT_REPORT.md
+     * P0-5 / docs/AQAR_DECISIONS.md.
+     */
+    public function forSettings(RightMoveSettings $settings): static
     {
-        $this->baseUri = config('services.rightmove.base_uri');
-        $this->apiKey = config('services.rightmove.api_key');
+        $this->baseUri = $settings->base_uri;
+        $this->apiKey = $settings->api_key;
+        $this->teamId = $settings->team_id;
+
+        return $this;
+    }
+
+    protected function ensureConfigured(): void
+    {
+        if ($this->teamId === null) {
+            throw new RuntimeException('RightMoveService must be configured via forSettings() before use.');
+        }
     }
 
     public function fetchProperties()
     {
+        $this->ensureConfigured();
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
         ])->get("{$this->baseUri}/properties");
@@ -35,6 +58,8 @@ class RightMoveService
 
     public function createListing(Property $property): array
     {
+        $this->ensureConfigured();
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
         ])->post("{$this->baseUri}/listings", $this->preparePropertyData($property));
@@ -48,6 +73,8 @@ class RightMoveService
 
     public function updateListing(string $listingId, Property $property): array
     {
+        $this->ensureConfigured();
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
         ])->put("{$this->baseUri}/listings/{$listingId}", $this->preparePropertyData($property));
@@ -61,6 +88,8 @@ class RightMoveService
 
     public function deleteListing(string $listingId): bool
     {
+        $this->ensureConfigured();
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
         ])->delete("{$this->baseUri}/listings/{$listingId}");
@@ -74,7 +103,9 @@ class RightMoveService
 
     public function syncAllProperties()
     {
-        $properties = Property::all();
+        $this->ensureConfigured();
+
+        $properties = Property::where('team_id', $this->teamId)->get();
         $results = [];
     
         foreach ($properties as $property) {

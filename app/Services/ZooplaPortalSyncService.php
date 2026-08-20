@@ -10,17 +10,25 @@ use Illuminate\Support\Facades\Log;
 class ZooplaPortalSyncService
 {
     protected $zooplaApiService;
-    protected $zooplaSettings;
 
-    public function __construct(ZooplaApiService $zooplaApiService, ZooplaSettings $zooplaSettings)
+    public function __construct(ZooplaApiService $zooplaApiService)
     {
         $this->zooplaApiService = $zooplaApiService;
-        $this->zooplaSettings = $zooplaSettings;
     }
 
-    public function syncProperties()
+    public function syncProperties(ZooplaSettings $settings)
     {
-        $properties = Property::needsSyncing()->get();
+        $this->zooplaApiService->forSettings($settings);
+
+        // team_id is nullable on zoopla_settings (added after the fact - see
+        // AQAR_PRE_RELEASE_AUDIT_REPORT.md P0-5) so an unconfigured settings
+        // row can't accidentally sync every team's properties.
+        if ($settings->team_id === null) {
+            Log::warning('Skipping Zoopla sync: settings row has no team_id assigned', ['zoopla_settings_id' => $settings->id]);
+            return ['synced' => 0, 'failed' => 0];
+        }
+
+        $properties = Property::where('team_id', $settings->team_id)->needsSyncing()->get();
         $synced = 0;
         $failed = 0;
 

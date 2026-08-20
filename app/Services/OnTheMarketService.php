@@ -3,24 +3,43 @@
 namespace App\Services;
 
 use App\Models\Property;
+use App\Models\OnTheMarketSettings;
 use App\Exceptions\OnTheMarketApiException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use RuntimeException;
 
 class OnTheMarketService
 {
-    protected $baseUri;
-    protected $apiKey;
+    protected ?string $baseUri = null;
+    protected ?string $apiKey = null;
+    protected ?int $teamId = null;
 
-    public function __construct()
+    /**
+     * Configure this service instance for one team's OnTheMarket integration.
+     * See RightMoveService::forSettings() - same P0-5 fix, same shape.
+     */
+    public function forSettings(OnTheMarketSettings $settings): static
     {
-        $this->baseUri = config('services.onthemarket.base_uri');
-        $this->apiKey = config('services.onthemarket.api_key');
+        $this->baseUri = $settings->base_uri;
+        $this->apiKey = $settings->api_key;
+        $this->teamId = $settings->team_id;
+
+        return $this;
+    }
+
+    protected function ensureConfigured(): void
+    {
+        if ($this->teamId === null) {
+            throw new RuntimeException('OnTheMarketService must be configured via forSettings() before use.');
+        }
     }
 
     public function fetchProperties(): array
     {
+        $this->ensureConfigured();
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
         ])->get("{$this->baseUri}/listings");
@@ -34,7 +53,9 @@ class OnTheMarketService
 
     public function syncAllProperties(): array
     {
-        $properties = Property::all();
+        $this->ensureConfigured();
+
+        $properties = Property::where('team_id', $this->teamId)->get();
         $results = [];
 
         foreach ($properties as $property) {
@@ -64,6 +85,8 @@ class OnTheMarketService
 
     protected function createListing(Property $property): array
     {
+        $this->ensureConfigured();
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
         ])->post("{$this->baseUri}/listings", $this->preparePropertyData($property));
@@ -77,6 +100,8 @@ class OnTheMarketService
 
     protected function updateListing(string $listingId, Property $property): array
     {
+        $this->ensureConfigured();
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
         ])->put("{$this->baseUri}/listings/{$listingId}", $this->preparePropertyData($property));
@@ -90,6 +115,8 @@ class OnTheMarketService
 
     public function deleteListing(string $listingId): bool
     {
+        $this->ensureConfigured();
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
         ])->delete("{$this->baseUri}/listings/{$listingId}");
