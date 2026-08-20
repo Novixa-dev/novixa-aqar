@@ -38,7 +38,7 @@ class UsersTable
                     ->searchable()
                     ->sortable()
                     ->formatStateUsing(fn ($state) => ucfirst($state))
-                    ->placeholder('No roles assigned'),
+                    ->placeholder(__('No roles assigned')),
                 
                 IconColumn::make('email_verified_at')
                     ->label(__('filament.fields.verified'))
@@ -77,7 +77,7 @@ class UsersTable
                     ->multiple()
                     ->preload()
                     ->searchable()
-                    ->placeholder('Filter by role'),
+                    ->placeholder(__('Filter by role')),
                 
                 Filter::make('verified')
                     ->label(__('filament.fields.email_verified'))

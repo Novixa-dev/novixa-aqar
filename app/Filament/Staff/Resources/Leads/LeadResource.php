@@ -73,7 +73,7 @@ class LeadResource extends Resource
                     ->required(),
                 TextInput::make('score')
                     ->disabled()
-                    ->helperText('Score is automatically calculated'),
+                    ->helperText(__('Score is automatically calculated')),
                 Select::make('category')
                     ->options(fn () => app()->getLocale() === 'ar' ? [
                         'hot' => 'مرتفع الاهتمام',

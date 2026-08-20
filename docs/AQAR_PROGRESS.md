@@ -115,3 +115,15 @@ User confirmed no further P0/P1 backend items take priority right now — the ac
 **Also checked:** DB-content localization more broadly (property descriptions, news articles) — confirmed `properties`/`news` tables have single-value `title`/`description`/`content` columns with no per-locale storage at all, and confirmed seeded content is genuinely Arabic throughout (matches the Arabic-first primary market). This is a real structural gap for a true bilingual experience, but not a demo blocker for the primary (Arabic) locale — logged as a post-demo architecture item (needs `spatie/laravel-translatable` or dual-column migration across multiple models), not attempted speculatively given the blast radius.
 
 **Next:** app-internal static-string sweep (Blade/Filament labels not yet using `__()`) using the same mechanical pattern as P1-14; check on the visual UI/UX audit agent (still running).
+
+---
+
+## 2026-08-20 — Filament label/placeholder/helperText sweep; 2 background agents dispatched for remaining scope
+
+**Filament hardcoded strings — FIXED**, pending commit. Grepped all of `app/Filament/**/*.php` for explicit `->label(`/`->placeholder(`/`->helperText(` calls with raw string literals (Filament's own field-name-humanization auto-labels weren't in scope here — a much larger, separate concern, see decision log). Found 29 hardcoded strings across 8 files (mostly `Admin/Resources/Users/*` and a few Staff resources: Property, PropertyTemplate, News, Lead, Alert). Wrapped 28 in `__()` (left `'user@example.com'` alone — it's a format example, not translatable content) and added the 26 resulting unique keys to both lang files. Verified: `php -l` clean on all 8 files, both JSON files parse with matching +26 key counts (171/157), `tinker` confirms `__()` resolves correctly to real Arabic in the `ar` locale and identity English in `en` for a sample of the new keys. Full suite re-run in progress.
+
+**Dispatched two background agents this session, both still running, to cover ground in parallel without duplicating this direct work:**
+1. Visual UI/UX audit (dispatched earlier) — screenshots across light/dark × AR/EN × desktop/mobile, hunting dark-mode/RTL/responsive bugs and untranslated visible text. No results yet.
+2. Blade-view translation sweep (dispatched this entry) — scoped to the ~78 Blade files identified as using neither `__()` nor the inline locale-ternary pattern, after filtering out pure structural/wrapper components. Briefed with the exact convention established in the P1-14 commit, full verification requirements (JSON validity, full test suite, live spot-check), and explicit instructions to confirm branch before starting (the worktree lesson). No results yet.
+
+**Not covered by either agent, still open:** Filament's *auto-generated* field labels (the majority of form/table labels across ~45 resources, which Filament humanizes from the English column name by default rather than reading any translation) — this is a much larger, structurally different problem than the explicit-string cases just fixed. Not attempted this session; see decision log for reasoning on scope/priority.

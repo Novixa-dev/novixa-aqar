@@ -33,7 +33,7 @@ class UserForm
                                             ->required()
                                             ->maxLength(255)
                                             ->columnSpanFull()
-                                            ->placeholder('Enter full name'),
+                                            ->placeholder(__('Enter full name')),
                                         
                                         TextInput::make('email')
                                             ->label(__('filament.fields.email_address'))
@@ -49,8 +49,8 @@ class UserForm
                                             ->dehydrated(fn ($state) => filled($state))
                                             ->required(fn (string $context): bool => $context === 'create')
                                             ->maxLength(255)
-                                            ->placeholder('Enter password')
-                                            ->helperText('Leave blank to keep current password (when editing)'),
+                                            ->placeholder(__('Enter password'))
+                                            ->helperText(__('Leave blank to keep current password (when editing)')),
                                         
                                         FileUpload::make('profile_photo_path')
                                             ->label(__('filament.fields.profile_photo'))
@@ -59,7 +59,7 @@ class UserForm
                                             ->maxSize(2048)
                                             ->directory('profile-photos')
                                             ->columnSpanFull()
-                                            ->helperText('Upload a profile photo (max 2MB)')
+                                            ->helperText(__('Upload a profile photo (max 2MB)'))
                                     ]),
                             ]),
                         
@@ -73,8 +73,8 @@ class UserForm
                                             ->multiple()
                                             ->preload()
                                             ->searchable()
-                                            ->placeholder('Select roles')
-                                            ->helperText('Users inherit all permissions from their assigned roles')
+                                            ->placeholder(__('Select roles'))
+                                            ->helperText(__('Users inherit all permissions from their assigned roles'))
                                             ->columnSpanFull(),
                                     ]),
                             ]),

@@ -66,7 +66,7 @@ class NewsResource extends Resource
                 Textarea::make('excerpt')
                     ->maxLength(500)
                     ->rows(3)
-                    ->helperText('A brief summary of the news article (optional)'),
+                    ->helperText(__('A brief summary of the news article (optional)')),
                 RichEditor::make('content')
                     ->required()
                     ->columnSpanFull()
@@ -84,7 +84,7 @@ class NewsResource extends Resource
                     ]),
                 DateTimePicker::make('published_at')
                     ->label(__('filament.fields.publish_date_time'))
-                    ->helperText('Leave empty to save as draft'),
+                    ->helperText(__('Leave empty to save as draft')),
                 Select::make('author_id')
                     ->label(__('filament.fields.author'))
                     ->relationship('author', 'name')
@@ -93,7 +93,7 @@ class NewsResource extends Resource
                     ->default(fn () => auth()->id()),
                 Toggle::make('is_featured')
                     ->label(__('filament.fields.featured_article'))
-                    ->helperText('Featured articles will be highlighted on the homepage'),
+                    ->helperText(__('Featured articles will be highlighted on the homepage')),
             ]);
     }
 

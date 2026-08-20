@@ -65,7 +65,7 @@ class PropertyResource extends Resource
                         Textarea::make('content')
                             ->required()
                             ->label(__('filament.fields.template_content'))
-                            ->helperText('Use placeholders like {title}, {description}, {price}, etc.')
+                            ->helperText(__('Use placeholders like {title}, {description}, {price}, etc.'))
                             ->rows(10),
                     ])
                     ->createOptionAction(function (Action $action) {
@@ -138,7 +138,7 @@ class PropertyResource extends Resource
                     ->url()
                     ->maxLength(255)
                     ->label(__('filament.fields.virtual_tour_url'))
-                    ->helperText('Enter the URL for the virtual tour (Matterport, Kuula, etc.)'),
+                    ->helperText(__('Enter the URL for the virtual tour (Matterport, Kuula, etc.)')),
                 Select::make('virtual_tour_provider')
                     ->options(fn () => [
                         'matterport' => 'Matterport',
@@ -148,21 +148,21 @@ class PropertyResource extends Resource
                         'other' => app()->getLocale() === 'ar' ? 'أخرى' : 'Other',
                     ])
                     ->label(__('filament.fields.virtual_tour_provider'))
-                    ->helperText('Select the provider of your virtual tour'),
+                    ->helperText(__('Select the provider of your virtual tour')),
                 Textarea::make('virtual_tour_embed_code')
                     ->rows(3)
                     ->maxLength(2000)
                     ->label(__('filament.fields.virtual_tour_embed_code'))
-                    ->helperText('Paste custom embed code if auto-generation from URL doesn\'t work'),
+                    ->helperText(__('Paste custom embed code if auto-generation from URL doesn\'t work')),
                 Toggle::make('live_tour_available')
                     ->label(__('filament.fields.live_virtual_tours_available'))
-                    ->helperText('Enable this to allow users to schedule live virtual tours with agents')
+                    ->helperText(__('Enable this to allow users to schedule live virtual tours with agents'))
                     ->default(false),
                 TextInput::make('model_3d_url')
                     ->label(__('filament.fields.3d_model_url'))
                     ->url()
                     ->maxLength(255)
-                    ->helperText('URL to GLB/GLTF 3D model file'),
+                    ->helperText(__('URL to GLB/GLTF 3D model file')),
                 Toggle::make('is_featured')
                     ->required(),
                 Select::make('property_category_id')
@@ -215,7 +215,7 @@ class PropertyResource extends Resource
                     ->acceptedFileTypes(['model/gltf-binary', 'model/gltf+json', 'application/octet-stream'])
                     ->maxSize(51200) // 50MB
                     ->label(__('filament.fields.3d_model'))
-                    ->helperText('Upload a 3D model file in GLB or GLTF format for interactive viewing')
+                    ->helperText(__('Upload a 3D model file in GLB or GLTF format for interactive viewing'))
                     ->columnSpanFull(),
                 FloorPlanEditor::make('floor_plan_data')
                     ->label(__('filament.fields.interactive_floor_plan'))

@@ -57,7 +57,7 @@ class ViewUser extends ViewRecord
                         TextEntry::make('email_verified_at')
                             ->label(__('filament.fields.verified_at'))
                             ->dateTime('M d, Y H:i')
-                            ->placeholder('Not verified'),
+                            ->placeholder(__('Not verified')),
                     ]),
                 
                 Section::make('Roles & Permissions')
@@ -68,14 +68,14 @@ class ViewUser extends ViewRecord
                             ->badge()
                             ->color('success')
                             ->formatStateUsing(fn ($state) => ucfirst($state))
-                            ->placeholder('No roles assigned')
+                            ->placeholder(__('No roles assigned'))
                             ->columnSpanFull(),
                         
                         TextEntry::make('permissions.name')
                             ->label(__('filament.fields.direct_permissions'))
                             ->badge()
                             ->color('info')
-                            ->placeholder('No direct permissions')
+                            ->placeholder(__('No direct permissions'))
                             ->columnSpanFull(),
                     ]),
                 
@@ -86,18 +86,18 @@ class ViewUser extends ViewRecord
                             ->label(__('filament.fields.teams'))
                             ->badge()
                             ->color('primary')
-                            ->placeholder('No teams')
+                            ->placeholder(__('No teams'))
                             ->columnSpanFull(),
                         
                         TextEntry::make('currentTeam.name')
                             ->label(__('filament.fields.current_team'))
-                            ->placeholder('No current team'),
+                            ->placeholder(__('No current team')),
                         
                         TextEntry::make('ownedTeams.name')
                             ->label(__('filament.fields.owned_teams'))
                             ->badge()
                             ->color('warning')
-                            ->placeholder('No owned teams'),
+                            ->placeholder(__('No owned teams')),
                     ]),
                 
                 Section::make('Account Information')
@@ -122,7 +122,7 @@ class ViewUser extends ViewRecord
                         
                         TextEntry::make('profile_photo_path')
                             ->label(__('filament.fields.profile_photo_path'))
-                            ->placeholder('No custom photo')
+                            ->placeholder(__('No custom photo'))
                             ->limit(50),
                     ]),
             ]);

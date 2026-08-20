@@ -93,7 +93,7 @@ class AlertResource extends Resource
                 TextInput::make('price_change_threshold')
                     ->numeric()
                     ->suffix('%')
-                    ->helperText('Percentage change to trigger alert'),
+                    ->helperText(__('Percentage change to trigger alert')),
             ]);
     }
 

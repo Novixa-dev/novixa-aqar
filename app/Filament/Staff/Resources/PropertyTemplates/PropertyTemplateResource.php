@@ -46,7 +46,7 @@ class PropertyTemplateResource extends Resource
                 Textarea::make('content')
                     ->required()
                     ->label(__('filament.fields.template_content'))
-                    ->helperText('Use placeholders like {title}, {description}, {price}, etc.')
+                    ->helperText(__('Use placeholders like {title}, {description}, {price}, etc.'))
                     ->rows(10),
             ]);
     }
