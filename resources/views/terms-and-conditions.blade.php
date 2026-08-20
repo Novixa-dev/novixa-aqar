@@ -11,7 +11,7 @@
             {{ app()->getLocale() === 'ar' ? 'الشروط والأحكام' : 'Terms and Conditions' }}
         </h1>
         <p class="text-base sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed font-light">
-            {{ app()->getLocale() === 'ar' ? 'يرجى قراءة الشروط والأحكام بعناية قبل استخدام منصة نوفيكسا عقار (Novixa Aqar).' : 'Please read these terms and conditions carefully before using Novixa Aqar platform.' }}
+            {{ app()->getLocale() === 'ar' ? 'يرجى قراءة الشروط والأحكام بعناية قبل استخدام منصة دار حضرموت العقارية.' : 'Please read these terms and conditions carefully before using the Dar Hadhramaut Real Estate platform.' }}
         </p>
     </div>
 
@@ -23,7 +23,7 @@
                 <span>{{ app()->getLocale() === 'ar' ? 'الموافقة على الشروط' : 'Acceptance of Terms' }}</span>
             </h2>
             <p class="text-sm sm:text-base">
-                {{ app()->getLocale() === 'ar' ? 'باستخدامك لمنصة نوفيكسا عقار أو أي من خدماتها، فإنك تقر وتوافق على الالتزام بكافة الشروط والسياسات المذكورة هنا وجميع القوانين المعمول بها.' : 'By accessing or using Novixa Aqar platform, you agree to be bound by these Terms and Conditions and all applicable laws and regulations.' }}
+                {{ app()->getLocale() === 'ar' ? 'باستخدامك لمنصة دار حضرموت العقارية أو أي من خدماتها، فإنك تقر وتوافق على الالتزام بكافة الشروط والسياسات المذكورة هنا وجميع القوانين المعمول بها.' : 'By accessing or using the Dar Hadhramaut Real Estate platform, you agree to be bound by these Terms and Conditions and all applicable laws and regulations.' }}
             </p>
         </section>
 

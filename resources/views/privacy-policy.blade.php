@@ -11,7 +11,7 @@
             {{ app()->getLocale() === 'ar' ? 'سياسة الخصوصية وحماية البيانات' : 'Privacy & Data Protection Policy' }}
         </h1>
         <p class="text-base sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed font-light">
-            {{ app()->getLocale() === 'ar' ? 'نلتزم في منصة نوفيكسا عقار بحماية خصوصية مستخدمينا وتأمين بياناتهم الشخصية وفق أعلى المعايير الأمنية.' : 'At Novixa Aqar, we are strictly committed to safeguarding our users’ personal information with industry-leading security.' }}
+            {{ app()->getLocale() === 'ar' ? 'نلتزم في منصة دار حضرموت العقارية بحماية خصوصية مستخدمينا وتأمين بياناتهم الشخصية وفق أعلى المعايير الأمنية.' : 'At Dar Hadhramaut Real Estate, we are strictly committed to safeguarding our users’ personal information with industry-leading security.' }}
         </p>
     </div>
 
