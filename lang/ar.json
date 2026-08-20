@@ -155,5 +155,7 @@
     "A brief summary of the news article (optional)": "ملخص موجز للمقال الإخباري (اختياري)",
     "Leave empty to save as draft": "اتركه فارغاً للحفظ كمسودة",
     "Featured articles will be highlighted on the homepage": "سيتم إبراز المقالات المميزة في الصفحة الرئيسية",
-    "Score is automatically calculated": "يُحسب التقييم تلقائياً"
+    "Score is automatically calculated": "يُحسب التقييم تلقائياً",
+    "Make a Payment": "إجراء دفعة",
+    "Payment History": "سجل المدفوعات"
 }

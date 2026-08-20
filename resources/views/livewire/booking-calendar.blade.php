@@ -1,4 +1,4 @@
-<div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+<div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
     <div class="p-6 bg-indigo-600 text-white">
         <h2 class="text-2xl font-bold">{{ app()->getLocale() === 'ar' ? 'تقويم' : 'Calendar' }} {{ $appointmentType->name ?? (app()->getLocale() === 'ar' ? 'الموعد' : 'Appointment') }}</h2>
         <p class="mt-1 text-indigo-100 text-sm">{{ app()->getLocale() === 'ar' ? 'اختر تاريخاً ووقتاً متاحين لتحديد موعدك.' : 'Select an available date and time to schedule your appointment.' }}</p>

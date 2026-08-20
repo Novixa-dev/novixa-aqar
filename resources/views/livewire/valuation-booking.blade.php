@@ -1,7 +1,7 @@
-<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+<div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
     <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-900">{{ app()->getLocale() === 'ar' ? 'احجز تثميناً مجانياً لعقارك' : 'Book a Free Property Valuation' }}</h2>
-        <p class="mt-1 text-sm text-gray-500">{{ app()->getLocale() === 'ar' ? 'سيقوم خبراء التثمين لدينا بزيارة عقارك وتقديم تقييم سوقي مفصل.' : 'Our expert valuers will visit your property and provide a detailed market appraisal.' }}</p>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'احجز تثميناً مجانياً لعقارك' : 'Book a Free Property Valuation' }}</h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'سيقوم خبراء التثمين لدينا بزيارة عقارك وتقديم تقييم سوقي مفصل.' : 'Our expert valuers will visit your property and provide a detailed market appraisal.' }}</p>
     </div>
 
     @if (session()->has('message'))
@@ -13,21 +13,21 @@
                     <div class="mt-3 flex flex-wrap gap-2">
                         @if ($googleCalendarUrl)
                             <a href="{{ $googleCalendarUrl }}" target="_blank" rel="noopener"
-                               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                 {{ app()->getLocale() === 'ar' ? 'إضافة إلى تقويم Google' : 'Add to Google Calendar' }}
                             </a>
                         @endif
                         @if ($outlookCalendarUrl)
                             <a href="{{ $outlookCalendarUrl }}" target="_blank" rel="noopener"
-                               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                 {{ app()->getLocale() === 'ar' ? 'إضافة إلى Outlook' : 'Add to Outlook' }}
                             </a>
                         @endif
                         @if ($confirmedAppointmentId)
                             <a href="{{ route('appointment.ics', $confirmedAppointmentId) }}"
-                               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                 {{ app()->getLocale() === 'ar' ? 'تحميل ملف .ics (Apple / أخرى)' : 'Download .ics (Apple / Other)' }}
                             </a>
