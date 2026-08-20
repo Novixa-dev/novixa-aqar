@@ -17,6 +17,8 @@ use App\Livewire\PropertyBooking;
 use App\Livewire\PropertyComparison;
 use App\Livewire\PropertyDetail;
 use App\Livewire\PropertyList;
+use App\Livewire\PropertyRequestForm;
+use App\Livewire\PropertySubmissionForm;
 use App\Livewire\RentalApplicationForm;
 use App\Livewire\WishlistManager;
 use Illuminate\Support\Facades\Route;
@@ -75,6 +77,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::get('/properties/compare/{propertyIds}', PropertyComparison::class)->name('property.compare');
+Route::get('/submit-property', PropertySubmissionForm::class)->name('property.submit');
+Route::get('/property-request', PropertyRequestForm::class)->name('property.request');
 
 Route::controller(ContactController::class)->group(function () {
     Route::get('/contact', 'show')->name('contact');

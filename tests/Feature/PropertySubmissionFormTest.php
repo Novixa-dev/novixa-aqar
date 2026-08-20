@@ -110,6 +110,27 @@ class PropertySubmissionFormTest extends TestCase
         Livewire::actingAs($user)
             ->test(PropertySubmissionForm::class)
             ->call('submit')
-            ->assertHasErrors(['title', 'description', 'location', 'price', 'bedrooms', 'bathrooms', 'area_sqft', 'year_built', 'property_type']);
+            ->assertHasErrors(['title', 'description', 'location', 'price', 'bedrooms', 'bathrooms', 'area_sqft', 'property_type']);
+    }
+
+    public function test_submission_succeeds_without_year_built()
+    {
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test(PropertySubmissionForm::class)
+            ->set('title', 'Test Property')
+            ->set('description', 'A test property description')
+            ->set('location', 'Test Location')
+            ->set('price', 250000)
+            ->set('bedrooms', 3)
+            ->set('bathrooms', 2)
+            ->set('area_sqft', 1500)
+            ->set('property_type', 'House')
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $this->assertCount(1, Property::all());
+        $this->assertEquals((int) date('Y'), Property::first()->year_built);
     }
 }

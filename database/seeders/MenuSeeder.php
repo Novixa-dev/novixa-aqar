@@ -27,6 +27,8 @@ class MenuSeeder extends Seeder
                 'children' => [
                     ['name' => 'For Sale', 'url' => '/properties?status=For+Sale', 'order' => 1],
                     ['name' => 'For Rent', 'url' => '/properties?status=For+Rent', 'order' => 2],
+                    ['name' => 'List Your Property', 'url' => '/submit-property', 'order' => 3],
+                    ['name' => 'Request a Property', 'url' => '/property-request', 'order' => 4],
                 ]
             ],
             [

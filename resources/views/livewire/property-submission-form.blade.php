@@ -117,6 +117,13 @@
                 </div>
 
                 <div>
+                    <label for="year_built" class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">سنة البناء</label>
+                    <input type="number" id="year_built" wire:model="year_built" min="1800" max="2099" placeholder="{{ date('Y') }}"
+                        class="w-full p-3 text-sm rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white">
+                    @error('year_built') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
                     <label for="owner_phone" class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">رقم للتواصل (المالك)</label>
                     <input type="text" id="owner_phone" wire:model="owner_phone" placeholder="+967 770 000 000"
                         class="w-full p-3 text-sm rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white">

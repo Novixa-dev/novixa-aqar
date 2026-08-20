@@ -37,7 +37,7 @@ class PropertySubmissionForm extends Component
         'bedrooms' => 'required|integer|min:0',
         'bathrooms' => 'required|integer|min:0',
         'area_sqft' => 'required|numeric|min:0',
-        'year_built' => 'required|integer|min:1800|max:2099',
+        'year_built' => 'nullable|integer|min:1800|max:2099',
         'property_type' => 'required|string|max:255',
         'neighborhood_id' => 'nullable|exists:neighborhoods,id',
         'owner_phone' => 'nullable|string|max:30',
