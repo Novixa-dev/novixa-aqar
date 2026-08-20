@@ -35,7 +35,10 @@ class ZooplaSettingsResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
-    protected static ?string $navigationLabel = 'Zoopla Settings';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إعدادات Zoopla' : 'Zoopla Settings';
+    }
 
     protected static ?string $modelLabel = 'Zoopla Setting';
 

@@ -9,10 +9,10 @@
                 <div class="py-3 flex items-center justify-between">
                     <div>
                         <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                            {{ $booking->property?->title ?? $booking->name ?? 'Booking #' . $booking->id }}
+                            {{ $booking->property?->title ?? $booking->name ?? (app()->getLocale() === 'ar' ? 'حجز رقم ' : 'Booking #') . $booking->id }}
                         </p>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ $booking->date }} &bull; {{ $booking->status ?? 'pending' }}
+                            {{ $booking->date }} &bull; {{ $booking->status ?? (app()->getLocale() === 'ar' ? 'قيد الانتظار' : 'pending') }}
                         </p>
                     </div>
                     <span class="text-xs text-gray-400">

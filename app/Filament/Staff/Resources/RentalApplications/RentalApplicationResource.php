@@ -80,7 +80,7 @@ class RentalApplicationResource extends Resource
                 TextInput::make('annual_income')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->suffix(config('currencies.default')),
                 DatePicker::make('lease_start_date')
                     ->required(),
                 DatePicker::make('lease_end_date')
@@ -148,7 +148,7 @@ class RentalApplicationResource extends Resource
                 TextColumn::make('employment_status')
                     ->searchable(),
                 TextColumn::make('annual_income')
-                    ->money('usd')
+                    ->money(strtolower(config('currencies.default')))
                     ->sortable(),
                 TextColumn::make('background_check_status')
                     ->badge()

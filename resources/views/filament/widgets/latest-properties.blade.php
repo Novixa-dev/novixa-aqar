@@ -12,7 +12,7 @@
                             {{ $property->title }}
                         </p>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                            ${{ number_format($property->price) }} &bull; {{ $property->status === 'For Rent' ? __('For Rent') : __('For Sale') }}
+                            {{ $property->formatted_price }} &bull; {{ $property->status === 'For Rent' ? __('For Rent') : __('For Sale') }}
                         </p>
                     </div>
                     <span class="text-xs text-gray-400">

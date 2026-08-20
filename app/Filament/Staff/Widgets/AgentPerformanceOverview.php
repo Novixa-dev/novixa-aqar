@@ -20,14 +20,16 @@ class AgentPerformanceOverview extends BaseWidget
             ->orderByDesc('properties_count')
             ->first();
 
+        $ar = app()->getLocale() === 'ar';
+
         return [
-            Stat::make('Total Agents', User::role('agent')->count()),
-            Stat::make('Total Properties', Property::count()),
-            Stat::make('Properties Sold', Property::where('status', 'sold')->count()),
-            Stat::make('Appointments This Month', Appointment::whereMonth('appointment_date', now()->month)->count()),
-            Stat::make('Average Agent Rating', number_format(Review::avg('rating'), 2)),
-            Stat::make('Top Performing Agent', $topAgent ? $topAgent->name : 'N/A')
-                ->description($topAgent ? $topAgent->properties_count . ' properties sold' : ''),
+            Stat::make($ar ? 'إجمالي الوكلاء' : 'Total Agents', User::role('agent')->count()),
+            Stat::make($ar ? 'إجمالي العقارات' : 'Total Properties', Property::count()),
+            Stat::make($ar ? 'العقارات المباعة' : 'Properties Sold', Property::where('status', 'sold')->count()),
+            Stat::make($ar ? 'مواعيد هذا الشهر' : 'Appointments This Month', Appointment::whereMonth('appointment_date', now()->month)->count()),
+            Stat::make($ar ? 'متوسط تقييم الوكلاء' : 'Average Agent Rating', number_format(Review::avg('rating'), 2)),
+            Stat::make($ar ? 'أفضل وكيل أداءً' : 'Top Performing Agent', $topAgent ? $topAgent->name : ($ar ? 'غير متوفر' : 'N/A'))
+                ->description($topAgent ? $topAgent->properties_count . ($ar ? ' عقار مباع' : ' properties sold') : ''),
         ];
     }
 }

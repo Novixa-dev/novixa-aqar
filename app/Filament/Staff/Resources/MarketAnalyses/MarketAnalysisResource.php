@@ -36,8 +36,6 @@ class MarketAnalysisResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
 
-    protected static ?string $navigationLabel = 'Market Analysis';
-
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -61,7 +59,7 @@ class MarketAnalysisResource extends Resource
                 TextColumn::make('title'),
                 TextColumn::make('property_type'),
                 TextColumn::make('price')
-                    ->money('usd'),
+                    ->money(strtolower(config('currencies.default'))),
                 TextColumn::make('area_sqft'),
             ])
             ->filters([

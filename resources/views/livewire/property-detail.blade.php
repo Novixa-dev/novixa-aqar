@@ -363,7 +363,7 @@
 
                                 <hr class="my-2 md:my-2 border-gray-200 dark:border-gray-800" />
                                 <div class="my-2">
-                                    <span class="text-gray-500 font-semibold">Walkability Scores</span>
+                                    <span class="text-gray-500 font-semibold">{{ app()->getLocale() === 'ar' ? 'مؤشرات إمكانية المشي' : 'Walkability Scores' }}</span>
                                     @if ($property->walkability_score)
                                         <div class="mt-3 space-y-3">
                                             <!-- Walk Score -->
@@ -371,11 +371,18 @@
                                                 <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white font-bold me-4"
                                                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                                     <span class="text-2xl">{{ $property->walkability_score }}</span>
-                                                    <span class="text-xs">Walk</span>
+                                                    <span class="text-xs">{{ app()->getLocale() === 'ar' ? 'مشي' : 'Walk' }}</span>
                                                 </div>
                                                 <div class="flex-1">
-                                                    <p class="font-semibold text-gray-900 dark:text-white">{{ $property->walkability_description }}</p>
-                                                    <p class="text-sm text-gray-600 dark:text-gray-400">Daily errands and amenities</p>
+                                                    <p class="font-semibold text-gray-900 dark:text-white">
+                                                        @if(app()->getLocale() === 'ar')
+                                                            @php $s = $property->walkability_score; @endphp
+                                                            {{ $s >= 90 ? 'جنة المشاة' : ($s >= 70 ? 'ملائم جداً للمشي' : ($s >= 50 ? 'ملائم نوعاً ما للمشي' : ($s >= 25 ? 'يعتمد على السيارة' : 'يعتمد كلياً على السيارة'))) }}
+                                                        @else
+                                                            {{ $property->walkability_description }}
+                                                        @endif
+                                                    </p>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'المشاوير اليومية والمرافق القريبة' : 'Daily errands and amenities' }}</p>
                                                 </div>
                                             </div>
 
@@ -385,11 +392,18 @@
                                                 <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white font-bold me-4"
                                                     style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                                                     <span class="text-2xl">{{ $property->transit_score }}</span>
-                                                    <span class="text-xs">Transit</span>
+                                                    <span class="text-xs">{{ app()->getLocale() === 'ar' ? 'نقل' : 'Transit' }}</span>
                                                 </div>
                                                 <div class="flex-1">
-                                                    <p class="font-semibold text-gray-900 dark:text-white">{{ $property->transit_description }}</p>
-                                                    <p class="text-sm text-gray-600 dark:text-gray-400">Public transportation options</p>
+                                                    <p class="font-semibold text-gray-900 dark:text-white">
+                                                        @if(app()->getLocale() === 'ar')
+                                                            @php $s = $property->transit_score; @endphp
+                                                            {{ $s >= 90 ? 'جنة الركاب' : ($s >= 70 ? 'نقل ممتاز' : ($s >= 50 ? 'نقل جيد' : ($s >= 25 ? 'نقل محدود' : 'نقل ضئيل'))) }}
+                                                        @else
+                                                            {{ $property->transit_description }}
+                                                        @endif
+                                                    </p>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'خيارات النقل العام' : 'Public transportation options' }}</p>
                                                 </div>
                                             </div>
                                             @endif
@@ -400,27 +414,34 @@
                                                 <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white font-bold me-4"
                                                     style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                                                     <span class="text-2xl">{{ $property->bike_score }}</span>
-                                                    <span class="text-xs">Bike</span>
+                                                    <span class="text-xs">{{ app()->getLocale() === 'ar' ? 'دراجة' : 'Bike' }}</span>
                                                 </div>
                                                 <div class="flex-1">
-                                                    <p class="font-semibold text-gray-900 dark:text-white">{{ $property->bike_description }}</p>
-                                                    <p class="text-sm text-gray-600 dark:text-gray-400">Bike lanes and biking infrastructure</p>
+                                                    <p class="font-semibold text-gray-900 dark:text-white">
+                                                        @if(app()->getLocale() === 'ar')
+                                                            @php $s = $property->bike_score; @endphp
+                                                            {{ $s >= 90 ? 'جنة الدراجات' : ($s >= 70 ? 'ملائم جداً للدراجات' : ($s >= 50 ? 'ملائم للدراجات' : 'ملائم نوعاً ما للدراجات')) }}
+                                                        @else
+                                                            {{ $property->bike_description }}
+                                                        @endif
+                                                    </p>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'ممرات الدراجات والبنية التحتية' : 'Bike lanes and biking infrastructure' }}</p>
                                                 </div>
                                             </div>
                                             @endif
 
                                             <p class="text-xs text-gray-500 mt-2">
-                                                Last updated: {{ $property->walkability_updated_at ? $property->walkability_updated_at->format('M d, Y') : 'N/A' }}
+                                                {{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}: {{ $property->walkability_updated_at ? $property->walkability_updated_at->format('M d, Y') : (app()->getLocale() === 'ar' ? 'غير متوفر' : 'N/A') }}
                                             </p>
                                         </div>
                                     @else
-                                        <p class="text-gray-500 mt-2">Walkability scores not available for this property</p>
+                                        <p class="text-gray-500 mt-2">{{ app()->getLocale() === 'ar' ? 'مؤشرات إمكانية المشي غير متوفرة لهذا العقار' : 'Walkability scores not available for this property' }}</p>
                                     @endif
                                 </div>
 
                                 <hr class="my-2 md:my-2 border-gray-200 dark:border-gray-800" />
                                 <div class="my-2">
-                                    <span class="text-gray-500">Energy Efficiency</span>
+                                    <span class="text-gray-500">{{ app()->getLocale() === 'ar' ? 'كفاءة الطاقة' : 'Energy Efficiency' }}</span>
                                     @if ($property->energy_rating && $property->energy_score)
                                         <div class="flex items-center">
                                             <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl me-4"
@@ -428,30 +449,30 @@
                                                 {{ $property->energy_rating }}
                                             </div>
                                             <div>
-                                                <p class="font-semibold">Energy Efficiency Score:
+                                                <p class="font-semibold">{{ app()->getLocale() === 'ar' ? 'مؤشر كفاءة الطاقة' : 'Energy Efficiency Score' }}:
                                                     {{ $property->energy_score }}/100</p>
-                                                <p class="text-sm text-gray-600">Last updated:
+                                                <p class="text-sm text-gray-600">{{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}:
                                                     {{ $property->energy_rating_date->format('d M Y') }}</p>
                                             </div>
                                         </div>
-                                        <p class="mt-2 text-sm text-gray-600">Properties are rated from A (most efficient)
-                                            to G
-                                            (least efficient). Learn more about <a href="#"
-                                                class="text-blue-600 hover:underline"
-                                                @click="$dispatch('open-modal', 'energy-efficiency-info')">energy
-                                                efficiency
-                                                ratings</a>.</p>
+                                        <p class="mt-2 text-sm text-gray-600">
+                                            @if(app()->getLocale() === 'ar')
+                                                يتم تصنيف العقارات من A (الأعلى كفاءة) إلى G (الأقل كفاءة). لمزيد من المعلومات حول <a href="#" class="text-blue-600 hover:underline" @click="$dispatch('open-modal', 'energy-efficiency-info')">تصنيفات كفاءة الطاقة</a>.
+                                            @else
+                                                Properties are rated from A (most efficient) to G (least efficient). Learn more about <a href="#" class="text-blue-600 hover:underline" @click="$dispatch('open-modal', 'energy-efficiency-info')">energy efficiency ratings</a>.
+                                            @endif
+                                        </p>
                                     @else
                                         <ul class="list-disc list-inside grid grid-cols-2 gap-2">
-                                            <li class="text-gray-500">No Energy efficiency details available</li>
+                                            <li class="text-gray-500">{{ app()->getLocale() === 'ar' ? 'لا تتوفر تفاصيل كفاءة الطاقة' : 'No Energy efficiency details available' }}</li>
                                         </ul>
                                     @endif
                                 </div>
                                 <hr class="my-2 md:my-2 border-gray-200 dark:border-gray-800" />
                                 <div class="">
-                                    <span class="text-gray-500">Branch/Team</span>
+                                    <span class="text-gray-500">{{ app()->getLocale() === 'ar' ? 'الفرع/الفريق' : 'Branch/Team' }}</span>
                                     <span
-                                        class="bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ $team->name ?? 'No team information available' }}</span>
+                                        class="bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ $team->name ?? (app()->getLocale() === 'ar' ? 'لا تتوفر معلومات عن الفريق' : 'No team information available') }}</span>
                                 </div>
                                 
                                 <!-- Investment Analytics Section -->
@@ -548,7 +569,11 @@
                                                 <svg class="w-4 h-4 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                                 </svg>
-                                                {{ $showInvestmentSimulation ? 'Hide' : 'Show' }} Advanced Investment Simulator
+                                                @if(app()->getLocale() === 'ar')
+                                                    {{ $showInvestmentSimulation ? 'إخفاء' : 'عرض' }} محاكي الاستثمار المتقدم
+                                                @else
+                                                    {{ $showInvestmentSimulation ? 'Hide' : 'Show' }} Advanced Investment Simulator
+                                                @endif
                                             </button>
                                         </div>
                                     </div>
@@ -607,7 +632,7 @@
                     {{-- Property History Section --}}
                     @if($propertyHistory->count() > 0 || $priceHistory->count() > 0 || $salesHistory->count() > 0)
                         <div class="w-full mt-8 mb-8">
-                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Property History</h2>
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">{{ app()->getLocale() === 'ar' ? 'سجل العقار' : 'Property History' }}</h2>
                             
                             {{-- Price History --}}
                             @if($priceHistory->count() > 0)
@@ -680,7 +705,7 @@
                                         <svg class="w-5 h-5 me-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
-                                        Activity Timeline
+                                        {{ app()->getLocale() === 'ar' ? 'الجدول الزمني للنشاط' : 'Activity Timeline' }}
                                     </h3>
                                     <div class="space-y-4">
                                         @foreach($propertyHistory as $event)
@@ -711,10 +736,34 @@
                                                 </div>
                                                 <div class="flex-1">
                                                     <p class="text-sm text-gray-600 dark:text-gray-400">{{ $event->event_date->format('M d, Y') }}</p>
-                                                    <p class="text-gray-900 dark:text-white font-medium">{{ $event->description }}</p>
+                                                    <p class="text-gray-900 dark:text-white font-medium">
+                                                        @if(app()->getLocale() === 'ar')
+                                                            @switch($event->event_type)
+                                                                @case('listing')
+                                                                    تم إدراج العقار بسعر {{ app(\App\Services\CurrencyService::class)->format($event->new_price, $property->currency) }}
+                                                                    @break
+                                                                @case('sale')
+                                                                    تم بيع العقار بسعر {{ app(\App\Services\CurrencyService::class)->format($event->new_price, $property->currency) }}
+                                                                    @break
+                                                                @case('price_change')
+                                                                    {{ $event->new_price >= $event->old_price ? 'ارتفع السعر' : 'انخفض السعر' }}
+                                                                    من {{ app(\App\Services\CurrencyService::class)->format($event->old_price, $property->currency) }}
+                                                                    إلى {{ app(\App\Services\CurrencyService::class)->format($event->new_price, $property->currency) }}
+                                                                    ({{ number_format(abs((($event->new_price - $event->old_price) / max($event->old_price, 1)) * 100), 2) }}%)
+                                                                    @break
+                                                                @case('status_change')
+                                                                    تغيّرت الحالة من {{ $event->old_status }} إلى {{ $event->new_status }}
+                                                                    @break
+                                                                @default
+                                                                    {{ $event->description }}
+                                                            @endswitch
+                                                        @else
+                                                            {{ $event->description }}
+                                                        @endif
+                                                    </p>
                                                     @if($event->event_type === 'update' && $event->changes)
                                                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                            Updated fields: {{ implode(', ', array_keys($event->changes)) }}
+                                                            {{ app()->getLocale() === 'ar' ? 'الحقول المحدّثة' : 'Updated fields' }}: {{ implode(', ', array_keys($event->changes)) }}
                                                         </p>
                                                     @endif
                                                 </div>
@@ -899,7 +948,7 @@
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                 </svg>
-                                <span class="sr-only">Close modal</span>
+                                <span class="sr-only">{{ app()->getLocale() === 'ar' ? 'إغلاق النافذة' : 'Close modal' }}</span>
                             </button>
                         </div>
                         <div class="p-4 md:p-5 space-y-4">
@@ -944,7 +993,7 @@
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                 </svg>
-                                <span class="sr-only">Close modal</span>
+                                <span class="sr-only">{{ app()->getLocale() === 'ar' ? 'إغلاق النافذة' : 'Close modal' }}</span>
                             </button>
                         </div>
                         <div class="p-4 md:p-5 space-y-4">
@@ -973,7 +1022,7 @@
                         <form wire:submit.prevent="scheduleLiveTour" class="space-y-4">
                             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Schedule Live Virtual Tour
+                                    {{ app()->getLocale() === 'ar' ? 'حجز جولة افتراضية مباشرة' : 'Schedule Live Virtual Tour' }}
                                 </h3>
                                 <button type="button" wire:click="closeScheduleLiveTourModal"
                                     class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
@@ -982,7 +1031,7 @@
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                             stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                     </svg>
-                                    <span class="sr-only">Close modal</span>
+                                    <span class="sr-only">{{ app()->getLocale() === 'ar' ? 'إغلاق النافذة' : 'Close modal' }}</span>
                                 </button>
                             </div>
                             <div class="p-4 md:p-5 space-y-4">

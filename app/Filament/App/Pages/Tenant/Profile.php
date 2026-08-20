@@ -11,8 +11,15 @@ class Profile extends Page
 {
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user';
     protected string $view = 'filament.app.tenant.profile';
-    protected static ?string $navigationLabel = 'Profile';
-    protected static ?string $title = 'Profile';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'الملف الشخصي' : 'Profile';
+    }
+
+    public function getTitle(): string
+    {
+        return app()->getLocale() === 'ar' ? 'الملف الشخصي' : 'Profile';
+    }
 
     public ?array $data = [];
 
@@ -51,7 +58,7 @@ class Profile extends Page
 
         Auth::user()->update($data);
 
-        $this->notify('success', 'Profile updated successfully.');
+        $this->notify('success', app()->getLocale() === 'ar' ? 'تم تحديث الملف الشخصي بنجاح.' : 'Profile updated successfully.');
     }
 
     public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?\Illuminate\Database\Eloquent\Model $tenant = null, bool $shouldGuessMissingParameters = false, ?string $configuration = null): string

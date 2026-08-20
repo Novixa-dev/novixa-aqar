@@ -16,11 +16,20 @@ class ManageGeneralSettings extends SettingsPage
 
     protected static string $settings = GeneralSettings::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    public static function getNavigationGroup(): ?string
+    {
+        return app()->getLocale() === 'ar' ? 'الإعدادات' : 'Settings';
+    }
 
-    protected static ?string $title = 'General Settings';
+    public function getTitle(): string
+    {
+        return app()->getLocale() === 'ar' ? 'الإعدادات العامة' : 'General Settings';
+    }
 
-    protected static ?string $navigationLabel = 'General Settings';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'الإعدادات العامة' : 'General Settings';
+    }
 
     public function form(Schema $schema): Schema
     {

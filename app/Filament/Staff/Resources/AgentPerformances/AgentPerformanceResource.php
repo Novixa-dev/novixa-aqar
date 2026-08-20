@@ -33,8 +33,6 @@ class AgentPerformanceResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
 
-    protected static ?string $navigationLabel = 'Agent Performance';
-
     protected static ?string $tenantOwnershipRelationshipName = 'currentTeam';
 
     public static function getEloquentQuery(): Builder

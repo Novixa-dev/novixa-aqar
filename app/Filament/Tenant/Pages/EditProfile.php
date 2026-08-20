@@ -14,9 +14,15 @@ class EditProfile extends Page
 
     protected static ?string $slug = 'profile';
 
-    protected static ?string $navigationLabel = 'Edit Profile';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'تعديل الملف الشخصي' : 'Edit Profile';
+    }
 
-    protected static ?string $title = 'Edit Profile';
+    public function getTitle(): string
+    {
+        return app()->getLocale() === 'ar' ? 'تعديل الملف الشخصي' : 'Edit Profile';
+    }
 
     public static function getRoutes(): array
     {

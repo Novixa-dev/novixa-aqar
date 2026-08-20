@@ -39,7 +39,10 @@ class PropertyModerationResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationLabel = 'Property Moderation';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مراجعات العقارات' : 'Property Moderation';
+    }
 
     public static function form(Schema $schema): Schema
     {

@@ -32,7 +32,10 @@ class ChatConversationResource extends Resource
 
     protected static string | \UnitEnum | null $navigationGroup = 'Support';
 
-    protected static ?string $navigationLabel = 'Chat Conversations';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'المحادثات' : 'Chat Conversations';
+    }
 
     public static function form(Schema $schema): Schema
     {

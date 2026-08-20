@@ -36,7 +36,10 @@ class PaymentResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-credit-card';
 
-    protected static ?string $navigationLabel = 'Payments';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'المدفوعات' : 'Payments';
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -45,7 +48,7 @@ class PaymentResource extends Resource
                 TextInput::make('amount')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->suffix(config('currencies.default')),
                 DatePicker::make('payment_date')
                     ->required(),
                 Select::make('status')

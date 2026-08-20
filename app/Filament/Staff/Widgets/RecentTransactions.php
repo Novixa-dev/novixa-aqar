@@ -24,7 +24,7 @@ class RecentTransactions extends TableWidget
             TextColumn::make('transaction_date')
                 ->date(),
             TextColumn::make('transaction_amount')
-                ->money('usd'),
+                ->money(strtolower(config('currencies.default'))),
             TextColumn::make('buyer.name')
                 ->label(__('filament.fields.buyer')),
         ];

@@ -35,7 +35,10 @@ class RightMoveSettingsResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog';
 
-    protected static ?string $navigationLabel = 'RightMove Settings';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إعدادات RightMove' : 'RightMove Settings';
+    }
 
     protected static ?string $modelLabel = 'RightMove Setting';
 

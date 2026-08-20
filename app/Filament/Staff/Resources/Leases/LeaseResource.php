@@ -63,7 +63,7 @@ class LeaseResource extends Resource
                 TextInput::make('rent_amount')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->suffix(config('currencies.default')),
                 Select::make('status')
                     ->options(fn () => app()->getLocale() === 'ar' ? [
                         'active' => 'ساري',
@@ -98,7 +98,7 @@ class LeaseResource extends Resource
                     ->date()
                     ->sortable(),
                 TextColumn::make('rent_amount')
-                    ->money('usd')
+                    ->money(strtolower(config('currencies.default')))
                     ->sortable(),
                 TextColumn::make('status')
                     ->sortable(),

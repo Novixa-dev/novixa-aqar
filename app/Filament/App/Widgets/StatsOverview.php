@@ -12,11 +12,13 @@ class StatsOverview extends BaseWidget
 {
     protected function getCards(): array
     {
+        $ar = app()->getLocale() === 'ar';
+
         return [
-            Stat::make('Total Properties', Property::count()),
-            Stat::make('Active Listings', Property::where('status', 'active')->count()),
-            Stat::make('Total Bookings', Booking::count()),
-            Stat::make('Total Revenue', Transaction::sum('transaction_amount')),
+            Stat::make($ar ? 'إجمالي العقارات' : 'Total Properties', Property::count()),
+            Stat::make($ar ? 'الإعلانات النشطة' : 'Active Listings', Property::where('status', 'active')->count()),
+            Stat::make($ar ? 'إجمالي الحجوزات' : 'Total Bookings', Booking::count()),
+            Stat::make($ar ? 'إجمالي الإيرادات' : 'Total Revenue', app(\App\Services\CurrencyService::class)->format(Transaction::sum('transaction_amount'))),
         ];
     }
 }

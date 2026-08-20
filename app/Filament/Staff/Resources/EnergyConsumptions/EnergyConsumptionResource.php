@@ -60,7 +60,7 @@ class EnergyConsumptionResource extends Resource
                 TextInput::make('total_cost')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->suffix(config('currencies.default')),
                 Select::make('status')
                     ->options(fn () => app()->getLocale() === 'ar' ? [
                         'pending' => 'قيد الانتظار',
@@ -96,7 +96,7 @@ class EnergyConsumptionResource extends Resource
                     ->numeric()
                     ->suffix('m³'),
                 TextColumn::make('total_cost')
-                    ->money('usd')
+                    ->money(strtolower(config('currencies.default')))
                     ->sortable(),
             ])
             ->filters([

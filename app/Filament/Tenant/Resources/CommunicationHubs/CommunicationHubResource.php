@@ -34,7 +34,10 @@ class CommunicationHubResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static ?string $navigationLabel = 'Communication Hub';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'مركز التواصل' : 'Communication Hub';
+    }
 
     public static function form(Schema $schema): Schema
     {

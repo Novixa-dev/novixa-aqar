@@ -34,7 +34,10 @@ class UserResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = "Administration";
 
-    protected static ?string $navigationLabel = 'Users';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'المستخدمون' : 'Users';
+    }
 
     protected static ?string $recordTitleAttribute = 'name';
 

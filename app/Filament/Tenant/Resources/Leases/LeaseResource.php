@@ -35,7 +35,10 @@ class LeaseResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationLabel = 'My Lease';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إيجاري' : 'My Lease';
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -50,7 +53,7 @@ class LeaseResource extends Resource
                     ->disabled(),
                 TextInput::make('rent_amount')
                     ->disabled()
-                    ->prefix('$'),
+                    ->suffix(config('currencies.default')),
                 Select::make('status')
                     ->disabled()
                     ->options(fn () => app()->getLocale() === 'ar' ? [
@@ -79,7 +82,7 @@ class LeaseResource extends Resource
                 TextColumn::make('end_date')
                     ->date(),
                 TextColumn::make('rent_amount')
-                    ->money('usd'),
+                    ->money(strtolower(config('currencies.default'))),
                 TextColumn::make('status'),
             ])
             ->filters([

@@ -25,21 +25,23 @@ class PropertyStatsOverview extends BaseWidget
         $totalBookings = Booking::count();
         $totalRevenue = Transaction::sum('amount') ?: 0;
 
+        $ar = app()->getLocale() === 'ar';
+
         return [
-            Stat::make('Total Properties', $totalProperties)
-                ->description('All listings in system')
+            Stat::make($ar ? 'إجمالي العقارات' : 'Total Properties', $totalProperties)
+                ->description($ar ? 'جميع العقارات في النظام' : 'All listings in system')
                 ->descriptionIcon('heroicon-m-home')
                 ->color('primary'),
-            Stat::make('Active Listings', $activeListings)
-                ->description('Published & available')
+            Stat::make($ar ? 'الإعلانات النشطة' : 'Active Listings', $activeListings)
+                ->description($ar ? 'منشورة ومتاحة' : 'Published & available')
                 ->descriptionIcon('heroicon-m-check-badge')
                 ->color('success'),
-            Stat::make('Total Bookings', $totalBookings)
-                ->description('Customer visits & tours')
+            Stat::make($ar ? 'إجمالي الحجوزات' : 'Total Bookings', $totalBookings)
+                ->description($ar ? 'زيارات وجولات العملاء' : 'Customer visits & tours')
                 ->descriptionIcon('heroicon-m-calendar-days')
                 ->color('warning'),
-            Stat::make('Total Revenue', '$' . number_format($totalRevenue, 2))
-                ->description('Total financial transactions')
+            Stat::make($ar ? 'إجمالي الإيرادات' : 'Total Revenue', app(\App\Services\CurrencyService::class)->format($totalRevenue))
+                ->description($ar ? 'إجمالي المعاملات المالية' : 'Total financial transactions')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
         ];

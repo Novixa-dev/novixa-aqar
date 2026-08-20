@@ -47,7 +47,7 @@ class UtilityPaymentResource extends Resource
                 TextInput::make('amount')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->suffix(config('currencies.default')),
                 DatePicker::make('payment_date')
                     ->required(),
                 Select::make('payment_method')

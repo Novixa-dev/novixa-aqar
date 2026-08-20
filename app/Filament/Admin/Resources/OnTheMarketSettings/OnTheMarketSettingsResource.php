@@ -36,7 +36,10 @@ class OnTheMarketSettingsResource extends Resource
     }
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog';
-    protected static ?string $navigationLabel = 'On The Market Settings';
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'إعدادات OnTheMarket' : 'On The Market Settings';
+    }
 
     protected static ?string $modelLabel = 'On The Market Setting';
 
