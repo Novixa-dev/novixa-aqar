@@ -27,7 +27,7 @@ class ManageBooking extends Component
     public function cancelBooking()
     {
         $this->booking->cancel();
-        session()->flash('message', 'Booking cancelled successfully.');
+        session()->flash('message', __('Booking cancelled successfully.'));
     }
 
     public function rescheduleBooking()
@@ -35,7 +35,7 @@ class ManageBooking extends Component
         $this->validate();
 
         $this->booking->reschedule($this->newDate, $this->newTime);
-        session()->flash('message', 'Booking rescheduled successfully.');
+        session()->flash('message', __('Booking rescheduled successfully.'));
     }
 
     public function render()

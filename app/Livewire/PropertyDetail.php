@@ -115,7 +115,7 @@ class PropertyDetail extends Component
         if ($favorite) {
             $favorite->delete();
             $this->isFavorited = false;
-            session()->flash('message', 'Property removed from wishlist');
+            session()->flash('message', __('Property removed from wishlist'));
             $this->dispatch('favoriteRemoved');
         } else {
             Favorite::create([
@@ -124,7 +124,7 @@ class PropertyDetail extends Component
                 'team_id' => $user->currentTeam?->id,
             ]);
             $this->isFavorited = true;
-            session()->flash('message', 'Property added to wishlist');
+            session()->flash('message', __('Property added to wishlist'));
             $this->dispatch('favoriteAdded');
         }
     }
@@ -355,7 +355,7 @@ class PropertyDetail extends Component
                 "Scheduled live virtual tour for property {$this->property->id} on {$this->tourDate} at {$this->tourTime}");
         }
 
-        session()->flash('message', 'Live virtual tour scheduled successfully! You will receive a confirmation email shortly.');
+        session()->flash('message', __('Live virtual tour scheduled successfully! You will receive a confirmation email shortly.'));
         
         $this->closeScheduleLiveTourModal();
         $this->dispatch('tourScheduled');

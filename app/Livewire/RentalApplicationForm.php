@@ -43,7 +43,7 @@ class RentalApplicationForm extends Component
     
         $application->initiateScreening();
     
-        session()->flash('message', 'Application submitted and screening initiated!');
+        session()->flash('message', __('Application submitted and screening initiated!'));
         return redirect()->route('tenant.applications');
     }
 

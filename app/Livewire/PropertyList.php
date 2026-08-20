@@ -249,7 +249,7 @@ class PropertyList extends Component
 
         if ($favorite) {
             $favorite->delete();
-            session()->flash('message', 'Property removed from wishlist');
+            session()->flash('message', __('Property removed from wishlist'));
             $this->dispatch('favoriteRemoved');
         } else {
             Favorite::create([
@@ -257,7 +257,7 @@ class PropertyList extends Component
                 'property_id' => $propertyId,
                 'team_id' => $user->currentTeam?->id,
             ]);
-            session()->flash('message', 'Property added to wishlist');
+            session()->flash('message', __('Property added to wishlist'));
             $this->dispatch('favoriteAdded');
         }
     }

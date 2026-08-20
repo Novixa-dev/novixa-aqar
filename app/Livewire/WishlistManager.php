@@ -38,7 +38,7 @@ class WishlistManager extends Component
 
         if ($favorite) {
             $favorite->delete();
-            session()->flash('success', 'Property removed from wishlist successfully');
+            session()->flash('success', __('Property removed from wishlist successfully'));
             $this->dispatch('favoriteRemoved');
         }
     }

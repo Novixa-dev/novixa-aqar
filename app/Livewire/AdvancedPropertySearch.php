@@ -214,7 +214,7 @@ class AdvancedPropertySearch extends Component
             ],
         ]);
 
-        session()->flash('message', 'Search saved successfully!');
+        session()->flash('message', __('Search saved successfully!'));
     }
 
     public function render()

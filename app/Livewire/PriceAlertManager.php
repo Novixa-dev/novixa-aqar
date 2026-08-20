@@ -43,7 +43,7 @@ class PriceAlertManager extends Component
 
         $this->loadPriceAlerts();
         $this->reset(['alertPercentage', 'alertFrequency']);
-        session()->flash('message', 'Price alert created successfully.');
+        session()->flash('message', __('Price alert created successfully.'));
     }
 
     public function toggleAlert($alertId)
@@ -57,7 +57,7 @@ class PriceAlertManager extends Component
     {
         PriceAlert::findOrFail($alertId)->delete();
         $this->loadPriceAlerts();
-        session()->flash('message', 'Price alert deleted successfully.');
+        session()->flash('message', __('Price alert deleted successfully.'));
     }
 
     public function render()

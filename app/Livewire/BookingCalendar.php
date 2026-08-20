@@ -139,7 +139,7 @@ class BookingCalendar extends Component
         $this->notificationService->notifyAppointmentCreated(auth()->user(), $appointment);
 
         $this->dispatch('appointmentRequested', $appointment->getKey());
-        session()->flash('message', 'Appointment scheduled successfully!');
+        session()->flash('message', __('Appointment scheduled successfully!'));
 
         $this->selectedDate = null;
         $this->selectedTimeSlot = null;

@@ -54,9 +54,9 @@ class InsurancePurchaseForm extends Component
         if ($policy) {
             $this->property->insurance_policy_id = $policy['id'];
             $this->property->save();
-            session()->flash('message', 'Insurance policy purchased successfully.');
+            session()->flash('message', __('Insurance policy purchased successfully.'));
         } else {
-            session()->flash('error', 'Failed to purchase insurance policy. Please try again.');
+            session()->flash('error', __('Failed to purchase insurance policy. Please try again.'));
         }
     }
 

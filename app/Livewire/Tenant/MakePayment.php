@@ -58,7 +58,7 @@ class MakePayment extends Component
         ]);
 
         $this->dispatch('paymentProcessed');
-        session()->flash('message', 'Payment processed successfully.');
+        session()->flash('message', __('Payment processed successfully.'));
     }
 
     public function render()

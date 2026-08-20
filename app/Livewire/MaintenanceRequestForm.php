@@ -35,7 +35,7 @@ class MaintenanceRequestForm extends Component
         $notificationService->notifyTenantRequestSubmitted(auth()->user(), $maintenanceRequest);
 
         $this->reset(['title', 'description', 'property_id']);
-        session()->flash('message', 'Maintenance request submitted successfully.');
+        session()->flash('message', __('Maintenance request submitted successfully.'));
     }
 
     public function render()

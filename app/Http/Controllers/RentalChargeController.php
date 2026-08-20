@@ -31,7 +31,7 @@ class RentalChargeController extends Controller
 
         RentalCharge::create($validatedData);
 
-        return redirect()->route('rental-charges.index')->with('success', 'Rental charge created successfully.');
+        return redirect()->route('rental-charges.index')->with('success', __('Rental charge created successfully.'));
     }
 
     public function show(RentalCharge $rentalCharge)
@@ -57,13 +57,13 @@ class RentalChargeController extends Controller
 
         $rentalCharge->update($validatedData);
 
-        return redirect()->route('rental-charges.index')->with('success', 'Rental charge updated successfully.');
+        return redirect()->route('rental-charges.index')->with('success', __('Rental charge updated successfully.'));
     }
 
     public function destroy(RentalCharge $rentalCharge)
     {
         $rentalCharge->delete();
 
-        return redirect()->route('rental-charges.index')->with('success', 'Rental charge deleted successfully.');
+        return redirect()->route('rental-charges.index')->with('success', __('Rental charge deleted successfully.'));
     }
 }

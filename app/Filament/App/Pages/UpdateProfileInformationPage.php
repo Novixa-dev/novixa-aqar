@@ -55,7 +55,7 @@ class UpdateProfileInformationPage extends Page
 
         $user->forceFill($state)->save();
 
-        session()->flash('status', 'Your profile has been updated.');
+        session()->flash('status', __('Your profile has been updated.'));
     }
 
     public function getHeading(): string

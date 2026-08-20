@@ -26,7 +26,7 @@ class PriceAlertController extends Controller
 
         $priceAlert->save();
 
-        return redirect()->back()->with('success', 'Price alert created successfully.');
+        return redirect()->back()->with('success', __('Price alert created successfully.'));
     }
 
     public function update(Request $request, PriceAlert $priceAlert)
@@ -39,13 +39,13 @@ class PriceAlertController extends Controller
 
         $priceAlert->update($validatedData);
 
-        return redirect()->back()->with('success', 'Price alert updated successfully.');
+        return redirect()->back()->with('success', __('Price alert updated successfully.'));
     }
 
     public function destroy(PriceAlert $priceAlert)
     {
         $priceAlert->delete();
 
-        return redirect()->back()->with('success', 'Price alert deleted successfully.');
+        return redirect()->back()->with('success', __('Price alert deleted successfully.'));
     }
 }

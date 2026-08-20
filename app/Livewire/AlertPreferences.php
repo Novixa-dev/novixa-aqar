@@ -52,7 +52,7 @@ class AlertPreferences extends Component
             ],
         ]);
 
-        session()->flash('message', 'Alert preferences saved successfully.');
+        session()->flash('message', __('Alert preferences saved successfully.'));
     }
 
     public function render()

@@ -126,10 +126,13 @@ class ValuationBooking extends Component
             $this->confirmedAppointmentId = $appointment->getKey();
             $this->bookingConfirmed = true;
 
-            session()->flash('message', 'Valuation appointment requested for ' . Carbon::parse($this->selectedDate)->format('F j, Y') . ' at ' . $this->selectedTime);
+            session()->flash('message', __('Valuation appointment requested for :date at :time', [
+                'date' => Carbon::parse($this->selectedDate)->format('F j, Y'),
+                'time' => $this->selectedTime,
+            ]));
             $this->reset(['selectedDate', 'selectedTime', 'userName', 'userEmail', 'userContact', 'notes', 'propertyAddress', 'propertyType', 'areaSqft', 'bedrooms', 'bathrooms', 'availableTimeSlots']);
         } catch (Exception $e) {
-            session()->flash('error', 'Failed to book appointment: ' . $e->getMessage());
+            session()->flash('error', __('Failed to book appointment: :error', ['error' => $e->getMessage()]));
         }
     }
 

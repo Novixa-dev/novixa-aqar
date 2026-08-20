@@ -111,7 +111,7 @@ class PropertySubmissionForm extends Component
                 ->toMediaCollection('videos');
         }
     
-        session()->flash('message', 'تم إرسال طلب إضافة العقار بنجاح وهو قيد المراجعة والموافقة من قبل إدارة المكتب.');
+        session()->flash('message', __('تم إرسال طلب إضافة العقار بنجاح وهو قيد المراجعة والموافقة من قبل إدارة المكتب.'));
         $this->dispatch('propertySubmitted');
         $this->reset(['title', 'description', 'location', 'price', 'bedrooms', 'bathrooms', 'area_sqft', 'year_built', 'property_type', 'neighborhood_id', 'owner_phone', 'images', 'video', 'customDescription']);
     }

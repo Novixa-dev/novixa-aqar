@@ -122,24 +122,27 @@ class PropertyBooking extends Component
                 auth()->user()->notify(new BookingNotification($booking, 'confirmed'));
             }
 
-            session()->flash('message', 'Viewing scheduled successfully for ' . Carbon::parse($this->selectedDate)->format('F j, Y') . ' at ' . $this->selectedTime);
+            session()->flash('message', __('Viewing scheduled successfully for :date at :time', [
+                'date' => Carbon::parse($this->selectedDate)->format('F j, Y'),
+                'time' => $this->selectedTime,
+            ]));
             $this->reset(['selectedDate', 'selectedTime', 'userName', 'userEmail', 'userContact', 'notes', 'availableTimeSlots']);
         } catch (Exception $e) {
             Log::error('Booking failed: ' . $e->getMessage());
 
-            $errorMessage = 'Failed to schedule viewing. ';
+            $errorMessage = __('Failed to schedule viewing.') . ' ';
             if ($e instanceof QueryException) {
-                $errorMessage .= 'A database error occurred. ';
+                $errorMessage .= __('A database error occurred.') . ' ';
             } elseif ($e instanceof ValidationException) {
-                $errorMessage .= 'Please check your input and try again. ';
+                $errorMessage .= __('Please check your input and try again.') . ' ';
             } elseif ($e->getMessage() === 'Selected date is no longer available.') {
-                $errorMessage .= 'The selected date is no longer available. Please choose another date. ';
+                $errorMessage .= __('The selected date is no longer available. Please choose another date.') . ' ';
             } elseif ($e->getMessage() === 'Selected time slot is no longer available.') {
-                $errorMessage .= 'The selected time slot is no longer available. Please choose another time. ';
+                $errorMessage .= __('The selected time slot is no longer available. Please choose another time.') . ' ';
             } else {
-                $errorMessage .= 'An unexpected error occurred. ';
+                $errorMessage .= __('An unexpected error occurred.') . ' ';
             }
-            $errorMessage .= 'Please try again or contact support if the problem persists.';
+            $errorMessage .= __('Please try again or contact support if the problem persists.');
 
             session()->flash('error', $errorMessage);
         }

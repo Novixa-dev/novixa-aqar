@@ -25,6 +25,6 @@ class ContactController extends Controller
 
         // TODO: Add email notification logic here if required
 
-        return redirect()->back()->with('success', 'Your message has been sent successfully!');
+        return redirect()->back()->with('success', __('Your message has been sent successfully!'));
     }
 }

@@ -67,7 +67,7 @@ class PropertyRequestForm extends Component
             // Log matching error gracefully
         }
 
-        session()->flash('message', 'تم تسجيل طلب البحث عن عقارك بنجاح. سيقوم مستشارنا بمطابقة طلبك والتواصل معك قريباً.');
+        session()->flash('message', __('تم تسجيل طلب البحث عن عقارك بنجاح. سيقوم مستشارنا بمطابقة طلبك والتواصل معك قريباً.'));
         $this->dispatch('propertyRequestSubmitted');
         $this->reset();
     }

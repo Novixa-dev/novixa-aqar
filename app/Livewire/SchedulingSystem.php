@@ -94,7 +94,7 @@ class SchedulingSystem extends Component
         // Sync with calendar
         $this->calendarIntegrationService->addAppointmentToCalendar($appointment);
 
-        session()->flash('message', 'Appointment scheduled successfully!');
+        session()->flash('message', __('Appointment scheduled successfully!'));
         $this->resetAvailability();
     }
 
