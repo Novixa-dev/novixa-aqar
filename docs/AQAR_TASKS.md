@@ -37,7 +37,7 @@ Live tracker. Source of truth for priority/root-cause detail is `AQAR_PRE_RELEAS
 | P1-13 | No in-panel language switcher | DISCOVERED |
 | P1-14 | ~96% of Livewire flash messages untranslated | DISCOVERED |
 | P1-15/16 | Zero test coverage: Payments/Stripe, functional auth | DISCOVERED |
-| P1-17 | `.env.example` OCTANE_SERVER=swoole (only RoadRunner installed) | DISCOVERED |
+| P1-17 | `.env.example` OCTANE_SERVER=swoole (only RoadRunner installed) | **FIXED** — changed to `roadrunner` with an explanatory comment. Also fixed while in the same file: P2-8 (deduped conflicting `SESSION_DRIVER`/`SESSION_SECURE_COOKIE` keys, kept the previously-effective values so behavior doesn't silently change), P2-16 (added the entirely-missing `REVERB_*` vars). Deliberately did **not** flip `QUEUE_CONNECTION`/`CACHE_DRIVER` to `redis` (P2-17) — that would break a zero-dependency fresh install if Redis isn't running; added an explanatory comment instead of a silent behavior change |
 | P1-18/19 | No dynamic SEO on `/properties`, `/news/{slug}`; sitemap stale/incomplete | DISCOVERED |
 | P1-20 | No locale-prefixed URL routing (hreflang blocked structurally) | DISCOVERED — Large/roadmap |
 | P1-21 | `APP_DEBUG=true` | DISCOVERED — environment-provisioning task |
