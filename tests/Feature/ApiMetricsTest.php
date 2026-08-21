@@ -13,25 +13,23 @@ class ApiMetricsTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_metrics_endpoint_returns_app_name()
+    public function test_metrics_endpoint_returns_health_status()
     {
         $response = $this->getJson('/api/metrics');
 
-        $response->assertJsonStructure(['app_name']);
+        $response->assertJsonStructure(['status', 'uptime', 'cache_status', 'db_status']);
     }
 
-    public function test_metrics_endpoint_returns_environment()
+    public function test_metrics_endpoint_does_not_leak_sensitive_details()
     {
+        // The endpoint is unauthenticated (k8s probes), so it must never
+        // disclose app versions, environment names, or the PHP version.
         $response = $this->getJson('/api/metrics');
 
-        $response->assertJsonStructure(['environment']);
-    }
-
-    public function test_metrics_endpoint_returns_php_version()
-    {
-        $response = $this->getJson('/api/metrics');
-
-        $response->assertJsonStructure(['php_version']);
+        $response->assertJsonMissing(['app_name']);
+        $response->assertJsonMissing(['app_version']);
+        $response->assertJsonMissing(['environment']);
+        $response->assertJsonMissing(['php_version']);
     }
 
     public function test_metrics_endpoint_returns_cache_status()
@@ -55,16 +53,13 @@ class ApiMetricsTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_metrics_endpoint_returns_all_required_keys()
+    public function test_metrics_endpoint_is_rate_limited()
     {
-        $response = $this->getJson('/api/metrics');
+        // throttle:30,1 — the 31st request inside one minute must be rejected.
+        for ($i = 0; $i < 30; $i++) {
+            $this->getJson('/api/metrics')->assertStatus(200);
+        }
 
-        $response->assertJsonStructure([
-            'app_name',
-            'environment',
-            'php_version',
-            'cache_status',
-            'db_status',
-        ]);
+        $this->getJson('/api/metrics')->assertStatus(429);
     }
 }
