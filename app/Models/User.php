@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\AgentMatchingService;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasTenants;
@@ -188,11 +187,6 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         return $this->reviewsReceived()->avg('rating');
     }
 
-    public function priceAlerts()
-    {
-        return $this->hasMany(PriceAlert::class);
-    }
-
     public function favorites()
     {
         return $this->hasMany(Favorite::class);
@@ -204,55 +198,8 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
             ->withTimestamps();
     }
 
-    public function agentMatches()
-    {
-        return $this->hasMany(AgentMatch::class);
-    }
-
-    public function matchedAgents()
-    {
-        return $this->belongsToMany(User::class, 'agent_matches', 'user_id', 'agent_id')
-            ->withPivot(['match_score', 'status', 'match_reasons'])
-            ->withTimestamps();
-    }
-
-    public function clientMatches()
-    {
-        return $this->hasMany(AgentMatch::class, 'agent_id');
-    }
-
     public function team()
     {
         return $this->currentTeam();
-    }
-
-    /**
-     * Get recommended agents for this user
-     */
-    public function getRecommendedAgents(int $limit = 5): Collection
-    {
-        $service = app(AgentMatchingService::class);
-
-        return $service->findMatches($this, $limit);
-    }
-
-    /**
-     * Generate and save agent matches for this user
-     */
-    public function generateAgentMatches(int $minScore = 60): Collection
-    {
-        $service = app(AgentMatchingService::class);
-
-        return $service->generateMatchesForUser($this, $minScore);
-    }
-
-    /**
-     * Get agents recommended for a specific property search
-     */
-    public function getAgentsForPropertySearch(array $searchContext): Collection
-    {
-        $service = app(AgentMatchingService::class);
-
-        return $service->getRecommendedAgentsForPropertySearch($this, $searchContext);
     }
 }
