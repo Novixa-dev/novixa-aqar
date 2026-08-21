@@ -44,7 +44,7 @@ class LeaseResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('property.address')
+                TextInput::make('property.title')
                     ->label(__('filament.fields.property_address'))
                     ->disabled(),
                 DatePicker::make('start_date')
@@ -75,7 +75,7 @@ class LeaseResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('property.address')
+                TextColumn::make('property.title')
                     ->label(__('filament.fields.property_address')),
                 TextColumn::make('start_date')
                     ->date(),
