@@ -21,6 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SetLocaleMiddleware::class,
         ]);
 
+        // Stripe delivers webhooks with their own signature scheme; the
+        // Laravel CSRF token is neither present nor applicable.
+        $middleware->validateCsrfTokens(except: [
+            'payments/webhook',
+        ]);
+
         $middleware->append([
             \App\Http\Middleware\RoleBasedRedirect::class,
             \App\Http\Middleware\SecurityHeaders::class,

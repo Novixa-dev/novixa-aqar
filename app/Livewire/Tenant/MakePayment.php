@@ -22,8 +22,10 @@ class MakePayment extends Component
 
     public function mount()
     {
+        // Invoice statuses are pending/paid/void — 'unpaid' never matched.
         $this->invoiceId = Invoice::where('tenant_id', auth()->id())
-            ->where('status', 'unpaid')
+            ->whereIn('status', ['pending'])
+            ->orderBy('id')
             ->first()->id ?? null;
     }
 
@@ -31,12 +33,22 @@ class MakePayment extends Component
     {
         $this->validate();
 
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        // Ownership guard: never create intents for another tenant's invoice.
+        Invoice::query()
+            ->whereKey($this->invoiceId)
+            ->where('tenant_id', auth()->id())
+            ->whereNotIn('status', ['paid', 'void'])
+            ->firstOrFail();
+
+        Stripe::setApiKey((string) config('stripe.secret_key'));
 
         $paymentIntent = PaymentIntent::create([
-            'amount' => $this->amount * 100,
+            'amount' => (int) round(((float) $this->amount) * 100),
             'currency' => 'usd',
-            'payment_method_types' => ['card'],
+            'metadata' => [
+                'invoice_id' => (string) $this->invoiceId,
+                'tenant_id' => (string) auth()->id(),
+            ],
         ]);
 
         return $paymentIntent->client_secret;
@@ -46,16 +58,30 @@ class MakePayment extends Component
     {
         $this->validate();
 
-        // Process payment logic here
-        // For demonstration, we'll just create a new payment record
+        // Ownership + status guard: a tampered invoiceId must not be able to
+        // record payments against someone else's (or an already-paid) invoice.
+        $invoice = Invoice::query()
+            ->whereKey($this->invoiceId)
+            ->where('tenant_id', auth()->id())
+            ->whereNotIn('status', ['paid', 'void'])
+            ->first();
+
+        if (! $invoice) {
+            $this->addError('invoiceId', __('The selected invoice is invalid.'));
+
+            return;
+        }
+
         Payment::create([
             'amount' => $this->amount,
             'payment_date' => now(),
             'status' => 'completed',
             'payment_method' => $this->paymentMethod,
             'tenant_id' => auth()->id(),
-            'invoice_id' => $this->invoiceId,
+            'invoice_id' => $invoice->id,
         ]);
+
+        $invoice->update(['status' => 'paid']);
 
         $this->dispatch('paymentProcessed');
         session()->flash('message', __('Payment processed successfully.'));
