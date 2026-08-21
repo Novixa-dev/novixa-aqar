@@ -41,7 +41,7 @@
                     </div>
                 @endif
 
-                <div class="flex space-x-3">
+                <div class="flex gap-3">
                     <button wire:click="calculateTax" 
                             class="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition">
                         Calculate Estimated Taxes
@@ -123,7 +123,7 @@
                     </div>
                 </div>
 
-                <div class="flex space-x-3 mt-4">
+                <div class="flex gap-3 mt-4">
                     <button wire:click="resetCalculation" 
                             class="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition">
                         Calculate Again

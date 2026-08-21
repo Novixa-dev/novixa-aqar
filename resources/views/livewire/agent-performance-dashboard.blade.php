@@ -2,11 +2,11 @@
     <h2 class="text-2xl font-semibold mb-4">Agent Performance Dashboard</h2>
 
     <div class="mb-4">
-        <label for="startDate" class="mr-2">Start Date:</label>
+        <label for="startDate" class="me-2">Start Date:</label>
         <input type="date" wire:model="startDate" id="startDate" class="border rounded px-2 py-1">
-        <label for="endDate" class="ml-4 mr-2">End Date:</label>
+        <label for="endDate" class="ms-4 me-2">End Date:</label>
         <input type="date" wire:model="endDate" id="endDate" class="border rounded px-2 py-1">
-        <button wire:click="updateMetrics" class="ml-4 bg-blue-500 text-white px-4 py-2 rounded">Update</button>
+        <button wire:click="updateMetrics" class="ms-4 bg-blue-500 text-white px-4 py-2 rounded">Update</button>
     </div>
 
     <div class="grid grid-cols-2 gap-4 mb-8">

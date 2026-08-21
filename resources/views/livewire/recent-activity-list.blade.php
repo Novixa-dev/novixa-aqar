@@ -2,7 +2,7 @@
     <ul class="divide-y divide-gray-200">
         @foreach($activities as $activity)
             <li class="py-4">
-                <div class="flex space-x-3">
+                <div class="flex gap-3">
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
                             <h3 class="text-sm font-medium">{{ $activity->type }}</h3>

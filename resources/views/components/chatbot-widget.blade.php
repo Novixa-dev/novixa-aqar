@@ -60,7 +60,7 @@
             <!-- Typing Indicator -->
             <div x-show="isTyping" class="flex justify-start">
                 <div class="bg-gray-100 rounded-lg p-3 shadow-sm">
-                    <div class="flex space-x-1">
+                    <div class="flex gap-1">
                         <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                         <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
                         <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
@@ -123,6 +123,7 @@ function chatbotWidget() {
         conversationId: null,
         currentMessage: '',
         messages: [],
+        appLocale: document.documentElement.lang.startsWith('ar') ? 'ar' : 'en',
 
         init() {
             // Start conversation when component initializes
@@ -145,6 +146,19 @@ function chatbotWidget() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     },
                 });
+
+                if (!response.ok) {
+                    this.messages.push({
+                        id: Date.now(),
+                        message: appLocale === 'ar'
+                            ? 'خدمة المحادثة غير متاحة حالياً. يرجى المحاولة لاحقاً أو التواصل معنا عبر الواتساب.'
+                            : 'Chat is unavailable right now. Please try again later or reach us on WhatsApp.',
+                        sender_type: 'bot',
+                        created_at: new Date().toISOString(),
+                    });
+                    this.scrollToBottom();
+                    return;
+                }
 
                 const data = await response.json();
                 this.sessionId = data.session_id;
@@ -195,11 +209,27 @@ function chatbotWidget() {
                     }),
                 });
 
+                if (!response.ok) {
+                    setTimeout(() => {
+                        this.isTyping = false;
+                        this.messages.push({
+                            id: Date.now() + 1,
+                            message: this.appLocale === 'ar'
+                                ? 'تعذر إرسال رسالتك. يرجى المحاولة مرة أخرى.'
+                                : 'Your message could not be delivered. Please try again.',
+                            sender_type: 'bot',
+                            created_at: new Date().toISOString(),
+                        });
+                        this.scrollToBottom();
+                    }, 500);
+                    return;
+                }
+
                 const data = await response.json();
-                
+
                 setTimeout(() => {
                     this.isTyping = false;
-                    
+
                     // Add bot response
                     this.messages.push({
                         id: Date.now() + 1,

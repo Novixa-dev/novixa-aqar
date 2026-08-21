@@ -299,7 +299,7 @@
                                         </div>
 
                                         <p class="text-sm text-gray-500 mt-2">{{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}:
-                                            {{ $neighborhood->last_updated->format('M d, Y H:i') }}</p>
+                                            {{ $neighborhood->last_updated->translatedFormat('M d, Y H:i') }}</p>
 
                                         <!-- Neighborhood Reviews Section -->
                                         <div class="mt-6">
@@ -431,7 +431,7 @@
                                             @endif
 
                                             <p class="text-xs text-gray-500 mt-2">
-                                                {{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}: {{ $property->walkability_updated_at ? $property->walkability_updated_at->format('M d, Y') : (app()->getLocale() === 'ar' ? 'غير متوفر' : 'N/A') }}
+                                                {{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}: {{ $property->walkability_updated_at ? $property->walkability_updated_at->translatedFormat('M d, Y') : (app()->getLocale() === 'ar' ? 'غير متوفر' : 'N/A') }}
                                             </p>
                                         </div>
                                     @else
@@ -452,7 +452,7 @@
                                                 <p class="font-semibold">{{ app()->getLocale() === 'ar' ? 'مؤشر كفاءة الطاقة' : 'Energy Efficiency Score' }}:
                                                     {{ $property->energy_score }}/100</p>
                                                 <p class="text-sm text-gray-600">{{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}:
-                                                    {{ $property->energy_rating_date->format('d M Y') }}</p>
+                                                    {{ $property->energy_rating_date->translatedFormat('d M Y') }}</p>
                                             </div>
                                         </div>
                                         <p class="mt-2 text-sm text-gray-600">
@@ -647,7 +647,7 @@
                                         @foreach($priceHistory as $history)
                                             <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
                                                 <div class="flex-1">
-                                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $history->event_date->format('M d, Y') }}</p>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $history->event_date->translatedFormat('M d, Y') }}</p>
                                                     <p class="text-gray-900 dark:text-white font-medium">
                                                         {{ app(\App\Services\CurrencyService::class)->format($history->old_price, $property->currency) }}
                                                         <svg class="w-4 h-4 inline mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -684,7 +684,7 @@
                                         @foreach($salesHistory as $sale)
                                             <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3">
                                                 <div>
-                                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $sale->event_date->format('M d, Y') }}</p>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $sale->event_date->translatedFormat('M d, Y') }}</p>
                                                     <p class="text-gray-900 dark:text-white">{{ $sale->description }}</p>
                                                 </div>
                                                 <div class="text-end">
@@ -735,7 +735,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex-1">
-                                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $event->event_date->format('M d, Y') }}</p>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $event->event_date->translatedFormat('M d, Y') }}</p>
                                                     <p class="text-gray-900 dark:text-white font-medium">
                                                         @if(app()->getLocale() === 'ar')
                                                             @switch($event->event_type)
@@ -795,7 +795,7 @@
                                         </svg>
                                     </button>
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                        {{ \Carbon\Carbon::create($selectedYear, $selectedMonth, 1)->format('F Y') }}
+                                        {{ \Carbon\Carbon::create($selectedYear, $selectedMonth, 1)->translatedFormat('F Y') }}
                                     </h3>
                                     <button wire:click="changeMonth('next')" 
                                         class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
@@ -809,10 +809,10 @@
                                 <div class="space-y-4">
                                     @foreach($communityEvents as $event)
                                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
-                                            <div class="flex items-start space-x-4">
+                                            <div class="flex items-start gap-4">
                                                 <!-- Event Date Badge -->
                                                 <div class="flex-shrink-0 w-16 h-16 bg-blue-600 rounded-lg flex flex-col items-center justify-center text-white">
-                                                    <span class="text-xs font-semibold uppercase">{{ $event->event_date->format('M') }}</span>
+                                                    <span class="text-xs font-semibold uppercase">{{ $event->event_date->translatedFormat('M') }}</span>
                                                     <span class="text-2xl font-bold">{{ $event->event_date->format('d') }}</span>
                                                 </div>
                                                 
@@ -826,9 +826,9 @@
                                                         <svg class="w-4 h-4 me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                         </svg>
-                                                        {{ $event->event_date->format('g:i A') }}
+                                                        {{ $event->event_date->translatedFormat('g:i A') }}
                                                         @if($event->end_date)
-                                                            - {{ $event->end_date->format('g:i A') }}
+                                                            - {{ $event->end_date->translatedFormat('g:i A') }}
                                                         @endif
                                                     </div>
                                                     

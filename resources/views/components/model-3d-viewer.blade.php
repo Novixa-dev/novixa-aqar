@@ -11,7 +11,7 @@
                     </svg>
                     {{ app()->getLocale() === 'ar' ? 'عرض النموذج ثلاثي الأبعاد' : '3D Model View' }}
                 </h3>
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center gap-2">
                     <button onclick="resetModel3DCamera()"
                         class="text-sm px-3 py-1 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition">
                         <svg class="w-4 h-4 inline-block me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,7 +30,7 @@
             <!-- Controls Help -->
             <div class="px-4 py-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
                 <div class="flex flex-wrap items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center gap-4">
                         <span class="flex items-center">
                             <svg class="w-4 h-4 me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
