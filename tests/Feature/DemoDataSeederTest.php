@@ -26,4 +26,41 @@ class DemoDataSeederTest extends TestCase
         $this->assertGreaterThan(0, DB::table('leads')->count());
         $this->assertGreaterThan(0, DB::table('buyers')->count());
     }
+
+    public function test_demo_workflow_seeder_populates_every_persona_surface()
+    {
+        // Same ordering contract as DatabaseSeeder: permissions/roles precede
+        // any seeder that assigns roles to users.
+        $this->seed(\Database\Seeders\DefaultTeamSeeder::class);
+        $this->seed(\Database\Seeders\RolesSeeder::class);
+        $this->seed(\Database\Seeders\UserSeeder::class);
+        $this->seed(\Database\Seeders\PropertyCategorySeeder::class);
+        $this->seed(\Database\Seeders\PropertySeeder::class);
+        $this->seed(\Database\Seeders\DemoWorkflowSeeder::class);
+
+        // Every workflow table the role dashboards surface must have rows.
+        foreach (['vendors', 'tenants', 'leases', 'payments', 'maintenance_requests', 'rental_applications', 'bookings'] as $table) {
+            $this->assertGreaterThan(0, DB::table($table)->count(), "table {$table} is empty after seeding");
+        }
+
+        // The landlord persona owns rental inventory (their panel is scoped
+        // by properties.user_id).
+        $landlordId = DB::table('users')->where('email', 'landlord@darhadhramaut.ye')->value('id');
+        $this->assertGreaterThan(
+            0,
+            DB::table('properties')->where('user_id', $landlordId)->where('status', 'For Rent')->count(),
+            'landlord persona owns no rentals'
+        );
+
+        // The contractor persona has an assigned work order (contractor panel
+        // scopes by the contractors-table record carrying their email).
+        $contractorEmail = DB::table('users')->where('email', 'contractor@darhadhramaut.ye')->value('email');
+        $contractorId = DB::table('contractors')->where('email', $contractorEmail)->value('id');
+        $this->assertNotNull($contractorId, 'no contractors-table record for the contractor persona');
+        $this->assertGreaterThan(
+            0,
+            DB::table('maintenance_requests')->where('contractor_id', $contractorId)->count(),
+            'contractor persona has no assigned work orders'
+        );
+    }
 }
