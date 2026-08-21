@@ -196,9 +196,11 @@ class PropertyResource extends Resource
                     ])
                     ->columnSpanFull(),
                 SpatieMediaLibraryFileUpload::make('images')
-                    ->collection('property_images')
+                    ->collection('images')
                     ->multiple()
                     ->maxFiles(5)
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxSize(5120)
                     ->label(__('filament.fields.property_images'))
                     ->columnSpanFull(),
                 Textarea::make('custom_description')
@@ -228,7 +230,7 @@ class PropertyResource extends Resource
         return $table
             ->columns([
                 SpatieMediaLibraryImageColumn::make('images')
-                    ->collection('property_images')
+                    ->collection('images')
                     ->label(__('filament.fields.preview'))
                     ->circular()
                     ->stacked()
