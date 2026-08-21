@@ -93,12 +93,15 @@ class RolesSeeder extends Seeder
             $role->syncPermissions($allPermissions->values()->toArray());
         }
 
-        // Staff gets all view/create/update permissions (no deletes)
+        // Staff: explicit allowlist instead of prefix-matching every
+        // view*/create*/update* permission. Deliberately excludes role/team/
+        // menu administration, portal API-key settings, and integration
+        // surfaces. User permissions are included because the Staff panel's
+        // Buyers/Landlords/Sellers/Contractors/AgentPerformance resources all
+        // operate on the User model.
         $staffRole = $this->findOrCreateRole('staff', $teamId);
         $staffPermissions = $allPermissions->filter(
-            fn ($id, $name) => str_starts_with($name, 'view')
-                || str_starts_with($name, 'create')
-                || str_starts_with($name, 'update')
+            fn ($id, $name) => $this->matchesStaffAllowlist($name)
         )->values()->toArray();
         $staffRole->syncPermissions($staffPermissions);
 
@@ -136,5 +139,53 @@ class RolesSeeder extends Seeder
             }
             return false;
         })->values()->toArray();
+    }
+
+    /**
+     * Explicit staff allowlist: {action}_{subject} pairs for day-to-day agency
+     * operations, plus named page/widget permissions. Anything not listed here
+     * (roles, teams, menus, portal settings, integrations, deletes, restores,
+     * exports, force-deletes) is denied by default — new sensitive resources
+     * must be consciously added rather than being auto-granted by a prefix.
+     */
+    protected function matchesStaffAllowlist(string $permission): bool
+    {
+        $actions = ['view', 'view_any', 'create', 'update'];
+
+        $subjects = [
+            'appointment', 'branch', 'chat_conversation', 'document',
+            'document_template', 'email_campaign', 'energy_consumption',
+            'favorite', 'image', 'key_location', 'lead', 'lease',
+            'lease_agreement', 'maintenance_request', 'message', 'news',
+            'payment', 'property', 'property_category', 'property_feature',
+            'property_template', 'rental_application', 'review', 'tenant',
+            'transaction', 'utility_payment',
+        ];
+
+        foreach ($actions as $action) {
+            if (in_array($permission, array_map(fn ($s) => "{$action}_{$s}", $subjects), true)) {
+                return true;
+            }
+        }
+
+        // User management is required by Staff-panel resources whose underlying
+        // model is User (Buyers, Landlords, Sellers, Contractors, AgentPerformance).
+        if (in_array($permission, ['view_user', 'view_any_user', 'create_user', 'update_user'], true)) {
+            return true;
+        }
+
+        // Named pages/widgets the Staff dashboard and profile depend on.
+        $namedPermissions = [
+            'view_dashboard', 'view_dashboard_stats_overview', 'view_stats_overview',
+            'view_property_stats_overview', 'view_tenant_stats_overview',
+            'view_recent_activity', 'view_recent_bookings',
+            'view_recent_maintenance_requests', 'view_recent_transactions',
+            'view_top_performing_properties', 'view_latest_properties',
+            'view_agent_performance_overview', 'view_edit_profile', 'view_profile',
+            'view_update_profile_information_page', 'view_personal_access_tokens_page',
+            'view_social_links_widget',
+        ];
+
+        return in_array($permission, $namedPermissions, true);
     }
 }

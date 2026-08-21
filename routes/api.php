@@ -85,7 +85,9 @@ Route::prefix('v1/public/agencies/{team}')->middleware('throttle:60,1')->name('a
 });
 
 // Public metrics endpoint (for k8s monitoring/control-panel)
-Route::get('/metrics', [MetricsController::class, 'index'])->name('api.metrics');
+Route::get('/metrics', [MetricsController::class, 'index'])
+    ->middleware('throttle:30,1')
+    ->name('api.metrics');
 
 // Module management (admin only)
 Route::middleware(['auth:sanctum', 'role:super_admin|admin'])->prefix('modules')->group(function () {

@@ -54,6 +54,14 @@ class OnTheMarketSettingsResource extends Resource
         return false;
     }
 
+    public static function canAccess(): bool
+    {
+        // Fail closed: nav-hiding alone still leaves the pages reachable by
+        // direct URL. This integration is consciously disabled for the Yemen
+        // demo; re-enable both methods together if it ever ships.
+        return false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema

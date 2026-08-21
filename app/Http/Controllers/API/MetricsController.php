@@ -11,17 +11,18 @@ class MetricsController extends Controller
 {
     public function index(): JsonResponse
     {
-        $metrics = [
-            'app_name' => config('app.name'),
-            'app_version' => config('app.version', '1.0.0'),
-            'environment' => config('app.env'),
-            'php_version' => PHP_VERSION,
-            'uptime' => $this->getUptime(),
-            'cache_status' => $this->getCacheStatus(),
-            'db_status' => $this->getDatabaseStatus(),
-        ];
+        // Deliberately minimal: this endpoint is unauthenticated (k8s probes /
+        // uptime checks), so it must not disclose app versions, environment
+        // names, or PHP version. Health booleans only.
+        $cacheStatus = $this->getCacheStatus();
+        $dbStatus = $this->getDatabaseStatus();
 
-        return response()->json($metrics);
+        return response()->json([
+            'status' => ($cacheStatus === 'healthy' && $dbStatus === 'healthy') ? 'ok' : 'degraded',
+            'uptime' => $this->getUptime(),
+            'cache_status' => $cacheStatus,
+            'db_status' => $dbStatus,
+        ]);
     }
 
     private function getUptime(): string
