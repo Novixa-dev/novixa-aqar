@@ -45,6 +45,7 @@ class RolesSeeder extends Seeder
         'landlord' => [
             'view_property', 'view_any_property', 'create_property', 'update_property',
             'view_lease', 'view_any_lease', 'create_lease', 'update_lease',
+            'view_payment', 'view_any_payment',
             'view_lease_agreement', 'view_any_lease_agreement', 'create_lease_agreement',
             'view_rental_application', 'view_any_rental_application', 'update_rental_application',
             'view_tenant', 'view_any_tenant',
