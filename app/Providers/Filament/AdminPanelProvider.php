@@ -42,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ->login([AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/admin')
-            // ->passwordReset()
+            ->passwordReset()
             // ->emailVerification()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([

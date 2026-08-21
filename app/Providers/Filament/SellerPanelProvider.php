@@ -49,7 +49,7 @@ class SellerPanelProvider extends PanelProvider
             ->loginRouteSlug('login')
             ->homeUrl('/seller')
             // ->registration()
-            // ->passwordReset()
+            ->passwordReset()
             // ->emailVerification()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([

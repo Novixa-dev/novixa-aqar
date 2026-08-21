@@ -49,7 +49,7 @@ class ContractorPanelProvider extends PanelProvider
             ->loginRouteSlug('login')
             ->homeUrl('/contractor')
             // ->registration()
-            // ->passwordReset()
+            ->passwordReset()
             // ->emailVerification()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([

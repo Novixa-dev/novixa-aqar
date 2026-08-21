@@ -49,7 +49,7 @@ class TenantPanelProvider extends PanelProvider
             ->loginRouteSlug('login')
             ->homeUrl('/tenant')
             // ->registration()
-            // ->passwordReset()
+            ->passwordReset()
             // ->emailVerification()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
