@@ -103,4 +103,6 @@ return [
         'api_key' => env('ZOOPLA_API_KEY'),
         'sync_frequency' => env('ZOOPLA_SYNC_FREQUENCY', 'daily'),
     ],
+
+    'contact_inbox' => env('CONTACT_INBOX_EMAIL', env('MAIL_FROM_ADDRESS', 'info@darhadhramaut.ye')),
 ];
