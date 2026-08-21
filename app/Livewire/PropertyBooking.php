@@ -153,6 +153,8 @@ class PropertyBooking extends Component
         return view('livewire.property-booking', [
             'availableDates' => $this->availableDates,
             'availableTimeSlots' => $this->availableTimeSlots,
+        ])->layout('layouts.app', [
+            'title' => app()->getLocale() === 'ar' ? 'حجز معاينة عقار' : 'Book a Property Viewing',
         ]);
     }
 }

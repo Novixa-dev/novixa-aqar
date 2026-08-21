@@ -64,6 +64,8 @@ class NewsList extends Component
         return view('livewire.news-list', [
             'news' => $this->news,
             'featuredNews' => $this->featuredNews,
+        ])->layout('layouts.app', [
+            'title' => app()->getLocale() === 'ar' ? 'الأخبار العقارية' : 'Real Estate News',
         ]);
     }
 }

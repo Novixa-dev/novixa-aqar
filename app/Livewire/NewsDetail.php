@@ -30,6 +30,6 @@ class NewsDetail extends Component
     {
         return view('livewire.news-detail', [
             'relatedNews' => $this->relatedNews,
-        ]);
+        ])->layout('layouts.app', ['title' => $this->news->title]);
     }
 }

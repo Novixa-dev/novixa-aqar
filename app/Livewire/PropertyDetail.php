@@ -131,7 +131,11 @@ class PropertyDetail extends Component
 
     public function render()
     {
-        return view('livewire.property-detail')->layout('layouts.app');
+        return view('livewire.property-detail')
+            ->layout('layouts.app', [
+                'title' => $this->property->title,
+                'metaDescription' => \Illuminate\Support\Str::limit(strip_tags($this->property->description), 160),
+            ]);
     }
 
     public function toggleInvestmentSimulation()

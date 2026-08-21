@@ -220,7 +220,9 @@ class PropertyList extends Component
         return view('livewire.property-list', [
             'properties' => $this->getPropertiesProperty(),
             'amenities' => $this->propertyFeatureService->getFeatures(),
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'title' => app()->getLocale() === 'ar' ? 'العقارات المتاحة' : 'Available Properties',
+        ]);
     }
     
     public function viewProperty($propertyId)

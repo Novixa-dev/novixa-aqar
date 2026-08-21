@@ -52,6 +52,8 @@ class PropertyComparison extends Component
 
     public function render()
     {
-        return view('livewire.property-comparison');
+        return view('livewire.property-comparison')->layout('layouts.app', [
+            'title' => app()->getLocale() === 'ar' ? 'مقارنة العقارات' : 'Compare Properties',
+        ]);
     }
 }

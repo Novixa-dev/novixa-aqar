@@ -1,7 +1,5 @@
 <div>
 @push('meta')
-    <title>{{ $property->title }} | {{ app(\App\Settings\GeneralSettings::class)->site_name }}</title>
-    <meta name="description" content="{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 160) }}">
     <link rel="canonical" href="{{ url()->current() }}">
     
     <!-- OpenGraph Tags -->
