@@ -8,6 +8,9 @@ use App\Modules\ModuleServiceProvider;
 use App\Observers\PropertyObserver;
 use App\Policies\RolePolicy;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Forms\Components\Field;
+use Filament\Infolists\Components\Entry;
+use Filament\Tables\Columns\Column;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -51,5 +54,21 @@ class AppServiceProvider extends ServiceProvider
         // Spatie's Role model lives outside App\Models, so Laravel's policy
         // auto-discovery convention never finds RolePolicy on its own.
         Gate::policy(Role::class, RolePolicy::class);
+
+        // Filament auto-generates form/table/infolist labels from the field
+        // name (e.g. property_type -> "Property Type") but never runs that
+        // humanized string through __() unless ->translateLabel() is called
+        // on every single field. Field/Column/Entry all extend the same
+        // Filament\Support\Components\Component base, and configureUsing()
+        // walks the full class hierarchy (see ComponentManager::configure()),
+        // so this one call applies to every concrete subclass (TextInput,
+        // Select, TextColumn, IconColumn, TextEntry, ...) across all 9
+        // panels without editing any of the ~45 resource files. Labels with
+        // no matching lang/{ar,en}.json key just render unchanged (Laravel's
+        // __() fallback), so this is purely additive - it can only add
+        // translations, never break an existing label.
+        Field::configureUsing(fn (Field $field) => $field->translateLabel());
+        Column::configureUsing(fn (Column $column) => $column->translateLabel());
+        Entry::configureUsing(fn (Entry $entry) => $entry->translateLabel());
     }
 }
