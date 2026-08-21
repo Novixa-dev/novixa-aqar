@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             DocumentTemplateSeeder::class,
             ComponentSettingsSeeder::class,
             NewsSeeder::class,
-            // Add other seeders here if needed
+            DemoWorkflowSeeder::class,
         ]);
     }
 }
