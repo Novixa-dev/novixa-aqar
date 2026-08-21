@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', app()->getLocale() === 'ar' ? 'دار حضرموت العقارية | عقارات في اليمن' : 'Dar Hadhramaut Real Estate | Properties in Yemen')
+
 @section('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 @endsection

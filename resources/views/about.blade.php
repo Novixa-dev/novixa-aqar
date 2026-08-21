@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', app()->getLocale() === 'ar' ? 'من نحن | دار حضرموت العقارية' : 'About Us | Dar Hadhramaut Real Estate')
+
 @section('content')
 <div class="container mx-auto px-4 lg:px-8 py-12">
     <!-- Header -->
