@@ -26,7 +26,7 @@
                                 <p class="text-gray-600 dark:text-gray-400 mb-4">{{ Str::limit($article->excerpt, 120) }}</p>
                             @endif
                             <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                                <span>{{ $article->published_at->format('M d, Y') }}</span>
+                                <span>{{ $article->published_at->translatedFormat('M d, Y') }}</span>
                                 @if($article->author)
                                     <span>By {{ $article->author->name }}</span>
                                 @endif

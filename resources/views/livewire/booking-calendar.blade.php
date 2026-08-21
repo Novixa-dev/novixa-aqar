@@ -21,7 +21,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <h3 class="text-base font-semibold text-gray-900">
-                    {{ \Carbon\Carbon::create($currentYear, $currentMonth, 1)->format('F Y') }}
+                    {{ \Carbon\Carbon::create($currentYear, $currentMonth, 1)->translatedFormat('F Y') }}
                 </h3>
                 <button wire:click="nextMonth"
                     class="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition">
@@ -67,7 +67,7 @@
         <div class="p-6 flex flex-col">
             @if($selectedDate)
                 <h3 class="text-sm font-semibold text-gray-700 mb-3">
-                    {{ app()->getLocale() === 'ar' ? 'الأوقات المتاحة ليوم' : 'Available times for' }} {{ \Carbon\Carbon::parse($selectedDate)->format('D, d M Y') }}
+                    {{ app()->getLocale() === 'ar' ? 'الأوقات المتاحة ليوم' : 'Available times for' }} {{ \Carbon\Carbon::parse($selectedDate)->translatedFormat('D, d M Y') }}
                 </h3>
 
                 @if(count($availableTimeSlots) > 0)
@@ -92,7 +92,7 @@
                     <div class="mt-auto">
                         <div class="rounded-lg bg-indigo-50 p-3 mb-4 text-sm text-indigo-800">
                             <p class="font-medium">{{ app()->getLocale() === 'ar' ? 'اختيارك:' : 'Your selection:' }}</p>
-                            <p>{{ \Carbon\Carbon::parse($selectedDate)->format('D, d M Y') }} {{ app()->getLocale() === 'ar' ? 'الساعة' : 'at' }} {{ \Carbon\Carbon::createFromFormat('H:i', $selectedTimeSlot)->format('g:i A') }}</p>
+                            <p>{{ \Carbon\Carbon::parse($selectedDate)->translatedFormat('D, d M Y') }} {{ app()->getLocale() === 'ar' ? 'الساعة' : 'at' }} {{ \Carbon\Carbon::createFromFormat('H:i', $selectedTimeSlot)->format('g:i A') }}</p>
                         </div>
                         <button wire:click="bookAppointment"
                             class="w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow transition focus:outline-none focus:ring-2 focus:ring-offset-2"

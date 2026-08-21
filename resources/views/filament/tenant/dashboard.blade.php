@@ -10,7 +10,7 @@
         <div>
             <x-filament::card>
                 <h2 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'موعد استحقاق الإيجار القادم' : 'Next Rent Due' }}</h2>
-                <p class="text-3xl font-bold">{{ $this->rentDueDate ? $this->rentDueDate->format('M d, Y') : 'N/A' }}</p>
+                <p class="text-3xl font-bold">{{ $this->rentDueDate ? $this->rentDueDate->translatedFormat('M d, Y') : 'N/A' }}</p>
             </x-filament::card>
         </div>
 

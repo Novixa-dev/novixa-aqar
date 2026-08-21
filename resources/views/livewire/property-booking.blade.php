@@ -56,7 +56,7 @@
                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                     <option value="">{{ app()->getLocale() === 'ar' ? '— اختر تاريخاً —' : '— Choose a date —' }}</option>
                     @foreach($availableDates as $date)
-                        <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('D, d M Y') }}</option>
+                        <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->translatedFormat('D, d M Y') }}</option>
                     @endforeach
                 </select>
                 @error('selectedDate') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror

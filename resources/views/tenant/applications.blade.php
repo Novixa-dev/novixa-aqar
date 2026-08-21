@@ -30,7 +30,7 @@
                                             {{ ucfirst($application->status) }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $application->created_at->format('M d, Y') }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ $application->created_at->translatedFormat('M d, Y') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
