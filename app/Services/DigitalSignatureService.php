@@ -6,66 +6,45 @@ use Exception;
 use App\Models\DigitalSignature;
 use App\Models\User;
 use App\Models\Document;
-use App\Models\LeaseAgreement;
 
+/**
+ * Internal e-signature flow (no external provider required).
+ *
+ * Records who signed what, when, from where, and pins the exact document
+ * version that was signed. DocuSign remains available as an optional
+ * integration via DocuSignService but is not part of the signing path.
+ */
 class DigitalSignatureService
 {
-    protected $docuSignService;
-
-    public function __construct(DocuSignService $docuSignService)
-    {
-        $this->docuSignService = $docuSignService;
-    }
-
     public function signDocument(User $user, Document $document, $signatureData)
     {
-        // Create an envelope and send it for signature using DocuSign
-        $envelope = $this->docuSignService->createEnvelope(
-            $document->file_path,
-            $user->email,
-            $user->name
-        );
         if (!$document->isSignable()) {
             throw new Exception('This document is not signable.');
         }
-        // Here you would integrate with a third-party service like DocuSign
-        // Ensure compliance with UK electronic signature regulations
-        $signature = DigitalSignature::create([
+
+        return DigitalSignature::create([
             'user_id' => $user->id,
             'document_id' => $document->id,
+            'document_version_id' => $document->versions()->latest('version')->value('id'),
             'signature_data' => $signatureData,
             'signed_at' => now(),
             'team_id' => $user->team_id,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
-            'envelope_id' => $envelope->getEnvelopeId(),
         ]);
-
-        // Currently unreachable: signDocument() is only ever called with a real
-        // Document instance (see DocumentSignatureController, TransactionService),
-        // and LeaseAgreement is a sibling model (extends Model directly), not a
-        // Document subclass or a documentable() polymorphic target - so this can
-        // never be true as written. Needs a product decision on the actual
-        // Document<->LeaseAgreement signing relationship before it can be fixed
-        // for real; see AQAR_PRE_RELEASE_AUDIT_REPORT.md P1-2/P1-4/P1-5 and
-        // docs/AQAR_DECISIONS.md. Import fixed so this at least references a
-        // real class instead of an undefined one.
-        if ($document instanceof LeaseAgreement) {
-            $document->update(['is_signed' => true]);
-        }
-
-        return $signature;
     }
 
-    public function verifySignature(DigitalSignature $signature)
+    /**
+     * A signature is valid when it is complete and internally consistent:
+     * signed by a known user on a known document with recorded evidence.
+     */
+    public function verifySignature(DigitalSignature $signature): bool
     {
-        $envelopeStatus = $this->docuSignService->getEnvelopeStatus($signature->envelope_id);
-        $isValid = $envelopeStatus->getStatus() === 'completed';
-
-        if ($isValid) {
-            $signature->update(['verified_at' => now()]);
-        }
-
-        return $isValid;
+        return $signature->signed_at !== null
+            && filled($signature->signature_data)
+            && $signature->user_id !== null
+            && $signature->document_id !== null
+            && $signature->user()->exists()
+            && $signature->document()->exists();
     }
 }
