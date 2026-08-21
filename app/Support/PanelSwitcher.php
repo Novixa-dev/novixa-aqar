@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Support;
+
+use App\Models\User;
+use Filament\Navigation\MenuItem;
+use Filament\Panel;
+
+/**
+ * Cross-panel navigation: builds user-menu entries for every panel the
+ * current user is allowed to access (per User::canAccessPanel), excluding
+ * the panel the menu is rendered in.
+ */
+class PanelSwitcher
+{
+    public const PANELS = [
+        'admin' => ['path' => 'admin', 'label' => 'Admin', 'label_ar' => 'الإدارة'],
+        'staff' => ['path' => 'staff', 'label' => 'Staff', 'label_ar' => 'الموظفون'],
+        'agent' => ['path' => 'agent', 'label' => 'Agent', 'label_ar' => 'الوكيل'],
+        'app' => ['path' => 'app', 'label' => 'Account', 'label_ar' => 'الحساب'],
+        'buyer' => ['path' => 'buyer', 'label' => 'Buyer', 'label_ar' => 'المشتري'],
+        'seller' => ['path' => 'seller', 'label' => 'Seller', 'label_ar' => 'البائع'],
+        'landlord' => ['path' => 'landlord', 'label' => 'Landlord', 'label_ar' => 'المالك'],
+        'tenant' => ['path' => 'tenant', 'label' => 'Tenant', 'label_ar' => 'المستأجر'],
+        'contractor' => ['path' => 'contractor', 'label' => 'Contractor', 'label_ar' => 'المقاول'],
+    ];
+
+    /**
+     * Filament user-menu items for every panel other than $currentId that the
+     * current user is allowed to access. Items are registered unconditionally
+     * (panel providers boot before authentication); per-user visibility is
+     * resolved lazily by each item's visible() closure.
+     *
+     * @return array<MenuItem>
+     */
+    public static function menuItems(string $currentId): array
+    {
+        $isArabic = app()->getLocale() === 'ar';
+        $items = [];
+
+        foreach (self::PANELS as $id => $meta) {
+            if ($id === $currentId) {
+                continue;
+            }
+
+            $items[] = MenuItem::make()
+                ->label($isArabic ? 'الانتقال إلى: ' . $meta['label_ar'] : 'Switch to: ' . $meta['label'])
+                ->icon('heroicon-o-arrow-right-start-on-rectangle')
+                ->url(url('/' . $meta['path']))
+                ->visible(fn () => auth()->user()?->canAccessPanelById($id) ?? false);
+        }
+
+        return $items;
+    }
+}

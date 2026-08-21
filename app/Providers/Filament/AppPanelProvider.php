@@ -18,6 +18,7 @@ use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use App\Support\PanelSwitcher;
 use Filament\Navigation\MenuItem;
 use Filament\Pages\Dashboard;
 // use App\Filament\App\Pages\Dashboard;
@@ -56,6 +57,9 @@ class AppPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
                 'primary' => Color::Gray,
+            ])
+            ->userMenuItems([
+                ...PanelSwitcher::menuItems('app'),
             ]);
 
         if (Features::hasTeamFeatures()) {

@@ -10,6 +10,7 @@ use JoelButcher\Socialstream\Filament\SocialstreamPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use App\Support\PanelSwitcher;
 use Filament\Navigation\MenuItem;
 use Filament\Pages as FilamentPage;
 use Filament\Panel;
@@ -55,6 +56,7 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn () => $this->shouldRegisterMenuItem()
                         ? url(Pages\EditProfile::getUrl())
                         : url($panel->getPath())),
+                ...PanelSwitcher::menuItems('admin'),
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverResources(in: app_path('Filament/Staff/Resources'), for: 'App\\Filament\\Staff\\Resources')

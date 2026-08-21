@@ -113,7 +113,7 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         return $this->canAccessPanelById($panelId);
     }
 
-    private function canAccessPanelById(string $panelId): bool
+    public function canAccessPanelById(string $panelId): bool
     {
         if ($this->hasAnyRole(['admin', 'super_admin'])) {
             return true;

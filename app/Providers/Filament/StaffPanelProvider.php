@@ -24,6 +24,7 @@ use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use App\Support\PanelSwitcher;
 use Filament\Navigation\MenuItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
@@ -69,6 +70,7 @@ class StaffPanelProvider extends PanelProvider
                     ->url(fn () => $this->shouldRegisterMenuItem()
                         ? url(Pages\EditProfile::getUrl())
                         : url($panel->getPath())),
+                ...PanelSwitcher::menuItems('staff'),
             ]);
         if (Features::hasTeamFeatures()) {
             $panel
