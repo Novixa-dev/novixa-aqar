@@ -70,6 +70,7 @@ class RentalApplicationResource extends Resource
                     ->label(app()->getLocale() === 'ar' ? 'المتقدم' : 'Applicant')
                     ->searchable(),
                 TextColumn::make('status')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('rental_application'))
                     ->badge()
                     ->colors(fn () => [
                         'warning' => 'pending',

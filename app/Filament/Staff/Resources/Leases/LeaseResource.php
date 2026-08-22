@@ -101,7 +101,9 @@ class LeaseResource extends Resource
                     ->money(strtolower(config('currencies.default')))
                     ->sortable(),
                 TextColumn::make('status')
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(\App\Support\StatusLabels::for('lease'))
+                    ->color(\App\Support\StatusLabels::color('lease')),
             ])
             ->filters([
                 SelectFilter::make('status')

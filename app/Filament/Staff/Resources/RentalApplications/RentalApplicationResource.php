@@ -146,11 +146,13 @@ class RentalApplicationResource extends Resource
                     ])
                     ->sortable(),
                 TextColumn::make('employment_status')
-                    ->searchable(),
+                    ->searchable()
+                    ->formatStateUsing(\App\Support\StatusLabels::for('employment')),
                 TextColumn::make('annual_income')
                     ->money(strtolower(config('currencies.default')))
                     ->sortable(),
                 TextColumn::make('background_check_status')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('check_status'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'passed' => 'success',

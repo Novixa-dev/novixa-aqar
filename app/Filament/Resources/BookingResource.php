@@ -85,7 +85,9 @@ class BookingResource extends Resource
                 TextColumn::make('time'),
                 TextColumn::make('user.name'),
                 TextColumn::make('name'),
-                TextColumn::make('status'),
+                TextColumn::make('status')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('booking'))
+                    ->color(\App\Support\StatusLabels::color('booking')),
             ])
             ->filters([
                 SelectFilter::make('status')

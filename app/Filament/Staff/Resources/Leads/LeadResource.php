@@ -104,7 +104,9 @@ class LeadResource extends Resource
                 TextColumn::make('name')->sortable()->searchable(),
                 TextColumn::make('email')->sortable()->searchable(),
                 TextColumn::make('interest'),
-                TextColumn::make('status'),
+                TextColumn::make('status')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('lead'))
+                    ->color(\App\Support\StatusLabels::color('lead')),
                 TextColumn::make('score')->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime('d-M-Y')

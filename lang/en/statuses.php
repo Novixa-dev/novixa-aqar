@@ -1,0 +1,108 @@
+<?php
+
+return [
+    'lease' => [
+        'active' => 'Active',
+        'expired' => 'Expired',
+        'terminated' => 'Terminated',
+    ],
+    'payment' => [
+        'pending' => 'Pending',
+        'completed' => 'Completed',
+        'paid' => 'Paid',
+        'failed' => 'Failed',
+        'void' => 'Void',
+        'refunded' => 'Refunded',
+    ],
+    'property' => [
+        'For Rent' => 'For Rent',
+        'For Sale' => 'For Sale',
+        'pending' => 'Pending review',
+        'available' => 'Available',
+        'rented' => 'Rented',
+        'sold' => 'Sold',
+    ],
+    'rental_application' => [
+        'pending' => 'Pending',
+        'approved' => 'Approved',
+        'rejected' => 'Rejected',
+    ],
+    'booking' => [
+        'pending' => 'Pending',
+        'confirmed' => 'Confirmed',
+        'completed' => 'Completed',
+        'cancelled' => 'Cancelled',
+    ],
+    'maintenance' => [
+        'pending' => 'Pending',
+        'in_progress' => 'In progress',
+        'completed' => 'Completed',
+        'cancelled' => 'Cancelled',
+    ],
+    'priority' => [
+        'low' => 'Low',
+        'normal' => 'Normal',
+        'high' => 'High',
+        'urgent' => 'Urgent',
+    ],
+    'lead' => [
+        'new' => 'New',
+        'contacted' => 'Contacted',
+        'qualified' => 'Qualified',
+        'converted' => 'Converted',
+        'lost' => 'Lost',
+    ],
+    'campaign' => [
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'sent' => 'Sent',
+        'failed' => 'Failed',
+    ],
+    'document_template' => [
+        'yemen_residential_lease_agreement' => 'Yemeni residential lease agreement',
+        'lease_breach_notice' => 'Lease breach notice',
+        'end_of_lease_notice' => 'End of lease notice',
+    ],
+    'employment' => [
+        'employed' => 'Employed',
+        'self_employed' => 'Self-employed',
+        'unemployed' => 'Unemployed',
+        'student' => 'Student',
+    ],
+    'moderation' => [
+        'pending' => 'Under review',
+        'approved' => 'Approved',
+        'rejected' => 'Rejected',
+    ],
+    'alert_property_type' => [
+        'house' => 'House',
+        'apartment' => 'Apartment',
+        'condo' => 'Condo',
+        'land' => 'Land',
+        'villa' => 'Villa',
+        'office' => 'Office',
+        'shop' => 'Shop',
+    ],
+    'file_type' => [
+        'pdf' => 'PDF',
+        'docx' => 'Word',
+        'xlsx' => 'Excel',
+        'image' => 'Image',
+        'contract' => 'Contract',
+        'receipt' => 'Receipt',
+    ],
+    'check_status' => [
+        'pending' => 'Pending',
+        'passed' => 'Passed',
+        'failed' => 'Failed',
+    ],
+    'activity' => [
+        'property_view' => 'Property view',
+        'property_inquiry' => 'Property inquiry',
+        'live_tour_scheduled' => 'Live tour scheduled',
+        'call' => 'Call',
+        'email' => 'Email',
+        'meeting' => 'Meeting',
+        'note' => 'Note',
+    ],
+];

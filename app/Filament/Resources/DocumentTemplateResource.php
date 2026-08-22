@@ -57,7 +57,7 @@ class DocumentTemplateResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('type'),
+                TextColumn::make('type')->formatStateUsing(\App\Support\StatusLabels::for('document_template')),
                 TextColumn::make('description'),
             ])
             ->filters([

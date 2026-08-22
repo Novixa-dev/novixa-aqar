@@ -72,7 +72,9 @@ class EmailCampaignResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->sortable()->searchable(),
-                TextColumn::make('status')->sortable(),
+                TextColumn::make('status')->sortable()
+                    ->formatStateUsing(\App\Support\StatusLabels::for('campaign'))
+                    ->color(\App\Support\StatusLabels::color('campaign')),
                 TextColumn::make('scheduled_at')->dateTime()->sortable(),
                 TextColumn::make('sent_at')->dateTime()->sortable(),
             ])

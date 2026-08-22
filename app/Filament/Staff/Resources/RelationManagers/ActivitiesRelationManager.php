@@ -41,7 +41,7 @@ class ActivitiesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                TextColumn::make('type'),
+                TextColumn::make('type')->formatStateUsing(\App\Support\StatusLabels::for('activity')),
                 TextColumn::make('description'),
                 TextColumn::make('scheduled_at')
                     ->dateTime(),

@@ -61,6 +61,8 @@ class PaymentResource extends Resource
                     ->label(app()->getLocale() === 'ar' ? 'الطريقة' : 'Method')
                     ->badge(),
                 TextColumn::make('status')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('payment'))
+                    ->color(\App\Support\StatusLabels::color('payment'))
                     ->label(app()->getLocale() === 'ar' ? 'الحالة' : 'Status')
                     ->badge(),
             ])

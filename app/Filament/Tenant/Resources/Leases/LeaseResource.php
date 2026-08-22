@@ -83,7 +83,9 @@ class LeaseResource extends Resource
                     ->date(),
                 TextColumn::make('rent_amount')
                     ->money(strtolower(config('currencies.default'))),
-                TextColumn::make('status'),
+                TextColumn::make('status')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('lease'))
+                    ->color(\App\Support\StatusLabels::color('lease')),
             ])
             ->filters([
                 //

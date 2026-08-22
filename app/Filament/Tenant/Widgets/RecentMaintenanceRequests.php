@@ -28,7 +28,9 @@ class RecentMaintenanceRequests extends TableWidget
     {
         return [
             TextColumn::make('title'),
-            TextColumn::make('status'),
+            TextColumn::make('status')
+                ->formatStateUsing(\App\Support\StatusLabels::for('maintenance'))
+                ->color(\App\Support\StatusLabels::color('maintenance')),
             TextColumn::make('requested_date')->date(),
         ];
     }

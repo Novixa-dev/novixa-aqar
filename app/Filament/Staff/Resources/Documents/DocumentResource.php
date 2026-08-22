@@ -80,7 +80,7 @@ class DocumentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title'),
-                TextColumn::make('file_type'),
+                TextColumn::make('file_type')->formatStateUsing(\App\Support\StatusLabels::for('file_type')),
                 TextColumn::make('size')->formatStateUsing(fn ($state) => number_format($state / 1024 / 1024, 2) . ' MB'),
                 TextColumn::make('user.name'),
                 TextColumn::make('created_at')

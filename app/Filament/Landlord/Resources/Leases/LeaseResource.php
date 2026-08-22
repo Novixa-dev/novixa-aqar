@@ -87,6 +87,8 @@ class LeaseResource extends Resource
                     ->label(app()->getLocale() === 'ar' ? 'الإيجار' : 'Rent')
                     ->money(strtolower(config('currencies.default'))),
                 TextColumn::make('status')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('lease'))
+                    ->color(\App\Support\StatusLabels::color('lease'))
                     ->label(app()->getLocale() === 'ar' ? 'الحالة' : 'Status')
                     ->badge(),
             ])

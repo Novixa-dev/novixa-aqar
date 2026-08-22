@@ -87,7 +87,9 @@ class PaymentResource extends Resource
                     ->date()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(\App\Support\StatusLabels::for('payment'))
+                    ->color(\App\Support\StatusLabels::color('payment')),
                 TextColumn::make('payment_method'),
             ])
             ->filters([

@@ -55,7 +55,9 @@ class PaymentRelationManager extends RelationManager
                     ->date()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(\App\Support\StatusLabels::for('payment'))
+                    ->color(\App\Support\StatusLabels::color('payment')),
             ])
             ->filters([
                 //

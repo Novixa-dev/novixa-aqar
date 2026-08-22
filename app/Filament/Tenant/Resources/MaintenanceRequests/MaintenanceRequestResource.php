@@ -128,7 +128,7 @@ class MaintenanceRequestResource extends Resource
                         ]);
                         $notificationService->notifyTenantWorkOrderCreated($record->tenant, $workOrder);
                         Notification::make()
-                            ->title('Work Order Created')
+                            ->title(app()->getLocale() === 'ar' ? 'تم إنشاء أمر العمل' : 'Work Order Created')
                             ->success()
                             ->send();
                     })

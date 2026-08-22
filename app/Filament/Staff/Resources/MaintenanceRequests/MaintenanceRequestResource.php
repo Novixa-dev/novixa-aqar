@@ -115,6 +115,7 @@ class MaintenanceRequestResource extends Resource
                     ->label(app()->getLocale() === 'ar' ? 'المستأجر' : 'Tenant')
                     ->searchable(),
                 TextColumn::make('status')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('maintenance'))
                     ->badge()
                     ->colors(fn () => [
                         'warning' => 'pending',
@@ -124,6 +125,7 @@ class MaintenanceRequestResource extends Resource
                     ->formatStateUsing(fn ($state) => static::getStatusOptions()[$state] ?? $state)
                     ->sortable(),
                 TextColumn::make('priority')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('priority'))
                     ->badge()
                     ->colors(fn () => [
                         'gray' => 'low',

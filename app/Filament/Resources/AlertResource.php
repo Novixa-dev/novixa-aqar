@@ -102,7 +102,7 @@ class AlertResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('user.name'),
-                TextColumn::make('property_type'),
+                TextColumn::make('property_type')->formatStateUsing(\App\Support\StatusLabels::for('alert_property_type')),
                 TextColumn::make('location'),
                 TextColumn::make('notification_frequency'),
             ])

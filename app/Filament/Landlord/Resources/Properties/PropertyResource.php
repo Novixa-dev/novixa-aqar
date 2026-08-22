@@ -58,6 +58,8 @@ class PropertyResource extends Resource
                     ->label(app()->getLocale() === 'ar' ? 'السعر' : 'Price')
                     ->money(strtolower(config('currencies.default'))),
                 TextColumn::make('status')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('property'))
+                    ->color(\App\Support\StatusLabels::color('property'))
                     ->label(app()->getLocale() === 'ar' ? 'الحالة' : 'Status')
                     ->badge(),
                 TextColumn::make('list_date')

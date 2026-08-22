@@ -75,7 +75,9 @@ class PropertyModerationResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')->sortable()->searchable(),
-                TextColumn::make('status')->sortable(),
+                TextColumn::make('status')->sortable()
+                    ->formatStateUsing(\App\Support\StatusLabels::for('moderation'))
+                    ->color(\App\Support\StatusLabels::color('rental_application')),
                 TextColumn::make('moderated_at')->dateTime()->sortable(),
             ])
             ->filters([

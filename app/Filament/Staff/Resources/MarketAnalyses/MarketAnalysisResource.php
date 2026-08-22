@@ -57,7 +57,7 @@ class MarketAnalysisResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title'),
-                TextColumn::make('property_type'),
+                TextColumn::make('property_type')->formatStateUsing(\App\Support\StatusLabels::for('alert_property_type')),
                 TextColumn::make('price')
                     ->money(strtolower(config('currencies.default'))),
                 TextColumn::make('area_sqft'),

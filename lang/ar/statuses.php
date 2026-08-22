@@ -1,0 +1,108 @@
+<?php
+
+return [
+    'lease' => [
+        'active' => 'نشط',
+        'expired' => 'منتهي',
+        'terminated' => 'مُنهى',
+    ],
+    'payment' => [
+        'pending' => 'معلق',
+        'completed' => 'مكتمل',
+        'paid' => 'مدفوع',
+        'failed' => 'فاشل',
+        'void' => 'ملغى',
+        'refunded' => 'مسترجع',
+    ],
+    'property' => [
+        'For Rent' => 'للإيجار',
+        'For Sale' => 'للبيع',
+        'pending' => 'قيد المراجعة',
+        'available' => 'متاح',
+        'rented' => 'مُؤجر',
+        'sold' => 'مُباع',
+    ],
+    'rental_application' => [
+        'pending' => 'قيد الانتظار',
+        'approved' => 'موافق عليه',
+        'rejected' => 'مرفوض',
+    ],
+    'booking' => [
+        'pending' => 'قيد الانتظار',
+        'confirmed' => 'مؤكد',
+        'completed' => 'مكتمل',
+        'cancelled' => 'ملغى',
+    ],
+    'maintenance' => [
+        'pending' => 'قيد الانتظار',
+        'in_progress' => 'جاري التنفيذ',
+        'completed' => 'مكتمل',
+        'cancelled' => 'ملغى',
+    ],
+    'priority' => [
+        'low' => 'منخفضة',
+        'normal' => 'عادية',
+        'high' => 'عالية',
+        'urgent' => 'عاجلة',
+    ],
+    'lead' => [
+        'new' => 'جديد',
+        'contacted' => 'تم التواصل',
+        'qualified' => 'مؤهل',
+        'converted' => 'تم التحويل',
+        'lost' => 'مفقود',
+    ],
+    'campaign' => [
+        'draft' => 'مسودة',
+        'scheduled' => 'مبرمج',
+        'sent' => 'تم الإرسال',
+        'failed' => 'فشل الإرسال',
+    ],
+    'document_template' => [
+        'yemen_residential_lease_agreement' => 'عقد إيجار سكني يمني',
+        'lease_breach_notice' => 'إشعار إخلال بالعقد',
+        'end_of_lease_notice' => 'إشعار انتهاء الإيجار',
+    ],
+    'employment' => [
+        'employed' => 'موظف',
+        'self_employed' => 'عمل حر',
+        'unemployed' => 'غير موظف',
+        'student' => 'طالب',
+    ],
+    'moderation' => [
+        'pending' => 'قيد المراجعة',
+        'approved' => 'معتمد',
+        'rejected' => 'مرفوض',
+    ],
+    'alert_property_type' => [
+        'house' => 'منزل',
+        'apartment' => 'شقة',
+        'condo' => 'شقة مفروشة',
+        'land' => 'أرض',
+        'villa' => 'فيلا',
+        'office' => 'مكتب',
+        'shop' => 'محل تجاري',
+    ],
+    'file_type' => [
+        'pdf' => 'PDF',
+        'docx' => 'Word',
+        'xlsx' => 'Excel',
+        'image' => 'صورة',
+        'contract' => 'عقد',
+        'receipt' => 'إيصال',
+    ],
+    'check_status' => [
+        'pending' => 'قيد الانتظار',
+        'passed' => 'ناجح',
+        'failed' => 'راسب',
+    ],
+    'activity' => [
+        'property_view' => 'مشاهدة عقار',
+        'property_inquiry' => 'استفسار عن عقار',
+        'live_tour_scheduled' => 'جدولة جولة مباشرة',
+        'call' => 'مكالمة',
+        'email' => 'بريد إلكتروني',
+        'meeting' => 'اجتماع',
+        'note' => 'ملاحظة',
+    ],
+];
