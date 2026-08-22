@@ -16,8 +16,8 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: liberu
-          MYSQL_USER: liberu
+          MYSQL_DATABASE: aqar
+          MYSQL_USER: aqar
           MYSQL_PASSWORD: secret
         ports:
           - 3306:3306
@@ -59,8 +59,8 @@ jobs:
 
       - name: Set database credentials
         run: |
-          sed -i 's/DB_DATABASE=.*/DB_DATABASE=liberu/' .env
-          sed -i 's/DB_USERNAME=.*/DB_USERNAME=liberu/' .env
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=aqar/' .env
+          sed -i 's/DB_USERNAME=.*/DB_USERNAME=aqar/' .env
           sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=secret/' .env
           sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
 
