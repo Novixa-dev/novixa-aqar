@@ -96,12 +96,17 @@ class MaintenanceRequestResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title'),
-                TextColumn::make('status'),
+                TextColumn::make('status')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('maintenance'))
+                    ->color(\App\Support\StatusLabels::color('maintenance')),
                 TextColumn::make('requested_date')
                     ->date(),
                 TextColumn::make('property.title')
                     ->label(__('filament.fields.property')),
                 TextColumn::make('workOrders.status')
+                    ->formatStateUsing(fn ($state) => \App\Support\StatusLabels::label('maintenance', $state))
+                    ->badge()
+                    ->color(fn ($state) => \App\Support\StatusLabels::color('maintenance')($state))
                     ->label(__('filament.fields.work_order_status')),
             ])
             ->filters([
