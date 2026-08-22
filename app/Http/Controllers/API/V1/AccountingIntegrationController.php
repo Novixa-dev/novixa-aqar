@@ -34,7 +34,7 @@ class AccountingIntegrationController extends TenantCrudController
     protected function rules(Request $request, ?Model $record = null): array
     {
         return [
-            'provider' => [$record ? 'sometimes' : 'required', Rule::in(['liberu_accounting', 'quickbooks', 'xero', 'sage'])],
+            'provider' => [$record ? 'sometimes' : 'required', Rule::in(['novixa_accounting', 'quickbooks', 'xero', 'sage'])],
             'name' => [$record ? 'sometimes' : 'required', 'string', 'max:255'],
             'credentials' => ['nullable', 'array'],
             'settings' => ['nullable', 'array'],
