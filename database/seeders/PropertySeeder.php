@@ -28,6 +28,50 @@ class PropertySeeder extends Seeder
         if ($hmoCategory) {
             $this->createHmoProperties($hmoCategory, 4);
         }
+
+        $this->attachGalleryPhotos();
+    }
+
+    /**
+     * Attach the bundled demo gallery photos (database/seeders/media/*.jpg)
+     * to every property so listings render with real imagery. Photos cycle
+     * deterministically; each property gets 2–3 shots.
+     */
+    private function attachGalleryPhotos(): void
+    {
+        $photos = glob(database_path('seeders/media/prop-*.jpg'));
+
+        if (empty($photos)) {
+            return;
+        }
+
+        sort($photos);
+
+        Property::query()->chunkById(10, function ($properties) use ($photos) {
+            static $offset = 0;
+
+            foreach ($properties as $property) {
+                if ($property->getMedia('images')->isNotEmpty()) {
+                    continue;
+                }
+
+                // Deterministic window into the photo pool so re-seeding is stable.
+                $count = ($property->id % 2 === 0) ? 3 : 2;
+
+                for ($j = 0; $j < $count; $j++) {
+                    $photo = $photos[($offset + $j) % count($photos)];
+
+                    $property
+                        ->addMedia($photo)
+                        ->preservingOriginal()
+                        ->usingName($property->title)
+                        ->usingFileName("property-{$property->id}-".($j + 1).'.jpg')
+                        ->toMediaCollection('images');
+                }
+
+                $offset += $count;
+            }
+        });
     }
 
     /**
