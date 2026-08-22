@@ -17,9 +17,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(append: [
-            \App\Http\Middleware\SetLocaleMiddleware::class,
-        ]);
+        // Locale must resolve on EVERY request — including unmatched URLs
+        // rendering 404 pages — so it lives on the global stack, not the web
+        // group (which never runs for non-routed paths). The middleware falls
+        // back to its cookie when no session is started yet; that cookie is
+        // kept plaintext because EncryptCookies sits in the web group and
+        // never touches non-routed requests.
+        $middleware->append(\App\Http\Middleware\SetLocaleMiddleware::class);
+        $middleware->encryptCookies(except: ['locale']);
 
         // Stripe delivers webhooks with their own signature scheme; the
         // Laravel CSRF token is neither present nor applicable.
