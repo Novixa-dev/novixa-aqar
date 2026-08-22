@@ -21,6 +21,12 @@ class CrmIntegrationService
 
     public function syncLead(Lead $lead)
     {
+        // Integration is opt-in: skip quietly when unconfigured instead of
+        // firing HTTP requests at a null endpoint.
+        if (empty($this->endpoint) || empty($this->apiKey)) {
+            return false;
+        }
+
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
@@ -49,6 +55,10 @@ class CrmIntegrationService
 
     public function syncActivity(Activity $activity)
     {
+        if (empty($this->endpoint) || empty($this->apiKey)) {
+            return false;
+        }
+
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,

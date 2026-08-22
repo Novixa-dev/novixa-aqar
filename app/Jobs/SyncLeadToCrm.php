@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Lead;
+use App\Services\CrmIntegrationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,8 +16,8 @@ class SyncLeadToCrm implements ShouldQueue
 
     public function __construct(protected Lead $lead) {}
 
-    public function handle(): void
+    public function handle(CrmIntegrationService $crm): void
     {
-        // CRM sync logic placeholder
+        $crm->syncLead($this->lead);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Activity;
+use App\Services\CrmIntegrationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,10 +16,8 @@ class SyncActivityToCrm implements ShouldQueue
 
     public function __construct(protected Activity $activity) {}
 
-    public function handle(): void
+    public function handle(CrmIntegrationService $crm): void
     {
-        // TODO: Implement CRM synchronization for activity records.
-        // This job should send activity data (type, description, timestamps)
-        // to the configured CRM system via CrmIntegrationService.
+        $crm->syncActivity($this->activity);
     }
 }
