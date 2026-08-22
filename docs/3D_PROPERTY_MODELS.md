@@ -259,7 +259,7 @@ php artisan test --filter=Property3DModelTest
 
 For issues or questions:
 1. Check the Quick Start Guide: `3D_PROPERTY_MODELS_QUICKSTART.md`
-2. Review Implementation Summary: `3D_PROPERTY_MODELS_SUMMARY.md`
+2. Review Implementation Summary: *reference removed — document no longer exists*
 3. Check browser console for errors
 4. Verify model URL accessibility
 5. Contact development team with:

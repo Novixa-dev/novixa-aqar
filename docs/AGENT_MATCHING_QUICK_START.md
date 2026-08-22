@@ -145,7 +145,7 @@ tests/Unit/
 
 docs/
 ├── AGENT_MATCHING_SERVICE.md              # Full documentation
-└── AGENT_MATCHING_IMPLEMENTATION_SUMMARY.md # Technical summary
+└── docs/AGENT_MATCHING_SERVICE.md # Technical summary
 ```
 
 ## 🧪 Testing
@@ -165,7 +165,7 @@ php artisan test tests/Unit/AgentMatchTest.php
 
 For complete documentation, see:
 - **[AGENT_MATCHING_SERVICE.md](./AGENT_MATCHING_SERVICE.md)** - Full API reference and usage guide
-- **[AGENT_MATCHING_IMPLEMENTATION_SUMMARY.md](./AGENT_MATCHING_IMPLEMENTATION_SUMMARY.md)** - Technical implementation details
+- **[docs/AGENT_MATCHING_SERVICE.md](AGENT_MATCHING_SERVICE.md)** - Technical implementation details
 
 ## 🎨 UI Component
 

@@ -112,9 +112,9 @@ Live demo: **[https://agent.liberu.co.uk](https://agent.liberu.co.uk)**
 
 ## Documentation
 
-- [VR Property Design](docs/VR_DESIGN.md) — Create and customise interiors in VR with 8 design styles and full furniture management
-- [Virtual Staging Tool](docs/VIRTUAL_STAGING.md) — Upload and stage property images with AI-powered design styles
-- [Smart Contracts](docs/SMART_CONTRACTS.md) — Blockchain-based rental agreements with automated transactions
+- VR Property Design — Create and customise interiors in VR with 8 design styles and full furniture management
+- Virtual Staging Tool — Upload and stage property images with AI-powered design styles
+- Smart Contracts — Blockchain-based rental agreements with automated transactions
 - [Community Events Calendar](docs/COMMUNITY_EVENTS.md) — Display community events near properties on detail pages
 
 ---

@@ -240,7 +240,7 @@ Potential enhancements:
 
 For technical support or questions:
 1. Check this guide first
-2. Review the implementation summary (3D_PROPERTY_MODELS_SUMMARY.md)
+2. Review the implementation summary (docs/3D_PROPERTY_MODELS.md)
 3. Check browser console for errors
 4. Contact the development team with:
    - Browser and version

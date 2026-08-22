@@ -15,10 +15,10 @@ Anything P0-3A/B/C unblocks: give Landlord/Buyer/Seller real resources (not just
 Systematic RTL/LTR check inside panels (tables, dropdowns, modals, pagination), mobile viewport pass beyond the homepage, P2-13 (`space-x-*`→`gap-*`) and `ml-`/`mr-`→`ms-`/`me-` sweep. **Acceptance:** no layout breakage in either direction on any panel or public page, at one desktop and one mobile viewport.
 
 ### Phase 4 — Data & Demo Realism
-Audit current seed data for placeholder/nonsense content; strengthen Yemeni-market realism per `docs/AQAR_DEMO_DATA_STRATEGY.md`. **Acceptance:** a cold demo walkthrough doesn't visibly show `Test User 1`/`Lorem Ipsum Property`-class content.
+Audit current seed data for placeholder/nonsense content; strengthen Yemeni-market realism per *reference removed — document no longer exists*. **Acceptance:** a cold demo walkthrough doesn't visibly show `Test User 1`/`Lorem Ipsum Property`-class content.
 
 ### Phase 5 — Security & Integrity
-P0-1/P0-2 land here structurally even though fixed earlier for urgency; this phase is the sweep pass — P1-1 (rate limiting), P1-3 (e-signature CRUD exposure), P2-5/P2-9 (CSP, `/metrics`). **Acceptance:** `docs/AQAR_SECURITY_CHECKLIST.md` fully checked.
+P0-1/P0-2 land here structurally even though fixed earlier for urgency; this phase is the sweep pass — P1-1 (rate limiting), P1-3 (e-signature CRUD exposure), P2-5/P2-9 (CSP, `/metrics`). **Acceptance:** `docs/AQAR_RULES.md` fully checked.
 
 ### Phase 6 — Automated Testing
 P1-15/16 (Payments/Stripe, auth tests), regression tests for every P0/P1 fix in this pass. **Acceptance:** suite count grows from the 558 baseline with every fix that lacked coverage; no regressions.
@@ -27,13 +27,13 @@ P1-15/16 (Payments/Stripe, auth tests), regression tests for every P0/P1 fix in 
 `.env.example` fixes (P1-17, P2-8, P2-16/17/19), `public/build` gitignore decision, CI PHP-version alignment. **Acceptance:** a fresh clone + `.env.example` boots without manual correction.
 
 ### Phase 8 — Final Browser QA
-Full persona × page × language × viewport matrix from `docs/AQAR_BROWSER_QA.md`.
+Full persona × page × language × viewport matrix from `docs/TEST_USERS.md`.
 
 ### Phase 9 — Release Candidate
-Freeze scope; run `docs/AQAR_RELEASE_CHECKLIST.md` end to end.
+Freeze scope; run `docs/AQAR_TASKS.md` end to end.
 
 ### Phase 10 — Final Readiness Audit
-Regenerate `docs/AQAR_FINAL_READINESS_REPORT.md` with an explicit GO/NO-GO verdict.
+Regenerate `docs/AQAR_PROGRESS.md` with an explicit GO/NO-GO verdict.
 
 ---
 

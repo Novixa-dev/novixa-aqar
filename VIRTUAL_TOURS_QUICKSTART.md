@@ -140,7 +140,7 @@ All URLs are automatically sanitized using `htmlspecialchars()` with `ENT_QUOTES
 ## Resources
 
 - [Full Documentation](VIRTUAL_TOURS_INTEGRATION.md)
-- [Implementation Summary](VIRTUAL_TOURS_IMPLEMENTATION_SUMMARY.md)
+- Implementation Summary
 - [Matterport Support](https://support.matterport.com/)
 - [Kuula Documentation](https://kuula.co/support)
 

@@ -46,4 +46,4 @@
 
 ## Release rules
 
-No demo release until: zero unresolved P0 blockers, no fatal errors reachable from any seeded persona's first click, no broken primary workflow, no critical/live authorization vulnerability, no obviously fake/placeholder content on a page meant to look real. See `docs/AQAR_RELEASE_CHECKLIST.md` for the full gate.
+No demo release until: zero unresolved P0 blockers, no fatal errors reachable from any seeded persona's first click, no broken primary workflow, no critical/live authorization vulnerability, no obviously fake/placeholder content on a page meant to look real. See `docs/AQAR_RULES.md` for the full gate.
