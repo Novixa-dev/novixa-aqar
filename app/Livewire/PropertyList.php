@@ -153,6 +153,32 @@ class PropertyList extends Component
         $this->dispatch('filtersChanged', $this->getFilters());
     }
 
+    public function getActiveFiltersCountProperty(): int
+    {
+        $count = 0;
+        if (trim((string) $this->search) !== '') $count++;
+        if ($this->status !== '') $count++;
+        if ($this->propertyType !== '') $count++;
+        if ((int) $this->minBedrooms > 0) $count++;
+        if ((int) $this->minBathrooms > 0) $count++;
+        if ((int) $this->minPrice > 0) $count++;
+        if ((int) $this->maxPrice > 0 && (int) $this->maxPrice < 1000000000) $count++;
+
+        return $count;
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->status = '';
+        $this->propertyType = '';
+        $this->minBedrooms = 0;
+        $this->minBathrooms = 0;
+        $this->minPrice = 0;
+        $this->maxPrice = 1000000000;
+        $this->resetPage();
+    }
+
     public function applyFilters($filters)
     {
         $this->fill($filters);

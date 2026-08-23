@@ -137,6 +137,21 @@
             </div>
         </div>
 
+        <!-- Results Summary -->
+        <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                <span class="font-bold text-gray-900 dark:text-white">{{ number_format($properties->total()) }}</span>
+                {{ app()->getLocale() === 'ar' ? 'عقار متاح' : 'properties available' }}
+            </p>
+            @if ($this->active_filters_count > 0)
+                <button type="button" wire:click="resetFilters" wire:loading.attr="disabled"
+                    class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+                    {{ app()->getLocale() === 'ar' ? 'مسح الفلاتر (' . $this->active_filters_count . ')' : 'Clear filters (' . $this->active_filters_count . ')' }}
+                </button>
+            @endif
+        </div>
+
         <!-- Property Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
             @forelse($properties as $property)
@@ -217,14 +232,20 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-20 bg-gray-900/50 rounded-3xl border border-dashed border-gray-800">
+                <div class="col-span-full text-center py-20 bg-gray-50 dark:bg-gray-900/50 rounded-3xl border border-dashed border-gray-200 dark:border-gray-800">
                     <span class="inline-block mb-3 text-gray-300 dark:text-gray-600"><svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" /></svg></span>
-                    <h3 class="text-lg font-bold text-white mb-1">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">
                         {{ app()->getLocale() === 'ar' ? 'لا توجد عقارات مطابقة' : 'No properties found' }}
                     </h3>
-                    <p class="text-gray-400 text-xs">
+                    <p class="text-gray-500 dark:text-gray-400 text-xs mb-4">
                         {{ app()->getLocale() === 'ar' ? 'يرجى تجربة معايير بحث أخرى أو إعادة تعيين الفلاتر.' : 'Try changing your search filters to find more properties.' }}
                     </p>
+                    @if ($this->active_filters_count > 0)
+                        <button type="button" wire:click="resetFilters"
+                            class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-xl transition-colors">
+                            {{ app()->getLocale() === 'ar' ? 'إعادة تعيين الفلاتر' : 'Reset filters' }}
+                        </button>
+                    @endif
                 </div>
             @endforelse
         </div>
