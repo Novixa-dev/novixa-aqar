@@ -81,3 +81,6 @@ Tracked in full in `AQAR_PRE_RELEASE_AUDIT_REPORT.md` Sections 6, 9, 11–16. No
 ---
 
 **Update discipline:** when a task's status changes, update this file AND, for P0/P1 items, log the change in `docs/AQAR_PROGRESS.md` with date + commit.
+
+| NEW-P1 (9C) | Staff Documents form saved a document FileUpload field not in $fillable Ã¢ uploads silently discarded; Images form wrote image to a model with ile_path; neither derived file metadata | **FIXED** (19b8206) Ã¢ Documents: FileUpload repointed to ile_path (public disk, documents/, downloadable, 20MB cap) + CreateDocument::mutateFormDataBeforeCreate() derives size/ile_type; Images: repointed to ile_path + editor + CreateImage derives mime/size/dimensions/disk/filename; table columns updated. Root cause of the environment-level "unable to create temporary file" 422 also fixed: herd php84 php.ini had no upload_tmp_dir (set to writable temp dir; upload_max 2MÃ¢20M, post 25M). E2E verified via Playwright for both resources: create Ã¢ row in list / view page, file on disk, DB metadata correct |
+| NEW-P1 (9B) | 9 OAuth provider buttons site-wide returned 500 (no credentials configured) | **FIXED** ( 93266d) Ã¢ config/socialstream.php providers filtered by env credential presence; crawl shows zero broken links |
