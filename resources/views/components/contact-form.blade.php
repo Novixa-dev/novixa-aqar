@@ -1,7 +1,7 @@
 <div>
     @if(session('success'))
         <div class="p-4 mb-6 text-sm text-green-800 rounded-2xl bg-green-50 dark:bg-gray-700 dark:text-green-400 border border-green-200 dark:border-green-600 flex items-center gap-3" role="alert">
-            <span class="text-xl">✅</span>
+            <span class="text-emerald-500"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
             <span class="font-medium">{{ session('success') }}</span>
         </div>
     @endif

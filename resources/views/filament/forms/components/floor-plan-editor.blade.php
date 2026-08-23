@@ -61,7 +61,7 @@
                 <template x-for="(annotation, index) in annotations" :key="index">
                     <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm font-medium" x-text="annotation.type === 'room' ? '🏠' : '📍'"></span>
+                            <span class="text-sm font-medium inline-flex items-center"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg></span>
                             <input
                                 type="text"
                                 x-model="annotation.label"

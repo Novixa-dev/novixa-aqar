@@ -4,7 +4,7 @@
         @click="toggleChat()" 
         x-show="!isOpen"
         class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center"
-        aria-label="Open chat"
+        aria-label="{{ app()->getLocale() === 'ar' ? 'فتح المحادثة' : 'Open chat' }}"
     >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
@@ -49,7 +49,7 @@
                         class="rounded-lg p-3 max-w-[80%] shadow-sm"
                     >
                         <template x-if="message.sender_type === 'agent'">
-                            <div class="text-xs font-semibold mb-1 text-green-700">Agent</div>
+                            <div class="text-xs font-semibold mb-1 text-green-700">{{ app()->getLocale() === 'ar' ? 'موظف الدعم' : 'Agent' }}</div>
                         </template>
                         <p class="text-sm whitespace-pre-wrap" x-text="message.message"></p>
                         <span class="text-xs opacity-70 mt-1 block" x-text="formatTime(message.created_at)"></span>
@@ -78,13 +78,13 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
-                Talk to a live agent
+                {{ app()->getLocale() === 'ar' ? 'التحدث مع موظف مباشر' : 'Talk to a live agent' }}
             </button>
         </div>
 
         <!-- Escalated Notice -->
         <div x-show="isEscalated" class="px-4 py-2 bg-green-50 border-t border-green-200">
-            <p class="text-sm text-green-700">Connected to a live agent</p>
+            <p class="text-sm text-green-700">{{ app()->getLocale() === 'ar' ? 'تم توصيلك بموظف مباشر' : 'Connected to a live agent' }}</p>
         </div>
 
         <!-- Input Area -->
@@ -94,7 +94,7 @@
                     type="text" 
                     x-model="currentMessage" 
                     :disabled="isEscalated"
-                    placeholder="Type your message..." 
+                    placeholder="{{ app()->getLocale() === 'ar' ? 'اكتب رسالتك...' : 'Type your message...' }}" 
                     class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:bg-gray-100"
                 />
                 <button 
@@ -126,8 +126,7 @@ function chatbotWidget() {
         appLocale: document.documentElement.lang.startsWith('ar') ? 'ar' : 'en',
 
         init() {
-            // Start conversation when component initializes
-            this.startConversation();
+            // Conversation starts lazily on first open to avoid an API call on every page view
         },
 
         toggleChat() {
@@ -150,7 +149,7 @@ function chatbotWidget() {
                 if (!response.ok) {
                     this.messages.push({
                         id: Date.now(),
-                        message: appLocale === 'ar'
+                        message: this.appLocale === 'ar'
                             ? 'خدمة المحادثة غير متاحة حالياً. يرجى المحاولة لاحقاً أو التواصل معنا عبر الواتساب.'
                             : 'Chat is unavailable right now. Please try again later or reach us on WhatsApp.',
                         sender_type: 'bot',
@@ -298,10 +297,10 @@ function chatbotWidget() {
 
         formatTime(timestamp) {
             const date = new Date(timestamp);
-            return date.toLocaleTimeString('en-US', { 
-                hour: 'numeric', 
+            return date.toLocaleTimeString(this.appLocale === 'ar' ? 'ar' : 'en-US', {
+                hour: 'numeric',
                 minute: '2-digit',
-                hour12: true 
+                hour12: true
             });
         }
     }

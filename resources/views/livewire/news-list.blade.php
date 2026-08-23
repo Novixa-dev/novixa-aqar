@@ -18,7 +18,7 @@
         @if($featuredNews->count() > 0 && !$search && !$featuredOnly)
             <div class="mb-12">
                 <h2 class="text-2xl font-black text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                    <span>⭐</span>
+                    <span class="text-amber-500"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg></span>
                     <span>{{ app()->getLocale() === 'ar' ? 'المقالات المميزة' : 'Featured Articles' }}</span>
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

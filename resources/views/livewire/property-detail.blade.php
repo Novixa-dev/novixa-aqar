@@ -97,7 +97,7 @@
                             </h1>
 
                             <p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1.5 mb-4">
-                                <span class="text-blue-500">📍</span>
+                                <span class="text-blue-500"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg></span>
                                 <span>{{ $property->location ?: 'المكلا - حضرموت' }}</span>
                             </p>
 
@@ -265,7 +265,7 @@
                                     <ul class="grid grid-cols-2 gap-2 text-xs text-gray-700 dark:text-gray-300">
                                         @forelse($property->features ?? [] as $feature)
                                             <li class="flex items-center gap-1.5">
-                                                <span class="text-emerald-500">✓</span>
+                                                <span class="text-emerald-500"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></span>
                                                 <span>{{ $feature->name }}</span>
                                             </li>
                                         @empty

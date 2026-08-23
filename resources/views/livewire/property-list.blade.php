@@ -3,7 +3,7 @@
     <div class="bg-gradient-to-b from-blue-50 to-gray-50 dark:from-blue-950/40 dark:via-gray-900 dark:to-gray-900 py-12 border-b border-gray-200 dark:border-gray-800">
         <div class="container mx-auto px-4 lg:px-8 text-center max-w-4xl">
             <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider mb-4 border border-blue-200 dark:border-blue-700/50 shadow-inner">
-                {{ app()->getLocale() === 'ar' ? '✨ بوابة العقارات المتميزة في اليمن' : '✨ Premier Real Estate Portal in Yemen' }}
+                {{ app()->getLocale() === 'ar' ? 'بوابة العقارات المتميزة في اليمن' : 'Premier Real Estate Portal in Yemen' }}
             </span>
             <h1 class="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-4">
                 {{ app()->getLocale() === 'ar' ? 'استكشف أفضل العقارات المتاحة للبيع والإيجار' : 'Explore Properties for Sale & Rent' }}
@@ -28,7 +28,7 @@
                         <input type="text" wire:model.live.debounce.300ms="search"
                             class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             placeholder="{{ app()->getLocale() === 'ar' ? 'ابحث عن شقة، فيلا، حي فوه، الديس، حدة...' : 'Search apartment, villa, Mukalla, Sanaa...' }}">
-                        <span class="absolute end-3 top-3.5 text-gray-400">🔍</span>
+                        <span class="absolute end-3 top-3.5 text-gray-400"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg></span>
                     </div>
                 </div>
 
@@ -166,7 +166,7 @@
                                     {{ $property->translated_type }}
                                 </span>
                                 <span class="bg-white/90 dark:bg-gray-900/80 backdrop-blur-md text-blue-600 dark:text-blue-400 text-xs px-2.5 py-1 rounded-md font-semibold">
-                                    📍 {{ Str::limit($property->location, 20) }}
+                                    <svg class="w-4 h-4 inline-block align-[-2px]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg> {{ Str::limit($property->location, 20) }}
                                 </span>
                             </div>
                         </div>
@@ -193,15 +193,15 @@
                             <div class="grid grid-cols-3 gap-2 text-center text-xs text-gray-700 dark:text-gray-300 py-3 border-t border-gray-100 dark:border-gray-700/80 bg-gray-50 dark:bg-gray-900/40 rounded-xl px-2">
                                 <div>
                                     <span class="block text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'الغرف' : 'Beds' }}</span>
-                                    <span class="font-bold">🛏️ {{ $property->bedrooms ?? 1 }}</span>
+                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 18v-5a2 2 0 012-2h14a2 2 0 012 2v5m0 0v2m0-2H3m0 0v2m3.5-10V8a2 2 0 012-2h7a2 2 0 012 2v2" /></svg> {{ $property->bedrooms ?? 1 }}</span>
                                 </div>
                                 <div>
                                     <span class="block text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'الحمامات' : 'Baths' }}</span>
-                                    <span class="font-bold">🚿 {{ $property->bathrooms ?? 1 }}</span>
+                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16v2a4 4 0 01-4 4H8a4 4 0 01-4-4v-2zm2 0V6a2 2 0 012-2h1.5M6 18l-1 2m13-2l1 2" /></svg> {{ $property->bathrooms ?? 1 }}</span>
                                 </div>
                                 <div>
                                     <span class="block text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
-                                    <span class="font-bold">📐 {{ $property->area_sqft ?? 150 }} م²</span>
+                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 4.5H4.5M9 4.5L3.75 9.75M15 9V4.5M15 4.5h4.5M15 4.5l5.25 5.25M9 15v4.5M9 19.5H4.5M9 19.5l-5.25-5.25M15 15v4.5M15 19.5h4.5M15 19.5l5.25-5.25" /></svg> {{ $property->area_sqft ?? 150 }} م²</span>
                                 </div>
                             </div>
                         </div>
@@ -218,7 +218,7 @@
                 </div>
             @empty
                 <div class="col-span-full text-center py-20 bg-gray-900/50 rounded-3xl border border-dashed border-gray-800">
-                    <span class="text-4xl block mb-3">🏡</span>
+                    <span class="inline-block mb-3 text-gray-300 dark:text-gray-600"><svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" /></svg></span>
                     <h3 class="text-lg font-bold text-white mb-1">
                         {{ app()->getLocale() === 'ar' ? 'لا توجد عقارات مطابقة' : 'No properties found' }}
                     </h3>
