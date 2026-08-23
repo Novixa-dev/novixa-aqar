@@ -40,14 +40,14 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2" for="propertyPrice">
-                    {{ app()->getLocale() === 'ar' ? 'سعر العقار الإجمالي ($)' : 'Property Price ($)' }}
+                    {{ app()->getLocale() === 'ar' ? 'سعر العقار الإجمالي (ر.ي)' : 'Property Price (YER)' }}
                 </label>
                 <input wire:model="propertyPrice" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white" id="propertyPrice" type="number" placeholder="300000">
                 @error('propertyPrice') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
             </div>
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2" for="loanAmount">
-                    {{ __('Loan Amount') }} ($)
+                    {{ __('Loan Amount') }} ({{ app()->getLocale() === 'ar' ? 'ر.ي' : 'YER' }})
                 </label>
                 <input wire:model="loanAmount" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white" id="loanAmount" type="number" placeholder="240000">
                 @error('loanAmount') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
@@ -79,15 +79,15 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xs">
                         <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">{{ __('Monthly Payment') }}</span>
-                        <span class="text-xl font-black text-blue-600 dark:text-blue-400">${{ number_format($mortgageResult['monthly_payment'] ?? 0, 2) }}</span>
+                        <span class="text-xl font-black text-blue-600 dark:text-blue-400">{{ app(\App\Services\CurrencyService::class)->format($mortgageResult['monthly_payment'] ?? 0) }}</span>
                     </div>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xs">
                         <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">{{ __('Total Payment') }}</span>
-                        <span class="text-xl font-black text-gray-900 dark:text-white">${{ number_format($mortgageResult['total_payment'] ?? 0, 2) }}</span>
+                        <span class="text-xl font-black text-gray-900 dark:text-white">{{ app(\App\Services\CurrencyService::class)->format($mortgageResult['total_payment'] ?? 0) }}</span>
                     </div>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xs">
                         <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">{{ __('Total Interest') }}</span>
-                        <span class="text-xl font-black text-gray-900 dark:text-white">${{ number_format($mortgageResult['total_interest'] ?? 0, 2) }}</span>
+                        <span class="text-xl font-black text-gray-900 dark:text-white">{{ app(\App\Services\CurrencyService::class)->format($mortgageResult['total_interest'] ?? 0) }}</span>
                     </div>
                 </div>
             </div>
@@ -103,7 +103,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
-                    {{ app()->getLocale() === 'ar' ? 'قيمة العقار ($)' : 'Property Value ($)' }}
+                    {{ app()->getLocale() === 'ar' ? 'قيمة العقار (ر.ي)' : 'Property Value (YER)' }}
                 </label>
                 <input wire:model="propertyValue" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white" type="number" placeholder="250000">
                 @error('propertyValue') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
@@ -136,7 +136,7 @@
         @if($costOfMovingResult)
             <div class="mt-8 p-6 bg-blue-50 dark:bg-blue-900/30 rounded-2xl border border-blue-100 dark:border-blue-800">
                 <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">{{ app()->getLocale() === 'ar' ? 'إجمالي تكاليف الانتقال التقديرية:' : 'Total Estimated Moving Cost:' }}</span>
-                <span class="text-3xl font-black text-blue-600 dark:text-blue-400">${{ number_format($costOfMovingResult['total_cost'] ?? 0, 2) }}</span>
+                <span class="text-3xl font-black text-blue-600 dark:text-blue-400">{{ app(\App\Services\CurrencyService::class)->format($costOfMovingResult['total_cost'] ?? 0, 2) }}</span>
             </div>
         @endif
     </div>

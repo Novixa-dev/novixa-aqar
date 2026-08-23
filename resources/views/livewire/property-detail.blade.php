@@ -236,6 +236,20 @@
                                     </svg>
                                     {{ app()->getLocale() === 'ar' ? 'حجز معاينة' : 'Book Viewing' }}
                                 </a>
+
+                                @if (app(\App\Services\ComponentSettingsService::class)->isEnabled('valuation-booking'))
+                                    <button type="button" data-modal-target="bookValuationModal"
+                                        data-modal-toggle="bookValuationModal"
+                                        class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-white dark:bg-gray-800 border border-emerald-300 dark:border-emerald-700 rounded-2xl shadow-xs hover:bg-emerald-50 dark:hover:bg-gray-700 transition-colors">
+                                        <svg class="w-4 h-4 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                            fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M9 14h6m-5 4h4M9 6h6M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                        {{ app()->getLocale() === 'ar' ? 'تقييم عقاري مجاني' : 'Free Valuation' }}
+                                    </button>
+                                @endif
                             </div>
 
                             <hr class="my-6 border-gray-200 dark:border-gray-800" />
@@ -272,7 +286,7 @@
                                                 <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'إحصائيات رئيسية' : 'Key Statistics' }}</h3>
                                                 <ul class="list-disc list-inside">
                                                     <li>{{ app()->getLocale() === 'ar' ? 'عدد السكان' : 'Population' }}: {{ number_format($neighborhood->population) }}</li>
-                                                    <li>{{ app()->getLocale() === 'ar' ? 'متوسط الدخل' : 'Median Income' }}: ${{ number_format($neighborhood->median_income) }}
+                                                    <li>{{ app()->getLocale() === 'ar' ? 'متوسط الدخل' : 'Median Income' }}: {{ app(\App\Services\CurrencyService::class)->format($neighborhood->median_income) }}
                                                     </li>
                                                     <li>{{ app()->getLocale() === 'ar' ? 'مؤشر إمكانية المشي' : 'Walk Score' }}: {{ $neighborhood->walk_score }}/100</li>
                                                     <li>{{ app()->getLocale() === 'ar' ? 'مؤشر النقل العام' : 'Transit Score' }}: {{ $neighborhood->transit_score }}/100</li>
@@ -936,7 +950,7 @@
                     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                Book valution
+                                {{ app()->getLocale() === 'ar' ? 'احجز تقييماً عقارياً' : 'Book a Property Valuation' }}
                             </h3>
                             <button type="button"
                                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
