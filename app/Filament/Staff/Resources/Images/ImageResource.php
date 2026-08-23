@@ -46,8 +46,14 @@ class ImageResource extends Resource
             ->components([
                 Select::make('property_id')
                 ->relationship('property', 'title'),
-                FileUpload::make('image')
-                    ->image(),
+                FileUpload::make('file_path')
+                    ->label(app()->getLocale() === 'ar' ? 'الصورة' : 'Image')
+                    ->disk('public')
+                    ->directory('images')
+                    ->image()
+                    ->imageEditor()
+                    ->maxSize(10240)
+                    ->required(),
             ]);
     }
 
@@ -55,7 +61,8 @@ class ImageResource extends Resource
     {
         return $table
             ->columns([
-                ImageColumn::make('image'),
+                ImageColumn::make('file_path')
+                    ->disk('public'),
                 TextColumn::make('property.title')
                     ->label(__('filament.fields.property'))
                     ->searchable()

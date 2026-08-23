@@ -68,8 +68,13 @@ class DocumentResource extends Resource
                 Textarea::make('description')
                     ->maxLength(65535)
                     ->columnSpanFull(),
-                FileUpload::make('document')
+                FileUpload::make('file_path')
+                    ->label(app()->getLocale() === 'ar' ? 'الملف' : 'File')
+                    ->disk('public')
+                    ->directory('documents')
                     ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                    ->maxSize(20480)
+                    ->downloadable()
                     ->required(),
 
             ]);
@@ -81,7 +86,7 @@ class DocumentResource extends Resource
             ->columns([
                 TextColumn::make('title'),
                 TextColumn::make('file_type')->formatStateUsing(\App\Support\StatusLabels::for('file_type')),
-                TextColumn::make('size')->formatStateUsing(fn ($state) => number_format($state / 1024 / 1024, 2) . ' MB'),
+                TextColumn::make('size')->formatStateUsing(fn ($state) => $state >= 1048576 ? number_format($state / 1048576, 2) . ' MB' : number_format($state / 1024, 0) . ' KB'),
                 TextColumn::make('user.name'),
                 TextColumn::make('created_at')
                     ->dateTime(),
