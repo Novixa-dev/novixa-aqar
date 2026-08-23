@@ -14,7 +14,7 @@ class Dashboard extends Page
     public function mount(): void
     {
         $this->totalProperties = Property::count();
-        $this->activeListings = Property::where('status', 'active')->count();
+        $this->activeListings = Property::active()->count();
         $this->totalBookings = Booking::count();
         $this->totalRevenue = Transaction::sum('amount');
     }

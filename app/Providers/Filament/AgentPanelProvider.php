@@ -69,6 +69,7 @@ class AgentPanelProvider extends PanelProvider
             ->pages([
                 Pages\EditProfile::class,
                 Profile::class,
+                \App\Filament\Agent\Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Agent/Widgets'), for: 'App\\Filament\\Agent\\Widgets')
             ->widgets([

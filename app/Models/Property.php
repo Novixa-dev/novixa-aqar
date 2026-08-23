@@ -152,6 +152,17 @@ class Property extends Model implements HasMedia
         return $query->where('status', 'approved');
     }
 
+    /**
+     * Status values that mean "listed and visible to buyers/tenants".
+     * The DB mixes legacy lowercase states and display-case marketplace states.
+     */
+    public const ACTIVE_STATUSES = ['active', 'available', 'For Sale', 'For Rent'];
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereIn('status', self::ACTIVE_STATUSES);
+    }
+
     public function approve(): void
     {
         $this->update(['status' => 'approved']);

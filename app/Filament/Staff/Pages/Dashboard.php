@@ -14,7 +14,19 @@ class Dashboard extends Page
 {
     protected string $view = 'filament.staff.dashboard';
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-home';
+
+    protected static ?int $navigationSort = -2;
+
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Dashboard';
+    }
+
+    public function getTitle(): string
+    {
+        return app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Dashboard';
+    }
 
     public $startDate;
     public $endDate;
@@ -34,7 +46,7 @@ class Dashboard extends Page
     public function loadDashboardData(): void
     {
         $this->totalProperties = Property::count();
-        $this->activeListings = Property::where('status', 'active')->count();
+        $this->activeListings = Property::active()->count();
         $this->totalBookings = Booking::whereBetween('date', [$this->startDate, $this->endDate])->count();
         $this->totalRevenue = Transaction::whereBetween('date', [$this->startDate, $this->endDate])->sum('amount');
     }

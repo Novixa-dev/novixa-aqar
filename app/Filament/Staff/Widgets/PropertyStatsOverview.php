@@ -21,7 +21,7 @@ class PropertyStatsOverview extends BaseWidget
     protected function getStats(): array
     {
         $totalProperties = Property::count();
-        $activeListings = Property::whereIn('status', ['active', 'For Sale', 'For Rent', 'available'])->count() ?: $totalProperties;
+        $activeListings = Property::active()->count() ?: $totalProperties;
         $totalBookings = Booking::count();
         $totalRevenue = Transaction::sum('amount') ?: 0;
 
