@@ -286,7 +286,7 @@
                                                 <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'إحصائيات رئيسية' : 'Key Statistics' }}</h3>
                                                 <ul class="list-disc list-inside">
                                                     <li>{{ app()->getLocale() === 'ar' ? 'عدد السكان' : 'Population' }}: {{ number_format($neighborhood->population) }}</li>
-                                                    <li>{{ app()->getLocale() === 'ar' ? 'متوسط الدخل' : 'Median Income' }}: {{ app(\App\Services\CurrencyService::class)->format($neighborhood->median_income) }}
+                                                    <li>{{ app()->getLocale() === 'ar' ? 'متوسط الدخل الشهري للأسرة' : 'Avg. Monthly Household Income' }}: {{ app(\App\Services\CurrencyService::class)->format($neighborhood->median_income) }}
                                                     </li>
                                                     <li>{{ app()->getLocale() === 'ar' ? 'مؤشر إمكانية المشي' : 'Walk Score' }}: {{ $neighborhood->walk_score }}/100</li>
                                                     <li>{{ app()->getLocale() === 'ar' ? 'مؤشر النقل العام' : 'Transit Score' }}: {{ $neighborhood->transit_score }}/100</li>

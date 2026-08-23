@@ -44,6 +44,16 @@ class DemoWorkflowSeeder extends Seeder
                 ->take(5)
                 ->update(['user_id' => $landlord->id]);
         }
+
+        // Give the seller persona a portfolio of sale listings so their
+        // dashboard and ownership-scoped resources are not empty in the demo.
+        $seller = User::where('email', 'seller@darhadhramaut.ye')->first();
+        if ($seller) {
+            Property::where('status', 'For Sale')
+                ->orderBy('id')
+                ->take(6)
+                ->update(['user_id' => $seller->id]);
+        }
         $rentals = Property::where('user_id', $landlord?->id)->orderBy('id')->get();
         $fallbackRentals = $rentals->isEmpty()
             ? Property::where('status', 'For Rent')->orderBy('id')->get()
