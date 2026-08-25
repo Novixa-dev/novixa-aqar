@@ -4,7 +4,7 @@
             <!-- Col 1: Brand & Bio -->
             <div class="space-y-4">
                 <a href="/" class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo.png') }}" class="h-10 w-auto rounded-xl shadow-xs" alt="Dar Hadhramaut Real Estate" />
+                    <img src="{{ asset('images/logo.svg') }}" class="h-10 w-auto rounded-xl shadow-xs" alt="Dar Hadhramaut Real Estate" />
                     <span class="text-xl font-black text-white">
                         {{ app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut Real Estate' }}
                     </span>

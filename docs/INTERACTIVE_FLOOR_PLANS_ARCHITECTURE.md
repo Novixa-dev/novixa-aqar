@@ -122,7 +122,7 @@
 
 ## File Structure
 
-real-estate-laravel/
+aqar/
 ├── app/
 │   ├── Models/
 │   │   └── Property.php                          [Modified]

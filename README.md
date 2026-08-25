@@ -1,22 +1,24 @@
 # Novixa Aqar (نوفيكسا عقار)
 
-![PHP 8.5](https://img.shields.io/badge/PHP-8.5-informational?style=flat&logo=php&color=4f5b93)
+![PHP 8.4+](https://img.shields.io/badge/PHP-8.4%2B-informational?style=flat&logo=php&color=4f5b93)
 ![Laravel 13](https://img.shields.io/badge/Laravel-13-informational?style=flat&logo=laravel&color=ef3b2d)
-![Filament 5](https://img.shields.io/badge/Filament-5-informational?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgeG1sbnM6dj0iaHR0cHM6Ly92ZWN0YS5pby9uYW5vIj48cGF0aCBkPSJNMCAwaDQ4djQ4SDBWMHoiIGZpbGw9IiNmNGIyNWUiLz48cGF0aCBkPSJNMjggN2wtMSA2LTMuNDM3LjgxM0wyMCAxNWwtMSAzaDZ2NWgtN2wtMyAxOEg4Yy41MTUtNS44NTMgMS40NTQtMTEuMzMgMy0xN0g4di01bDUtMSAuMjUtMy4yNUMxNCAxMSAxNCAxMSAxNS44MzggOC41NjMgMTkuNDI5IDYuMTI4IDIzLjQ0MiA2LjY4NyAyOCA3eiIgZmlsbD0iIzI4MjQxZSIvPjxwYXRoIGQ9Ik0zMCAxOGg0YzIuMjMzIDUuMzM0IDIuMjMzIDUuMzM0IDEuMTI1IDguNUwzNCAyOWMtLjE2OCAzLjIwOS0uMTY4IDMuMjA5IDAgNmwtMiAxIDEgM2gtNXYyaC0yYy44NzUtNy42MjUuODc1LTcuNjI1IDItMTFoMnYtMmgtMnYtMmwyLTF2LTQtM3oiIGZpbGw9IiMyYTIwMTIiLz48cGF0aCBkPSJNMzUuNTYzIDYuODEzQzM4IDcgMzggNyAzOSA4Yy4xODggMi40MzguMTg4IDIuNDM4IDAgNWwtMiAyYy0yLjYyNS0uMzc1LTIuNjI1LS4zNzUtNS0xLS42MjUtMi4zNzUtLjYyNS0yLjM3NS0xLTUgMi0yIDItMiA0LjU2My0yLjE4N3oiIGZpbGw9IiM0MDM5MzEiLz48cGF0aCBkPSJNMzAgMThoNGMyLjA1NSA1LjMxOSAyLjA1NSA1LjMxOSAxLjgxMyA4LjMxM0wzNSAyOGwtMyAxdi0ybC00IDF2LTJsMi0xdi00LTN6IiBmaWxsPSIjMzEyODFlIi8+PHBhdGggZD0iTTI5IDI3aDN2MmgydjJoLTJ2MmwtNC0xdi0yaDJsLTEtM3oiIGZpbGw9IiMxNTEzMTAiLz48cGF0aCBkPSJNMzAgMThoNHYzaC0ydjJsLTMgMSAxLTZ6IiBmaWxsPSIjNjA0YjMyIi8+PC9zdmc+&&color=fdae4b&link=https://filamentphp.com)
+![Filament 5](https://img.shields.io/badge/Filament-5-informational?style=flat&color=fdae4b)
 ![Livewire 4](https://img.shields.io/badge/Livewire-4-informational?style=flat&logo=Livewire&color=fb70a9)
+![Status: Ready for Demo](https://img.shields.io/badge/status-ready%20for%20demo-brightgreen)
 
 ---
 
-## Smart Real Estate Management & Marketing Platform — Novixa Aqar
+## Smart Real Estate Management Platform — Novixa Aqar
 
-**Novixa Aqar (نوفيكسا عقار)** is a modern, high-performance real estate and property management platform owned by **Novixa** and developed by **AK01REDWAN**. It unites property listings, tenant & landlord management, bookings, property valuations, smart contracts, virtual staging, 3D holographic tours, and local network accessibility into a single unified Laravel 13 framework.
+**Novixa Aqar (نوفيكسا عقار)** is a bilingual (Arabic-first), Yemen-focused real estate and property management platform owned by **Novixa** and developed by **AK01REDWAN**. It brings public property listings, tenant/landlord/buyer/seller/contractor self-service, lease and maintenance management, and a role-based administration back office together on a Laravel 13 / Filament 5 foundation.
 
----e.
+- 🏠 Property listings, moderation, leases, maintenance requests and bookings in one platform
+- 👥 9 role-specific panels: Admin, Staff, Agent, Buyer, Seller, Landlord, Tenant, Contractor, and a public App panel
+- 🌐 Arabic-first bilingual UI (AR/EN) with RTL/LTR layout support
+- 🧭 AI-assisted investment analysis, interactive 3D property models, and neighbourhood insights on listing pages
+- 🛠️ Docker Compose ready for local development and demo deployment
 
-- 🏠 Manage properties, tenants, landlords, bookings and transactions in one place  
-- 🤖 AI-powered valuations and smart-contract rental agreements  
-- 🌐 Live demo at **[agent.liberu.co.uk](https://agent.liberu.co.uk)**  
-- 🛠️ Fully open-source — fork it, extend it, ship it
+> **Status:** this codebase is verified **READY FOR DEMO** — every core workflow below has been live-tested end-to-end (not just covered by green automated tests). It is **NOT YET CONFIGURED FOR PRODUCTION**; see [Project Status](#project-status) and [`docs/PRODUCTION-DEPLOYMENT.md`](docs/PRODUCTION-DEPLOYMENT.md) before deploying to a real domain.
 
 ---
 
@@ -24,22 +26,18 @@
 
 | Feature | Description |
 |---|---|
-| **Property Listings** | Create and manage residential and commercial listings with rich media, pricing and availability. |
-| **Tenant & Landlord Management** | Track tenants, landlords, lease terms, rent schedules and contact history. |
-| **Bookings & Bids** | Allow prospective tenants and buyers to book viewings and submit bids directly through the platform. |
-| **Transaction Tracking** | Full audit trail of payments, deposits and financial events with reporting dashboards. |
-| **Neural Network Valuation** | AI-powered property valuations using machine learning with confidence scoring and market insights. |
-| **Smart Contracts** | Blockchain-based rental agreements with digital signatures and automated clause execution. |
-| **Virtual Staging** | Upload property images and apply AI-powered design styles to stage them virtually. |
-| **Holographic Tours** | Immersive 3D property viewing with support for Looking Glass, HoloFan, HoloLamp and browser-based WebGL. |
-| **VR Property Design** | Design and visualise custom interiors in VR with 8 design styles and full furniture/lighting management. |
-| **Neighbourhood Insights** | Automated demographics, schools, amenities, transport links and walkability scores for each listing. |
-| **News & Market Updates** | Built-in CMS for publishing property market news and agency announcements. |
-| **Admin Panel** | Powerful back-office powered by Filament 5 with role-based access control via Filament Shield. |
-| **Real-time UI** | Livewire 4 driven interactive interfaces — no full-page reloads needed. |
-| **Scheduled Tasks** | Automated daily neighbourhood data refresh via Laravel's task scheduler. |
+| **Property Listings** | Create and manage residential and commercial listings with rich media, pricing, availability and moderation workflow. |
+| **Public Site** | Property search/browse/detail, owner property submission, buyer property requests, contact forms — bilingual AR/EN. |
+| **Tenant & Landlord Management** | Track tenants, landlords, lease agreements, rent schedules and maintenance requests. |
+| **Bookings** | Prospective tenants and buyers can book property viewings directly through the platform. |
+| **AI Investment Analysis** | Automated investment insights embedded on property detail pages. |
+| **3D Property Models** | Interactive Three.js-based 3D viewing on property detail pages. |
+| **Neighbourhood Insights** | Demographics, amenities and walkability information per listing. |
+| **Portal Sync** | Per-team-scoped listing sync integrations (e.g. Rightmove/Zoopla/OnTheMarket-style portals). |
+| **Admin Panel** | Back office powered by Filament 5 with role-based access control via Filament Shield. |
+| **Real-time UI** | Livewire 4 driven interactive interfaces. |
 | **Multi-auth & Social Login** | Jetstream + Socialstream for first-party and OAuth authentication. |
-| **Docker & Sail Ready** | One-command local development with Docker Compose or Laravel Sail. |
+| **Docker Ready** | One-command local development and demo deployment with Docker Compose. |
 
 ---
 
@@ -47,37 +45,25 @@
 
 ### Prerequisites
 
-- PHP 8.5+
+- PHP 8.4+ (this repository is developed and tested against PHP 8.4.1+ — see [`docs/PRODUCTION-DEPLOYMENT.md`](docs/PRODUCTION-DEPLOYMENT.md) for the exact toolchain notes)
 - Composer 2
-- MySQL 8 / PostgreSQL 15 / SQLite 3
+- MySQL 8 (default) — PostgreSQL/SQLite are supported by Laravel but not part of the tested demo configuration
 - Node.js 20+ & npm (for front-end assets)
 
 ### Option 1 — Command-line installer (`setup.sh`)
 
-The quickest way to get started on Linux/macOS:
+The quickest way to get started on Linux/macOS, once you have a local copy of this repository:
 
 ```bash
-git clone https://github.com/liberu-real-estate/real-estate-laravel.git
-cd real-estate-laravel
 chmod +x setup.sh
 ./setup.sh
 ```
 
-`setup.sh` copies `.env.example` → `.env`, generates the application key, installs Composer and npm dependencies, runs database migrations and seeds demo data automatically.
+`setup.sh` copies `.env.example` → `.env`, generates the application key, installs Composer and npm dependencies, runs database migrations and seeds demo data automatically. It also supports a Docker Compose path (`./setup.sh docker`) and a non-interactive CI mode (`./setup.sh standalone --ci`) — run `./setup.sh --help` for details.
 
-### Option 2 — Graphical installer (`install.php`)
-
-A browser-based graphical installer is included for shared-hosting and non-technical deployments:
-
-1. Upload the project files to your web server.
-2. Open `https://your-domain.com/install.php` in a browser.
-3. Follow the step-by-step wizard to configure your database, environment and admin account.
-
-### Option 3 — Manual step-by-step
+### Option 2 — Manual step-by-step
 
 ```bash
-git clone https://github.com/liberu-real-estate/real-estate-laravel.git
-cd real-estate-laravel
 composer install
 cp .env.example .env
 php artisan key:generate
@@ -87,16 +73,15 @@ npm install && npm run build
 php artisan serve
 ```
 
-### Option 4 — Docker
+### Option 3 — Docker Compose
 
 ```bash
-docker build -t real-estate-laravel .
-docker run -p 8000:8000 real-estate-laravel
-# Or with Docker Compose:
-docker compose up
+docker compose up -d --build
 ```
 
-### Option 5 — Laravel Sail
+This is the deployment path documented and exercised in [`docs/PRODUCTION-DEPLOYMENT.md`](docs/PRODUCTION-DEPLOYMENT.md). The application will be available at `http://localhost:8000` once the containers are healthy.
+
+### Option 4 — Laravel Sail
 
 ```bash
 ./vendor/bin/sail up
@@ -104,54 +89,34 @@ docker compose up
 
 ---
 
-## Demo
+## Project Status
 
-Live demo: **[https://agent.liberu.co.uk](https://agent.liberu.co.uk)**
+This platform has gone through iterative demo-readiness audits and end-to-end, live-browser QA passes (see `docs/AQAR-DEMO-READINESS-AUDIT.md` and `docs/AQAR-FINAL-END-TO-END-ACCEPTANCE-REPORT.md`). Current status:
+
+- ✅ **READY FOR DEMO** — property management, moderation, lease agreements, public lead-generation forms, search/filter, cross-role authorization boundaries, and media uploads have all been reproduced and verified through real browser interaction, not just an automated test pass.
+- ⚠️ **NOT READY FOR PRODUCTION** as-is — deploying to a real domain requires working through the environment/security checklist in [`docs/PRODUCTION-DEPLOYMENT.md`](docs/PRODUCTION-DEPLOYMENT.md) and [`docs/RELEASE-CHECKLIST.md`](docs/RELEASE-CHECKLIST.md) first (production `.env` values, HTTPS/session/cookie configuration, queue/cache drivers, mail, and third-party API keys).
+- See [`docs/AQAR_TASKS.md`](docs/AQAR_TASKS.md) and [`docs/AQAR-REMAINING-WORK.md`](docs/AQAR-REMAINING-WORK.md) for the live task list and known open items.
 
 ---
 
 ## Documentation
 
-- VR Property Design — Create and customise interiors in VR with 8 design styles and full furniture management
-- Virtual Staging Tool — Upload and stage property images with AI-powered design styles
-- Smart Contracts — Blockchain-based rental agreements with automated transactions
-- [Community Events Calendar](docs/COMMUNITY_EVENTS.md) — Display community events near properties on detail pages
-
----
-
-## Our Projects
-
-The Liberu ecosystem contains a number of companion repositories and packages that extend or demonstrate functionality used in this boilerplate. Follow the links to learn more or to contribute.
-
-| Project | Repository | Description |
-|---|---|---|
-| Accounting | [liberu-accounting/accounting-laravel](https://github.com/liberu-accounting/accounting-laravel) | Accounting and invoicing features tailored for Laravel applications. |
-| Automation | [liberu-automation/automation-laravel](https://github.com/liberu-automation/automation-laravel) | Automation tooling and workflow integrations for Laravel projects. |
-| Billing | [liberu-billing/billing-laravel](https://github.com/liberu-billing/billing-laravel) | Subscription and billing management integrations (payments, invoices). |
-| Boilerplate (core) | [liberusoftware/boilerplate](https://github.com/liberusoftware/boilerplate) | Core starter and shared utilities used across Liberu projects. |
-| Browser Game | [liberu-browser-game/browser-game-laravel](https://github.com/liberu-browser-game/browser-game-laravel) | Example Laravel-based browser game platform and mechanics. |
-| CMS | [liberu-cms/cms-laravel](https://github.com/liberu-cms/cms-laravel) | Content management features and modular page administration. |
-| Control Panel | [liberu-control-panel/control-panel-laravel](https://github.com/liberu-control-panel/control-panel-laravel) | Administration/control-panel components for managing services. |
-| CRM | [liberu-crm/crm-laravel](https://github.com/liberu-crm/crm-laravel) | Customer relationship management features and integrations. |
-| E-commerce | [liberu-ecommerce/ecommerce-laravel](https://github.com/liberu-ecommerce/ecommerce-laravel) | E-commerce storefront, product and order management. |
-| Genealogy | [liberu-genealogy/genealogy-laravel](https://github.com/liberu-genealogy/genealogy-laravel) | Family tree and genealogy research features built on Laravel. |
-| Maintenance | [liberu-maintenance/maintenance-laravel](https://github.com/liberu-maintenance/maintenance-laravel) | Scheduling, tracking and reporting for maintenance tasks. |
-| Real Estate | [liberu-real-estate/real-estate-laravel](https://github.com/liberu-real-estate/real-estate-laravel) | Property listings and real-estate management features. |
-| Social Network | [liberu-social-network/social-network-laravel](https://github.com/liberu-social-network/social-network-laravel) | Social features, profiles, feeds and messaging for Laravel apps. |
+- [`docs/PRODUCTION-DEPLOYMENT.md`](docs/PRODUCTION-DEPLOYMENT.md) — production deployment and environment configuration guide
+- [`docs/RELEASE-CHECKLIST.md`](docs/RELEASE-CHECKLIST.md) — local vs. production QA checklist
+- [`docs/AQAR_PROGRESS.md`](docs/AQAR_PROGRESS.md) / [`docs/AQAR_TASKS.md`](docs/AQAR_TASKS.md) — live project status and task tracking
+- [`docs/COMMUNITY_EVENTS.md`](docs/COMMUNITY_EVENTS.md) — community events calendar feature, shown near properties on detail pages
+- [`docs/TEST_USERS.md`](docs/TEST_USERS.md) — seeded demo accounts for each role/panel
 
 ---
 
 ## Contributing
 
-Contributions are warmly welcomed! Here's how to get involved:
-
 1. **Fork** the repository and create a new branch from `main` (e.g. `feature/my-new-feature`).
-2. **Write tests** for any new functionality or bug fix — we follow PHPUnit with the existing test suite.
+2. **Write tests** for any new functionality or bug fix — the project uses PHPUnit via `php artisan test`.
 3. **Follow PSR-12** coding standards. Run `./vendor/bin/pint` before committing to auto-fix style issues.
 4. **Open a Pull Request** against `main` with a clear description of the change and why it's needed.
-5. A maintainer will review your PR, leave feedback if necessary, and merge once approved.
 
-For larger changes or new features, please open an issue first to discuss the approach before investing significant time. Bug reports, documentation improvements and translations are all equally valuable.
+For larger changes, please open an issue first to discuss the approach before investing significant time.
 
 ---
 
@@ -159,15 +124,14 @@ For larger changes or new features, please open an issue first to discuss the ap
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for the full text.
 
-**What this means for you:**
+Novixa Aqar is a substantially customized, localized and extended derivative of the open-source [Liberu Real Estate](https://github.com/liberu-real-estate/real-estate-laravel) project, originally created by Curtis Delicata and contributors and also distributed under the MIT License. The `LICENSE` file carries both the original and Novixa's copyright notices, as required by the MIT license's attribution term.
+
+**What the MIT license means for you:**
 
 - ✅ **Free to use** — commercially and privately, without paying royalties.
 - ✅ **Free to modify** — adapt the code to your exact business needs.
 - ✅ **Free to distribute** — share your modifications or bundle the software in your own products.
-- ✅ **Free to sublicense** — include it as part of a proprietary or SaaS offering.
 - ℹ️ **Attribution required** — keep the copyright notice in any copy or substantial portion of the software.
-
-The MIT license is one of the most permissive open-source licenses available. It gives you maximum freedom with minimal legal overhead, making it ideal for both personal projects and commercial deployments.
 
 ---
 

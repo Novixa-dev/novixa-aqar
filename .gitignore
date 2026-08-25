@@ -34,3 +34,11 @@ public/sitemap.xml
 
 # Media library runtime artifacts (generated conversions/temp uploads)
 storage/media-library/
+
+# Editor / OS cruft
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Test coverage artifacts
+coverage.xml

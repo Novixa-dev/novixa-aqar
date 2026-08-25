@@ -24,7 +24,7 @@
         <div class="flex items-center justify-between h-20">
             <!-- Brand Logo & Identity -->
             <a href="/" class="flex items-center gap-3 group">
-                <img src="{{ asset('images/logo.png') }}" class="h-10 w-auto rounded-xl shadow-xs transition-transform group-hover:scale-105" alt="Dar Hadhramaut Real Estate" />
+                <img src="{{ asset('images/logo.svg') }}" class="h-10 w-auto rounded-xl shadow-xs transition-transform group-hover:scale-105" alt="Dar Hadhramaut Real Estate" />
                 <div class="flex flex-col">
                     <span class="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center gap-1.5">
                         {{ app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut' }}

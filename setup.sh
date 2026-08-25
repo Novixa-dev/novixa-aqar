@@ -1,11 +1,10 @@
 #!/bin/bash
-# Setup script for the Liberu Real Estate project.
+# Setup script for Novixa Aqar.
 #
 # Usage:
 #   ./setup.sh                        Interactive mode (shows menu)
 #   ./setup.sh standalone             Standalone installation
 #   ./setup.sh docker                 Docker installation
-#   ./setup.sh k8s                    Kubernetes installation
 #   ./setup.sh standalone --ci        Non-interactive (CI/CD) mode
 #   ./setup.sh --help                 Show this help
 
@@ -30,12 +29,11 @@ for arg in "$@"; do
         --skip-tests) SKIP_TESTS=true ;;
         --skip-build) SKIP_BUILD=true ;;
         --help|-h)
-            echo "Usage: $0 [standalone|docker|k8s] [--ci] [--skip-tests] [--skip-build]"
+            echo "Usage: $0 [standalone|docker] [--ci] [--skip-tests] [--skip-build]"
             echo ""
             echo "Commands:"
             echo "  standalone    Local/standalone installation"
             echo "  docker        Docker Compose installation"
-            echo "  k8s           Kubernetes installation"
             echo ""
             echo "Flags:"
             echo "  --ci / --non-interactive  Skip interactive prompts (for CI/CD)"
@@ -402,85 +400,6 @@ install_docker() {
     [ $retries -eq 0 ] && print_warning "Application did not become ready in time; check logs"
 }
 
-install_kubernetes() {
-    print_header "KUBERNETES INSTALLATION"
-
-    if ! command_exists kubectl; then
-        print_error "kubectl not installed. Visit: https://kubernetes.io/docs/tasks/tools/"
-        exit 1
-    fi
-    print_success "kubectl installed ($(kubectl version --client --short 2>/dev/null || kubectl version --client))"
-
-    K8S_DIR="k8s"
-    [ ! -d "$K8S_DIR" ] && [ -d "kubernetes" ] && K8S_DIR="kubernetes"
-
-    if [ ! -d "$K8S_DIR" ]; then
-        print_error "No Kubernetes configuration directory found (k8s/ or kubernetes/)"
-        exit 1
-    fi
-    print_info "Using Kubernetes configs from: $K8S_DIR/"
-
-    setup_env_file
-
-    # Verify cluster access
-    if ! kubectl cluster-info >/dev/null 2>&1; then
-        print_error "Cannot connect to Kubernetes cluster. Check your kubeconfig."
-        exit 1
-    fi
-    print_success "Kubernetes cluster accessible"
-
-    apply_if_exists() {
-        local file="$K8S_DIR/$1"
-        if [ -f "$file" ]; then
-            print_info "Applying $1..."
-            kubectl apply -f "$file"
-        fi
-    }
-
-    # Use kustomize if kustomization.yaml is present
-    if [ -f "$K8S_DIR/kustomization.yaml" ]; then
-        print_info "Applying via kustomize..."
-        kubectl apply -k "$K8S_DIR/"
-        print_success "Kustomize resources applied"
-    else
-        # Apply in dependency order
-        apply_if_exists "namespace.yaml"
-        apply_if_exists "configmap.yaml"
-        apply_if_exists "secret.yaml"
-        apply_if_exists "pvc.yaml"
-        apply_if_exists "deployment.yaml"
-        apply_if_exists "service.yaml"
-        apply_if_exists "ingress.yaml"
-        apply_if_exists "hpa.yaml"
-        apply_if_exists "monitoring.yaml"
-        apply_if_exists "network-policy.yaml"
-        apply_if_exists "resource-quota.yaml"
-
-        # Apply any remaining yaml files
-        for f in "$K8S_DIR"/*.yaml; do
-            filename=$(basename "$f")
-            case "$filename" in
-                namespace.yaml|configmap.yaml|secret.yaml|pvc.yaml|deployment.yaml|service.yaml|ingress.yaml|hpa.yaml|monitoring.yaml|network-policy.yaml|resource-quota.yaml|kustomization.yaml) ;;
-                *) print_info "Applying $filename..."; kubectl apply -f "$f" ;;
-            esac
-        done
-    fi
-
-    print_success "Kubernetes resources applied"
-    echo ""
-    print_info "Check pod status:  kubectl get pods -n real-estate"
-    print_info "View services:     kubectl get svc -n real-estate"
-    print_info "View ingress:      kubectl get ingress -n real-estate"
-    print_info "View logs:         kubectl logs -f deployment/real-estate-app -n real-estate"
-
-    # Wait for rollout if not CI
-    if [ "$NON_INTERACTIVE" = false ] || [ "${WAIT_FOR_ROLLOUT:-false}" = "true" ]; then
-        print_info "Waiting for deployment rollout..."
-        kubectl rollout status deployment/real-estate-app -n real-estate --timeout=300s || \
-            print_warning "Rollout did not complete within 5 minutes; check pod status"
-    fi
-}
-
 # Main entry point
 main() {
     local command="${1:-}"
@@ -497,31 +416,26 @@ main() {
         docker)
             install_docker
             ;;
-        k8s|kubernetes)
-            install_kubernetes
-            ;;
         "")
             if [ "$NON_INTERACTIVE" = true ]; then
-                print_error "Non-interactive mode requires a command: standalone, docker, or k8s"
+                print_error "Non-interactive mode requires a command: standalone or docker"
                 exit 1
             fi
 
             clear
-            print_header "LIBERU REAL ESTATE - INSTALLER"
+            print_header "NOVIXA AQAR - INSTALLER"
             echo "  1) Standalone (Local development/production)"
             echo "  2) Docker (Containerized deployment)"
-            echo "  3) Kubernetes (K8s cluster deployment)"
-            echo "  4) Exit"
+            echo "  3) Exit"
             echo ""
 
             while true; do
-                read -rp "Enter your choice (1-4): " choice
+                read -rp "Enter your choice (1-3): " choice
                 case $choice in
                     1) install_standalone; break ;;
                     2) install_docker; break ;;
-                    3) install_kubernetes; break ;;
-                    4) print_info "Installation cancelled"; exit 0 ;;
-                    *) print_warning "Invalid choice. Please enter 1, 2, 3, or 4." ;;
+                    3) print_info "Installation cancelled"; exit 0 ;;
+                    *) print_warning "Invalid choice. Please enter 1, 2, or 3." ;;
                 esac
             done
             ;;

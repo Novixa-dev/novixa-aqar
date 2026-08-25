@@ -1,7 +1,7 @@
 # Enhanced Search Filters Documentation
 
 ## Overview
-This document describes the enhanced search filter functionality added to the Liberu Real Estate Laravel application. These enhancements enable users to filter properties based on energy efficiency, walkability, transit accessibility, bike-friendliness, featured status, and country location.
+This document describes the enhanced search filter functionality in the Novixa Aqar platform. These enhancements enable users to filter properties based on energy efficiency, walkability, transit accessibility, bike-friendliness, featured status, and country location.
 
 ## New Filter Features
 

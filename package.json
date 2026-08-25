@@ -1,6 +1,9 @@
 {
+    "name": "novixa-aqar",
     "private": true,
     "type": "module",
+    "description": "Novixa Aqar (عقاري) — bilingual real-estate platform for the Yemeni market.",
+    "homepage": "https://novixa.dev",
     "scripts": {
         "dev": "vite",
         "build": "vite build"
