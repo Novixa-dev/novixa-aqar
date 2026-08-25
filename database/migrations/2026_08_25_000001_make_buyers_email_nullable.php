@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -12,16 +12,14 @@ use Illuminate\Support\Facades\Schema;
  * forms) with a blank email, exactly as the form's own validation
  * allows, throws a live SQLSTATE[23000] NOT NULL constraint violation.
  * Reproduced live via a real form submission, then fixed here.
- *
- * Uses a raw ALTER rather than Schema::table()->change() to avoid adding
- * a new doctrine/dbal dependency just for one column-nullability change
- * (same reasoning as the properties.country fix earlier this session).
  */
 return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement('ALTER TABLE buyers MODIFY email VARCHAR(255) NULL');
+        Schema::table('buyers', function (Blueprint $table) {
+            $table->string('email')->nullable()->change();
+        });
     }
 
     public function down(): void
