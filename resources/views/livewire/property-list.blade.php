@@ -41,8 +41,8 @@
                         <select wire:model.live="status"
                             class="w-full ps-4 pe-10 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-gray-900 dark:text-white appearance-none cursor-pointer">
                             <option value="">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
-                            <option value="For Sale">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
-                            <option value="For Rent">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
+                            <option value="for_sale">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
+                            <option value="for_rent">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
                         </select>
                         <div class="absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,8 +166,8 @@
                                     class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110">
                             </a>
                             <div class="absolute top-3 start-3 flex flex-wrap gap-1.5 z-10">
-                                <span class="rounded-lg px-3 py-1 text-xs font-black shadow-md {{ $property->status === 'For Rent' ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white' }}">
-                                    {{ $property->status === 'For Rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
+                                <span class="rounded-lg px-3 py-1 text-xs font-black shadow-md {{ $property->status === 'for_rent' ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white' }}">
+                                    {{ $property->status === 'for_rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
                                 </span>
                                 @if($property->is_featured)
                                     <span class="rounded-lg px-2.5 py-1 text-xs font-bold bg-amber-500 text-gray-900 shadow-md">

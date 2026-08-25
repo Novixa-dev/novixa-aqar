@@ -5,7 +5,7 @@
     <div class="mb-4">
         <input type="text" wire:model.live.debounce.300ms="searchTerm" wire:keyup="searchProperties" placeholder="{{ app()->getLocale() === 'ar' ? 'ابحث عن عقارات لمقارنتها' : 'Search properties to compare' }}" class="w-full p-2 border rounded">
         @if(count($searchResults) > 0)
-            <div class="mt-2 bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="mt-2 bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
                 @foreach($searchResults as $result)
                     <div class="p-2 hover:bg-gray-100 cursor-pointer" wire:click="addProperty({{ $result->id }})">
                         {{ $result->title }}
@@ -17,7 +17,7 @@
 
     <!-- Comparison Table -->
     <div class="overflow-x-auto">
-        <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="w-full bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
             <thead>
                 <tr class="bg-gray-200">
                     <th class="p-2">{{ app()->getLocale() === 'ar' ? 'الميزة' : 'Feature' }}</th>

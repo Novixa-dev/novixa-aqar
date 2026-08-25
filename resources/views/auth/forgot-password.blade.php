@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="h-full flex flex-col sm:justify-center items-center pt-3 sm:pt-0 my-8">
-        <div class="w-full sm:max-w-md mb-4 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+    <div class="h-full flex flex-col sm:justify-center items-center pt-3 sm:pt-0 my-8 bg-gray-100 dark:bg-gray-900">
+        <div class="w-full sm:max-w-md mb-4 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
 
-            <div class="mb-4 text-sm text-gray-600">
+            <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
                 {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
             </div>
 
             @session('status')
-                <div class="mb-4 font-medium text-sm text-green-600">
+                <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
                     {{ $value }}
                 </div>
             @endsession

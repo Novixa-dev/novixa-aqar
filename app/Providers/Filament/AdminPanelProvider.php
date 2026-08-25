@@ -57,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
                         ? url(Pages\EditProfile::getUrl())
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('admin'),
+                PanelSwitcher::languageMenuItem(),
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverResources(in: app_path('Filament/Staff/Resources'), for: 'App\\Filament\\Staff\\Resources')

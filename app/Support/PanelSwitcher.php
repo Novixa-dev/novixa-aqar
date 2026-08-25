@@ -52,4 +52,22 @@ class PanelSwitcher
 
         return $items;
     }
+
+    /**
+     * A real AR/EN toggle for the Filament user menu, reusing the same
+     * `lang.switch` route the public site's navbar already uses (it sets
+     * the session/cookie locale and redirects back to the current page).
+     * Every panel previously had PanelSwitcher's cross-*panel* navigator
+     * but no way to actually change language without leaving the panel.
+     */
+    public static function languageMenuItem(): MenuItem
+    {
+        $target = app()->getLocale() === 'ar' ? 'en' : 'ar';
+        $label = $target === 'ar' ? 'العربية' : 'English';
+
+        return MenuItem::make()
+            ->label($label)
+            ->icon('heroicon-o-language')
+            ->url(fn () => route('lang.switch', $target));
+    }
 }

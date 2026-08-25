@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="min-h-full flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
+    <div class="min-h-full flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
 
-        <div class="w-full sm:max-w-md mb-4 mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+        <div class="w-full sm:max-w-md mb-4 mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
             <x-validation-errors class="mb-4" />
         
             <form method="POST" action="{{ route('register') }}">
@@ -31,7 +31,7 @@
 
                 <div class="mt-4">
                     <x-label for="role" value="{{ __('Role') }}" />
-                    <select id="role" name="role" class="block mt-1 w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" required>
+                    <select id="role" name="role" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-300 dark:focus:border-indigo-600 focus:ring focus:ring-indigo-200 dark:focus:ring-indigo-800 focus:ring-opacity-50 rounded-md shadow-sm" required>
                         <option value="">{{ __('Select a role') }}</option>
                         <option value="tenant">{{ __('Tenant') }}</option>
                         <option value="buyer">{{ __('Buyer') }}</option>
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="flex items-center justify-end mt-4">
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
+                    <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200" href="{{ route('login') }}">
                         {{ __('Already registered?') }}
                     </a>
 
@@ -56,10 +56,10 @@
                 <div class="mt-4">
                     <div class="relative">
                         <div class="absolute inset-0 flex items-center">
-                            <div class="w-full border-t border-gray-300"></div>
+                            <div class="w-full border-t border-gray-300 dark:border-gray-700"></div>
                         </div>
                         <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white text-gray-500">{{ config('socialstream.prompt', 'Or Register Via') }}</span>
+                            <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">{{ config('socialstream.prompt', 'Or Register Via') }}</span>
                         </div>
                     </div>
                     <div class="mt-4">

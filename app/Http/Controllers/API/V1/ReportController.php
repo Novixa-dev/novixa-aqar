@@ -87,7 +87,7 @@ class ReportController extends Controller
         return [
             'properties' => Property::where('team_id', $teamId)->count(),
             'available_properties' => Property::where('team_id', $teamId)
-                ->whereIn('status', ['available', 'to_let', 'approved', 'For Sale', 'For Rent'])->count(),
+                ->whereIn('status', ['available', 'to_let', 'approved', 'For Sale', 'For Rent', Property::STATUS_FOR_SALE, Property::STATUS_FOR_RENT])->count(),
             'contacts' => Contact::where('team_id', $teamId)->count(),
             'open_offers' => Offer::where('team_id', $teamId)->where('status', 'pending')->count(),
             'upcoming_viewings' => Appointment::where('team_id', $teamId)

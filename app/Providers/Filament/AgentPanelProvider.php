@@ -53,6 +53,7 @@ class AgentPanelProvider extends PanelProvider
                         ? url(Pages\EditProfile::getUrl())
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('agent'),
+                PanelSwitcher::languageMenuItem(),
             ]);
 
         if (Features::hasTeamFeatures()) {

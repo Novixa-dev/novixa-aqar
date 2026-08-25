@@ -51,6 +51,16 @@ class Property extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, SoftDeletes;
 
+    /**
+     * Application-level default for any insert path that omits `country`
+     * (this is a Yemen-first platform; the DB column's own legacy default
+     * is still 'UK', inherited from the upstream template — fixed here
+     * rather than via a schema ALTER, which would need doctrine/dbal).
+     */
+    protected $attributes = [
+        'country' => 'Yemen',
+    ];
+
     protected $fillable = [
         'title',
         'description',
@@ -78,6 +88,9 @@ class Property extends Model implements HasMedia
         'year_built',
         'property_type',
         'status',
+        'moderation_status',
+        'moderated_at',
+        'moderation_notes',
         'list_date',
         'sold_date',
         'user_id',
@@ -114,6 +127,7 @@ class Property extends Model implements HasMedia
         'last_synced_at' => 'datetime',
         'list_date' => 'date',
         'sold_date' => 'date',
+        'moderated_at' => 'datetime',
         'is_featured' => 'boolean',
         'live_tour_available' => 'boolean',
         'insurance_expiry_date' => 'date',
@@ -144,33 +158,83 @@ class Property extends Model implements HasMedia
 
     public function scopePending(Builder $query): Builder
     {
-        return $query->where('status', 'pending');
+        return $query->where('moderation_status', 'pending');
     }
 
     public function scopeApproved(Builder $query): Builder
     {
-        return $query->where('status', 'approved');
+        return $query->where('moderation_status', 'approved');
     }
 
     /**
-     * Status values that mean "listed and visible to buyers/tenants".
-     * The DB mixes legacy lowercase states and display-case marketplace states.
+     * Canonical listing-status values for the seeder/Staff-form convention.
+     * `status` also carries a second, separate, legitimate vocabulary used
+     * by the V1 API/AutomationController (draft, available, under_offer,
+     * sstc, exchanged, to_let, let, let_agreed, withdrawn, archived,
+     * pending, approved, rejected, ...) — those are distinct real states,
+     * not synonyms of these four, and must NOT be collapsed into them.
+     * setStatusAttribute() below only rewrites the narrow, unambiguous
+     * legacy Title-Case values (which have no other meaning anywhere in
+     * the codebase) to their snake_case equivalent; everything else,
+     * including the broader vocabulary above, passes through untouched.
      */
-    public const ACTIVE_STATUSES = ['active', 'available', 'For Sale', 'For Rent'];
+    public const STATUS_FOR_SALE = 'for_sale';
+    public const STATUS_FOR_RENT = 'for_rent';
+    public const STATUS_SOLD = 'sold';
+    public const STATUS_RENTED = 'rented';
+
+    /**
+     * Only the exact legacy Title-Case strings PropertySeeder/
+     * PropertyFactory historically wrote — each has no other meaning
+     * anywhere else in the codebase, so remapping them is unambiguous.
+     */
+    private const STATUS_SYNONYMS = [
+        'For Sale' => self::STATUS_FOR_SALE,
+        'For Rent' => self::STATUS_FOR_RENT,
+        'Sold' => self::STATUS_SOLD,
+        'Rented' => self::STATUS_RENTED,
+    ];
+
+    /**
+     * Status values that mean "listed and visible to buyers/tenants".
+     * Includes both this model's canonical values and the V1 API's
+     * separate vocabulary's equivalent ('available'/'active') — a
+     * read-side inclusive list, not a write-side normalization target.
+     */
+    public const ACTIVE_STATUSES = [self::STATUS_FOR_SALE, self::STATUS_FOR_RENT, 'active', 'available', 'For Sale', 'For Rent'];
+
+    public static function canonicalStatus(?string $raw): ?string
+    {
+        if ($raw === null) {
+            return null;
+        }
+
+        return self::STATUS_SYNONYMS[$raw] ?? $raw;
+    }
+
+    protected function setStatusAttribute(?string $value): void
+    {
+        $this->attributes['status'] = self::canonicalStatus($value);
+    }
 
     public function scopeActive(Builder $query): Builder
     {
         return $query->whereIn('status', self::ACTIVE_STATUSES);
     }
 
+    public function scopeSold(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_SOLD);
+    }
+
     public function approve(): void
     {
-        $this->update(['status' => 'approved']);
+        $this->update(['moderation_status' => 'approved', 'moderated_at' => now()]);
     }
 
     public function reject(): void
     {
-        $this->update(['status' => 'rejected']);
+        $this->update(['moderation_status' => 'rejected', 'moderated_at' => now()]);
     }
 
     public function setYearBuiltAttribute($value)
@@ -623,15 +687,30 @@ class Property extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
+        // useDisk('public') is required explicitly: without it, media
+        // uploaded through Filament's SpatieMediaLibraryFileUpload field
+        // silently lands on `filesystems.default` (local — a private,
+        // non-web-accessible disk) instead of the public one these
+        // collections are actually served from, even though the config
+        // default (media-library.disk_name) is 'public'. Verified live:
+        // reproduced (an uploaded property photo 404'd forever), fixed.
+        // Pre-existing seeded photos were already correct only because
+        // PropertySeeder's addMedia() call happens to inherit the app
+        // config's disk default at the time it runs, not because the
+        // collection itself pinned one — this makes it explicit and
+        // consistent regardless of upload path.
         $this->addMediaCollection('images')
+            ->useDisk('public')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp'])
             ->withResponsiveImages();
 
         $this->addMediaCollection('videos')
+            ->useDisk('public')
             ->acceptsMimeTypes(['video/mp4', 'video/quicktime', 'application/x-empty'])
             ->singleFile();
 
         $this->addMediaCollection('3d_models')
+            ->useDisk('public')
             ->acceptsMimeTypes(['model/gltf-binary', 'model/gltf+json', 'application/octet-stream', 'application/x-empty'])
             ->singleFile();
     }

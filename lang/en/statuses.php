@@ -15,6 +15,8 @@ return [
         'refunded' => 'Refunded',
     ],
     'property' => [
+        'for_rent' => 'For Rent',
+        'for_sale' => 'For Sale',
         'For Rent' => 'For Rent',
         'For Sale' => 'For Sale',
         'pending' => 'Pending review',

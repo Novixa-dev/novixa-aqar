@@ -36,7 +36,7 @@ class StatusLabels
             $map = match ($domain) {
                 'lease' => ['active' => 'success', 'expired' => 'warning', 'terminated' => 'danger'],
                 'payment' => ['completed' => 'success', 'paid' => 'success', 'pending' => 'warning', 'failed' => 'danger', 'void' => 'gray', 'refunded' => 'info'],
-                'property' => ['For Rent' => 'info', 'For Sale' => 'success', 'pending' => 'warning', 'available' => 'success', 'rented' => 'info', 'sold' => 'gray'],
+                'property' => ['for_rent' => 'info', 'for_sale' => 'success', 'For Rent' => 'info', 'For Sale' => 'success', 'pending' => 'warning', 'available' => 'success', 'rented' => 'info', 'sold' => 'gray'],
                 'rental_application', 'moderation' => ['approved' => 'success', 'rejected' => 'danger', 'pending' => 'warning'],
                 'booking', 'maintenance' => ['confirmed' => 'success', 'completed' => 'success', 'in_progress' => 'info', 'pending' => 'warning', 'cancelled' => 'danger'],
                 'priority' => ['low' => 'gray', 'normal' => 'info', 'high' => 'warning', 'urgent' => 'danger'],

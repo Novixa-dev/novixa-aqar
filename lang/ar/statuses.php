@@ -15,6 +15,8 @@ return [
         'refunded' => 'مسترجع',
     ],
     'property' => [
+        'for_rent' => 'للإيجار',
+        'for_sale' => 'للبيع',
         'For Rent' => 'للإيجار',
         'For Sale' => 'للبيع',
         'pending' => 'قيد المراجعة',

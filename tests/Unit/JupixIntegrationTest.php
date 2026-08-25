@@ -61,6 +61,10 @@ class JupixIntegrationTest extends TestCase
         $this->assertEquals(1, $result['synced']);
         $this->assertEquals(0, $result['failed']);
 
+        // The incoming Jupix payload sends the legacy Title-Case status
+        // ('For Sale'); Property::setStatusAttribute() normalizes it to
+        // the canonical snake_case value on write, so the stored row is
+        // asserted against that, not the raw external payload's casing.
         $this->assertDatabaseHas('properties', [
             'jupix_id' => 1,
             'title' => 'Test Property',
@@ -71,7 +75,7 @@ class JupixIntegrationTest extends TestCase
             'bathrooms' => 2,
             'area_sqft' => 1500,
             'property_type' => 'House',
-            'status' => 'For Sale',
+            'status' => 'for_sale',
         ]);
     }
 }

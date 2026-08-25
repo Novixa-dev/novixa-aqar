@@ -42,8 +42,8 @@
                             style="background-image: none !important; -webkit-appearance: none; -moz-appearance: none; appearance: none;"
                             class="w-full ps-4 pe-10 py-3.5 bg-gray-800/90 border border-gray-700/80 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer [background-image:none] transition-all">
                         <option value="" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
-                        <option value="For Sale" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
-                        <option value="For Rent" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
+                        <option value="for_sale" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
+                        <option value="for_rent" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
                     </select>
                     <div class="absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-white transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +108,7 @@
                         </a>
                         <div class="absolute top-3 start-3 flex gap-1.5 z-10">
                             <span class="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-lg shadow-sm">
-                                {{ $property->status === 'For Rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
+                                {{ $property->status === 'for_rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
                             </span>
                             @if($property->is_featured)
                                 <span class="px-2.5 py-1 bg-amber-500 text-gray-900 text-xs font-black rounded-lg shadow-sm">

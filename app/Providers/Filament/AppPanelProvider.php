@@ -60,6 +60,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->userMenuItems([
                 ...PanelSwitcher::menuItems('app'),
+                PanelSwitcher::languageMenuItem(),
             ]);
 
         if (Features::hasTeamFeatures()) {

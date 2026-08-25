@@ -43,21 +43,39 @@
                 <div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
                     <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-12 items-start">
                         <!-- Left: Property Hero Media -->
-                        <div class="shrink-0 w-full mx-auto space-y-4">
+                        @php
+                            $galleryMedia = $property->getMedia('images');
+                        @endphp
+                        <div class="shrink-0 w-full mx-auto space-y-4" x-data="{ activeImage: @js($property->image_url) }">
                             <div class="relative overflow-hidden rounded-3xl shadow-2xl bg-gray-900 border border-gray-800">
-                                <img src="{{ $property->image_url }}"
+                                <img :src="activeImage"
                                     alt="{{ $property->title }}"
                                     class="w-full h-80 sm:h-96 md:h-[450px] object-cover transition-transform duration-500 hover:scale-105">
                                 <div class="absolute top-4 start-4 flex gap-2">
-                                    <span class="px-3.5 py-1.5 rounded-xl text-xs font-black shadow-lg {{ $property->status === 'For Rent' ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white' }}">
-                                        {{ $property->status === 'For Rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
+                                    <span class="px-3.5 py-1.5 rounded-xl text-xs font-black shadow-lg {{ $property->status === 'for_rent' ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white' }}">
+                                        {{ $property->status === 'for_rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
                                     </span>
                                     <span class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gray-900/80 backdrop-blur-md text-white shadow-lg">
                                         {{ $property->translated_type }}
                                     </span>
                                 </div>
                             </div>
-                            
+
+                            @if($galleryMedia->count() > 1)
+                                <div class="grid grid-cols-4 sm:grid-cols-5 gap-2" role="list" aria-label="{{ app()->getLocale() === 'ar' ? 'معرض صور العقار' : 'Property photo gallery' }}">
+                                    @foreach($galleryMedia as $media)
+                                        <button type="button"
+                                            @click="activeImage = @js($media->getUrl())"
+                                            :class="activeImage === @js($media->getUrl()) ? 'ring-2 ring-blue-600' : 'ring-1 ring-gray-200 dark:ring-gray-700 hover:ring-blue-400'"
+                                            class="relative rounded-xl overflow-hidden aspect-square transition-all focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                            <img src="{{ $media->getUrl() }}"
+                                                alt="{{ app()->getLocale() === 'ar' ? $property->title . ' - صورة ' . ($loop->iteration) : $property->title . ' - photo ' . ($loop->iteration) }}"
+                                                class="w-full h-full object-cover">
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endif
+
                             @if($property->hasMedia('3d_models'))
                                 <div class="mt-6">
                                     <div class="flex items-center justify-between mb-3">
@@ -257,7 +275,7 @@
                                 <div class="flex items-center gap-2 mb-4">
                                     <span class="text-xs font-bold text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'التصنيف:' : 'Category:' }}</span>
                                     <span class="bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 text-xs font-bold px-3 py-1 rounded-lg">
-                                        {{ $property->category->name ?? ($property->status === 'For Rent' ? (app()->getLocale() === 'ar' ? 'إيجارات' : 'Rentals') : (app()->getLocale() === 'ar' ? 'مبيعات' : 'Sales')) }}
+                                        {{ $property->category->name ?? ($property->status === 'for_rent' ? (app()->getLocale() === 'ar' ? 'إيجارات' : 'Rentals') : (app()->getLocale() === 'ar' ? 'مبيعات' : 'Sales')) }}
                                     </span>
                                 </div>
                                 <div class="my-4">
@@ -356,7 +374,7 @@
                                                     @endforeach
                                                 </div>
                                             @else
-                                                <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">No reviews yet. Be the first to review this neighborhood!</p>
+                                                <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">{{ app()->getLocale() === 'ar' ? 'لا توجد تقييمات بعد. كن أول من يقيّم هذا الحي!' : 'No reviews yet. Be the first to review this neighborhood!' }}</p>
                                             @endif
                                             
                                             <!-- Neighborhood Review Form -->
@@ -1049,7 +1067,7 @@
                                 </p>
 
                                 <div>
-                                    <label for="tourDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Preferred Date</label>
+                                    <label for="tourDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'التاريخ المفضل' : 'Preferred Date' }}</label>
                                     <input type="date" id="tourDate" wire:model="tourDate"
                                         min="{{ date('Y-m-d', strtotime('+1 day')) }}"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -1058,7 +1076,7 @@
                                 </div>
 
                                 <div>
-                                    <label for="tourTime" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Preferred Time</label>
+                                    <label for="tourTime" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'الوقت المفضل' : 'Preferred Time' }}</label>
                                     <input type="time" id="tourTime" wire:model="tourTime"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                         required>
@@ -1066,7 +1084,7 @@
                                 </div>
 
                                 <div>
-                                    <label for="tourNotes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Additional Notes (Optional)</label>
+                                    <label for="tourNotes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'ملاحظات إضافية (اختياري)' : 'Additional Notes (Optional)' }}</label>
                                     <textarea id="tourNotes" wire:model="tourNotes" rows="3"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                         placeholder="Any specific areas you'd like to focus on or questions you have..."></textarea>

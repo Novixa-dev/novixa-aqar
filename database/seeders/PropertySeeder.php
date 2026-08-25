@@ -14,6 +14,18 @@ class PropertySeeder extends Seeder
     /** The seeded demo agent that properties should be attributed to, rather than the admin account. */
     private ?int $agentUserId = null;
 
+    /**
+     * Matches DemoWorkflowSeeder's own hardcoded team id (the single demo
+     * agency team created by DefaultTeamSeeder). Without this, every
+     * property created here had a NULL team_id — PropertyPolicy's
+     * ownership check (direct user_id match OR shared team_id) then
+     * silently blocked staff/agent from editing the vast majority of the
+     * seeded inventory (measured: staff could edit only 3 of 36 properties
+     * before this fix, all of which happened to be team-scoped by
+     * coincidence via the live Filament create form during testing).
+     */
+    private int $teamId = 1;
+
     public function run()
     {
         $faker = Faker::create('ar_SA');
@@ -149,6 +161,7 @@ class PropertySeeder extends Seeder
                 'list_date' => now()->subDays($i * 3),
                 'user_id' => $this->agentUserId,
                 'agent_id' => $this->agentUserId,
+                'team_id' => $this->teamId,
                 'property_category_id' => $category?->id,
                 'latitude' => 14.5385 + ($i * 0.002),
                 'longitude' => 49.1235 + ($i * 0.002),
@@ -185,6 +198,7 @@ class PropertySeeder extends Seeder
                 'list_date' => now(),
                 'user_id' => $this->agentUserId,
                 'agent_id' => $this->agentUserId,
+                'team_id' => $this->teamId,
                 'property_category_id' => $category->id,
                 'latitude' => 14.5385,
                 'longitude' => 49.1235,

@@ -12,6 +12,11 @@ class ImagePolicy
         return $user->can('view_any_image');
     }
 
+    public function view(User $user, Image $image): bool
+    {
+        return $user->can('view', $image->property);
+    }
+
     public function create(User $user): bool
     {
         return $user->can('create_image');

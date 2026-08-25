@@ -71,6 +71,7 @@ class StaffPanelProvider extends PanelProvider
                         ? url(Pages\EditProfile::getUrl())
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('staff'),
+                PanelSwitcher::languageMenuItem(),
             ]);
         if (Features::hasTeamFeatures()) {
             $panel

@@ -64,6 +64,7 @@ class TenantPanelProvider extends PanelProvider
                         ? url(Pages\EditProfile::getUrl())
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('tenant'),
+                PanelSwitcher::languageMenuItem(),
             ]);
 
         if (Features::hasTeamFeatures()) {

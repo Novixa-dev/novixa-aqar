@@ -44,11 +44,13 @@ class DemoDataSeederTest extends TestCase
         }
 
         // The landlord persona owns rental inventory (their panel is scoped
-        // by properties.user_id).
+        // by properties.user_id). PropertySeeder writes the legacy 'For
+        // Rent' status, normalized by Property::setStatusAttribute() to
+        // the canonical 'for_rent' on write — assert against that.
         $landlordId = DB::table('users')->where('email', 'landlord@darhadhramaut.ye')->value('id');
         $this->assertGreaterThan(
             0,
-            DB::table('properties')->where('user_id', $landlordId)->where('status', 'For Rent')->count(),
+            DB::table('properties')->where('user_id', $landlordId)->where('status', 'for_rent')->count(),
             'landlord persona owns no rentals'
         );
 

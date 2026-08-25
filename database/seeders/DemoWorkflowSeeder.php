@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Booking;
 use App\Models\Contact;
 use App\Models\Lease;
+use App\Models\LeaseAgreement;
 use App\Models\MaintenanceRequest;
 use App\Models\Payment;
 use App\Models\Property;
@@ -39,7 +40,7 @@ class DemoWorkflowSeeder extends Seeder
         // Give the landlord direct ownership of several rentals so their
         // panel shows inventory and ownership-scoped resources have rows.
         if ($landlord) {
-            Property::where('status', 'For Rent')
+            Property::where('status', Property::STATUS_FOR_RENT)
                 ->orderBy('id')
                 ->take(5)
                 ->update(['user_id' => $landlord->id]);
@@ -49,15 +50,33 @@ class DemoWorkflowSeeder extends Seeder
         // dashboard and ownership-scoped resources are not empty in the demo.
         $seller = User::where('email', 'seller@darhadhramaut.ye')->first();
         if ($seller) {
-            Property::where('status', 'For Sale')
+            Property::where('status', Property::STATUS_FOR_SALE)
                 ->orderBy('id')
                 ->take(6)
                 ->update(['user_id' => $seller->id]);
         }
         $rentals = Property::where('user_id', $landlord?->id)->orderBy('id')->get();
         $fallbackRentals = $rentals->isEmpty()
-            ? Property::where('status', 'For Rent')->orderBy('id')->get()
+            ? Property::where('status', Property::STATUS_FOR_RENT)->orderBy('id')->get()
             : $rentals;
+
+        // A handful of listings that have actually closed, so agent-
+        // performance "Properties Sold"/"Properties Rented" stats aren't
+        // permanently zero against fresh seed data (previously every
+        // seeded property stayed for_sale/for_rent forever). Picked from
+        // the agent's own inventory, distinct from the landlord/seller
+        // portfolios just assigned above.
+        Property::where('status', Property::STATUS_FOR_SALE)
+            ->where('user_id', '!=', $seller?->id)
+            ->orderBy('id')
+            ->take(2)
+            ->update(['status' => Property::STATUS_SOLD, 'sold_date' => now()->subDays(10)]);
+
+        Property::where('status', Property::STATUS_FOR_RENT)
+            ->where('user_id', '!=', $landlord?->id)
+            ->orderBy('id')
+            ->take(1)
+            ->update(['status' => Property::STATUS_RENTED]);
 
         // --- Vendors (contractors) ---
         $vendorsData = [
@@ -166,6 +185,35 @@ class DemoWorkflowSeeder extends Seeder
                     'security_deposit' => 240000,
                     'status' => $i === 0 ? 'active' : ($i === 1 ? 'active' : 'expired'),
                     'terms' => 'الإيجار سنوي يُدفع على أقساط شهرية، والصيانة الدورية على المالك ما لم يكن العطل بسبب المستأجر.',
+                    'team_id' => $teamId,
+                ]
+            );
+        }
+
+        // --- Lease agreements (Staff panel's LeaseAgreementResource; a
+        // separate, parallel table from `leases` above — previously never
+        // seeded at all, so it always rendered empty next to the populated
+        // Leases list in the same panel) ---
+        foreach ($leaseRows as $i => $lease) {
+            $leaseTenantRecord = Tenant::where('user_id', $lease->tenant_id)->first();
+            if (! $leaseTenantRecord) {
+                continue;
+            }
+            LeaseAgreement::updateOrCreate(
+                ['property_id' => $lease->property_id, 'tenant_id' => $leaseTenantRecord->id],
+                [
+                    'landlord_id' => $landlord?->id,
+                    'start_date' => $lease->start_date,
+                    'end_date' => $lease->end_date,
+                    'monthly_rent' => $lease->rent_amount,
+                    'rent_amount' => $lease->rent_amount,
+                    'security_deposit' => $lease->security_deposit,
+                    'status' => $lease->status,
+                    'payment_frequency' => 'monthly',
+                    'terms_and_conditions' => 'الإيجار سنوي يُدفع على أقساط شهرية، والصيانة الدورية على المالك ما لم يكن العطل بسبب المستأجر.',
+                    'is_signed' => $i !== 2,
+                    'landlord_signed' => true,
+                    'tenant_signed' => $i !== 2,
                     'team_id' => $teamId,
                 ]
             );
@@ -306,7 +354,8 @@ class DemoWorkflowSeeder extends Seeder
 
         $this->command->info('Demo workflow data seeded: '
             .Vendor::count().' vendors, '.Tenant::count().' tenants, '
-            .Lease::count().' leases, '.Payment::count().' payments, '
+            .Lease::count().' leases, '.LeaseAgreement::count().' lease agreements, '
+            .Payment::count().' payments, '
             .MaintenanceRequest::count().' maintenance requests, '
             .RentalApplication::count().' rental applications, '
             .Booking::count().' bookings.');

@@ -39,7 +39,21 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            // Deliberately relative (not env('APP_URL').'/storage'): media
+            // URLs (Spatie Medialibrary, Storage::disk('public')->url())
+            // then resolve against whatever origin actually served the page,
+            // instead of being baked to the configured APP_URL. This is the
+            // fix for a real, live-reproduced bug — if the serving origin
+            // ever doesn't exactly match APP_URL (a different port locally,
+            // a proxy/load balancer in front of the app, staging vs.
+            // production domains), every absolute-URL image on the public
+          // site silently fails the CSP `img-src 'self' data: https:`
+            // directive and the photo never loads. A relative URL is always
+            // same-origin, so this class of failure can't happen. Override
+            // with ASSET_URL only if media is ever served from a separate
+            // asset host/CDN (e.g. a different subdomain or S3) — leave
+            // unset for the standard same-origin `storage:link` setup.
+            'url' => env('ASSET_URL', '/storage'),
             'visibility' => 'public',
             'throw' => false,
         ],

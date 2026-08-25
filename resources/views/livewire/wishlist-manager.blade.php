@@ -58,7 +58,7 @@
                         <div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 relative">
                             <!-- Remove from Wishlist Button -->
                             <button wire:click="removeFavorite({{ $property->id }})"
-                                    class="absolute top-3 end-3 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-red-50 transition-colors"
+                                    class="absolute top-3 end-3 z-10 p-2 bg-white dark:bg-gray-700 rounded-full shadow-lg hover:bg-red-50 dark:hover:bg-red-900/40 transition-colors"
                                     title="{{ app()->getLocale() === 'ar' ? 'إزالة من المفضلة' : 'Remove from wishlist' }}">
                                 <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>

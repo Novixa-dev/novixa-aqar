@@ -64,6 +64,7 @@ class SellerPanelProvider extends PanelProvider
                         ? url(Pages\EditProfile::getUrl())
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('seller'),
+                PanelSwitcher::languageMenuItem(),
             ]);
 
         if (Features::hasTeamFeatures()) {

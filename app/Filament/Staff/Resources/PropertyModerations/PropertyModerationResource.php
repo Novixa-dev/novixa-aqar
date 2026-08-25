@@ -53,7 +53,8 @@ class PropertyModerationResource extends Resource
                     ->maxLength(255),
                 Textarea::make('description')
                     ->maxLength(65535),
-                Select::make('status')
+                Select::make('moderation_status')
+                    ->label(app()->getLocale() === 'ar' ? 'حالة المراجعة' : 'Moderation status')
                     ->options(fn () => app()->getLocale() === 'ar' ? [
                         'pending' => 'قيد المراجعة',
                         'approved' => 'موافق عليه',
@@ -75,13 +76,15 @@ class PropertyModerationResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')->sortable()->searchable(),
-                TextColumn::make('status')->sortable()
+                TextColumn::make('moderation_status')->sortable()
+                    ->label(app()->getLocale() === 'ar' ? 'حالة المراجعة' : 'Moderation status')
                     ->formatStateUsing(\App\Support\StatusLabels::for('moderation'))
                     ->color(\App\Support\StatusLabels::color('rental_application')),
                 TextColumn::make('moderated_at')->dateTime()->sortable(),
             ])
             ->filters([
-                SelectFilter::make('status')
+                SelectFilter::make('moderation_status')
+                    ->label(app()->getLocale() === 'ar' ? 'حالة المراجعة' : 'Moderation status')
                     ->options(fn () => app()->getLocale() === 'ar' ? [
                         'pending' => 'قيد المراجعة',
                         'approved' => 'موافق عليه',

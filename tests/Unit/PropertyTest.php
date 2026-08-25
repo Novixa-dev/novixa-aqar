@@ -13,6 +13,12 @@ class PropertyTest extends TestCase
 
     public function test_create_property()
     {
+        // Deliberately create with the legacy Title-Case status ('For
+        // Sale') that the original seeder wrote — Property's
+        // setStatusAttribute() normalizes this to the canonical
+        // snake_case value ('for_sale') that the live Staff edit form and
+        // every reader in the app actually use, so the persisted row is
+        // asserted against that normalized value, not the raw input.
         $propertyData = [
             'title' => 'Test Property',
             'description' => 'A test property description',
@@ -29,7 +35,7 @@ class PropertyTest extends TestCase
         $property = Property::create($propertyData);
 
         $this->assertInstanceOf(Property::class, $property);
-        $this->assertDatabaseHas('properties', $propertyData);
+        $this->assertDatabaseHas('properties', [...$propertyData, 'status' => 'for_sale']);
     }
 
     public function test_property_relationships()
