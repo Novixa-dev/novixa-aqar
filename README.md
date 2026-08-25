@@ -20,6 +20,8 @@
 
 > **Status:** this codebase is verified **READY FOR DEMO** — every core workflow below has been live-tested end-to-end (not just covered by green automated tests). It is **NOT YET CONFIGURED FOR PRODUCTION**; see [Project Status](#project-status) and [`docs/PRODUCTION-DEPLOYMENT.md`](docs/PRODUCTION-DEPLOYMENT.md) before deploying to a real domain.
 
+![Novixa Aqar homepage](public/images/screenshot.png)
+
 ---
 
 ## Features
