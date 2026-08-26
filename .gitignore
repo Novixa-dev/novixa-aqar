@@ -42,3 +42,6 @@ Thumbs.db
 
 # Test coverage artifacts
 coverage.xml
+
+# Stray backup/scratch files
+*.bak

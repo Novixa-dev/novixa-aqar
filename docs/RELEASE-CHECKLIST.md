@@ -2,7 +2,7 @@
 
 Two distinct gates. **LOCAL QA** proves the codebase itself is correct and complete — run it on every meaningful change, entirely on a dev machine, no production access needed. **PRODUCTION DEPLOYMENT QA** proves a specific deployment of that codebase is correctly configured — run it against the real target environment, after every deploy. Passing LOCAL QA is a prerequisite for attempting a deploy; it is not a substitute for PRODUCTION DEPLOYMENT QA, and vice versa.
 
-See `docs/PRODUCTION-DEPLOYMENT.md` for what every environment variable in the second section actually means. See `docs/AQAR-FINAL-RELEASE-QA.md` for the most recent full run of this checklist and its results.
+See `docs/PRODUCTION-DEPLOYMENT.md` for what every environment variable in the second section actually means. See `docs/REPOSITORY_RELEASE_AUDIT.md` for the most recent validation run (test suite/build/seed results); the original detailed walkthrough is archived at `docs/archive/2026-08-rescue-qa-history/AQAR-FINAL-RELEASE-QA.md`.
 
 ---
 

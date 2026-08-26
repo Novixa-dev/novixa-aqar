@@ -47,13 +47,14 @@ about what is actually implemented, tested, or working.
 
 ## Current source of truth
 
-- Live defect/status tracking: `AQAR_PRE_RELEASE_AUDIT_REPORT.md` (root)
+- Live defect/status tracking: `docs/AQAR_PROGRESS.md` (the original baseline audit that superseded this archive's documents has itself since moved to `docs/archive/2026-08-rescue-qa-history/AQAR_PRE_RELEASE_AUDIT_REPORT.md`, once it too became a historical record)
 - Active task list: `docs/AQAR_TASKS.md`
 - Progress log: `docs/AQAR_PROGRESS.md`
 - Decision log: `docs/AQAR_DECISIONS.md`
 - Operating rules: `docs/AQAR_RULES.md`, `CLAUDE.md` (root)
-- Feature reference docs that remain at `docs/` top level or repo root
-  (e.g. `docs/WISHLIST_API.md`, `CHATBOT_ARCHITECTURE.md`) are believed
-  accurate as *feature descriptions* but were not re-verified line-by-line
-  during this archival pass — treat implementation claims in them with the
-  same skepticism as any other pre-rescue document until spot-checked.
+- Feature reference docs now live under `docs/` top level (e.g.
+  `docs/WISHLIST_API.md`, `docs/CHATBOT_ARCHITECTURE.md`) — see
+  `docs/README.md` for the full index. They are believed accurate as
+  *feature descriptions* but were not re-verified line-by-line during this
+  archival pass — treat implementation claims in them with the same
+  skepticism as any other pre-rescue document until spot-checked.

@@ -5,7 +5,7 @@
 - **Product:** Novixa Aqar — a bilingual (Arabic-first) real-estate platform, owned by Novixa (novixa.dev).
 - **Purpose:** a reusable, productized real-estate platform for offices, brokers, landlords, buyers, sellers, tenants, and contractors — not a one-off prototype.
 - **Primary market:** Yemen (cities/governorates, YER-primary pricing, Arabic RTL as the default experience). Architecture should not preclude broader GCC expansion later, but the Yemeni demo experience is not to be diluted for that.
-- **Current objective:** take the app from its audited-but-broken state to a stable, complete, professional, deployable demo. Live status: `docs/AQAR_PROGRESS.md`. Live task list: `docs/AQAR_TASKS.md`. Baseline defect list: `AQAR_PRE_RELEASE_AUDIT_REPORT.md`.
+- **Current objective:** the app is now a stable, live-verified, READY-FOR-DEMO build; production deployment and further hardening are ongoing. Live status: `docs/AQAR_PROGRESS.md`. Live task list: `docs/AQAR_TASKS.md`. Original baseline defect list (historical): `docs/archive/2026-08-rescue-qa-history/AQAR_PRE_RELEASE_AUDIT_REPORT.md`.
 
 ## Architecture
 
@@ -26,7 +26,7 @@
 ## Testing rules
 
 - Use the PHP 8.4.1+ binary, not the default `php` on PATH (which resolves to 8.4.0 and fatally errors before Laravel boots): `/c/Users/ak01redwan/.config/herd/bin/php84/php.exe` (Git Bash) or `C:\Users\ak01redwan\.config\herd\bin\php84\php.exe` (PowerShell).
-- Run the full suite before and after any non-trivial change: `php artisan test --no-ansi`. Baseline: 558 passed / 0 failed / 32 skipped (see `AQAR_PRE_RELEASE_AUDIT_REPORT.md` Section 20). Investigate every regression; never delete or weaken a test to make it pass.
+- Run the full suite before and after any non-trivial change: `php artisan test --no-ansi`. Current verified baseline: **553 passed / 0 failed / 32 skipped** (the original audit's "558" figure was superseded once the suite itself gained/lost a handful of tests across later fix passes — see `docs/AQAR_PROGRESS.md` and `docs/REPOSITORY_RELEASE_AUDIT.md` for the most recent confirmed runs). Investigate every regression; never delete or weaken a test to make it pass.
 - Static/unit/feature tests are necessary but not sufficient — Filament's runtime route registration and DB-column bugs do not show up in a green test suite (this is exactly how the 6-panel P0-3 crash went undetected). Verify any panel/route change by actually loading it in a browser and logging in as the affected role (`docs/TEST_USERS.md`, all passwords `password`).
 - Browser QA tooling: Playwright is available (was installed into a scratch/temp location previously, not a project dependency) — reuse rather than reinvent. Always confirm you are testing the real working tree/branch, not an isolated worktree that may have branched from the wrong ref (see Git rules).
 

@@ -93,11 +93,11 @@ This is the deployment path documented and exercised in [`docs/PRODUCTION-DEPLOY
 
 ## Project Status
 
-This platform has gone through iterative demo-readiness audits and end-to-end, live-browser QA passes (see `docs/AQAR-DEMO-READINESS-AUDIT.md` and `docs/AQAR-FINAL-END-TO-END-ACCEPTANCE-REPORT.md`). Current status:
+This platform has gone through iterative demo-readiness audits and end-to-end, live-browser QA passes (see `docs/AQAR_PROGRESS.md` for the full history). Current status:
 
 - ✅ **READY FOR DEMO** — property management, moderation, lease agreements, public lead-generation forms, search/filter, cross-role authorization boundaries, and media uploads have all been reproduced and verified through real browser interaction, not just an automated test pass.
 - ⚠️ **NOT READY FOR PRODUCTION** as-is — deploying to a real domain requires working through the environment/security checklist in [`docs/PRODUCTION-DEPLOYMENT.md`](docs/PRODUCTION-DEPLOYMENT.md) and [`docs/RELEASE-CHECKLIST.md`](docs/RELEASE-CHECKLIST.md) first (production `.env` values, HTTPS/session/cookie configuration, queue/cache drivers, mail, and third-party API keys).
-- See [`docs/AQAR_TASKS.md`](docs/AQAR_TASKS.md) and [`docs/AQAR-REMAINING-WORK.md`](docs/AQAR-REMAINING-WORK.md) for the live task list and known open items.
+- See [`docs/AQAR_TASKS.md`](docs/AQAR_TASKS.md) for the live task list and known open items.
 
 ---
 
@@ -106,8 +106,8 @@ This platform has gone through iterative demo-readiness audits and end-to-end, l
 - [`docs/PRODUCTION-DEPLOYMENT.md`](docs/PRODUCTION-DEPLOYMENT.md) — production deployment and environment configuration guide
 - [`docs/RELEASE-CHECKLIST.md`](docs/RELEASE-CHECKLIST.md) — local vs. production QA checklist
 - [`docs/AQAR_PROGRESS.md`](docs/AQAR_PROGRESS.md) / [`docs/AQAR_TASKS.md`](docs/AQAR_TASKS.md) — live project status and task tracking
-- [`docs/COMMUNITY_EVENTS.md`](docs/COMMUNITY_EVENTS.md) — community events calendar feature, shown near properties on detail pages
 - [`docs/TEST_USERS.md`](docs/TEST_USERS.md) — seeded demo accounts for each role/panel
+- [`docs/README.md`](docs/README.md) — full documentation index (feature reference docs, architecture, historical/archived reports)
 
 ---
 

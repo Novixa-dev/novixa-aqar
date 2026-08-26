@@ -2,7 +2,7 @@
 
 Every environment-specific value the application actually reads, extracted from the real `.env.example`/`config/*.php`/code — not a generic Laravel checklist. Nothing below is speculative: each entry was verified against the code path that consumes it. No real secrets appear in this repo or this document; every "production value" is a description of what to put there, never an actual credential.
 
-Companion documents: `docs/RELEASE-CHECKLIST.md` (local QA vs. deploy-day QA), `docs/AQAR-DEMO-READINESS-AUDIT.md` (the audit that drove this pass), `docs/AQAR-FINAL-RELEASE-QA.md` (the verification record for this pass).
+Companion documents: `docs/RELEASE-CHECKLIST.md` (local QA vs. deploy-day QA); the historical audit that originally drove this document and its verification record are archived at `docs/archive/2026-08-rescue-qa-history/AQAR-DEMO-READINESS-AUDIT.md` and `docs/archive/2026-08-rescue-qa-history/AQAR-FINAL-RELEASE-QA.md`.
 
 ---
 

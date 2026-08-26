@@ -8,7 +8,8 @@
     <title>@yield('title', $title ?? (app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut Real Estate'))</title>
     <meta name="description" content="{{ $metaDescription ?? (app()->getLocale() === 'ar' ? 'دار حضرموت العقارية - بوابتك الأولى للتملك والاستثمار العقاري في اليمن (حضرموت، صنعاء، عدن). وساطة عقارية، إدارة أملاك، وتثمين عادل.' : 'Dar Hadhramaut Real Estate - Your premier gateway for real estate investment and ownership in Yemen. Property brokerage, management, and fair valuation.') }}">
     <link rel="canonical" href="{{ url()->current() }}">
-    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/logo.svg') }}" type="image/svg+xml">
+    <link rel="alternate icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <meta name="theme-color" content="#2563eb">
     <meta property="og:site_name" content="Dar Hadhramaut Real Estate | دار حضرموت العقارية">
     <meta property="og:type" content="website">
