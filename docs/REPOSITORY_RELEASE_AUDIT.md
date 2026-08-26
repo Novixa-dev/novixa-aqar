@@ -274,3 +274,80 @@ No changes were made in this pass beyond what's already documented in `docs/PROD
 - Add the two documented Actions secrets (or adjust the workflow steps that need them).
 - Set repository visibility, branch protection, description/topics.
 - Decide the long-term storage location for the `archive/*` branches (recommended: do not publish them to the new public remote).
+
+---
+
+## 14. Final Documentation & Publication Pass (2026-08-25/26)
+
+A second pass, after the above, covering final documentation refactor, one more repository-hygiene sweep, and actual GitHub publication.
+
+### 14.1 Documentation refactor
+
+**Moved** (6 loose root-level feature docs → `docs/`, no content change): `3D_PROPERTY_MODELS_QUICKSTART.md`, `CHATBOT_ARCHITECTURE.md`, `CHATBOT_UI_DESIGN.md`, `ENHANCED_SEARCH_FILTERS.md`, `VIRTUAL_TOURS_INTEGRATION.md`, `VIRTUAL_TOURS_QUICKSTART.md` — each is a legitimate companion to a reference doc that already lived in `docs/`; they didn't belong loose at the repo root.
+
+**Archived** (8 dated, point-in-time audit/QA reports → new `docs/archive/2026-08-rescue-qa-history/`, with its own index README explaining what's there and why, mirroring the existing `docs/archive/2026-02-pre-rescue/` pattern): `AQAR_PRE_RELEASE_AUDIT_REPORT.md` (root), `docs/AQAR_EXECUTION_PLAN.md`, `docs/AQAR-DEMO-READINESS-AUDIT.md`, `docs/AQAR-FINAL-RELEASE-QA.md`, `docs/AQAR-FINAL-END-TO-END-ACCEPTANCE-REPORT.md`, `docs/AQAR-BROWSER-TEST-MATRIX.md`, `docs/AQAR-REMAINING-WORK.md`, `docs/REAL_ESTATE_SCOPE_AUDIT.md`. None of these were deleted — each is a snapshot that was accurate when written and superseded by a later pass in the same series. One, `AQAR_EXECUTION_PLAN.md`, was actively misleading if left in place: it was frozen at "Current phase: Phase 1, in progress" from 2026-08-20, while the project had since completed 14 more phases. Another, `AQAR-REMAINING-WORK.md`, listed the README/`k8s`/`install.php` branding issue as its top "Production Blocker" — already resolved by an earlier commit in this same effort.
+
+**Created**: `docs/README.md` (a categorized documentation index — getting started, deployment/release, architecture, feature reference, historical/archive) and `docs/archive/2026-08-rescue-qa-history/README.md` (chronological index of what's archived there and why).
+
+**Fixed cross-references** in every currently-active document that pointed at something that moved: `CLAUDE.md` (2 references, plus its stale "558 passed" baseline corrected to the actual, repeatedly-verified 553), `README.md` (3 references), `docs/PRODUCTION-DEPLOYMENT.md`, `docs/RELEASE-CHECKLIST.md`, and the older archive's own `README.md`. A full-repository broken-relative-link scan (custom script, all tracked `.md` files) confirmed **zero broken links in the active, non-archived documentation** after these fixes; the only unresolved link targets found anywhere are historical `file:///C:/...` absolute-path citations inside the pre-existing `docs/archive/2026-02-pre-rescue/` documents, which were never portable links to begin with and predate this pass.
+
+**Not created**: a separate `DEVELOPMENT.md` or `ARCHITECTURE.md`. README's own Installation/local-setup section already covers the former; `docs/MODULAR_ARCHITECTURE.md` (verified against the real `app/Modules/` directory — it accurately describes existing, active code) already serves the latter. Per this task's own instruction not to invent placeholder documents, no `SECURITY.md`/`CONTRIBUTING.md` were added either — README's existing Contributing section was judged sufficient for the project's current size.
+
+### 14.2 Repository hygiene — a second, more consequential sweep
+
+Root-directory cleanliness check found and removed two pieces of pure clutter: `toArray())` (a stray file created by an accidental shell-redirect, containing nothing but a PHP parse-error message) and `phpunit.xml.bak` (a stale backup of an older PHPUnit config). Added `*.bak` to `.gitignore`.
+
+Added an SVG favicon link (`resources/views/layouts/app.blade.php`) using the existing Novixa Aqar logo mark. `public/favicon.ico` remains a known, pre-existing 0-byte file — no image-conversion tooling (ImageMagick, sharp, etc.) is available in this environment to regenerate it as a proper `.ico`; modern browsers now get a real icon via the SVG link regardless, so this is a minor cosmetic gap, not a functional one.
+
+**A more significant finding, caught by inspecting GitHub's own file-tree view immediately after the first `git push`:** three things had been sitting in the tracked repository, invisible to every terminal-based `git status`/`grep` pass because nothing was wrong with them, but glaringly out of place the moment they were viewed as a normal visitor would see them:
+
+1. **`scratch/` — 14 files.** Ad-hoc debugging scripts left over from earlier development sessions (`check_admin_roles.php`, `dump_admin_panel.php`, `test_session_middleware.php`, etc.) — bootstrapping the Laravel app directly to poke at models/permissions/sessions. No secrets in any of them (checked), but this is precisely the "looks like a development workspace, not a maintained product" failure mode this entire cleanup effort exists to avoid. Removed entirely; added `/scratch/` to `.gitignore`.
+2. **`.docker/supervisord.reverb.conf.1`.** Not a config file — the raw scraped HTML of a GitHub blob-view page for an *unrelated* open-source project's (`exaco/laravel-docktane`) `supervisord.reverb.conf`, saved under a filename that collided with (and got a `.1` suffix instead of overwriting) the real config. Confirmed unreferenced by anything. Removed.
+3. **`.docker/config/` — 8 files, including an accidental nested `config/config/` duplicate.** Confirmed via `grep` that neither `Dockerfile` nor `docker-compose.yml` reference any file under this subtree — dead weight from an earlier, since-abandoned containerization approach. The Dockerfile's real config lives directly under `.docker/` (`supervisord*.conf`, `php.ini`, `octane/`, `start-container`, etc.), which was untouched. Removed the whole unreferenced subtree.
+
+These three were pushed to GitHub in the first `main` push, caught within minutes via `gh api repos/.../contents/`, and corrected in a prompt follow-up commit (`3e47365`) pushed immediately after. No one is known to have pulled the intermediate state.
+
+A repeated repository-wide search for `liberu`/`curtis delicata`/`real-estate-laravel`/`agent.liberu` (§7 of this task's original scope, re-run) found the identical, already-classified-clean result set from the prior pass — nothing new. A largest-tracked-files scan (top 25 by size) found nothing else unexpected: build output, demo property photos, and `composer.lock`/`package-lock.json` account for all of it.
+
+`sweep.yaml` and `.github/ISSUE_TEMPLATE/sweep-template.yml` (config for the third-party "Sweep AI" GitHub bot) were left as-is — inert unless that GitHub App is actually installed on the new repository, not upstream-vendor identity, and removing third-party tool integrations wasn't asked for. `demo-property-history.sh` (a legitimate one-off demo script for the Property History feature) was also left at the root — it's genuinely useful, small in number, and moving single scripts around for pure tidiness isn't what this pass's brief asked for.
+
+### 14.3 Environment/deployment documentation review
+
+Verified `docs/RELEASE-CHECKLIST.md` and `docs/PRODUCTION-DEPLOYMENT.md` already correctly and repeatedly warn against running `migrate:fresh` against real data (`docs/PRODUCTION-DEPLOYMENT.md`: *"Never run `migrate:fresh` against a production database with real data — it drops every table"*) and already explicitly state seeders self-check `app()->environment('production')` and refuse to run there. No Kubernetes documentation was reintroduced anywhere; Docker Compose remains the sole documented deployment path, consistent with §4's removal of `k8s/`.
+
+### 14.4 Final validation
+
+| Check | Result |
+|---|---|
+| `php artisan test --no-ansi` | **PASS — 553 passed / 0 failed / 32 skipped** (exact baseline, re-confirmed on the fully-finalized tree, including the documentation-restructure commit) |
+| `npm run build` | **PASS** — clean, no new warnings, identical output hashes to the prior run (no source content changed) |
+| `php artisan migrate:fresh --seed --force` | **Not re-run in this second pass.** The local MySQL service (managed by the Herd desktop application) went down mid-session and could not be brought back up from this non-interactive session — the Herd GUI process does not persist when launched here, most likely because this environment's session cannot attach to an interactive Windows desktop. This is an environment limitation, not a codebase issue: no PHP application code, migration, or seeder changed between the last **successful** `migrate:fresh --seed --force` run (exit 0, all migrations/seeders `DONE`, demo data seeded — see §12 above) and this final state; only documentation, `.gitignore`, one Blade `<link>` tag, and the `scratch/`/`.docker/config/` removals changed, none of which touch the database layer. Treat §12's result as still valid for this final state; it was not re-executed here only because the local DB service was unavailable, and is flagged rather than silently assumed. |
+
+### 14.5 GitHub publication
+
+- **Remote configured:** `git remote add origin https://github.com/Novixa-dev/novixa-aqar.git`. Confirmed via `git ls-remote origin` that the repository was genuinely empty before the first push (no pre-existing README/commits to conflict with).
+- **Pushed:** `main` only, via `git push -u origin main`. Verified via `git ls-remote origin` immediately after that the remote carries exactly one ref (`refs/heads/main`) plus `HEAD` — no `archive/*` branches, no `feature/aqar-productization`, no tags were pushed.
+- **Tracking:** confirmed via `git branch -a -vv` — local `main` tracks `origin/main` correctly.
+- **Verified live on GitHub** (via `gh api`/`gh repo view`, since this environment has an authenticated `gh` CLI session): the README renders with correct content (screenshot, feature table, Project Status section, License section all present and correct); `LICENSE`, `.gitignore`, `docs/`, `.github/` all present in the root tree; `git tag`/branches on the remote confirmed as exactly `main` (GitHub's Dependabot automatically opened three `dependabot/github_actions/...` branches immediately upon seeing `.github/dependabot.yml` — this is expected GitHub-platform behavior triggered by the push, not something pushed by this session, and does not affect the "only `main` was pushed" guarantee).
+- **Post-push correction:** the `scratch/`/`.docker/config/`/`.docker/supervisord.reverb.conf.1` cleanup in §14.2 was discovered *after* the first push (by inspecting the live GitHub file tree) and pushed as an immediate follow-up commit (`3e47365`). Re-verified via `gh api` after that push: `scratch/` returns 404 (confirmed gone), `.docker/` tree confirmed clean, `origin/main` confirmed at `3e47365`.
+
+**Remote URL:** `https://github.com/Novixa-dev/novixa-aqar.git`
+**`origin/main` HEAD:** `3e47365` — "chore(release): remove dev-workspace clutter discovered post-push"
+
+### 14.6 Manual GitHub tasks remaining (genuinely require human/GitHub-UI access)
+
+- Repository visibility (public/private) — an account/org-level decision this session cannot make or verify.
+- Branch protection rules on `main`.
+- Repository description/topics in the GitHub UI (the repo already had a description — *"Smart Real Estate Management Platform — Novixa Aqar"* — set before this session started; not changed).
+- Adding the two documented Actions secrets (`DOCKERHUB_USERNAME`/`DOCKERHUB_TOKEN` for `.github/workflows/main.yml`, `CODECOV_TOKEN` for `.github/workflows/tests.yml`), or removing/adjusting those workflow steps if those integrations aren't wanted.
+- A decision on the three auto-opened Dependabot PRs/branches (merge, close, or leave for later triage) — routine GitHub Actions version-bump PRs, not a defect.
+- A decision on whether/where to keep the local-only `archive/*` branches long-term (recommendation unchanged from §9/§2.6: do not publish them to this public-facing remote).
+- Bringing the local MySQL/Herd service back up (interactive desktop action) if another `migrate:fresh --seed` re-verification is wanted before further work.
+
+### 14.7 Final Verdict
+
+```
+READY FOR GITHUB / STAGING
+```
+
+The repository has been successfully published to `https://github.com/Novixa-dev/novixa-aqar.git` (`main` branch only), passes its full automated validation (553/0/32 tests, clean build), and — as of this pass — no longer carries any dev-workspace artifacts, dead/duplicate infrastructure config, or broken active documentation links. It is not a "READY FOR PRODUCTION" verdict: that status was never claimed, and §14.6's manual items (visibility, branch protection, CI secrets) are still open, exactly as they were framed as out-of-scope-for-this-environment from the start.
