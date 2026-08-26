@@ -45,3 +45,5 @@ coverage.xml
 
 # Stray backup/scratch files
 *.bak
+*.orig
+/scratch/
