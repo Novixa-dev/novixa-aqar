@@ -65,6 +65,7 @@ class BuyerPanelProvider extends PanelProvider
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('buyer'),
                 PanelSwitcher::languageMenuItem(),
+                PanelSwitcher::publicSiteMenuItem(),
             ]);
 
         if (Features::hasTeamFeatures()) {
@@ -81,9 +82,7 @@ class BuyerPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/Buyer/Resources'), for: 'App\\Filament\\Buyer\\Resources')
             ->discoverPages(in: app_path('Filament/Buyer/Pages'), for: 'App\\Filament\\Buyer\\Pages')
-            ->pages([
-                Pages\EditProfile::class,
-            ])
+            ->profile(Pages\EditProfile::class, isSimple: false)
             ->discoverWidgets(in: app_path('Filament/Buyer/Widgets'), for: 'App\\Filament\\Buyer\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

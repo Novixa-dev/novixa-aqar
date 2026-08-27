@@ -46,6 +46,14 @@ class NewsList extends Component
             $query->featured();
         }
 
+        // The view only renders the "Featured Articles" section when there's
+        // no search/featuredOnly filter active — match that condition here,
+        // otherwise the same 3 featured articles shown up top get repeated
+        // again as the first results in this grid right below them.
+        if (! $this->search && ! $this->featuredOnly) {
+            $query->whereNotIn('id', $this->featuredNews->pluck('id'));
+        }
+
         return $query->paginate(12);
     }
 

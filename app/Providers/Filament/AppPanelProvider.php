@@ -53,7 +53,14 @@ class AppPanelProvider extends PanelProvider
             ->homeUrl('/app')
             ->registration()
             ->passwordReset()
-            ->emailVerification()
+            // Email verification is disabled app-wide: Fortify's own
+            // Features::emailVerification() is commented out in
+            // config/fortify.php, and App\Models\User doesn't implement
+            // Illuminate\Contracts\Auth\MustVerifyEmail. Enabling it only
+            // here (every other panel already leaves it off) made Filament's
+            // own EmailVerificationPrompt page fatally TypeError on every
+            // visit, since it requires the auth user to be a MustVerifyEmail
+            // instance.
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
                 'primary' => Color::Gray,
@@ -61,6 +68,7 @@ class AppPanelProvider extends PanelProvider
             ->userMenuItems([
                 ...PanelSwitcher::menuItems('app'),
                 PanelSwitcher::languageMenuItem(),
+                PanelSwitcher::publicSiteMenuItem(),
             ]);
 
         if (Features::hasTeamFeatures()) {
@@ -77,7 +85,12 @@ class AppPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
-            ->pages([])
+            // Filament's Auth\Pages\EditProfile base class must be registered
+            // via ->profile() specifically — ->pages([...]) alone (even with
+            // discoverPages()) doesn't wire up the "auth."-namespaced route
+            // Filament's own panel layout expects, which fatally errors
+            // every page with a RouteNotFoundException.
+            ->profile(Pages\EditProfile::class, isSimple: false)
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

@@ -3,7 +3,9 @@
 namespace App\Filament\Staff\Resources\Reviews;
 
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use App\Models\Property;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -48,9 +50,21 @@ class ReviewResource extends Resource
                 Select::make('user_id')
                     ->relationship('user', 'name')
                     ->required(),
-                Select::make('property_id')
-                    ->relationship('property', 'title')
+                // `reviews.property_id` was dropped in favour of the polymorphic
+                // reviewable_id/reviewable_type pair (migration
+                // 2024_08_20_000000_update_reviews_table_for_polymorphic.php) —
+                // Review no longer has a `property` relationship, only the
+                // morphTo `reviewable()`. This form is scoped to property
+                // reviews specifically (matches its previous property-only
+                // intent), so reviewable_type is fixed to Property and only
+                // reviewable_id needs picking.
+                Select::make('reviewable_id')
+                    ->label(__('filament.fields.property'))
+                    ->options(fn () => Property::query()->pluck('title', 'id'))
+                    ->searchable()
                     ->required(),
+                Hidden::make('reviewable_type')
+                    ->default(Property::class),
                 Textarea::make('comment')
                     ->label(__('filament.fields.comment'))
                     ->required(),
@@ -67,9 +81,9 @@ class ReviewResource extends Resource
                 TextColumn::make('user_id')
                 ->searchable()
                 ->sortable(),
-            TextColumn::make('property_id')
-                ->searchable()
-                ->sortable(),
+            TextColumn::make('reviewable.title')
+                ->label(__('filament.fields.property'))
+                ->searchable(),
             TextColumn::make('rating')
                 ->searchable()
                 ->sortable(),

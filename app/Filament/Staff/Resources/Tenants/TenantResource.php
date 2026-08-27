@@ -65,10 +65,17 @@ class TenantResource extends Resource
                     ->searchable(),
                 TextColumn::make('email')
                     ->searchable(),
+                // averageRating() is a computed aggregate (reviews()->avg('rating')),
+                // not a relationship — Eloquent's magic attribute access requires
+                // any non-column method it resolves to return a Relation, so
+                // TextColumn::make('averageRating') alone (which reads it via
+                // that same magic access) fatally errors for every row. ->state()
+                // calls the method directly instead. Also null-safe: a tenant
+                // with zero reviews gets avg()===null, not 0.
                 TextColumn::make('averageRating')
                     ->label(__('filament.fields.average_rating'))
-                    ->formatStateUsing(fn ($state) => number_format($state, 2))
-                    ->sortable(),
+                    ->state(fn ($record) => $record->averageRating())
+                    ->formatStateUsing(fn ($state) => $state === null ? '—' : number_format($state, 2)),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

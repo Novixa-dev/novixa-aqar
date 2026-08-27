@@ -2,37 +2,15 @@
 
 namespace App\Filament\Tenant\Pages;
 
-use Filament\Facades\Filament;
-use Filament\Panel;
-use Filament\Pages\Page;
-
-class EditProfile extends Page
+class EditProfile extends \Filament\Auth\Pages\EditProfile
 {
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected string $view = 'filament.tenant.pages.edit-profile';
+    protected static bool $shouldRegisterNavigation = false;
 
-    protected static ?string $slug = 'profile';
-
-    public static function getNavigationLabel(): string
-    {
-        return app()->getLocale() === 'ar' ? 'تعديل الملف الشخصي' : 'Edit Profile';
-    }
-
-    public function getTitle(): string
-    {
-        return app()->getLocale() === 'ar' ? 'تعديل الملف الشخصي' : 'Edit Profile';
-    }
-
-    public static function getRoutes(): array
-    {
-        return [
-            static::getSlug() => static::getRoutePath(Filament::getCurrentOrDefaultPanel(), Filament::getCurrentOrDefaultPanel(), Filament::getCurrentOrDefaultPanel(), Filament::getCurrentOrDefaultPanel()),
-        ];
-    }
-
-    public static function getRoutePath(Panel $panel): string
-    {
-        return '/tenant/profile';
-    }
+    // Pin to the original slug: the inherited default ('profile') collides
+    // with the unrelated, separately auto-discovered PagesTenantProfile
+    // page in this same panel, which silently wins the route and shadows
+    // this page entirely.
+    protected static ?string $slug = 'edit-profile';
 }

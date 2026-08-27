@@ -65,6 +65,7 @@ class ContractorPanelProvider extends PanelProvider
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('contractor'),
                 PanelSwitcher::languageMenuItem(),
+                PanelSwitcher::publicSiteMenuItem(),
             ]);
 
         if (Features::hasTeamFeatures()) {
@@ -81,9 +82,7 @@ class ContractorPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/Contractor/Resources'), for: 'App\\Filament\\Contractor\\Resources')
             ->discoverPages(in: app_path('Filament/Contractor/Pages'), for: 'App\\Filament\\Contractor\\Pages')
-            ->pages([
-                Pages\EditProfile::class,
-            ])
+            ->profile(Pages\EditProfile::class, isSimple: false)
             ->discoverWidgets(in: app_path('Filament/Contractor/Widgets'), for: 'App\\Filament\\Contractor\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

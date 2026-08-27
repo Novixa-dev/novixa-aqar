@@ -58,6 +58,7 @@ class AdminPanelProvider extends PanelProvider
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('admin'),
                 PanelSwitcher::languageMenuItem(),
+                PanelSwitcher::publicSiteMenuItem(),
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverResources(in: app_path('Filament/Staff/Resources'), for: 'App\\Filament\\Staff\\Resources')
@@ -65,9 +66,15 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->discoverWidgets(in: app_path('Filament/Staff/Widgets'), for: 'App\\Filament\\Staff\\Widgets')
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
-            ->pages([
-                Pages\EditProfile::class,
-            ])->widgets([
+            // Registering EditProfile via ->pages([...]) alone doesn't wire
+            // up the "auth."-namespaced route Filament's own panel layout
+            // expects (route('filament.{panel}.auth.profile')) — only
+            // ->profile() registers it through the code path that does,
+            // which is why every page fatally errored with a
+            // RouteNotFoundException once EditProfile extended Filament's
+            // own Auth\Pages\EditProfile.
+            ->profile(Pages\EditProfile::class, isSimple: false)
+            ->widgets([
                 \App\Filament\Staff\Widgets\StatsOverview::class,
                 \App\Filament\Staff\Widgets\PropertyStatsOverview::class,
                 \App\Filament\App\Widgets\LatestProperties::class,

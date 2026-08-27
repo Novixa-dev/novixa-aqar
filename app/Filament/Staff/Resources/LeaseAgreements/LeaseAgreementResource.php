@@ -43,7 +43,7 @@ class LeaseAgreementResource extends Resource
                     ->relationship('tenant', 'name')
                     ->required(),
                 Select::make('property_id')
-                    ->relationship('property', 'address')
+                    ->relationship('property', 'title')
                     ->required(),
                 DatePicker::make('start_date')
                     ->required(),

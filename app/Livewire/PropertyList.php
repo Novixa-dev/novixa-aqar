@@ -53,6 +53,7 @@ class PropertyList extends Component
     
     protected $queryString = [
         'search' => ['except' => ''],
+        'status' => ['except' => ''],
         'minPrice' => ['except' => 0],
         'maxPrice' => ['except' => 1000000000],
         'minBedrooms' => ['except' => 0],
@@ -61,7 +62,13 @@ class PropertyList extends Component
         'maxBathrooms' => ['except' => 10],
         'minArea' => ['except' => 0],
         'maxArea' => ['except' => 10000],
-        'propertyType' => ['except' => ''],
+        // Aliased: the homepage search form (resources/views/home.blade.php)
+        // and every other property-type <select> across the public site use
+        // the snake_case field name `property_type`, not the camelCase PHP
+        // property name — without this alias Livewire's query-string binding
+        // looks for `?propertyType=` instead, so the type filter picked on
+        // the homepage silently never reaches this component.
+        'propertyType' => ['as' => 'property_type', 'except' => ''],
         'selectedAmenities' => ['except' => []],
         'energyRating' => ['except' => ''],
         'minEnergyScore' => ['except' => 0],

@@ -2,69 +2,23 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
-use Illuminate\Support\Facades\Auth;
 
+/**
+ * Auto-discovered duplicate of App\Filament\App\Pages\EditProfile (which
+ * now correctly extends Filament\Auth\Pages\EditProfile and is registered
+ * via ->profile() in every panel). This page's own mount() called
+ * $this->form->fill() without ever implementing HasForms/InteractsWithForms,
+ * so it fatally errored on every visit. Rather than maintain two parallel
+ * "edit your own profile" implementations, this just forwards to the real
+ * one.
+ */
 class UpdateProfileInformationPage extends Page
 {
-    protected string $view = 'filament.pages.profile.update-profile-information';
-
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user';
-
-    protected static string | \UnitEnum | null $navigationGroup = 'Account';
-
-    protected static ?int $navigationSort = 0;
-
-    protected static ?string $title = 'Profile';
-
-    public $name;
-
-    public $email;
+    protected static bool $shouldRegisterNavigation = false;
 
     public function mount(): void
     {
-        $this->form->fill([
-            'name'  => Auth::user()->name,
-            'email' => Auth::user()->email,
-        ]);
-    }
-
-    protected function getFormSchema(): array
-    {
-        return [
-            TextInput::make('name')
-                ->label(__('filament.fields.name'))
-                ->required(),
-            TextInput::make('email')
-                ->label(__('filament.fields.email_address'))
-                ->required(),
-        ];
-    }
-
-    public function submit(): void
-    {
-        $this->form->getState();
-
-        $state = array_filter([
-            'name'  => $this->name,
-            'email' => $this->email,
-        ]);
-
-        $user = Auth::user();
-
-        $user->forceFill($state)->save();
-
-        session()->flash('status', __('Your profile has been updated.'));
-    }
-
-    public function getHeading(): string
-    {
-        return static::$title;
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return true; //config('filament-jetstream.show_update_profile_information_page');
+        redirect(EditProfile::getUrl());
     }
 }

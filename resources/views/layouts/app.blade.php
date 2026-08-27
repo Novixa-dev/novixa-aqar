@@ -36,17 +36,23 @@
     @livewireStyles
 
     <style>
-        /* Top Loading Bar */
+        /* Top Loading Bar — anchored to the reading-start edge (insets, not
+           left/right) so it grows in the correct visual direction for both
+           LTR (left→right) and RTL (right→left) instead of always sliding
+           out from the physical left edge regardless of page direction. */
         #top-progress-bar {
             position: fixed;
             top: 0;
-            left: 0;
+            inset-inline-start: 0;
             height: 3px;
             width: 0%;
-            background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa, #93c5fd);
+            background: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa, #93c5fd);
             z-index: 99999;
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
             box-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
+        }
+        html[dir="rtl"] #top-progress-bar {
+            background: linear-gradient(to left, #2563eb, #3b82f6, #60a5fa, #93c5fd);
         }
     </style>
     <!-- Theme Initialization Script (Prevent Flash) -->

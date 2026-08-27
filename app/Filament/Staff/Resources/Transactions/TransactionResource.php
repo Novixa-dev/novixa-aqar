@@ -49,8 +49,11 @@ class TransactionResource extends Resource
                 Select::make('property_id')
                     ->relationship('property', 'title')
                     ->required(),
+                // Transaction's belongsTo(User::class, 'buyer_id') method is
+                // actually named user(), not buyer() — 'buyer' here isn't a
+                // real relationship on the model.
                 Select::make('buyer_id')
-                    ->relationship('buyer', 'name')
+                    ->relationship('user', 'name')
                     ->required(),
                 Select::make('seller_id')
                     ->relationship('seller', 'name')
@@ -89,7 +92,8 @@ class TransactionResource extends Resource
                 TextColumn::make('property.title')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('buyer.name')
+                TextColumn::make('user.name')
+                    ->label(__('filament.fields.buyer'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('seller.name')

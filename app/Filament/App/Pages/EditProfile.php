@@ -2,63 +2,15 @@
 
 namespace App\Filament\App\Pages;
 
-use App\Models\User;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\TextInput;
-use Filament\Pages\Page;
-use Illuminate\Support\Facades\Auth;
-
-class EditProfile extends Page
+class EditProfile extends \Filament\Auth\Pages\EditProfile
 {
-    protected string $view = 'filament.pages.edit-profile';
-    
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
 
     protected static bool $shouldRegisterNavigation = false;
 
-    public User $user;
-
-    public function mount()
-    {
-        $this->user = Auth::user();
-        $this->form->fill([
-            'name'  => $this->user->name,
-            'email' => $this->user->email,
-        ]);
-    }
-
-    protected function getFormSchema(): array
-    {
-        return [
-            TextInput::make('name')
-                ->label(__('filament.fields.name'))
-                ->required()
-                ->maxLength(255),
-            TextInput::make('email')
-                ->label(__('filament.fields.email_address'))
-                ->required()
-                ->maxLength(255),
-        ];
-    }
-
-    public function submit()
-    {
-        $this->validate();
-
-        $state = $this->form->getState();
-
-        $this->user->forceFill([
-            'name'  => $state['name'],
-            'email' => $state['email'],
-        ])->save();
-
-        Filament::notify('success', 'Your profile has been updated.');
-    }
-
-    public function getBreadcrumbs(): array
-    {
-        return [
-            url()->current() => 'Edit Profile',
-        ];
-    }
+    // Pin to the original slug: the inherited default ('profile') collides
+    // with the unrelated, separately auto-discovered PagesTenantProfile
+    // page in this same panel, which silently wins the route and shadows
+    // this page entirely.
+    protected static ?string $slug = 'edit-profile';
 }

@@ -72,6 +72,7 @@ class StaffPanelProvider extends PanelProvider
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('staff'),
                 PanelSwitcher::languageMenuItem(),
+                PanelSwitcher::publicSiteMenuItem(),
             ]);
         if (Features::hasTeamFeatures()) {
             $panel
@@ -90,6 +91,14 @@ class StaffPanelProvider extends PanelProvider
             ->pages([
                 \App\Filament\Staff\Pages\Dashboard::class,
             ])
+            // The panel's own user menu links to this shared class (see
+            // Pages\EditProfile::getUrl() above, where Pages resolves to
+            // App\Filament\App\Pages). Filament's Auth\Pages\EditProfile
+            // base class must be registered via ->profile() specifically —
+            // ->pages([...]) alone doesn't wire up the "auth."-namespaced
+            // route Filament's own panel layout expects, which fatally
+            // errors every page with a RouteNotFoundException.
+            ->profile(Pages\EditProfile::class, isSimple: false)
             ->discoverWidgets(in: app_path('Filament/Staff/Widgets'), for: 'App\\Filament\\Staff\\Widgets')
             ->widgets([
                 PropertyStatsOverview::class,

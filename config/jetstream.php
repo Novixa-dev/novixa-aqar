@@ -16,7 +16,15 @@ return [
     |
     */
 
-    'stack' => 'inertia',
+    // This app uses Livewire throughout (Livewire v4 is a core dependency;
+    // every profile/team view under resources/views/profile and
+    // resources/views/teams uses @livewire(...) components) and never
+    // installed the Inertia PHP/JS adapter. Leaving this at Jetstream's
+    // installer default of 'inertia' registered Jetstream's Inertia route
+    // file instead of its Livewire one, so /user/profile (and the rest of
+    // the account/team management routes) fatally errored with
+    // "Class \"Inertia\\Inertia\" not found" the moment anyone opened them.
+    'stack' => 'livewire',
 
     /*
      |--------------------------------------------------------------------------

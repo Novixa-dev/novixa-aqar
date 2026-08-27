@@ -65,6 +65,7 @@ class TenantPanelProvider extends PanelProvider
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('tenant'),
                 PanelSwitcher::languageMenuItem(),
+                PanelSwitcher::publicSiteMenuItem(),
             ]);
 
         if (Features::hasTeamFeatures()) {
@@ -81,9 +82,7 @@ class TenantPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/Tenant/Resources'), for: 'App\\Filament\\Tenant\\Resources')
             ->discoverPages(in: app_path('Filament/Tenant/Pages'), for: 'App\\Filament\\Tenant\\Pages')
-            ->pages([
-                Pages\EditProfile::class,
-            ])
+            ->profile(Pages\EditProfile::class, isSimple: false)
             ->discoverWidgets(in: app_path('Filament/Tenant/Widgets'), for: 'App\\Filament\\Tenant\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

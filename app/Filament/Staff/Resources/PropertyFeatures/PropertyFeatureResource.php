@@ -40,7 +40,7 @@ class PropertyFeatureResource extends Resource
         return $schema
             ->components([
                 Select::make('property_id')
-                    ->relationship('property', 'name')
+                    ->relationship('property', 'title')
                     ->required(),
                 TextInput::make('feature_name')
                     ->required()

@@ -59,15 +59,37 @@ class PanelSwitcher
      * the session/cookie locale and redirects back to the current page).
      * Every panel previously had PanelSwitcher's cross-*panel* navigator
      * but no way to actually change language without leaving the panel.
+     *
+     * Label and URL are both deferred to closures (evaluated fresh on every
+     * render via MenuItem::getLabel()/getUrl()) rather than computed once
+     * here. This method runs from each PanelProvider's panel() registration,
+     * which — under Octane (this app's actual server, see docker-compose.yml)
+     * — executes once per worker, not once per request. Reading
+     * app()->getLocale() eagerly froze the "next" target language at
+     * whatever locale was active when the worker booted: the item would
+     * always point at the same target locale for the rest of that worker's
+     * life, so switching worked exactly once and then offered no way back.
      */
     public static function languageMenuItem(): MenuItem
     {
-        $target = app()->getLocale() === 'ar' ? 'en' : 'ar';
-        $label = $target === 'ar' ? 'العربية' : 'English';
-
         return MenuItem::make()
-            ->label($label)
+            ->label(fn () => app()->getLocale() === 'ar' ? 'English' : 'العربية')
             ->icon('heroicon-o-language')
-            ->url(fn () => route('lang.switch', $target));
+            ->url(fn () => route('lang.switch', app()->getLocale() === 'ar' ? 'en' : 'ar'));
+    }
+
+    /**
+     * A way back to the public marketing site. Every panel's user menu could
+     * switch *between* panels (menuItems() above) but had no link back to
+     * the public homepage at all — once inside any dashboard, there was no
+     * reliable way to return to the public-facing site short of manually
+     * editing the URL.
+     */
+    public static function publicSiteMenuItem(): MenuItem
+    {
+        return MenuItem::make()
+            ->label(fn () => app()->getLocale() === 'ar' ? 'زيارة الموقع' : 'Visit Website')
+            ->icon('heroicon-o-globe-alt')
+            ->url(url('/'));
     }
 }

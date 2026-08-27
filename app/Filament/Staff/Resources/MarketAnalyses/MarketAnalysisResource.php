@@ -45,10 +45,6 @@ class MarketAnalysisResource extends Resource
                 DatePicker::make('end_date')
                     ->required()
                     ->after('start_date'),
-                Select::make('properties')
-                    ->multiple()
-                    ->relationship('properties', 'title')
-                    ->preload(),
             ]);
     }
 

@@ -54,6 +54,7 @@ class AgentPanelProvider extends PanelProvider
                         : url($panel->getPath())),
                 ...PanelSwitcher::menuItems('agent'),
                 PanelSwitcher::languageMenuItem(),
+                PanelSwitcher::publicSiteMenuItem(),
             ]);
 
         if (Features::hasTeamFeatures()) {
@@ -67,8 +68,8 @@ class AgentPanelProvider extends PanelProvider
         $panel
             ->discoverResources(in: app_path('Filament/Agent/Resources'), for: 'App\\Filament\\Agent\\Resources')
             ->discoverPages(in: app_path('Filament/Agent/Pages'), for: 'App\\Filament\\Agent\\Pages')
+            ->profile(Pages\EditProfile::class, isSimple: false)
             ->pages([
-                Pages\EditProfile::class,
                 Profile::class,
                 \App\Filament\Agent\Pages\Dashboard::class,
             ])
