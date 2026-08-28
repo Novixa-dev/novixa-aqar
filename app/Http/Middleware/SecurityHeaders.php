@@ -19,7 +19,15 @@ class SecurityHeaders
         $response->headers->set('Permissions-Policy', 'camera=(), geolocation=(), microphone=(), payment=(), usb=()');
         $response->headers->set(
             'Content-Security-Policy',
-            "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://matterport.com https://*.matterport.com https://kuula.co https://*.kuula.co https://3dvista.com https://*.3dvista.com https://3dv.st https://*.3dv.st https://seekbeak.com https://*.seekbeak.com"
+            // blob: is required for Livewire/Filament FileUpload's local preview
+            // thumbnail (a browser-generated object URL, never an external
+            // resource) — without it, every file upload's preview image is
+            // silently blocked by CSP even though the upload itself succeeds.
+            // worker-src is set explicitly (rather than left to fall back to
+            // script-src, per the CSP spec) so a blob: Web Worker — used
+            // during file upload — is allowed without broadening script-src
+            // itself, which governs actual script/eval execution.
+            "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://matterport.com https://*.matterport.com https://kuula.co https://*.kuula.co https://3dvista.com https://*.3dvista.com https://3dv.st https://*.3dv.st https://seekbeak.com https://*.seekbeak.com"
         );
 
         if ($request->secure()) {
