@@ -201,3 +201,25 @@ Live browser QA driven primarily in Arabic (RTL) across mobile/tablet/desktop, w
 **Final validation:** `php artisan test --no-ansi` run twice this pass (after the Filament fixes, and after the property/news fixes) — both **553 passed / 0 failed / 32 skipped**, exact baseline match.
 
 **Verdict: DEMO READY** (restated, evidence specific to this pass). Full narrative, including two items explicitly investigated and cleared (P17-5, and the architectural note that Property/News body content is single-language by design, not a translation bug), is in the audit report addendum.
+
+## Phase 18 (2026-08-28) — Final demo release gate
+
+User-requested final verification that the exact code about to be published matches what was audited as DEMO READY. Full detail: `docs/FINAL_PRE_DEPLOYMENT_AUDIT_REPORT.md` Addendum B.
+
+| ID | Problem | Fix | Status | Commit(s) |
+|---|---|---|---|---|
+| P18-1 | **Self-registration was completely broken** — `/app/register` succeeded (account created, logged in) but the next request hard-403'd. `User::canAccessPanelById()` required a role from `filament-shield.panels.app` (admin/super_admin/staff only), but `AppPanelProvider` is the one panel with public `->registration()` — every self-registered user has zero roles | Granted `app` panel access to authenticated users with no role at all; other 8 panels' role gates untouched | **FIXED** | `45b7fc5` |
+| P18-2 | An unconditional first version of P18-1's fix broke `PanelSwitcherTest::test_buyer_sees_no_switch_links` (a buyer started seeing a switch-to-Account link) — caught by running the full suite, not assumed fixed from the browser check alone | Narrowed the fix to roleless users only | **FIXED** | `45b7fc5` (same commit, documents both the fix and the self-caught regression) |
+| P18-3 | File upload previews and an upload Web Worker silently blocked by CSP (`img-src` had no `blob:`; `worker-src` unset, fell back to stricter `script-src`) — upload itself always succeeded, only the client-side preview/worker were blocked | Added `blob:` to `img-src`, added dedicated `worker-src 'self' blob:` | **FIXED** | `0b3d87e` |
+| P18-4 | 5 of 9 panels' Dashboard pages (Contractor, Landlord, Seller, Buyer, App) showed raw English "Dashboard" — they extend generic `Page` instead of Filament's `Dashboard` base, losing its free built-in localization | Added the same `getTitle()`/`getNavigationLabel()` override Staff/Agent already had | **FIXED** | `f0519d2` |
+| P18-5 | Tenant persona's entire dashboard widget area (5 stats, table heading, empty state, row action) was hardcoded English | Translated to match the rest of the codebase | **FIXED** | `21a2fa9` |
+| P18-6 | One flaky test (`TransactionTest::test_transaction_scope`) failed in 1 of 4 full-suite runs against identical code | Investigated directly (isolated 3×, forced the suspected leak order explicitly) — could not reproduce; concluded pre-existing rare flake, not caused by this session | **NOT REPRODUCIBLE / NOT A REGRESSION** | — |
+| P18-7 | Password-reset gives zero visible feedback when mail sending throws (mail delivery itself fails locally only because `mailpit` isn't running outside Docker — already documented) | Not fixed — lower risk to leave Filament's password-reset internals alone than patch blind; flagged for a follow-up once a real mail provider makes this verifiable end-to-end | **DOCUMENTED, DEFERRED** | — |
+
+**Fresh migrate:fresh --seed --force**: exit 0, all 16 seeders `DONE`; confirmed Phase 17's fixes (transaction seeding, news translation) survive a from-scratch reseed, and the "test" PropertyCategory does not reappear (no seeder path creates it).
+
+**Full sweep**: all 9 panels × their persona — zero errors, zero 5xx. Guest flow (language switch, search/filter — DOM-confirmed narrowing, property/news detail, two deliberate 404s) clean.
+
+**Final test suite state**: run 4× this pass as fixes landed — PASS → PASS → FAIL (P18-6, investigated) → FAIL (P18-2, fixed) → **PASS (553/0/32, final)**.
+
+**Verdict: DEMO READY.** P18-1 was the most severe finding across both this phase and Phase 17 — a real visitor could never have completed self-registration before this fix.

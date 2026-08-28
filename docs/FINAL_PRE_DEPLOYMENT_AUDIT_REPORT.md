@@ -286,3 +286,47 @@ DEMO READY
 ```
 
 No new P0/P1 blockers were found or left unresolved. All defects found this pass were confirmed, root-caused, fixed, and re-verified live; the automated suite remains clean at the established baseline. The two items noted as explicitly out of scope — a 4th (1920×1080) viewport capture, and per-locale content columns for Property/News — are genuine gaps worth tracking but do not change the readiness verdict: nothing found in either area constitutes a broken primary workflow, a fatal error, an authorization vulnerability, or fake content presented as real (the one instance of that — the "test" category — was found and fixed, §A.4 #14).
+
+---
+
+# Addendum B — 2026-08-28: Final Demo Release Gate
+
+**Purpose:** re-verify, against the exact commit about to be published, that the state audited above is actually correct — not re-derive the audit. Ran a fresh `migrate:fresh --seed`, a full 9-panel/8-persona browser sweep, real interactive flows (registration, password reset, search/filter, file upload), and the full automated suite three times across this pass as fixes landed.
+
+## B.1 Fresh migrate + seed validation
+
+`php artisan migrate:fresh --seed --force` against the real MySQL dev database: **exit 0**, all migrations and all 16 seeders `DONE`. Confirmed the two fixes from Addendum A survive a from-scratch reseed (not just the live `updateOrCreate` re-run used at the time): `Transaction::count()` = 2, zero English-titled news articles, and — importantly — the "test" `PropertyCategory` did **not** reappear (`sales, lettings, hmo` only), confirming it really was leftover dev-database cruft with no seeder path that could reintroduce it, not a latent seeding bug.
+
+## B.2 New defects found this pass (all fixed and re-verified)
+
+1. **Self-registration was completely broken** — `/app/register` succeeded (account created, user logged in) but the very next request hard-403'd with "غير مصرح بالوصول". Root cause: `User::canAccessPanelById()` required a role from `config('filament-shield.panels.app')` (`admin`/`super_admin`/`staff` only), while `AppPanelProvider` is the one panel with `->registration()` enabled for the general public — every self-registered user has zero roles and could never pass that gate. This is the most severe finding of the whole review: a real visitor could never successfully sign up. Fixed by granting `app` panel access to authenticated users with no role at all, leaving the other 8 panels' role gates untouched.
+   - **Self-caught regression:** the first version of the fix granted `app` access to *any* authenticated user, which broke `PanelSwitcherTest::test_buyer_sees_no_switch_links` (a buyer started seeing a "switch to Account" link) — caught by running the full suite before considering the fix done, not by the browser check alone. Narrowed to roleless users only; all 4 `PanelSwitcherTest` cases and the original registration flow both verified passing together afterward.
+2. **File upload previews and an upload Web Worker were silently blocked by CSP** — the upload itself always succeeded (confirmed via network trace: real chunked upload, 200s, "تم الرفع" complete state), but `img-src` had no `blob:` (killing the local preview thumbnail) and `worker-src` wasn't set so it fell back to `script-src`'s stricter list (killing a Web Worker used during upload) — both caught live via console/CSP error inspection, not assumed. Added `blob:` to `img-src` and a dedicated `worker-src 'self' blob:` (kept separate from `script-src`, which still governs actual script/eval execution — blob: object URLs here are always browser-generated from the user's own selected file, never external content).
+3. **5 of 9 panels' Dashboard pages showed a raw English "Dashboard" title** on Arabic-locale pages (Contractor, Landlord, Seller, Buyer, App) — Filament's base `Dashboard` class ships a localized title for free, but these pages extend the generic `Page` class instead (needed for custom `mount()`/widget logic) and lose that. Added the same override Staff/Agent already had.
+4. **The Tenant persona's entire dashboard widget area was hardcoded English** — 5 stat labels, a table heading, empty-state text, and a row-action label, all untranslated, unlike every other panel. Fixed to match the locale-ternary pattern used everywhere else in this codebase.
+
+## B.3 Investigated, not fixed (explicitly not a regression from this session)
+
+- **One flaky test** (`Tests\Unit\TransactionTest::test_transaction_scope`, "actual size 3 matches expected size 1") failed in 1 of 4 full-suite runs this session, against otherwise-identical code both times. Investigated directly: ran the same test file alone 3× (clean every time), and forced the exact suspected leak order (`DemoDataSeederTest` — which seeds `DemoWorkflowSeeder`, the seeder this session added 2 Transaction rows to — immediately before `TransactionTest`) explicitly (clean). `RefreshDatabase` correctly isolated the scenario every time it was directly tested. Conclusion: very likely a pre-existing, rare, test-order/parallelism-related flake, not caused by any change in this session — flagged honestly rather than either hidden or accepted as an unexplained failure.
+- **Password reset's mail delivery doesn't work in this local dev environment** (`local.ERROR: Connection could not be established with host "mailpit:1025": ... No such host is known`) — expected: `mailpit` is a Docker Compose service hostname, not running/resolvable in this native (non-Docker) local setup, already documented in `docs/DEPLOYMENT-ENVIRONMENT-INVENTORY.md` §13 as something a real mail provider must replace before any real deployment. The form/submission mechanics themselves work correctly (field renders, accepts input, submits, Livewire request completes). **New observation, not yet fixed:** when the mail send throws, the user gets zero visible feedback — no error toast, no success message, the form just silently sits there. Worth a follow-up once a real mail provider is configured, so this is verifiable end-to-end; not fixed this pass (Filament's own password-reset page internals, lower risk to leave alone than to patch blind).
+- **`docs/PRODUCTION-DEPLOYMENT.md` vs `docs/DEPLOYMENT-ENVIRONMENT-INVENTORY.md`:** compared both against the current codebase. The inventory document (later, more thorough) already correctly documents everything this pass independently found reason to check — the WalkScore mock-data fallback, all 12 inactive third-party integrations, the `FRONTEND_URL`/CORS gap, the ephemeral-storage risk, the Horizon dashboard deny-all gate — verified accurate, nothing stale. `PRODUCTION-DEPLOYMENT.md` remains a correct but narrower generic checklist; not edited this pass since no inaccuracy was found in it, only a completeness gap already covered by the other document.
+
+## B.4 Full panel + persona sweep
+
+All 9 panels (`admin`, `staff`, `agent`, `buyer`, `seller`, `landlord`, `tenant`, `contractor`, `app`) logged into with their seeded persona: **zero page errors, zero 5xx responses, all reach a working dashboard.** Guest flow (homepage → language switch via the real UI control → properties list → type filter, DOM-confirmed narrowing results → property detail → news list → news detail) and two deliberate 404s (nonexistent property ID, nonexistent route) all clean.
+
+## B.5 Test suite (this pass)
+
+Run 4 times total as fixes landed: **PASS** (553/0/32) → **PASS** (553/0/32) → **FAIL** (552/1/32, the flaky `TransactionTest`, investigated in B.3) → **FAIL** (552/1/32, `PanelSwitcherTest` regression, fixed in B.2 #1) → **PASS** (553/0/32), final and current. No test was weakened, skipped, or deleted to reach a passing result at any point.
+
+## B.6 Git state at the end of this pass
+
+15 commits ahead of `origin/main` (0 behind — clean fast-forward), working tree clean, HEAD `0b3d87e`. Nothing pushed.
+
+## B.7 Restated verdict
+
+```
+DEMO READY
+```
+
+One genuine, severe pre-existing bug (self-registration's hard 403) was found and fixed this pass — worth flagging that it existed at all despite Addendum A's review, since registration wasn't specifically exercised as an interactive flow until this gate. Full detail of what was and wasn't checked, and why, is in the chat response for this session.

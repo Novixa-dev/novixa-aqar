@@ -264,3 +264,21 @@ Responsive review (375/768/1440px, both RTL and LTR spot-checked) across every p
 **Scope note, flagged rather than silently dropped:** the plan called for a fourth (1920×1080) viewport; only 375/768/1440 were actually captured.
 
 **Verdict: DEMO READY** (restated on this pass's own evidence). No push to `origin` yet — awaiting the user's separate go-ahead, per this project's established convention.
+
+---
+
+## 2026-08-28 — Phase 18: final demo release gate
+
+The user asked for one last, explicit gate before pushing: verify the exact code about to be published is the same code just declared DEMO READY. Full detail: `docs/FINAL_PRE_DEPLOYMENT_AUDIT_REPORT.md` Addendum B; item list: `docs/AQAR_TASKS.md` Phase 18.
+
+This gate is what registration and password reset had not been — the previous pass verified translations, layout, and widget data extensively but never actually walked a brand-new visitor through signing up. Doing so this time found the single most severe bug of the entire multi-day effort: **self-registration was completely broken.** A visitor filling out `/app/register` got a real account, got logged in — and was then immediately served a hard 403 on the very panel they'd just joined, because the authorization gate for that panel required a role no self-registered user could ever have. Every other check this project has run (the 219-route sweep, the 553-test suite, five separate browser-QA passes) had exercised *already-authenticated seeded personas*, never a fresh signup — which is exactly why this had gone unnoticed until a gate specifically asked "can a new person actually join."
+
+Fixed narrowly: roleless users get into the general "App" panel; anyone who already holds one of the 8 persona roles keeps the exact restricted behavior a pre-existing test already encoded. That test — `PanelSwitcherTest::test_buyer_sees_no_switch_links` — is what caught the first version of the fix being too broad, within the same session, before it was ever called done. This is the process working as intended: the full suite was run again specifically *because* a fix had just landed, not skipped as "probably fine."
+
+Also found and fixed: a CSP gap silently blocking file-upload preview thumbnails and a upload-related Web Worker (the upload itself always worked; only the client-side feedback was blocked — caught via live console inspection, not assumed from the network tab alone), and five panels' Dashboard pages plus the entire Tenant widget area still showing raw English, missed by the previous pass's screenshot-driven review because titles and some widget labels don't show up distinctly in a full-page capture the way layout problems do.
+
+One test (`TransactionTest::test_transaction_scope`) failed once across four full-suite runs this pass, against identical code both times. Investigated rather than dismissed: isolated re-runs and a forced reproduction of the specific suspected leak path (seeding `DemoWorkflowSeeder` immediately before this test, since that seeder gained two new rows this week) both came back clean. Logged as a likely pre-existing flake, explicitly not claimed as fixed or explained away.
+
+Ran a genuinely fresh `migrate:fresh --seed --force` this pass (not just a targeted re-seed) — confirmed exit 0, and confirmed the previous pass's fixes (transaction seeding, the translated news article) hold from a cold start, and that the "test" property category — cleaned up live last time — does not come back, since no seeder path ever produced it.
+
+**Verdict: DEMO READY.** Nothing pushed. 15 commits ahead of `origin/main`, 0 behind, clean fast-forward available.
