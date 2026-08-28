@@ -39,12 +39,18 @@ class RecentMaintenanceRequests extends TableWidget
     {
         return [
             Action::make('view')
+                ->label(app()->getLocale() === 'ar' ? 'عرض' : 'View')
                 ->url(fn (MaintenanceRequest $record): string => MaintenanceRequestResource::getUrl('edit', ['record' => $record])),
         ];
     }
 
     protected function getTableHeading(): string
     {
-        return 'Recent Maintenance Requests';
+        return app()->getLocale() === 'ar' ? 'أحدث طلبات الصيانة' : 'Recent Maintenance Requests';
+    }
+
+    protected function getTableEmptyStateHeading(): ?string
+    {
+        return app()->getLocale() === 'ar' ? 'لا توجد طلبات صيانة' : 'No maintenance requests';
     }
 }
