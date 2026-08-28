@@ -781,7 +781,11 @@ class Property extends Model implements HasMedia
         $types = [
             'Apartment' => app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment',
             'Villa' => app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Luxury Villa',
-            'House' => app()->getLocale() === 'ar' ? 'منزل مستقل' : 'Independent House',
+            // The only property_type value actually stored lowercase
+            // ('house', not 'House') — every other key here exactly matches
+            // its real stored casing, so this one silently never matched
+            // and fell through to the raw value below.
+            'house' => app()->getLocale() === 'ar' ? 'منزل مستقل' : 'Independent House',
             'Land' => app()->getLocale() === 'ar' ? 'أرض سكنية / تجارية' : 'Land / Plot',
             'Commercial' => app()->getLocale() === 'ar' ? 'عقار تجاري / مكتب' : 'Commercial / Office',
             'Building' => app()->getLocale() === 'ar' ? 'عمارة استثمارية' : 'Investment Building',

@@ -272,10 +272,24 @@
 
                             <hr class="my-6 border-gray-200 dark:border-gray-800" />
                             <div>
+                                @php
+                                    // property_categories.name is a single, English, raw
+                                    // column ('sales'/'lettings'/'hmo') — the fallback
+                                    // branch below was already bilingual for a null
+                                    // category, but a real category (the common case)
+                                    // bypassed it entirely and printed the raw English
+                                    // value even on the Arabic-locale page.
+                                    $categoryLabels = app()->getLocale() === 'ar'
+                                        ? ['sales' => 'مبيعات', 'lettings' => 'إيجارات', 'hmo' => 'سكن جماعي']
+                                        : ['sales' => 'Sales', 'lettings' => 'Rentals', 'hmo' => 'Shared Housing (HMO)'];
+                                    $categoryName = $property->category
+                                        ? ($categoryLabels[$property->category->name] ?? $property->category->name)
+                                        : ($property->status === 'for_rent' ? $categoryLabels['lettings'] : $categoryLabels['sales']);
+                                @endphp
                                 <div class="flex items-center gap-2 mb-4">
                                     <span class="text-xs font-bold text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'التصنيف:' : 'Category:' }}</span>
                                     <span class="bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 text-xs font-bold px-3 py-1 rounded-lg">
-                                        {{ $property->category->name ?? ($property->status === 'for_rent' ? (app()->getLocale() === 'ar' ? 'إيجارات' : 'Rentals') : (app()->getLocale() === 'ar' ? 'مبيعات' : 'Sales')) }}
+                                        {{ $categoryName }}
                                     </span>
                                 </div>
                                 <div class="my-4">

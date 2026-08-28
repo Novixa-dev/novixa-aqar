@@ -130,7 +130,7 @@ class PropertyHistoryService
     /**
      * Track general property update
      */
-    public function trackUpdate(Property $property, array $changes, string $description = null): PropertyHistory
+    public function trackUpdate(Property $property, array $changes, ?string $description = null): PropertyHistory
     {
         if (!$description) {
             $fields = array_keys($changes);
