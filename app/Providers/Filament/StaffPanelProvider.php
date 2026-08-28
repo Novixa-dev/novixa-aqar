@@ -11,7 +11,6 @@ use App\Filament\App\Widgets\RecentBookings;
 use App\Filament\Staff\Widgets\AgentPerformanceOverview;
 use App\Filament\Staff\Widgets\PropertyStatsOverview;
 use App\Filament\Staff\Widgets\RecentTransactions;
-use App\Filament\Staff\Widgets\StatsOverview;
 // use App\Filament\Staff\Pages\Dashboard;
 use App\Http\Middleware\TeamsPermission;
 use App\Http\Middleware\AssignDefaultTeam;

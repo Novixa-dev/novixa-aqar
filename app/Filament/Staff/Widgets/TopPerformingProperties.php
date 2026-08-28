@@ -9,7 +9,10 @@ use Carbon\Carbon;
 
 class TopPerformingProperties extends ChartWidget
 {
-    protected ?string $heading = 'Top Performing Properties';
+    public function getHeading(): string
+    {
+        return app()->getLocale() === 'ar' ? 'أفضل العقارات أداءً' : 'Top Performing Properties';
+    }
 
     protected function getData(): array
     {
@@ -26,7 +29,7 @@ class TopPerformingProperties extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Revenue',
+                    'label' => app()->getLocale() === 'ar' ? 'الإيرادات' : 'Revenue',
                     'data' => $topProperties->pluck('transactions_sum_amount')->toArray(),
                 ],
             ],

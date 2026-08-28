@@ -3,9 +3,6 @@
 namespace App\Filament\Staff\Pages;
 
 use Filament\Pages\Page;
-use App\Models\Property;
-use App\Models\Booking;
-use App\Models\Transaction;
 use App\Filament\Staff\Widgets\PropertyStatsOverview;
 use App\Filament\Staff\Widgets\RecentTransactions;
 use App\Filament\Staff\Widgets\TopPerformingProperties;
@@ -28,33 +25,10 @@ class Dashboard extends Page
         return app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Dashboard';
     }
 
-    public $startDate;
-    public $endDate;
-    public $totalProperties;
-    public $activeListings;
-    public $totalBookings;
-    public $totalRevenue;
-
-    public function mount(): void
-    {
-        $this->startDate = now()->startOfMonth();
-        $this->endDate = now()->endOfMonth();
-
-        $this->loadDashboardData();
-    }
-
-    public function loadDashboardData(): void
-    {
-        $this->totalProperties = Property::count();
-        $this->activeListings = Property::active()->count();
-        $this->totalBookings = Booking::whereBetween('date', [$this->startDate, $this->endDate])->count();
-        $this->totalRevenue = Transaction::whereBetween('date', [$this->startDate, $this->endDate])->sum('amount');
-    }
-
-    public function refreshDashboard(): void
-    {
-        $this->loadDashboardData();
-    }
+    // Headline stats (Total Properties / Active Listings / Total Bookings /
+    // Total Revenue) are owned entirely by the PropertyStatsOverview header
+    // widget below — see the note in filament/staff/dashboard.blade.php for
+    // why this page no longer also loads and renders them itself.
 
     protected function getHeaderWidgets(): array
     {

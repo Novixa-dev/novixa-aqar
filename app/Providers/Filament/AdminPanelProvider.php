@@ -75,7 +75,6 @@ class AdminPanelProvider extends PanelProvider
             // own Auth\Pages\EditProfile.
             ->profile(Pages\EditProfile::class, isSimple: false)
             ->widgets([
-                \App\Filament\Staff\Widgets\StatsOverview::class,
                 \App\Filament\Staff\Widgets\PropertyStatsOverview::class,
                 \App\Filament\App\Widgets\LatestProperties::class,
                 \App\Filament\App\Widgets\RecentBookings::class,
