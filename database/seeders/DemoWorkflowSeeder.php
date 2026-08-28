@@ -11,6 +11,7 @@ use App\Models\Payment;
 use App\Models\Property;
 use App\Models\RentalApplication;
 use App\Models\Tenant;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Vendor;
 use Illuminate\Database\Seeder;
@@ -77,6 +78,33 @@ class DemoWorkflowSeeder extends Seeder
             ->orderBy('id')
             ->take(1)
             ->update(['status' => Property::STATUS_RENTED]);
+
+        // --- Transactions, for the just-sold properties above. Without
+        // these, `transactions` was permanently empty against fresh seed
+        // data — every revenue chart/stat/"Recent Transactions" widget on
+        // the Staff dashboard rendered a blank chart or "0.00", which reads
+        // as a broken/lifeless demo rather than an active agency. ---
+        if ($buyerUser && $seller) {
+            Property::where('status', Property::STATUS_SOLD)
+                ->orderBy('id')
+                ->take(2)
+                ->get()
+                ->each(function (Property $prop) use ($buyerUser, $seller, $teamId) {
+                    Transaction::updateOrCreate(
+                        ['property_id' => $prop->id, 'transaction_type' => 'sale'],
+                        [
+                            'buyer_id' => $buyerUser->id,
+                            'seller_id' => $seller->id,
+                            'date' => $prop->sold_date ?? now()->subDays(10),
+                            'amount' => $prop->price,
+                            'status' => Transaction::STATUS_COMPLETED,
+                            'completed_at' => $prop->sold_date ?? now()->subDays(10),
+                            'commission_amount' => round($prop->price * 0.025, 2),
+                            'team_id' => $teamId,
+                        ]
+                    );
+                });
+        }
 
         // --- Vendors (contractors) ---
         $vendorsData = [
@@ -358,6 +386,7 @@ class DemoWorkflowSeeder extends Seeder
             .Payment::count().' payments, '
             .MaintenanceRequest::count().' maintenance requests, '
             .RentalApplication::count().' rental applications, '
-            .Booking::count().' bookings.');
+            .Booking::count().' bookings, '
+            .Transaction::count().' transactions.');
     }
 }
