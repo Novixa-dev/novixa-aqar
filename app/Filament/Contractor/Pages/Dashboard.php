@@ -10,6 +10,16 @@ class Dashboard extends Page
 {
     protected string $view = 'filament.contractor.dashboard';
 
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Dashboard';
+    }
+
+    public function getTitle(): string
+    {
+        return app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Dashboard';
+    }
+
     public $openJobs;
     public $completedJobs;
     public $pendingPayments;

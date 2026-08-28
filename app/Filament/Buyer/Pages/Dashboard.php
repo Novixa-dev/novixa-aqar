@@ -10,6 +10,16 @@ class Dashboard extends Page
 {
     protected string $view = 'filament.buyer.dashboard';
 
+    public static function getNavigationLabel(): string
+    {
+        return app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Dashboard';
+    }
+
+    public function getTitle(): string
+    {
+        return app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Dashboard';
+    }
+
     protected $myBookings;
     protected $activeListings;
     protected $totalProperties;
