@@ -51,6 +51,53 @@ class PropertyResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office-2';
 
+    /**
+     * Real property_type values in the database ('Apartment', 'house',
+     * 'Land', 'Commercial', 'Building', 'Villa', 'HMO') came from separate
+     * seeders (PropertySeeder, LeadAndBuyerSeeder) that never matched this
+     * form's old 4-option house/apartment/condo/townhouse Select — meaning
+     * 6 of 7 real property types had no matching option (so editing one of
+     * those properties showed a blank dropdown) and the table column
+     * printed the raw, untranslated, inconsistently-cased value. The 5
+     * shared keys/labels here match the public search filters exactly
+     * (resources/views/home.blade.php, livewire/property-list.blade.php).
+     */
+    protected static function propertyTypeOptions(): array
+    {
+        return app()->getLocale() === 'ar' ? [
+            'house' => 'منزل',
+            'Apartment' => 'شقة سكنية',
+            'Villa' => 'فيلا فاخرة',
+            'Land' => 'أرض سكنية / تجارية',
+            'Commercial' => 'عقار تجاري / مكتب',
+            'Building' => 'عمارة استثمارية',
+            'HMO' => 'سكن جماعي (غرف للإيجار)',
+        ] : [
+            'house' => 'House',
+            'Apartment' => 'Apartment',
+            'Villa' => 'Luxury Villa',
+            'Land' => 'Land / Plot',
+            'Commercial' => 'Commercial / Office',
+            'Building' => 'Building',
+            'HMO' => 'Shared Housing (HMO)',
+        ];
+    }
+
+    protected static function statusOptions(): array
+    {
+        return app()->getLocale() === 'ar' ? [
+            'for_sale' => 'للبيع',
+            'for_rent' => 'للإيجار',
+            'sold' => 'تم البيع',
+            'rented' => 'تم التأجير',
+        ] : [
+            'for_sale' => 'For Sale',
+            'for_rent' => 'For Rent',
+            'sold' => 'Sold',
+            'rented' => 'Rented',
+        ];
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -107,30 +154,10 @@ class PropertyResource extends Resource
                     ->label(__('filament.fields.year_built')),
                 Select::make('property_type')
                     ->required()
-                    ->options(fn () => app()->getLocale() === 'ar' ? [
-                        'house' => 'منزل',
-                        'apartment' => 'شقة',
-                        'condo' => 'شقة سكنية',
-                        'townhouse' => 'منزل متصل',
-                    ] : [
-                        'house' => 'House',
-                        'apartment' => 'Apartment',
-                        'condo' => 'Condo',
-                        'townhouse' => 'Townhouse',
-                    ]),
+                    ->options(fn () => static::propertyTypeOptions()),
                 Select::make('status')
                     ->required()
-                    ->options(fn () => app()->getLocale() === 'ar' ? [
-                        'for_sale' => 'للبيع',
-                        'for_rent' => 'للإيجار',
-                        'sold' => 'تم البيع',
-                        'rented' => 'تم التأجير',
-                    ] : [
-                        'for_sale' => 'For Sale',
-                        'for_rent' => 'For Rent',
-                        'sold' => 'Sold',
-                        'rented' => 'Rented',
-                    ]),
+                    ->options(fn () => static::statusOptions()),
                 DatePicker::make('list_date')
                     ->required(),
                 DatePicker::make('sold_date'),
@@ -251,8 +278,16 @@ class PropertyResource extends Resource
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('property_type')
+                    ->formatStateUsing(fn (?string $state): string => static::propertyTypeOptions()[$state] ?? $state)
                     ->searchable(),
                 TextColumn::make('status')
+                    ->formatStateUsing(fn (?string $state): string => static::statusOptions()[$state] ?? $state)
+                    ->badge()
+                    ->color(fn (?string $state): string => match ($state) {
+                        'for_sale', 'for_rent' => 'success',
+                        'sold', 'rented' => 'gray',
+                        default => 'gray',
+                    })
                     ->searchable(),
                 IconColumn::make('is_featured')
                     ->boolean(),
@@ -273,8 +308,13 @@ class PropertyResource extends Resource
                     ->getStateUsing(fn (Property $record): bool => $record->hasMedia('3d_models')),
             ])
             ->filters([
-                SelectFilter::make('property_type'),
-                SelectFilter::make('status'),
+                // Bare SelectFilter::make() with no ->options()/->relationship()
+                // renders a dropdown with nothing selectable — these two
+                // filters were visible in the UI but non-functional.
+                SelectFilter::make('property_type')
+                    ->options(fn () => static::propertyTypeOptions()),
+                SelectFilter::make('status')
+                    ->options(fn () => static::statusOptions()),
                 Filter::make('is_featured')
                     ->query(fn (Builder $query): Builder => $query->where('is_featured', true)),
             ])
