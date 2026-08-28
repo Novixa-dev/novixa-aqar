@@ -49,14 +49,26 @@
                 </div>
             </form>
 
-            @if (\JoelButcher\Socialstream\Socialstream::show())
+            {{--
+                Socialstream::show() only reflects whether the package feature
+                is enabled, not whether any OAuth provider is actually
+                configured (config('socialstream.providers') is empty in this
+                deployment). Gating on show() alone rendered an "Or Login Via"
+                divider with nothing underneath it — <x-socialstream />'s own
+                internal !empty(providers()) check correctly renders no
+                buttons, leaving a dangling, untranslated-into-Arabic label
+                pointing at nothing. Require both.
+            --}}
+            @if (\JoelButcher\Socialstream\Socialstream::show() && ! empty(\JoelButcher\Socialstream\Socialstream::providers()))
                 <div class="mt-4">
                     <div class="relative">
                         <div class="absolute inset-0 flex items-center">
                             <div class="w-full border-t border-gray-300 dark:border-gray-700"></div>
                         </div>
                         <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">{{ config('socialstream.prompt', 'Or Login Via') }}</span>
+                            <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                                {{ app()->getLocale() === 'ar' ? 'أو سجّل الدخول عبر' : config('socialstream.prompt', 'Or Login Via') }}
+                            </span>
                         </div>
                     </div>
                     <div class="mt-4">

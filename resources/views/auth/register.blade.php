@@ -52,14 +52,18 @@
                 </div>
             </form>
 
-            @if (\JoelButcher\Socialstream\Socialstream::show())
+            {{-- See resources/views/auth/login.blade.php for why this also
+                 checks providers(), not just show(). --}}
+            @if (\JoelButcher\Socialstream\Socialstream::show() && ! empty(\JoelButcher\Socialstream\Socialstream::providers()))
                 <div class="mt-4">
                     <div class="relative">
                         <div class="absolute inset-0 flex items-center">
                             <div class="w-full border-t border-gray-300 dark:border-gray-700"></div>
                         </div>
                         <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">{{ config('socialstream.prompt', 'Or Register Via') }}</span>
+                            <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                                {{ app()->getLocale() === 'ar' ? 'أو سجّل عبر' : config('socialstream.prompt', 'Or Register Via') }}
+                            </span>
                         </div>
                     </div>
                     <div class="mt-4">
