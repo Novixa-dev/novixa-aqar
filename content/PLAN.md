@@ -8,13 +8,13 @@
 
 ## ⏸ Where We Stopped / Next Action
 
-**Nothing has been executed yet.** This file is the only artifact that exists for this initiative so far.
+**Phase 0 is substantively done (2026-08-29).** Real files exist now, not just this tracker — see the Phase 0 checklist below for exactly what and the new files it produced.
 
-**Next action when resuming:** start **Phase 0** (Product & Market Understanding) — specifically 0.1 (product inspection) and 0.2 (external research), since every later phase depends on both. Do not skip ahead to writing strategy docs or content before Phase 0 is genuinely done — the source brief is explicit about this (its own §47 "Important Execution Rules": inspect → research → strategy → architecture → docs → libraries → backlog → priority content → validate → review → polish, in that order).
+**Next action when resuming: start Phase 1 (Strategic Foundation)** — 1.1 through 1.7. Read `content/research/RESEARCH_NOTES.md` first; its single biggest finding (domestic-Yemen vs. Gulf-diaspora audiences likely need two different platform strategies) directly shapes 1.2 (platform tiering) and should not be re-derived from scratch. Also re-read the **Open Questions** section below before finalizing 1.2/1.7 — question 4 in particular is now sharpened by the research and worth actually asking the user rather than assuming an answer.
 
-**Before starting Phase 0's *external* research**, re-confirm today's date and check whether the assistant's own knowledge cutoff leaves a gap for "current" platform specs (aspect ratios, algorithm behavior, ad formats change often) — use web search/fetch rather than memory for anything platform-specification-shaped.
+**Not yet done within Phase 0** (honest gaps, not silently skipped): a live visual/content audit of competitor social accounts (blocked by bot protection on direct fetch this pass — see `content/research/COMPETITOR_ANALYSIS.md`'s "Next step" note); a dedicated marketing-lens screenshot/asset survey of the product (judged as more of a Phase 2/7 production concern than a Phase-0 understanding one, and the understanding itself is now captured in `FEATURE_REALITY_CLASSIFICATION.md` + `PERSONAS.md`); deeper SEO-keyword-specific research (reserved for Phase 4.4, general content-marketing SEO advice was captured but not Arabic-keyword-specific data).
 
-**Head start already banked** (see "Known Product Facts" below): this repo has had extensive, live, multi-session QA/UX work done on it already (see `docs/AQAR_PROGRESS.md`, `docs/AQAR_TASKS.md` Phases 0–18, `docs/FINAL_PRE_DEPLOYMENT_AUDIT_REPORT.md`). A lot of Phase 0.1's "inspect the product" work is already effectively done as a byproduct — read those docs first, they'll shortcut a large fraction of 0.1 rather than requiring a full re-tour of all 9 panels from zero.
+**Still true from before:** every later phase depends on Phase 0 being real, not skipped — don't jump ahead to content production before Phase 1 (strategy) is done too.
 
 ---
 
@@ -53,14 +53,14 @@ This session did extensive live QA/UX work on Aqar immediately before this conte
 Each phase lists its concrete deliverables and the source-brief sections it covers. Status legend: `NOT STARTED` / `IN PROGRESS` / `BLOCKED` / `DONE`.
 
 ### Phase 0 — Product & Market Understanding
-**Status:** NOT STARTED
+**Status:** SUBSTANTIALLY DONE (2026-08-29) — see gaps noted above
 **Brief sections:** §1, §2, §36, §39
 
-- [ ] 0.1 Full product inspection beyond docs: actually browse the live app (all 9 panels/personas, both languages, mobile+desktop) with a *marketing* lens this time (screenshots/notes framed as "what would I show a prospect," not just "does it work"). Build on the Known Product Facts above rather than starting cold.
-- [ ] 0.2 Deep external research (web search/fetch, not memory) across: proptech marketing, SaaS marketing, marketplace marketing, platform-specific strategy (TikTok/Instagram/YouTube/Facebook/LinkedIn/X/Snapchat/Pinterest/WhatsApp as relevant to the target market), short-form video structure, long-form YouTube strategy, SEO/organic content, paid acquisition, UGC/faceless/narrated content patterns, launch campaign structures, content repurposing systems. Record source + insight + why-it-matters for each meaningful finding (feeds Phase into the Research Source Library, §32).
-- [ ] 0.3 Competitor/reference analysis: real-estate platforms, PropTech companies, comparable SaaS/marketplace products, strong Arabic/GCC brands, global examples. What works, what to avoid, what to adapt — not copy. (§36)
-- [ ] 0.4 Feature-reality classification table: every marketable feature tagged Available now / Partially available / Demo-prototype / Planned / Conceptual. This becomes the standing reference every later content piece must be checked against before publishing (ties to Non-Negotiable Rule #2).
-- [ ] 0.5 Audience/persona understanding written up for all 10 audience angles the brief names: seeker/buyer, owner, agent/broker, agency, property manager, administrator, developer/real-estate company, business customer, investor/partner, first-time general audience.
+- [x] 0.1 Product inspection with a marketing lens — done via synthesis of this session's extensive prior QA work (not a fresh dedicated screenshot pass; judged sufficient for *understanding*, asset capture deferred to production phases). Encoded into 0.4/0.5 outputs below.
+- [x] 0.2 Deep external research — done (11 WebSearch queries + 2 successful WebFetch deep-dives across proptech/SaaS/real-estate marketing, MENA/GCC platform strategy, Yemen-specific digital penetration, diaspora/remittance economics, WhatsApp conversion behavior, YouTube/Reels algorithm mechanics, content repurposing frameworks). → `content/research/SOURCES.md` (12 sourced entries) + `content/research/RESEARCH_NOTES.md` (synthesis). SEO-keyword-specific and paid-media-platform-specific research still open, reserved for Phases 4.4/2.11.
+- [x] 0.3 Competitor/reference analysis — done at the company-positioning level (Bayut, OpenSooq, Aqarmap) with sourced findings and a clear differentiation recommendation. → `content/research/COMPETITOR_ANALYSIS.md`. Live visual/content audit of their actual social accounts blocked (bot protection on direct fetch) — flagged as an honest open gap in that file, not silently dropped.
+- [x] 0.4 Feature-reality classification — done, comprehensive (Available now / Partially available / Demo-prototype / Planned / Conceptual), sourced from this project's own verified live QA history. → `content/research/FEATURE_REALITY_CLASSIFICATION.md`. **This is the standing reference every future content piece must be checked against — treat it as load-bearing, keep it in sync with the product.**
+- [x] 0.5 Audience personas — done for all 10 brief-named angles plus one research-driven addition (Gulf-based Yemeni diaspora investor, elevated to its own persona based on the 0.2 diaspora/remittance findings — a genuine strategic call, not busywork padding). → `content/audience/PERSONAS.md`.
 
 ### Phase 1 — Strategic Foundation
 **Status:** NOT STARTED
@@ -250,7 +250,7 @@ Not blockers to *starting* Phase 0, but will materially shape Phases 1+ — wort
 1. **Team/production reality:** who's actually producing this content day-to-day (just AI-assisted solo work, a small team, freelancers)? Changes the realistic cadence in Phase 8's 30/60/90 plan.
 2. **Existing social presence:** does Aqar/Novixa Aqar already have any live accounts (Instagram/TikTok/YouTube/etc.), or is this a from-zero launch? Changes Phase 1.2's platform prioritization and Phase 4.2's campaign framing ("launch" vs. "relaunch").
 3. **Budget for paid media:** is Phase 2.11 (ads strategy) meant to be built for an actual near-term ad spend, or purely prepared-and-shelved until later? Changes how much production effort to put into ad-specific creative now vs. deferring.
-4. **Target market precision:** brief says "Yemen primary, GCC/broader-Arab possible later" — confirm this still holds for the *content/marketing* system specifically (marketing timelines often move faster than product roadmaps).
+4. **Target market precision — sharpened by research, worth a direct answer before Phase 1 locks in:** the brief says "Yemen primary, GCC/broader-Arab possible later," but Phase 0.2's research found that domestic Yemen has only ~17.7% internet penetration while the Gulf-based Yemeni diaspora (~1.27M people) is both more digitally reachable *and* already a demonstrated real-estate buyer (diaspora-connected areas show measurably inflated property prices — see `content/research/RESEARCH_NOTES.md` §1). Should the diaspora audience be treated as a **co-primary** target from day one rather than a "later" expansion? This measurably changes Phase 1.2's platform tiering (WhatsApp/Instagram-led for diaspora vs. Facebook-led for domestic) and could change near-term paid-media targeting (Phase 2.11).
 5. **Any existing brand assets** beyond what's in the repo (logo files, brand guideline doc, photography, prior marketing materials) that should be inventoried in Phase 0 rather than assumed not to exist?
 
 ---
@@ -258,3 +258,4 @@ Not blockers to *starting* Phase 0, but will materially shape Phases 1+ — wort
 ## Change Log
 
 - **2026-08-28** — File created. Full 49-section brief received and mapped into Phases 0–10 above. No execution started yet.
+- **2026-08-29** — Phase 0 substantively completed. 5 new files created: `content/research/SOURCES.md`, `content/research/RESEARCH_NOTES.md`, `content/research/COMPETITOR_ANALYSIS.md`, `content/research/FEATURE_REALITY_CLASSIFICATION.md`, `content/audience/PERSONAS.md`. Key finding: domestic-Yemen and Gulf-diaspora audiences likely need distinct platform strategies (Open Question 4 sharpened accordingly — worth the user's direct input before Phase 1 locks in positioning). Next action: Phase 1 (Strategic Foundation).
