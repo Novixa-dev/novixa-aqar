@@ -40,6 +40,11 @@ storage/media-library/
 .DS_Store
 Thumbs.db
 
+# Claude Code local tooling (skills, local settings, worktree/lock state) —
+# reproducible via the two documented install commands, not app source.
+# CLAUDE.md itself stays tracked; it lives at the repo root, not in here.
+.claude/
+
 # Test coverage artifacts
 coverage.xml
 
