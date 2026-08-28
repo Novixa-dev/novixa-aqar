@@ -3,17 +3,39 @@
         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }},
     })" class="floor-plan-editor">
         <div class="space-y-4">
-            <!-- Floor Plan Image Upload -->
+            {{--
+                A bare <input type="file"> renders its "Choose File" / "No
+                file chosen" text from the BROWSER's own OS locale, not this
+                page's — no amount of CSS on the input itself can translate
+                or restyle that native label, which is why this field alone
+                showed raw English text on an otherwise fully Arabic, fully
+                styled form (every other upload field here uses Filament's
+                FileUpload, which already hides its native input the same
+                way). Fix: hide the native input and drive it from a styled,
+                translated <label for="...">, which the "sr-only" input
+                still responds to natively — no extra JS needed to trigger it.
+            --}}
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label for="floor-plan-image-{{ $getStatePath() }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {{ app()->getLocale() === 'ar' ? 'صورة المخطط' : 'Floor Plan Image' }}
                 </label>
                 <input
+                    id="floor-plan-image-{{ $getStatePath() }}"
                     type="file"
+                    x-ref="fileInput"
                     @change="handleImageUpload($event)"
                     accept="image/*"
-                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    class="sr-only"
                 />
+                <label
+                    for="floor-plan-image-{{ $getStatePath() }}"
+                    class="flex items-center justify-between gap-3 w-full text-sm border border-gray-300 rounded-lg cursor-pointer bg-gray-50 px-3 py-2 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600 transition"
+                >
+                    <span x-text="fileName || '{{ app()->getLocale() === 'ar' ? 'لم يتم اختيار ملف' : 'No file chosen' }}'" class="text-gray-500 dark:text-gray-400 truncate"></span>
+                    <span class="shrink-0 px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-700 font-medium dark:bg-gray-800 dark:border-gray-500 dark:text-gray-200">
+                        {{ app()->getLocale() === 'ar' ? 'اختيار صورة' : 'Choose Image' }}
+                    </span>
+                </label>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     {{ app()->getLocale() === 'ar' ? 'ارفع صورة المخطط (PNG أو JPG أو SVG)' : 'Upload a floor plan image (PNG, JPG, or SVG)' }}
                 </p>
@@ -92,6 +114,7 @@
                 currentTool: 'room',
                 annotations: [],
                 floorPlanImage: null,
+                fileName: null,
                 canvas: null,
                 ctx: null,
                 
@@ -103,6 +126,7 @@
                     if (this.state && typeof this.state === 'object') {
                         if (this.state.image) {
                             this.loadImage(this.state.image);
+                            this.fileName = {!! app()->getLocale() === 'ar' ? "'الصورة الحالية'" : "'Current image'" !!};
                         }
                         if (this.state.annotations) {
                             this.annotations = this.state.annotations || [];
@@ -113,7 +137,8 @@
                 handleImageUpload(event) {
                     const file = event.target.files[0];
                     if (!file) return;
-                    
+                    this.fileName = file.name;
+
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         this.loadImage(e.target.result);
