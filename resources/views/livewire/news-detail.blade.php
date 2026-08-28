@@ -28,7 +28,7 @@
                 <div class="flex items-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm mb-6 pb-6 border-b border-gray-200 dark:border-gray-700 flex-wrap gap-4">
                     <div class="flex items-center gap-1.5">
                         <span><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg></span>
-                        <span>{{ $news->published_at ? $news->published_at->format('Y-m-d') : '' }}</span>
+                        <span>{{ $news->published_at ? $news->published_at->translatedFormat('M d, Y') : '' }}</span>
                     </div>
                     @if($news->author)
                         <div class="flex items-center gap-1.5">
@@ -72,8 +72,8 @@
                                         </p>
                                     @endif
                                 </div>
-                                <div class="text-[11px] text-gray-400 font-mono">
-                                    {{ $related->published_at ? $related->published_at->format('Y-m-d') : '' }}
+                                <div class="text-[11px] text-gray-400">
+                                    {{ $related->published_at ? $related->published_at->translatedFormat('M d, Y') : '' }}
                                 </div>
                             </div>
                         @endforeach

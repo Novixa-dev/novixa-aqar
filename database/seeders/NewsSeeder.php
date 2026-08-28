@@ -50,10 +50,16 @@ class NewsSeeder extends Seeder
                 'published_at' => now()->subDays(7),
             ],
             [
-                'title' => 'Real Estate Investment Strategies in Yemen for 2026',
+                // This article was the only one of the five still authored in
+                // English — every other row here has an Arabic title/excerpt/
+                // content (this table has no separate _ar/_en columns, so
+                // whatever language the row is written in is what every
+                // visitor sees regardless of locale). On an Arabic-first news
+                // list it stood out as the one raw-English card.
+                'title' => 'استراتيجيات الاستثمار العقاري في اليمن لعام 2026',
                 'slug' => 'real-estate-investment-strategies-2026',
-                'excerpt' => 'A strategic outlook on high-yield property investment in Mukalla, Sanaa, and Aden.',
-                'content' => '<p>Investing in commercial and residential properties in emerging coastal and urban centers provides strong hedge against inflation and stable rental yields exceeding 9% annually.</p>',
+                'excerpt' => 'نظرة استراتيجية على فرص الاستثمار العقاري ذات العائد المرتفع في المكلا وصنعاء وعدن.',
+                'content' => '<p>يوفر الاستثمار في العقارات التجارية والسكنية بالمراكز الساحلية والحضرية الناشئة تحوطاً قوياً ضد التضخم، إلى جانب عوائد إيجارية مستقرة تتجاوز 9% سنوياً.</p>',
                 'is_featured' => false,
                 'published_at' => now()->subDays(10),
             ]
