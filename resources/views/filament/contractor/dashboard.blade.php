@@ -17,7 +17,7 @@
         <div>
             <x-filament::card>
                 <h2 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'المدفوعات المعلقة' : 'Pending Payments' }}</h2>
-                <p class="text-3xl font-bold">{{ app(\App\Services\CurrencyService::class)->format($this->pendingPayments) }}</p>
+                <p class="text-3xl font-bold">{{ $this->pendingPayments }}</p>
             </x-filament::card>
         </div>
     </div>

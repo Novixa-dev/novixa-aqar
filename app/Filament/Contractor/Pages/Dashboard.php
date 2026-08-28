@@ -3,11 +3,8 @@
 namespace App\Filament\Contractor\Pages;
 
 use Filament\Pages\Page;
-use App\Models\Job;
-use App\Models\Maintenance;
-use App\Models\WorkOrder;
-use Filament\Widgets\StatsOverviewWidget\Card;
-use Filament\Widgets\StatsOverviewWidget as FilamentStatsOverviewWidget;
+use App\Models\Contractor;
+use App\Models\MaintenanceRequest;
 
 class Dashboard extends Page
 {
@@ -16,34 +13,38 @@ class Dashboard extends Page
     public $openJobs;
     public $completedJobs;
     public $pendingPayments;
-    public $upcomingJobs;
-    public $openWorkOrders;
-    public $completedWorkOrders;
 
     public function mount(): void
     {
-        // $this->openJobs = Job::where('contractor_id', auth()->id())->where('status', 'open')->count();
-        // $this->completedJobs = Job::where('contractor_id', auth()->id())->where('status', 'completed')->count();
-        // $this->pendingPayments = Job::where('contractor_id', auth()->id())->where('payment_status', 'pending')->sum('amount');
-        // $this->upcomingJobs = Job::where('contractor_id', auth()->id())->where('start_date', '>', now())->count();
-        // $this->openWorkOrders = WorkOrder::where('contractor_id', auth()->id())->whereIn('status', ['pending', 'in_progress'])->count();
-        // $this->completedWorkOrders = WorkOrder::where('contractor_id', auth()->id())->where('status', 'completed')->count();
+        // The contractor persona manages a Contractor profile record keyed
+        // by email (same lookup MaintenanceRequestResource::currentContractorId()
+        // uses) — MaintenanceRequest.contractor_id points at contractors.id,
+        // not users.id, so auth()->id() cannot be used directly here.
+        // Previously every line below was commented out (referencing a
+        // App\Models\Job class that doesn't exist in this codebase), which
+        // left $this->openJobs/etc. permanently null — the Blade view
+        // rendered three stat cards with blank values for every contractor.
+        $contractorId = Contractor::where('email', auth()->user()?->email)->value('id');
+
+        $this->openJobs = MaintenanceRequest::where('contractor_id', $contractorId)
+            ->whereIn('status', ['pending', 'in_progress'])
+            ->count();
+        $this->completedJobs = MaintenanceRequest::where('contractor_id', $contractorId)
+            ->where('status', 'completed')
+            ->count();
+        $this->pendingPayments = MaintenanceRequest::where('contractor_id', $contractorId)
+            ->where('payment_status', 'pending')
+            ->count();
     }
 
     protected function getHeaderWidgets(): array
     {
-        return [
-            // StatsOverviewWidget::class,
-        ];
+        return [];
     }
 
     protected function getFooterWidgets(): array
     {
-        return [
-            // Widgets\LatestJobsWidget::class,
-            // Widgets\UpcomingJobsWidget::class,
-            // Widgets\OpenWorkOrdersWidget::class,
-        ];
+        return [];
     }
 
     protected function getViewData(): array
@@ -52,43 +53,6 @@ class Dashboard extends Page
             'openJobs' => $this->openJobs,
             'completedJobs' => $this->completedJobs,
             'pendingPayments' => $this->pendingPayments,
-            'upcomingJobs' => $this->upcomingJobs,
-            'openWorkOrders' => $this->openWorkOrders,
-            'completedWorkOrders' => $this->completedWorkOrders,
         ];
-    }
-}
-
-class StatsOverviewWidget extends FilamentStatsOverviewWidget
-{
-    protected function getCards(): array
-    {
-        // return [
-        //     Card::make('Open Jobs', $this->openJobs)
-        //         ->description('Current open jobs')
-        //         ->descriptionIcon('heroicon-s-clipboard-list')
-        //         ->color('primary'),
-        //     Card::make('Completed Jobs', $this->completedJobs)
-        //         ->description('Total completed jobs')
-        //         ->descriptionIcon('heroicon-s-check-circle')
-        //         ->color('success'),
-        //     Card::make('Pending Payments', '$' . number_format($this->pendingPayments, 2))
-        //         ->description('Total pending payments')
-        //         ->descriptionIcon('heroicon-s-currency-dollar')
-        //         ->color('warning'),
-        //     Card::make('Upcoming Jobs', $this->upcomingJobs)
-        //         ->description('Jobs starting soon')
-        //         ->descriptionIcon('heroicon-s-calendar')
-        //         ->color('info'),
-        //     Card::make('Open Work Orders', $this->openWorkOrders)
-        //         ->description('Current open work orders')
-        //         ->descriptionIcon('heroicon-s-wrench')
-        //         ->color('danger'),
-        //     Card::make('Completed Work Orders', $this->completedWorkOrders)
-        //         ->description('Total completed work orders')
-        //         ->descriptionIcon('heroicon-s-check-circle')
-        //         ->color('success'),
-        // ];
-        return [];
     }
 }
