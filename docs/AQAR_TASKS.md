@@ -172,3 +172,32 @@ Final pass before/during publishing to `https://github.com/Novixa-dev/novixa-aqa
 | P16-7 | GitHub publication | `origin` added (`https://github.com/Novixa-dev/novixa-aqar.git`, confirmed empty before push); `main` pushed and verified as the *only* ref on the remote (no archive branches, no tags); confirmed live via `gh api` after both pushes | **DONE** | `e88947d`, `3e47365` |
 
 **Verdict: READY FOR GITHUB / STAGING.** Manual-only items (visibility, branch protection, CI secrets, Dependabot PR triage) listed in `docs/REPOSITORY_RELEASE_AUDIT.md` §14.6.
+
+## Phase 17 (2026-08-28) — Skill-assisted UI/UX, responsive, and translation-bug pass
+
+Live browser QA driven primarily in Arabic (RTL) across mobile/tablet/desktop, with an English (LTR) spot-check, informed by the `ui-ux-pro-max` and `design-review` skills. Full detail: `docs/FINAL_PRE_DEPLOYMENT_AUDIT_REPORT.md` Addendum (2026-08-28).
+
+| ID | Problem | Fix | Status | Commit(s) |
+|---|---|---|---|---|
+| P17-1 | Staff dashboard showed the same four headline stats twice — once via the `PropertyStatsOverview` header widget (all-time), once via the page's own hardcoded Blade grid (month-scoped) — labels identical, figures could disagree | Removed the redundant inline grid and its dead backing `mount()`/properties | **FIXED** | `9819284` |
+| P17-2 | `RecentTransactions` heading/empty-state and `TopPerformingProperties` heading/legend always English regardless of locale | Added proper `getTableHeading()`/`getHeading()` overrides | **FIXED** | `9819284` |
+| P17-3 | Fake, uncustomized Filament scaffold widget (`StatsOverview`: "Unique views 192.1k" etc.) wired into `AdminPanelProvider`'s widgets and auto-discovered by the Staff panel | Deleted the widget and its two dangling references | **FIXED** | `9819284` |
+| P17-4 | `Transaction::count()` was 0 against seeded data — Total Revenue, Recent Transactions, and the performance chart all rendered 0.00/empty | Seeded two real completed transactions tied to already-SOLD demo properties | **FIXED** | `c51321a` |
+| P17-5 | "Top Performing Properties" chart appeared blank in screenshots | Investigated and confirmed a screenshot-methodology false positive (Filament's `x-load` lazy-loads on real scroll, not on a `fullPage` capture) — no app change needed | **NOT A BUG** | — |
+| P17-6 | Every Contractor dashboard stat card was blank (not even "0") — `mount()` referenced a non-existent `App\Models\Job` class, fully commented out | Rewrote `mount()` against the real `MaintenanceRequest`/`Contractor` relationship already used by `MaintenanceRequestResource` | **FIXED** | `470cbcb` |
+| P17-7 | Staff Properties `property_type` column/form/filter showed raw, inconsistently-cased English; the edit form's 4-option dropdown matched only 1 of 7 real stored values, so editing most properties showed a blank type selector | Rebuilt the option set against the real 7 values, matching the public site's own filter wording | **FIXED** | `5b30ce8` |
+| P17-8 | Staff Properties `status` column untranslated; both `property_type` and `status` table filters were visible but non-functional (no `->options()`) | Added translation + badge styling; wired up both filters | **FIXED** | `5b30ce8` |
+| P17-9 | Floor-plan image upload field showed the browser's native, unstyled, English "No file chosen / Choose File" text on an otherwise fully Arabic form | Hid the native input, drove it from a styled translated `<label>` — self-caught and fixed a Blade-escaping regression introduced while making this fix (see addendum §A.4 #11) | **FIXED** | `6e19848` |
+| P17-10 | Login/Register showed an empty "Or Login Via" divider with zero buttons — `Socialstream::show()` reflects a package-enabled flag, not whether any provider is actually configured | Added the missing `!empty(Socialstream::providers())` check to both pages' outer gate | **FIXED** | `a24fa83` |
+| P17-11 | `Property::translated_type` (used by homepage, properties list, and property detail) never translated the `house` type — map key was capitalized `'House'`, real stored value is lowercase `'house'` | Fixed the one key; confirmed the fix reached all three call sites at once | **FIXED** | `e0fe798` |
+| P17-12 | Property detail's "Category" badge showed a raw value, including literally "test" on one seeded property (leftover dev cruft, never produced by any seeder) | Reassigned that property to the correct category, deleted the orphaned "test" row, added bilingual translation for the three real category values | **FIXED** | `e0fe798` |
+| P17-13 | PHP 8.4 implicit-nullable-parameter deprecation in `PropertyHistoryService::trackUpdate` | Explicit `?string` type hint | **FIXED** | `e0fe798` |
+| P17-14 | One of five seeded news articles was entirely in English while the rest of the site is Arabic | Translated to match the rest of the demo set | **FIXED** | `ef3fd9a` |
+| P17-15 | News detail page's dates were raw ISO (`2026-08-25`) while the list page already used localized Arabic/English month names for the same field | Made the detail page consistent with the list page's convention | **FIXED** | `ef3fd9a` |
+| P17-16 | New Blade utility classes (from P17-9) had no visual effect until the Filament theme CSS was rebuilt — Tailwind v4 scans templates at build time, no dev server was running | `npm run build`; confirmed via computed-style inspection | **FIXED** | `829b4c7` |
+
+**Responsive design review** (375/768/1440px, both directions where noted) across every public page plus the Staff panel: no layout defects found. **Design-quality pass** (using `design-review`'s 7-dimension methodology): no fix-now findings beyond the functional/translation bugs above. **Scope note:** the plan's fourth viewport (1920×1080) was not captured this pass.
+
+**Final validation:** `php artisan test --no-ansi` run twice this pass (after the Filament fixes, and after the property/news fixes) — both **553 passed / 0 failed / 32 skipped**, exact baseline match.
+
+**Verdict: DEMO READY** (restated, evidence specific to this pass). Full narrative, including two items explicitly investigated and cleared (P17-5, and the architectural note that Property/News body content is single-language by design, not a translation bug), is in the audit report addendum.
