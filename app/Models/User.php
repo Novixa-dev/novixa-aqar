@@ -119,6 +119,21 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
             return true;
         }
 
+        // The "app" panel is the only one with ->registration() enabled
+        // (AppPanelProvider) — a general, open self-service portal for
+        // anyone who signs up without a pre-assigned role. filament-shield's
+        // config still gated it to admin/super_admin/staff like every other
+        // (internal, role-assigned) panel, which meant every freshly
+        // self-registered user was immediately locked out with a 403 on the
+        // very panel they just registered into. Scoped to roleless users
+        // only — a user who already holds one of the 8 persona roles stays
+        // confined to their own panel (PanelSwitcherTest's "buyer sees no
+        // switch links" encodes exactly that boundary; granting 'app' to
+        // every authenticated user broke it).
+        if ($panelId === 'app' && $this->roles()->doesntExist()) {
+            return true;
+        }
+
         $allowedRoles = config("filament-shield.panels.$panelId", []);
 
         return $this->hasAnyRole($allowedRoles);
