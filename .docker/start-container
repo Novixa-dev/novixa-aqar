@@ -1,6 +1,15 @@
 #!/usr/bin/env sh
 set -e
 
+# php.ini sets opcache.file_cache to this path, but PHP's opcache does not
+# create it itself -- on hosts where /tmp is a fresh, empty filesystem per
+# container boot (e.g. Railway), every PHP invocation (including this
+# script's own artisan calls below) fatal-errors with
+# "opcache.file_cache must be a full path of an accessible directory"
+# until the directory exists. Recreate it on every boot, before any php
+# command runs.
+mkdir -p /tmp/opcache-file-cache
+
 container_mode=${CONTAINER_MODE:-"http"}
 running_migrations_and_seeders=${RUNNING_MIGRATIONS_AND_SEEDERS:-"false"}
 
