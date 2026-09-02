@@ -160,6 +160,15 @@ COPY --chown=${USER}:${USER} .docker/start-container /usr/local/bin/start-contai
 # Copy environment file
 COPY --chown=${USER}:${USER} .env.example ./.env
 
+# Pre-fetch the RoadRunner server binary at build time. Octane's
+# `octane:roadrunner` command otherwise lazily downloads it from GitHub's
+# API on first boot -- on a shared host like Railway that call comes back
+# HTTP 403 (GitHub's anonymous API rate limit, exhausted by other tenants
+# on the same egress IP), so the octane process crash-looped forever and
+# the app never came up. Doing it once here, at build time, means every
+# container boot just uses the binary already baked into the image.
+RUN php artisan octane:install --server=roadrunner --no-interaction
+
 RUN chmod +x /usr/local/bin/start-container && \
     cat .docker/utilities.sh >> ~/.bashrc
 
@@ -169,4 +178,3 @@ EXPOSE 8080
 ENTRYPOINT ["start-container"]
 
 HEALTHCHECK --start-period=5s --interval=2s --timeout=5s --retries=8 CMD php artisan octane:status || exit 1
-
