@@ -167,7 +167,7 @@ COPY --chown=${USER}:${USER} .env.example ./.env
 # on the same egress IP), so the octane process crash-looped forever and
 # the app never came up. Doing it once here, at build time, means every
 # container boot just uses the binary already baked into the image.
-RUN php artisan octane:install --server=roadrunner --no-interaction
+RUN mkdir -p /tmp/opcache-file-cache && php artisan octane:install --server=roadrunner --no-interaction
 
 RUN chmod +x /usr/local/bin/start-container && \
     cat .docker/utilities.sh >> ~/.bashrc
