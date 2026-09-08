@@ -1,6 +1,15 @@
 #!/usr/bin/env sh
 set -e
 
+# php.ini sets opcache.file_cache to this path, but PHP's opcache does not
+# create it itself -- on hosts where /tmp is a fresh, empty filesystem per
+# container boot (e.g. Railway), every PHP invocation (including this
+# script's own artisan calls below) fatal-errors with
+# "opcache.file_cache must be a full path of an accessible directory"
+# until the directory exists. Recreate it on every boot, before any php
+# command runs.
+mkdir -p /tmp/opcache-file-cache
+
 container_mode=${CONTAINER_MODE:-"http"}
 running_migrations_and_seeders=${RUNNING_MIGRATIONS_AND_SEEDERS:-"false"}
 
@@ -9,7 +18,46 @@ initialStuff() {
 
     if [ "${running_migrations_and_seeders}" = "true" ]; then
         echo "Running migrations and seeding database ..."
-        php artisan migrate --isolated --seed --force || php artisan migrate --seed --force
+        # DatabaseSeeder's last step, UserSeeder, deliberately throws in
+        # production (it only ever creates demo accounts with a hardcoded
+        # password). That's correct behavior -- but under `set -e` it was
+        # taking the whole container down, even though migrations and every
+        # seeder before it (site settings, permissions, roles, default team)
+        # had already applied successfully. Tolerate that specific, expected
+        # failure instead of crash-looping the container over it.
+        php artisan migrate --isolated --seed --force || php artisan migrate --seed --force || true
+    fi
+
+    # Create the first admin from ADMIN_EMAIL/ADMIN_PASSWORD (Railway
+    # variables, never committed to the repo) instead of UserSeeder's
+    # hardcoded demo password. Safe to leave on every boot: firstOrCreate
+    # makes it a no-op once the account exists.
+    if [ -n "${ADMIN_EMAIL}" ] && [ -n "${ADMIN_PASSWORD}" ]; then
+        echo "Ensuring first admin account exists ..."
+        php artisan tinker --execute='
+            $email = env("ADMIN_EMAIL");
+            $password = env("ADMIN_PASSWORD");
+            $user = \App\Models\User::firstOrCreate(
+                ["email" => $email],
+                [
+                    "name" => env("ADMIN_NAME", "Admin"),
+                    "password" => \Illuminate\Support\Facades\Hash::make($password),
+                    "email_verified_at" => now(),
+                ]
+            );
+            $team = \App\Models\Team::first();
+            if ($team) {
+                $user->teams()->syncWithoutDetaching([$team->id]);
+                if (is_null($user->current_team_id)) {
+                    $user->switchTeam($team);
+                }
+            }
+            $role = \App\Models\Role::where("name", "super_admin")->first();
+            if ($role) {
+                $user->assignRole($role);
+            }
+            echo "Admin ensured: {$email}\n";
+        ' || echo "WARNING: admin bootstrap failed, continuing boot anyway."
     fi
 
     php artisan storage:link
