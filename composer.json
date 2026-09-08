@@ -35,11 +35,11 @@
         "spatie/menu": "^3.2",
         "spiral/roadrunner-cli": "^2.6.0",
         "spiral/roadrunner-http": "^3.3.0",
-        "stripe/stripe-php": "^20.0"
+        "stripe/stripe-php": "^20.0",
+        "fakerphp/faker": "^1.23"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
-        "fakerphp/faker": "^1.23",
         "filament/upgrade": "^5.0",
         "laravel/pint": "^1.14",
         "laravel/sail": "^1.28",
