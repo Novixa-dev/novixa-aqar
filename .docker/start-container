@@ -16,8 +16,15 @@ running_migrations_and_seeders=${RUNNING_MIGRATIONS_AND_SEEDERS:-"false"}
 initialStuff() {
     echo "Container mode: $container_mode"
 
+    # Always apply pending migrations -- safe and idempotent on every boot,
+    # regardless of whether this boot should also seed demo data. Previously
+    # this was nested inside the seed-only conditional below, which meant a
+    # later deploy's new migrations would silently never run once the
+    # one-time seed flag was turned off.
+    php artisan migrate --isolated --force || php artisan migrate --force || true
+
     if [ "${running_migrations_and_seeders}" = "true" ]; then
-        echo "Running migrations and seeding database ..."
+        echo "Seeding demo database ..."
         # DatabaseSeeder's last step, UserSeeder, deliberately throws in
         # production (it only ever creates demo accounts with a hardcoded
         # password). That's correct behavior -- but under `set -e` it was
@@ -25,7 +32,7 @@ initialStuff() {
         # seeder before it (site settings, permissions, roles, default team)
         # had already applied successfully. Tolerate that specific, expected
         # failure instead of crash-looping the container over it.
-        php artisan migrate --isolated --seed --force || php artisan migrate --seed --force || true
+        php artisan db:seed --force || true
     fi
 
     # Create the first admin from ADMIN_EMAIL/ADMIN_PASSWORD (Railway
@@ -69,6 +76,17 @@ if [ "$1" != "" ]; then
 elif [ "${container_mode}" = "http" ]; then
     initialStuff
     echo "Octane Server: ${OCTANE_SERVER}"
+
+    # Defensive cleanup: if the previous boot's Octane/RoadRunner process was
+    # ever killed abruptly enough (OOM, host restart) that a child process
+    # got orphaned instead of torn down, it can keep holding port 8000 and
+    # wedge every subsequent restart with "Unable to start server. Port 8000
+    # is already in use" -- exactly what happened here before workers were
+    # capped and opcache disabled (see supervisord.roadrunner.conf and
+    # php.ini). Clear the port first so a stale holder can never again
+    # permanently wedge the container (psmisc added to the image for
+    # `fuser`).
+    fuser -k -n tcp 8000 2>/dev/null || true
 
     if [ "${OCTANE_SERVER}" = "frankenphp" ]; then
         exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.frankenphp.conf
