@@ -43,23 +43,42 @@ running_migrations_and_seeders=${RUNNING_MIGRATIONS_AND_SEEDERS:-"false"}
 initialStuff() {
     echo "Container mode: $container_mode"
 
-    # Always apply pending migrations -- safe and idempotent on every boot,
-    # regardless of whether this boot should also seed demo data. Previously
-    # this was nested inside the seed-only conditional below, which meant a
-    # later deploy's new migrations would silently never run once the
-    # one-time seed flag was turned off.
-    php artisan migrate --isolated --force || php artisan migrate --force || true
+    # RESEED_FRESH: an explicit, deliberately-named, opt-in demo-reset
+    # button for this staging environment specifically -- distinct from
+    # RUNNING_MIGRATIONS_AND_SEEDERS (which only ever additively seeds).
+    # Several seeders (e.g. PropertySeeder, before it was fixed to check
+    # `Property::exists()` first) unconditionally create rows with no
+    # natural unique key, so a plain re-seed after a partial/interrupted
+    # prior run can leave duplicated demo data behind -- migrate:fresh is
+    # the only way to guarantee a genuinely clean slate. Never do this on
+    # an environment holding real user data (docs/PRODUCTION-DEPLOYMENT.md
+    # already documents why); this staging box only ever holds seeded demo
+    # content, so it's the appropriate "reset the demo" mechanism here.
+    # Always unset this variable again after use -- it is not meant to be
+    # left on.
+    if [ "${RESEED_FRESH:-false}" = "true" ]; then
+        echo "RESEED_FRESH=true: dropping and rebuilding the demo database from scratch ..."
+        php artisan migrate:fresh --seed --force
+    else
+        # Always apply pending migrations -- safe and idempotent on every
+        # boot, regardless of whether this boot should also seed demo data.
+        # Previously this was nested inside the seed-only conditional below,
+        # which meant a later deploy's new migrations would silently never
+        # run once the one-time seed flag was turned off.
+        php artisan migrate --isolated --force || php artisan migrate --force || true
 
-    if [ "${running_migrations_and_seeders}" = "true" ]; then
-        echo "Seeding demo database ..."
-        # DatabaseSeeder's last step, UserSeeder, deliberately throws in
-        # production (it only ever creates demo accounts with a hardcoded
-        # password). That's correct behavior -- but under `set -e` it was
-        # taking the whole container down, even though migrations and every
-        # seeder before it (site settings, permissions, roles, default team)
-        # had already applied successfully. Tolerate that specific, expected
-        # failure instead of crash-looping the container over it.
-        php artisan db:seed --force || true
+        if [ "${running_migrations_and_seeders}" = "true" ]; then
+            echo "Seeding demo database ..."
+            # DatabaseSeeder's last step, UserSeeder, deliberately throws in
+            # production (it only ever creates demo accounts with a
+            # hardcoded password). That's correct behavior -- but under
+            # `set -e` it was taking the whole container down, even though
+            # migrations and every seeder before it (site settings,
+            # permissions, roles, default team) had already applied
+            # successfully. Tolerate that specific, expected failure instead
+            # of crash-looping the container over it.
+            php artisan db:seed --force || true
+        fi
     fi
 
     # Create the first admin from ADMIN_EMAIL/ADMIN_PASSWORD (Railway
