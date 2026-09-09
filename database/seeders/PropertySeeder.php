@@ -30,15 +30,28 @@ class PropertySeeder extends Seeder
     {
         $faker = Faker::create('ar_SA');
         $this->agentUserId = User::role('agent')->first()?->id ?? User::where('email', 'admin@darhadhramaut.ye')->first()?->id;
-        $salesCategory = PropertyCategory::where('name', 'sales')->first();
-        $lettingsCategory = PropertyCategory::where('name', 'lettings')->first();
-        $hmoCategory = PropertyCategory::where('name', 'hmo')->first();
 
-        $this->createArabicProperties($salesCategory, 12, 'sales');
-        $this->createArabicProperties($lettingsCategory, 12, 'lettings');
+        // Every property here is Faker-generated (no natural unique key to
+        // firstOrCreate against), so re-running this unconditionally created
+        // 28 brand-new duplicate properties on every invocation -- silently
+        // multiplying the demo inventory across repeated `db:seed` runs
+        // (confirmed live: multiple partial reseed attempts on Railway while
+        // iterating on an unrelated storage-permission fix left the property
+        // count at multiples of 28). Property creation itself needs to run
+        // exactly once; gallery-photo attachment already has its own
+        // per-property guard below and must still run every time to backfill
+        // any property that doesn't have photos yet.
+        if (! Property::exists()) {
+            $salesCategory = PropertyCategory::where('name', 'sales')->first();
+            $lettingsCategory = PropertyCategory::where('name', 'lettings')->first();
+            $hmoCategory = PropertyCategory::where('name', 'hmo')->first();
 
-        if ($hmoCategory) {
-            $this->createHmoProperties($hmoCategory, 4);
+            $this->createArabicProperties($salesCategory, 12, 'sales');
+            $this->createArabicProperties($lettingsCategory, 12, 'lettings');
+
+            if ($hmoCategory) {
+                $this->createHmoProperties($hmoCategory, 4);
+            }
         }
 
         $this->attachGalleryPhotos();
