@@ -16,12 +16,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+
       - name: Check for known security vulnerabilities
-        run: |
-          PHP_SC_VERSION=$(curl -s "https://api.github.com/repos/fabpot/local-php-security-checker/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/;s/^v//')
-          curl -LSs "https://github.com/fabpot/local-php-security-checker/releases/download/v${PHP_SC_VERSION}/local-php-security-checker_${PHP_SC_VERSION}_linux_amd64" -o ./php-security-checker
-          chmod +x ./php-security-checker
-          ./php-security-checker
+        # Previously shelled out to fabpot/local-php-security-checker, whose
+        # GitHub "latest release" no longer resolves (the version-scraping
+        # curl now gets a 404 body back and tries to execute it as a binary).
+        # `composer audit` is Composer's own built-in equivalent (since 2.4)
+        # -- reads composer.lock directly, no external binary/version
+        # resolution to rot.
+        run: composer audit --no-interaction --locked
 
   phpcpd:
     name: PHP Copy/Paste Detector
