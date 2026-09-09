@@ -685,6 +685,20 @@ class Property extends Model implements HasMedia
         return '<iframe width="100%" height="480" src="'.$escapedUrl.'" frameborder="0" sandbox="allow-scripts allow-same-origin allow-presentation" referrerpolicy="no-referrer" allow="xr-spatial-tracking" allowfullscreen></iframe>';
     }
 
+    /**
+     * When true, registerMediaCollections() below skips ->withResponsiveImages()
+     * for the 'images' collection on THIS instance only. PropertySeeder sets this
+     * before seeding gallery photos: Spatie MediaLibrary's FileAdder always
+     * re-derives its own generateResponsiveImages flag from the collection's
+     * registered default via checkGenerateResponsiveImages() (called from inside
+     * toMediaCollection()), which silently overrides any ->withResponsiveImagesIf()
+     * passed on the addMedia() call chain itself -- confirmed live: chaining
+     * ->withResponsiveImagesIf(false) on the seeder's addMedia() call had no
+     * effect, the responsive-image job still ran and still crashed. The only way
+     * to actually suppress it per-call is a collection-level condition like this.
+     */
+    public bool $skipResponsiveImagesForSeeding = false;
+
     public function registerMediaCollections(): void
     {
         // useDisk('public') is required explicitly: without it, media
@@ -702,7 +716,7 @@ class Property extends Model implements HasMedia
         $this->addMediaCollection('images')
             ->useDisk('public')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp'])
-            ->withResponsiveImages();
+            ->withResponsiveImagesIf(! $this->skipResponsiveImagesForSeeding);
 
         $this->addMediaCollection('videos')
             ->useDisk('public')

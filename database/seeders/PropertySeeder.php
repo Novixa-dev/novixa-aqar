@@ -80,6 +80,23 @@ class PropertySeeder extends Seeder
                     continue;
                 }
 
+                // Responsive-image generation (Property::images collection registers
+                // ->withResponsiveImages()) runs synchronously here (QUEUE_CONNECTION
+                // is sync on Railway), and intermittently threw
+                // Spatie\MediaLibrary\...\DiskCannotBeAccessed deep inside
+                // ResponsiveImageGenerator -- reproduced live: crashed every
+                // `migrate:fresh --seed` attempt at this exact call, aborting the
+                // seeder (and, under this script's `set -e`, the whole container
+                // boot) every time. Chaining ->withResponsiveImagesIf(false) directly
+                // on this addMedia() call does NOT work: FileAdder::processMediaItem()
+                // unconditionally calls checkGenerateResponsiveImages(), which
+                // re-derives the flag from the collection's own registered default
+                // and silently overrides any per-call override -- confirmed live,
+                // that approach still crashed identically. The only place that
+                // actually sticks is the collection registration itself, gated by
+                // this instance flag (see Property::$skipResponsiveImagesForSeeding).
+                $property->skipResponsiveImagesForSeeding = true;
+
                 // Deterministic window into the photo pool so re-seeding is stable.
                 $count = ($property->id % 2 === 0) ? 3 : 2;
 
@@ -91,16 +108,6 @@ class PropertySeeder extends Seeder
                         ->preservingOriginal()
                         ->usingName($property->title)
                         ->usingFileName("property-{$property->id}-".($j + 1).'.jpg')
-                        // Responsive-image generation (Property::images collection sets
-                        // ->withResponsiveImages()) runs synchronously here (QUEUE_CONNECTION
-                        // defaults to sync), and on Railway intermittently threw
-                        // Spatie\MediaLibrary\...\DiskCannotBeAccessed deep inside
-                        // ResponsiveImageGenerator -- reproduced live: crashed 2 of 3 consecutive
-                        // `migrate:fresh --seed` attempts at this exact call, aborting the seeder
-                        // (and, under this script's `set -e`, the whole container boot) each time.
-                        // Seed photos don't need responsive srcset variants; skip generation only
-                        // for seeded media so real user uploads (via Filament) still get them.
-                        ->withResponsiveImagesIf(false)
                         ->toMediaCollection('images');
                 }
 
