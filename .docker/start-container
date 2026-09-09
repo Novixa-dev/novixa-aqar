@@ -10,6 +10,21 @@ set -e
 # command runs.
 mkdir -p /tmp/opcache-file-cache
 
+# Same root cause, different mount: Railway's persistent volume is bound at
+# storage/app, which overlays whatever the image built at that path with the
+# volume's own (initially empty) content. The build-time `mkdir -p
+# storage/framework/... && chmod -R a+rw storage` step in the Dockerfile
+# never touches storage/app/public because it can't -- the volume isn't
+# mounted yet at build time. Without this, the first write under
+# storage/app/public (property photo seeding, any real upload) fails with
+# "Unable to create a directory at .../storage/app/public", which is fatal
+# enough to abort the whole `db:seed` run partway through. Recreate it on
+# every boot, before migrate/seed/anything else touches storage. Guarded,
+# not `set -e`-fatal: a still-broken volume should degrade to a demo
+# without photos, not take the whole container down.
+{ mkdir -p storage/app/public && chmod -R a+rw storage/app; } || \
+    echo "WARNING: could not prepare storage/app/public on the mounted volume -- uploads/seeded photos will fail."
+
 container_mode=${CONTAINER_MODE:-"http"}
 running_migrations_and_seeders=${RUNNING_MIGRATIONS_AND_SEEDERS:-"false"}
 
