@@ -293,9 +293,16 @@ table columns across the app (compare-properties tool, a few others) show raw un
 labels on Arabic-locale pages — low severity, cosmetic, numerous enough to warrant a dedicated pass
 rather than one-off fixes.
 
-**Not yet done** (see `docs/AQAR_QA_REPORT_2026-09-09.md` §7 for the full list, in priority order):
-a full reachability sweep of every remaining Filament Resource class not explicitly covered above.
+**Full reachability sweep — done:** a Playwright crawl of every sidebar-discoverable link across all
+8 personas (103 page visits total) with an HTTP-status listener and a cleared/rechecked
+`storage/logs/laravel.log` found **zero HTTP 500s and zero new errors**. This was the last remaining
+item from the priority-ordered plan — every Tier P1/P2/P3 item has now been executed at least once.
+
 `RESEED_FRESH` cleanup (P21-4): fully resolved — see above. Booking/appointment creation (P21-5), AI
 investment analysis (P21-6), Rental Applications (P21-7), Tenant maintenance/work-orders (P21-8),
 property reviews (P21-9), and the currency-formatting bug (P21-10): all found broken and fixed — see
 above. P21-11: found, confirmed dormant/unreachable, documented — see above.
+
+**PR #21 merged** (`1c2242b`) — all 7 CI checks green, redeployed to Railway (deployment `4f68988e`)
+and live-verified via a fully-read deploy log: clean migration, clean cache rebuild, RoadRunner
+started, no exceptions. Every fix P21-5 through P21-10 above is now live on staging, not just merged.

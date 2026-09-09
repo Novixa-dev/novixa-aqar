@@ -486,12 +486,22 @@ to Railway (confirmed live). `b4ae817` (responsive-images fix, first attempt) �
 later found ineffective live. `3cbbf74` (the real responsive-images fix, confirmed to have worked) —
 PR #18. `70960b7` (clear the full volume before reseeding — the actual remaining cause) — PR #19.
 All merged, redeployed, and verified via a fully-read deploy log. `ee3a017`/`6cddf16`/`54c89d9`/
-`97bc81e`/`873f0e2`/`68ffba7` — PR #21, findings 5-10 above; pushed and CI-validated, not yet
-merged/redeployed as of this entry.
+`97bc81e`/`873f0e2`/`68ffba7` — **merged via PR #21** (`1c2242b`), all 7 CI checks green,
+`mergeable_state: clean`. Redeployed to Railway (deployment `4f68988e`) and live-verified via a
+fully-read deploy log: the new `saved_searches` migration ran cleanly (`127.73ms DONE`),
+config/routes/views/Filament caches rebuilt with zero errors, RoadRunner started, supervisord
+confirmed `octane_0` reached RUNNING and stayed up — no exceptions anywhere in the log. Findings 5-10
+above are now live, not just merged.
+
+**Full reachability sweep — done, zero findings:** a Playwright crawl of every sidebar-discoverable
+link across all 8 personas (103 page visits, up to 40 per persona) with an HTTP-status listener and a
+cleared/rechecked `laravel.log` found zero HTTP 500s and zero new errors. This was the one remaining
+Tier P3 item from earlier in this phase.
 
 **Verdict:** staging demo is live, seeded, and passes every P0 check plus the large majority of
 P1/P2/P3. Zero unresolved P0s from this pass. Every Tier P1 deep-interaction item and every Tier P3
-item planned for this phase has now been exercised — findings 5-10 above cover six more real bugs
-found and fixed, plus one confirmed-dormant defect documented. Not yet exercised: a full reachability
-sweep of every remaining Filament Resource class not explicitly covered above — see
-`docs/AQAR_QA_REPORT_2026-09-09.md` §7 for the full, honest list, in priority order for the next pass.
+item planned for this phase has now been exercised and verified live — findings 5-10 above cover six
+more real bugs found, fixed, merged, and confirmed live on staging, plus one confirmed-dormant defect
+documented (not fixed, since it's unreachable dead code) and a full reachability sweep confirming zero
+new errors anywhere in the app. See `docs/AQAR_QA_REPORT_2026-09-09.md` for the complete, final
+report.
