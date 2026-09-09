@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/bookings/{booking}', [BookingController::class, 'update']);
     Route::get('/bookings', [BookingController::class, 'index']);
 });
-Route::get('/properties/{property}/book', PropertyBooking::class)->name('property.book');
+Route::get('/properties/{propertyId}/book', PropertyBooking::class)->name('property.book');
 Route::post('/payments/session', [PaymentController::class, 'createSession'])->middleware(['auth', 'throttle:10,1']);
 // Stripe-signed webhook: no auth middleware (signature is the credential), CSRF-exempt in bootstrap/app.php.
 Route::post('/payments/webhook', [PaymentController::class, 'handleWebhook'])->middleware('throttle:60,1');
