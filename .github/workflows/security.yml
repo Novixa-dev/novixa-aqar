@@ -27,7 +27,7 @@ jobs:
         # `composer audit` is Composer's own built-in equivalent (since 2.4)
         # -- reads composer.lock directly, no external binary/version
         # resolution to rot.
-        run: composer audit --no-interaction
+        run: composer audit --no-interaction --locked
 
   phpcpd:
     name: PHP Copy/Paste Detector
