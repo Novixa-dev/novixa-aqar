@@ -167,6 +167,11 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         return $this->hasMany(SavedSearch::class);
     }
 
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class);
