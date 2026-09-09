@@ -17,6 +17,16 @@ class PropertyHistorySeeder extends Seeder
         $properties = Property::take(5)->get();
 
         foreach ($properties as $property) {
+            // These history rows are derived from the property itself and have
+            // no natural unique key, so re-running this appended a duplicate
+            // timeline (~5 rows per property) on every `db:seed`. Staging
+            // re-seeds on deploy, so each property's history kept growing.
+            // Skip any property that already has a timeline; still backfill
+            // properties added later that don't.
+            if (PropertyHistory::where('property_id', $property->id)->exists()) {
+                continue;
+            }
+
             // Add listing event (initial listing)
             PropertyHistory::create([
                 'property_id' => $property->id,

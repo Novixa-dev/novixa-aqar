@@ -13,6 +13,15 @@ class CommunityEventSeeder extends Seeder
      */
     public function run(): void
     {
+        // Factory-generated events have no natural unique key to match on, so
+        // running this unconditionally added another 30 events (20 general +
+        // 2 each for 5 properties) on every `db:seed`. Staging re-seeds on
+        // deploy, so the demo event list grew without bound. Same guard style
+        // as PropertySeeder: create the demo set exactly once.
+        if (CommunityEvent::exists()) {
+            return;
+        }
+
         // Create 20 general community events
         CommunityEvent::factory(20)->create();
 

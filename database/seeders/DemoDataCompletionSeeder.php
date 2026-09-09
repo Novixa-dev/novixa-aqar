@@ -336,14 +336,41 @@ class DemoDataCompletionSeeder extends Seeder
 
     private function seedCommunicationHub(?User $staff, ?User $landlord, ?User $tenant): void
     {
+        // sender_id + recipient_id + content is the natural key here: these are
+        // four fixed, hand-written demo messages, not generated content. They
+        // were previously created unconditionally, so every `db:seed` run added
+        // another copy of all four (confirmed live on Railway: Message::count()
+        // read 8 after a second seed run, against the four this method defines).
+        // Every other entity in this seeder is already guarded this way.
+        foreach ($this->communicationHubMessages($staff, $landlord, $tenant) as $message) {
+            Message::firstOrCreate(
+                [
+                    'sender_id' => $message['sender_id'],
+                    'recipient_id' => $message['recipient_id'],
+                    'content' => $message['content'],
+                ],
+                ['read_at' => $message['read_at']]
+            );
+        }
+    }
+
+    /**
+     * @return array<int, array{sender_id: int, recipient_id: int, content: string, read_at: ?\Illuminate\Support\Carbon}>
+     */
+    private function communicationHubMessages(?User $staff, ?User $landlord, ?User $tenant): array
+    {
+        $messages = [];
+
         if ($staff && $tenant) {
-            Message::create(['sender_id' => $staff->id, 'recipient_id' => $tenant->id, 'content' => 'مرحباً، نود التأكيد على استلام طلب الصيانة الخاص بكم وسيتم إرسال الفني خلال يومين.', 'read_at' => now()->subDays(2)]);
-            Message::create(['sender_id' => $tenant->id, 'recipient_id' => $staff->id, 'content' => 'شكراً لكم، بانتظار الفني في الموعد المحدد.', 'read_at' => null]);
+            $messages[] = ['sender_id' => $staff->id, 'recipient_id' => $tenant->id, 'content' => 'مرحباً، نود التأكيد على استلام طلب الصيانة الخاص بكم وسيتم إرسال الفني خلال يومين.', 'read_at' => now()->subDays(2)];
+            $messages[] = ['sender_id' => $tenant->id, 'recipient_id' => $staff->id, 'content' => 'شكراً لكم، بانتظار الفني في الموعد المحدد.', 'read_at' => null];
         }
         if ($staff && $landlord) {
-            Message::create(['sender_id' => $landlord->id, 'recipient_id' => $staff->id, 'content' => 'هل يوجد تحديث بخصوص تجديد عقد الإيجار المنتهي هذا الشهر؟', 'read_at' => now()->subDay()]);
-            Message::create(['sender_id' => $staff->id, 'recipient_id' => $landlord->id, 'content' => 'نعم، المستأجر أبدى رغبته بالتجديد، سنرسل لكم نسخة العقد المحدثة اليوم.', 'read_at' => null]);
+            $messages[] = ['sender_id' => $landlord->id, 'recipient_id' => $staff->id, 'content' => 'هل يوجد تحديث بخصوص تجديد عقد الإيجار المنتهي هذا الشهر؟', 'read_at' => now()->subDay()];
+            $messages[] = ['sender_id' => $staff->id, 'recipient_id' => $landlord->id, 'content' => 'نعم، المستأجر أبدى رغبته بالتجديد، سنرسل لكم نسخة العقد المحدثة اليوم.', 'read_at' => null];
         }
+
+        return $messages;
     }
 
     private function seedChatConversations(?User $buyer, ?User $tenant): void
