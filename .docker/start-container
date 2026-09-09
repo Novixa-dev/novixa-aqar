@@ -1,6 +1,26 @@
 #!/usr/bin/env sh
 set -e
 
+# Railway's persistent volume for storage/app arrives owned by root:root,
+# mode 0755 (no group/other write bit) -- regardless of the image's own
+# USER directive, since the volume is layered onto that path at container
+# start, after the image's baked-in ownership no longer applies there.
+# Confirmed live via a one-off diagnostic: whoami=octane (uid 1000), but
+# storage/app was root:root -- every write under it (property photo
+# seeding, any real upload) failed with "Unable to create a directory",
+# aborting the whole `db:seed` run partway through, every boot since this
+# volume was first provisioned.
+#
+# Fix it once, as root (the Dockerfile now ends with `USER root` so the
+# container starts privileged), then immediately re-exec this same script
+# as the unprivileged app user via su-exec before anything else runs
+# (migrations, seeding, the app server) -- so the application itself never
+# actually runs as root, only this one-time ownership fix does.
+if [ "$(id -u)" = "0" ]; then
+    chown -R "${USER}:${USER}" storage/app
+    exec su-exec "${USER}" "$0" "$@"
+fi
+
 # php.ini sets opcache.file_cache to this path, but PHP's opcache does not
 # create it itself -- on hosts where /tmp is a fresh, empty filesystem per
 # container boot (e.g. Railway), every PHP invocation (including this
@@ -10,32 +30,12 @@ set -e
 # command runs.
 mkdir -p /tmp/opcache-file-cache
 
-# Diagnostic only, temporary: the guarded mkdir below has failed with a
-# genuine "Permission denied" (not just "doesn't exist yet") on the last
-# two deploys, meaning the volume mount itself has ownership/mode this
-# container's runtime user can't write into -- unlike /tmp/opcache-file-cache
-# above, this isn't fixable by mkdir -p alone. Log who we are and what the
-# mount actually looks like so the real fix (chown vs. move off local disk
-# entirely) can be chosen from evidence instead of another guess. Remove
-# once root-caused.
-echo "DIAG: whoami=$(whoami 2>&1) id=$(id 2>&1)"
-echo "DIAG: ls -ld storage storage/app: $(ls -ld storage storage/app 2>&1)"
-echo "DIAG: stat storage/app: $(stat storage/app 2>&1)"
-
-# Same root cause, different mount: Railway's persistent volume is bound at
-# storage/app, which overlays whatever the image built at that path with the
-# volume's own (initially empty) content. The build-time `mkdir -p
-# storage/framework/... && chmod -R a+rw storage` step in the Dockerfile
-# never touches storage/app/public because it can't -- the volume isn't
-# mounted yet at build time. Without this, the first write under
-# storage/app/public (property photo seeding, any real upload) fails with
-# "Unable to create a directory at .../storage/app/public", which is fatal
-# enough to abort the whole `db:seed` run partway through. Recreate it on
-# every boot, before migrate/seed/anything else touches storage. Guarded,
-# not `set -e`-fatal: a still-broken volume should degrade to a demo
-# without photos, not take the whole container down.
-{ mkdir -p storage/app/public && chmod -R a+rw storage/app; } || \
-    echo "WARNING: could not prepare storage/app/public on the mounted volume -- uploads/seeded photos will fail."
+# storage/app/public specifically: now that the chown above has run,
+# this should always succeed -- kept as a lightweight, still-guarded
+# no-op for the very first boot after a fresh volume provision, where the
+# subdirectory genuinely doesn't exist yet.
+mkdir -p storage/app/public || \
+    echo "WARNING: could not prepare storage/app/public -- uploads/seeded photos will fail."
 
 container_mode=${CONTAINER_MODE:-"http"}
 running_migrations_and_seeders=${RUNNING_MIGRATIONS_AND_SEEDERS:-"false"}

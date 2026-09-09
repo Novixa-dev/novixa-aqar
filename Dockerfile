@@ -76,6 +76,7 @@ RUN apk update && \
     psmisc \
     ca-certificates \
     supervisor \
+    su-exec \
     libsodium-dev && \
     install-php-extensions \
     bz2 \
@@ -172,6 +173,16 @@ RUN mkdir -p /tmp/opcache-file-cache && php artisan octane:install --server=road
 
 RUN chmod +x /usr/local/bin/start-container && \
     cat .docker/utilities.sh >> ~/.bashrc
+
+# Start as root: a host-mounted volume (Railway's storage/app bind mount)
+# arrives owned by root regardless of what this image built as, since the
+# mount is layered on at container-start time, after the image's own
+# ownership no longer matters for that path. start-container fixes the
+# mounted volume's ownership as root, then re-execs itself as ${USER} via
+# su-exec before running anything else (migrations, seeding, the app
+# server) -- so the app itself never actually runs as root, only this
+# one-time fixup does.
+USER root
 
 EXPOSE 8000
 EXPOSE 8080
