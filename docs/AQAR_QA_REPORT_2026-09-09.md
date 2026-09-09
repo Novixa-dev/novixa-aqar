@@ -596,6 +596,13 @@ widget in a real browser — sent "مرحبا، أبحث عن عقار للبي�
 correctly-classified, fully Arabic, RTL-rendered reply (screenshot on file). No new `laravel.log`
 errors in either path.
 
+**Merged and live:** PR #23 (`6ad50e0`), all 7 CI checks green including `laravel-tests` and `tests`
+(confirms the updated/new `ChatbotTest.php` assertions pass for real, not just via local `tinker`
+simulation). Redeployed to Railway (deployment `116d3d05`); read the full deploy log end-to-end —
+`Nothing to migrate` (no schema change needed), config/routes/views/Filament caches rebuilt with zero
+errors, RoadRunner started, supervisord confirmed `octane_0` reached RUNNING and stayed up. No
+exceptions anywhere in the log.
+
 ---
 
 ## 6. Detailed Test Results
@@ -761,7 +768,7 @@ single QA pass and is recommended as ongoing work, not a gap in this session.
    103-page crawl across all 8 personas, zero HTTP 500s, zero new log errors (§7).
 5. ~~Consider the low-severity chatbot locale finding (§6.4)~~ — **done, and turned out to be more
    than cosmetic**: the chatbot never spoke Arabic and never understood Arabic input either. Fixed and
-   verified end-to-end, including in the live chat widget (§5.12). PR #23, pending merge/redeploy.
+   verified end-to-end, including in the live chat widget (§5.12). PR #23 merged and live-verified.
 6. Consider reviewing the 10 stale Dependabot PRs (§4.5) — none urgent, but 2 weeks old.
 7. `docs/DEPLOYMENT-ENVIRONMENT-INVENTORY.md` still frames itself around "Laravel Cloud" — worth a
    pass to reflect the actual Railway deployment, now that this report has established the current
