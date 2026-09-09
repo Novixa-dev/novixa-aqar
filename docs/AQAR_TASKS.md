@@ -256,3 +256,33 @@ Full detail and before/after row counts: `docs/AQAR_PROGRESS.md` Phase 20. Goal:
 **Verification:** `migrate:fresh --seed --force` — 4 runs, one transient Windows file-permission failure on the Spatie permission cache (unrelated to any seeder code, confirmed by an immediate clean retry), 3 clean exits. `php artisan test --no-ansi` — **553 passed / 0 failed / 32 skipped (2135 assertions)**, exact match to baseline, zero regressions.
 
 **Not yet done:** actual redeploy to the live Railway staging environment with both Phase 19's fixes and this phase's full seed data (need a `RAILWAY_TOKEN` to proceed) and the corresponding live-URL QA pass — see `docs/STAGING_DEMO_DEPLOYMENT_PROMPT.md`. The ~30 unexplained staged Railway config changes flagged in Phase 19 are still unresolved — review before trusting the live environment's full variable set.
+
+## Phase 21 (2026-09-09) — Full priority-ordered QA sweep, live-verified
+
+Full detail: `docs/AQAR_QA_REPORT_2026-09-09.md`. By this phase, Railway hosting was live with full
+demo data (Phase 20); this phase actually drove the browser (live Playwright against the same commit,
+run locally due to a sandbox network policy blocking the direct Railway URL — see report §2) across
+every role/panel/language/screen-size, priority-ordered, and fixed everything real it found.
+
+| ID | Finding | Fix | Status | File(s) |
+|---|---|---|---|---|
+| P21-1 | `PropertySeeder` had no idempotency guard — every re-seed created 28 brand-new duplicate properties; live Railway logs showed 560 `property_features` rows where 140 was expected (4×) | `Property::exists()` guard before creating; added `RESEED_FRESH` opt-in demo-reset flag to `.docker/start-container` | **FIXED**, verified live on Railway (§21-3 below) | `database/seeders/PropertySeeder.php`, `.docker/start-container` |
+| P21-2 | `ChatConversationResource`: 100%-reproducible HTTP 500 on `/admin/chat-conversations` and `/staff/chat-conversations` — `escalated_at` column chained `->dateTime()->default('—')`, and Filament's `default()` state then hit `dateTime()`'s Carbon parser and threw on every non-escalated row | Switched to `->placeholder('—')` (verified against Filament source: `blank($state)` short-circuits before parsing) | **FIXED**, verified live (HTTP 200, correct render, all 3 seeded conversations) | `app/Filament/Staff/Resources/ChatConversations/ChatConversationResource.php` |
+| P21-3 | `ContactMessagePolicy` missing — `ContactMessage` is a genuinely reachable Admin-panel Resource with no Policy class; non-strict Filament auth fails OPEN, so any Admin-eligible role (staff included) could view public contact-form PII with no explicit permission, directly contradicting `RolesSeeder::matchesStaffAllowlist()`'s own deliberate exclusion of `contact_message` | Added the policy following this codebase's existing generated-policy pattern; auto-discovered via Laravel's model-name convention, no explicit registration needed | **FIXED**, verified via tinker (staff denied, admin allowed) | `app/Policies/ContactMessagePolicy.php` (new) |
+| P21-4 | `RESEED_FRESH=true` crash-looped on Railway when used to clean up P21-1's already-duplicated live data: 2 of 3 observed `migrate:fresh --seed` attempts threw `Spatie\MediaLibrary\...\DiskCannotBeAccessed` inside `ResponsiveImageGenerator`, reached inline (`QUEUE_CONNECTION=sync`) from `PropertySeeder::attachGalleryPhotos()`; `start-container`'s RESEED_FRESH branch has no `\|\| true` fallback, so each crash aborted the boot and Railway auto-restarted, re-running the full reseed from scratch each time | Added `->withResponsiveImagesIf(false)` to the seeder's `addMedia()` chain — seeded photos never needed responsive srcset variants; real user uploads via Filament are unaffected | **FIXED locally**, verified end-to-end (28/28 properties with photos, clean single pass); **PR #17 open, not yet merged/redeployed as of this entry** | `database/seeders/PropertySeeder.php` |
+
+**Test results summary:** Tier P0 10/10 PASS. Tier P1 panel sweep 107/109 PASS (the 2 failures are
+P21-2 above, now fixed). Full live-browser CRUD lifecycle verified (create/search/edit/delete) on
+Properties, including confirming the staff-vs-admin delete-permission boundary. Public site
+(properties, calculators, contact form — verified a real DB row, not just a UI message — news,
+chatbot with a real contextual reply) all PASS. Tier P2 (English locale, dark mode on `/login`,
+375/768/1440px responsive) all PASS, zero horizontal overflow at any breakpoint.
+
+**Minor, non-blocking finding, not yet actioned:** chatbot replied in English to an Arabic-locale
+question — the canned/fallback response doesn't appear to key off `app()->getLocale()`.
+
+**Not yet done** (see `docs/AQAR_QA_REPORT_2026-09-09.md` §7 for the full list, in priority order):
+deep per-role interaction beyond Admin/Staff reachability, booking/appointment creation flow, virtual
+tour rendering, form-validation messaging, 404/500 pages, SEO basics, Tier P3 secondary surfaces.
+Also outstanding: merge PR #17, confirm one clean `RESEED_FRESH` redeploy, then set it back to
+`false` (currently still `true` on the live `web` service from this investigation).

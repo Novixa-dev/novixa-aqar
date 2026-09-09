@@ -337,3 +337,77 @@ The code from Phase 18 was pushed to `main` and a real deployment was stood up: 
 **Staging deployment prep:** `docs/STAGING_DEMO_DEPLOYMENT_PROMPT.md` (written this session) documents the full Railway environment-variable matrix, the one-time `RUNNING_MIGRATIONS_AND_SEEDERS=true` full-reseed step, and a post-deploy verification checklist. Railway CLI installed locally (`@railway/cli` via npm) ready for the deploy step, pending a `RAILWAY_TOKEN` from the user to authenticate against the actual project.
 
 **Verdict: FULL DEMO DATA READY (locally).** Every panel/page audited against real seeded row counts (not assumed) now has non-empty, realistic content. Merged with Phase 19's Faker fix before pushing (see `docs/AQAR_DECISIONS.md`) — the two passes are complementary: Phase 19 made the live Railway seed chain able to complete at all; this phase makes what it seeds actually full. Not yet redeployed to Railway as of this entry — see `docs/STAGING_DEMO_DEPLOYMENT_PROMPT.md` for the exact remaining steps and required input (a `RAILWAY_TOKEN`).
+
+---
+
+## 2026-09-09 — Phase 21: full priority-ordered QA sweep + 4 real bugs found and fixed
+
+**Context:** by this point Railway hosting was already live (project `novixa-aqar-staging`, `web` +
+`mysql` services, auto-deploy from `main` confirmed working) and full of seed data (Phase 20). The
+user asked for a professional, priority-ordered ("من الاهم فالاهم") full QA pass across every
+role/panel/language/screen size, with every finding logged and a final comprehensive `.md` report.
+Full detail: `docs/AQAR_QA_REPORT_2026-09-09.md`.
+
+**Environment note:** this session's sandbox has a hard network-policy block on the live Railway URL
+(confirmed via two tools + the proxy's own status endpoint) — correctly not routed around. Worked
+around by standing up the exact same commit locally (fresh MariaDB, `migrate:fresh --seed`,
+`php artisan serve`) and running real Playwright browser sessions against it — the identical
+local-serve+Playwright pattern this project's QA history has used in every prior phase. Deploy-side
+operations (merging PRs, setting Railway variables, reading deploy logs) went through Railway's
+management API, a separate channel that was reachable throughout.
+
+**Test results:** Tier P0 10/10 PASS (homepage, self-registration, all 9 persona logins). Tier P1
+panel sweep: 107/109 PASS across a full nav-discovery-and-visit of every persona's sidebar (not a
+hand-picked subset) — 37 admin pages, 34 staff, plus agent/buyer/seller/landlord/tenant/contractor.
+Full live-browser CRUD lifecycle verified on Properties (create → search → edit → delete), including
+confirming the staff-vs-admin delete-permission boundary is enforced correctly both in policy and in
+what the UI renders. Public site: property browse/detail, calculators (real YER-denominated
+interactive tool), contact form (verified a **real DB row** was created, not just a UI success
+message), news, and the chatbot (sent a real Arabic message, got a real contextual reply). Tier P2:
+English locale (zero raw keys, correct RTL→LTR icon mirroring), dark mode on `/login` (regression
+check on the historical P13-6 gap — still fixed), and 375/768/1440px responsive (zero horizontal
+overflow at any breakpoint).
+
+**4 real bugs found and fixed, all via live reproduction before any fix was written:**
+
+1. **`ChatConversationResource` — 100%-reproducible HTTP 500** on `/admin/chat-conversations` and
+   `/staff/chat-conversations`. Root cause: the `escalated_at` column chained
+   `->dateTime()->default('—')` — Filament's `default()` substitutes the literal string as the
+   column's state when null, which `dateTime()`'s Carbon parser then chokes on. Fixed by switching to
+   `->placeholder('—')` (verified against Filament's own source that `blank($state)` short-circuits
+   *before* parsing). Re-verified live: HTTP 200, all 3 seeded conversations render correctly.
+2. **`ContactMessagePolicy` — missing, authorization fails open.** Of 35 Resource-backed models, 2 had
+   no Policy class; `Alert` is confirmed dead code, but `ContactMessage` is genuinely reachable in the
+   live Admin panel. Non-strict Filament auth + no policy = fails open: any Admin-panel-eligible role
+   (staff included) could view public contact-form PII, directly contradicting `RolesSeeder`'s own
+   `matchesStaffAllowlist()`, which deliberately excludes `contact_message`. Fixed by adding the
+   policy (auto-discovered, no explicit registration needed — this project relies on Laravel's
+   model-name convention). Verified via tinker: staff denied, admin still allowed, exactly matching
+   the seeder's stated intent.
+3. **`RESEED_FRESH` crash-loop on Railway** — found *while executing the cleanup Phase 20/21's own
+   `PropertySeeder` idempotency fix made necessary* (using the new `RESEED_FRESH=true` flag to clear
+   out already-duplicated live property rows). Railway's deploy logs showed `migrate:fresh --seed`
+   crash-looping: 2 of 3 observed attempts threw `Spatie\MediaLibrary\...\DiskCannotBeAccessed`
+   inside `ResponsiveImageGenerator`, reached inline (via `QUEUE_CONNECTION=sync`) from
+   `PropertySeeder::attachGalleryPhotos()`. `start-container`'s `RESEED_FRESH` branch has no `|| true`
+   fallback, so each crash aborted the whole container boot and Railway auto-restarted it, re-running
+   the entire fresh reseed from scratch each time. Fixed by adding `->withResponsiveImagesIf(false)`
+   to the seeder's `addMedia()` call — seeded demo photos never needed responsive srcset variants;
+   real user uploads via Filament are untouched. Verified locally: clean single-pass
+   `migrate:fresh --seed --force`, 28/28 properties with photos attached. PR #17 open, CI running as
+   of this entry — merge, confirm one clean redeploy, then set `RESEED_FRESH` back to `false`.
+4. *(Carried from the same investigation, Phase 20/21 boundary)* **`PropertySeeder`
+   non-idempotency** — every re-seed created 28 brand-new duplicate properties; live Railway logs
+   showed 560 `property_features` rows where 140 was expected (exactly 4×). Fixed via a
+   `Property::exists()` guard.
+
+**Commits:** `f424db0` (idempotent PropertySeeder + RESEED_FRESH), `43f96b6` (ChatConversationResource
+fix), `f46c65e` (ContactMessagePolicy) — all merged via PR #16, all 6 CI checks green, auto-deployed
+to Railway (confirmed live). `b4ae817` (responsive-images crash-loop fix) — PR #17, open at time of
+writing.
+
+**Verdict:** staging demo is live, seeded, and passes every P0 check plus the large majority of P1/P2.
+Zero unresolved P0s from this pass. Not yet exercised: deep per-role interaction beyond Admin/Staff,
+booking/appointment creation, virtual tour rendering, form-validation messaging, 404/500 pages, SEO
+basics, and Tier P3 secondary surfaces — see `docs/AQAR_QA_REPORT_2026-09-09.md` §7 for the full,
+honest list of what remains, in priority order for the next pass.

@@ -91,6 +91,16 @@ class PropertySeeder extends Seeder
                         ->preservingOriginal()
                         ->usingName($property->title)
                         ->usingFileName("property-{$property->id}-".($j + 1).'.jpg')
+                        // Responsive-image generation (Property::images collection sets
+                        // ->withResponsiveImages()) runs synchronously here (QUEUE_CONNECTION
+                        // defaults to sync), and on Railway intermittently threw
+                        // Spatie\MediaLibrary\...\DiskCannotBeAccessed deep inside
+                        // ResponsiveImageGenerator -- reproduced live: crashed 2 of 3 consecutive
+                        // `migrate:fresh --seed` attempts at this exact call, aborting the seeder
+                        // (and, under this script's `set -e`, the whole container boot) each time.
+                        // Seed photos don't need responsive srcset variants; skip generation only
+                        // for seeded media so real user uploads (via Filament) still get them.
+                        ->withResponsiveImagesIf(false)
                         ->toMediaCollection('images');
                 }
 
