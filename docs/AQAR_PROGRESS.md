@@ -387,15 +387,28 @@ overflow at any breakpoint).
 3. **`RESEED_FRESH` crash-loop on Railway** — found *while executing the cleanup Phase 20/21's own
    `PropertySeeder` idempotency fix made necessary* (using the new `RESEED_FRESH=true` flag to clear
    out already-duplicated live property rows). Railway's deploy logs showed `migrate:fresh --seed`
-   crash-looping: 2 of 3 observed attempts threw `Spatie\MediaLibrary\...\DiskCannotBeAccessed`
+   crash-looping: repeated attempts threw `Spatie\MediaLibrary\...\DiskCannotBeAccessed`
    inside `ResponsiveImageGenerator`, reached inline (via `QUEUE_CONNECTION=sync`) from
    `PropertySeeder::attachGalleryPhotos()`. `start-container`'s `RESEED_FRESH` branch has no `|| true`
    fallback, so each crash aborted the whole container boot and Railway auto-restarted it, re-running
-   the entire fresh reseed from scratch each time. Fixed by adding `->withResponsiveImagesIf(false)`
-   to the seeder's `addMedia()` call — seeded demo photos never needed responsive srcset variants;
-   real user uploads via Filament are untouched. Verified locally: clean single-pass
-   `migrate:fresh --seed --force`, 28/28 properties with photos attached. PR #17 open, CI running as
-   of this entry — merge, confirm one clean redeploy, then set `RESEED_FRESH` back to `false`.
+   the entire fresh reseed from scratch each time.
+   **First fix attempt (PR #17) merged but turned out ineffective** — `->withResponsiveImagesIf(false)`
+   on the seeder's `addMedia()` call verified clean locally and merged, but the identical crash
+   happened again on the very next live redeploy, at the identical line. Caught only by watching that
+   redeploy through to completion via Railway's own logs rather than trusting "verified locally,
+   merged" as sufficient. Root-caused properly this time: Spatie's `FileAdder::processMediaItem()`
+   unconditionally calls `checkGenerateResponsiveImages()`, which re-derives the responsive-images
+   flag from the *media collection's own* registered default and silently overrides any per-call
+   override — there is no way to opt out at the `addMedia()` call site once the collection itself has
+   responsive images enabled, only the collection registration is authoritative.
+   **Real fix (PR #18)**: added `Property::$skipResponsiveImagesForSeeding`, an instance property
+   checked inside `registerMediaCollections()` itself — the one place in the chain that actually
+   sticks, since that method is re-invoked fresh on the specific model instance every time. Real user
+   uploads via Filament are unaffected (flag defaults `false`). Verified locally: clean single-pass
+   `migrate:fresh --seed --force`, `PropertySeeder` now 607ms (was 75,990ms even when it happened not
+   to crash), 28/28 properties with photos, and a sample media row's `responsive_images` field
+   genuinely empty (`[]`) confirming generation is actually skipped, not silently failing. PR #18
+   open, CI subscribed, as of this entry.
 4. *(Carried from the same investigation, Phase 20/21 boundary)* **`PropertySeeder`
    non-idempotency** — every re-seed created 28 brand-new duplicate properties; live Railway logs
    showed 560 `property_features` rows where 140 was expected (exactly 4×). Fixed via a
@@ -403,8 +416,8 @@ overflow at any breakpoint).
 
 **Commits:** `f424db0` (idempotent PropertySeeder + RESEED_FRESH), `43f96b6` (ChatConversationResource
 fix), `f46c65e` (ContactMessagePolicy) — all merged via PR #16, all 6 CI checks green, auto-deployed
-to Railway (confirmed live). `b4ae817` (responsive-images crash-loop fix) — PR #17, open at time of
-writing.
+to Railway (confirmed live). `b4ae817` (responsive-images crash-loop fix, first attempt) — merged via
+PR #17, later found ineffective live. `3cbbf74` (the actual fix) — PR #18, open at time of writing.
 
 **Verdict:** staging demo is live, seeded, and passes every P0 check plus the large majority of P1/P2.
 Zero unresolved P0s from this pass. Not yet exercised: deep per-role interaction beyond Admin/Staff,
