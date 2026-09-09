@@ -401,14 +401,27 @@ overflow at any breakpoint).
    flag from the *media collection's own* registered default and silently overrides any per-call
    override — there is no way to opt out at the `addMedia()` call site once the collection itself has
    responsive images enabled, only the collection registration is authoritative.
-   **Real fix (PR #18)**: added `Property::$skipResponsiveImagesForSeeding`, an instance property
+   **Fix, part 1 (PR #18)**: added `Property::$skipResponsiveImagesForSeeding`, an instance property
    checked inside `registerMediaCollections()` itself — the one place in the chain that actually
    sticks, since that method is re-invoked fresh on the specific model instance every time. Real user
    uploads via Filament are unaffected (flag defaults `false`). Verified locally: clean single-pass
    `migrate:fresh --seed --force`, `PropertySeeder` now 607ms (was 75,990ms even when it happened not
    to crash), 28/28 properties with photos, and a sample media row's `responsive_images` field
-   genuinely empty (`[]`) confirming generation is actually skipped, not silently failing. PR #18
-   open, CI subscribed, as of this entry.
+   genuinely empty (`[]`). Merged — **but the crash-loop continued on the next live redeploy anyway.**
+   The stack trace had changed (no longer through `ResponsiveImageGenerator` — proof this fix genuinely
+   worked), now failing on the *base* media file copy instead: checked Railway's `DISK_USAGE_GB`
+   metric and found the 500MB persistent volume at ~504MB used — completely full. `migrate:fresh` only
+   ever resets the database, never the filesystem, so every earlier crashed/partial attempt across this
+   whole investigation had left orphaned property photos on the volume with nothing ever cleaning them
+   up, until it filled completely.
+   **Fix, part 2 (PR #19)**: clear `storage/app/public` before `migrate:fresh --seed` in the
+   `RESEED_FRESH` branch, so the flag's own "clean slate" promise covers the filesystem too. Merged,
+   redeployed, and this time verified by reading the complete deploy log rather than trusting an early
+   status: exactly 1 container boot, full seed chain completed (`PropertySeeder` 1,259ms, zero errors),
+   reached `Octane Server: roadrunner` with a running process. `DISK_USAGE_GB` confirmed back to a
+   healthy ~70MB. `RESEED_FRESH` then set back to `false` — that redeploy's own log confirmed the
+   normal ("Nothing to migrate") boot path, admin ensured, `storage:link` connected, server started
+   cleanly. **Fully resolved and live-verified as of this entry.**
 4. *(Carried from the same investigation, Phase 20/21 boundary)* **`PropertySeeder`
    non-idempotency** — every re-seed created 28 brand-new duplicate properties; live Railway logs
    showed 560 `property_features` rows where 140 was expected (exactly 4×). Fixed via a
@@ -416,8 +429,10 @@ overflow at any breakpoint).
 
 **Commits:** `f424db0` (idempotent PropertySeeder + RESEED_FRESH), `43f96b6` (ChatConversationResource
 fix), `f46c65e` (ContactMessagePolicy) — all merged via PR #16, all 6 CI checks green, auto-deployed
-to Railway (confirmed live). `b4ae817` (responsive-images crash-loop fix, first attempt) — merged via
-PR #17, later found ineffective live. `3cbbf74` (the actual fix) — PR #18, open at time of writing.
+to Railway (confirmed live). `b4ae817` (responsive-images fix, first attempt) — merged via PR #17,
+later found ineffective live. `3cbbf74` (the real responsive-images fix, confirmed to have worked) —
+PR #18. `70960b7` (clear the full volume before reseeding — the actual remaining cause) — PR #19.
+All merged, redeployed, and verified via a fully-read deploy log.
 
 **Verdict:** staging demo is live, seeded, and passes every P0 check plus the large majority of P1/P2.
 Zero unresolved P0s from this pass. Not yet exercised: deep per-role interaction beyond Admin/Staff,
