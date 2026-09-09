@@ -57,6 +57,22 @@ initialStuff() {
     # Always unset this variable again after use -- it is not meant to be
     # left on.
     if [ "${RESEED_FRESH:-false}" = "true" ]; then
+        # migrate:fresh only resets the DATABASE -- it never touches the
+        # filesystem. Every crashed/partial seed attempt (this exact
+        # mechanism has now caused several, while root-causing an unrelated
+        # PropertySeeder bug) left its already-written property photos
+        # behind on the persistent volume, since nothing ever cleaned them
+        # up. Confirmed live via Railway's own DISK_USAGE_GB metric: the
+        # 500MB volume was reading ~504MB used -- completely full -- which
+        # is what made every subsequent write deterministically fail with
+        # Spatie MediaLibrary's DiskCannotBeAccessed, crash-looping the
+        # container indefinitely regardless of what the seeder code itself
+        # did. Clear seeded media before reseeding so RESEED_FRESH actually
+        # delivers the clean slate its name promises, filesystem included.
+        echo "RESEED_FRESH=true: clearing seeded media from the persistent volume ..."
+        rm -rf storage/app/public
+        mkdir -p storage/app/public
+
         echo "RESEED_FRESH=true: dropping and rebuilding the demo database from scratch ..."
         php artisan migrate:fresh --seed --force
     else
