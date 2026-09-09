@@ -48,7 +48,7 @@ class LeaseRelationManager extends RelationManager
                 TextColumn::make('end_date')
                     ->date(),
                 TextColumn::make('rent_amount')
-                    ->money(),
+                    ->money(strtolower(config('currencies.default'))),
                 TextColumn::make('terms')
                     ->limit(50),
             ])
