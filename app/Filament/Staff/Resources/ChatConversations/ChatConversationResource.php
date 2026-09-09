@@ -104,7 +104,7 @@ class ChatConversationResource extends Resource
                     ->label(__('filament.fields.escalated_at'))
                     ->dateTime()
                     ->sortable()
-                    ->default('—'),
+                    ->placeholder('—'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('filament.fields.started_at'))
                     ->dateTime()
