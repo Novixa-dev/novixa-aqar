@@ -192,6 +192,16 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         return $this->hasMany(Appointment::class);
     }
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function rentals()
+    {
+        return $this->hasMany(Lease::class, 'tenant_id');
+    }
+
     public function assignedAgencyTasks()
     {
         return $this->hasMany(AgencyTask::class, 'assigned_to');
