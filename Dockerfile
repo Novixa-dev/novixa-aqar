@@ -73,6 +73,7 @@ RUN apk update && \
     nano \
     ncdu \
     procps \
+    psmisc \
     ca-certificates \
     supervisor \
     libsodium-dev && \
