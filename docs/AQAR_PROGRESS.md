@@ -282,3 +282,40 @@ One test (`TransactionTest::test_transaction_scope`) failed once across four ful
 Ran a genuinely fresh `migrate:fresh --seed --force` this pass (not just a targeted re-seed) — confirmed exit 0, and confirmed the previous pass's fixes (transaction seeding, the translated news article) hold from a cold start, and that the "test" property category — cleaned up live last time — does not come back, since no seeder path ever produced it.
 
 **Verdict: DEMO READY.** Nothing pushed. 15 commits ahead of `origin/main`, 0 behind, clean fast-forward available.
+
+---
+
+## 2026-09-09 — Phase 19: full demo-data completion pass + Railway staging deployment prep
+
+**Note on the gap since Phase 18:** between 2026-08-28 and this pass, `main` was pushed and received 9 further commits directly (not through this doc's own session) fixing a real, live crash-loop on **Railway** (opcache/RoadRunner-worker/memory tuning for a 1GB container, plus admin-bootstrap and conditional-seed logic in `.docker/start-container`). This confirms the actual deployment target is Railway, not the Laravel Cloud plan `docs/DEPLOYMENT-ENVIRONMENT-INVENTORY.md` was written against — logged in `docs/AQAR_DECISIONS.md` (2026-09-09 entry). This branch was 9 commits behind `origin/main`; pulled clean, no conflicts, before starting this phase's work.
+
+**Task:** the user asked for every panel/page/section to carry real-looking demo data — nothing empty — so a reviewer clicking through the live demo never hits a blank table or empty state, then to get that data live on the Railway staging environment.
+
+**Method — verified against a real seeded database, not static code reading alone.** An initial grep-based audit found several apparent gaps; cross-checking against actual row counts from a fresh `migrate:fresh --seed --force` caught **two false positives** the static pass would have wasted effort on: `Room` (24 rows — already created inside `PropertySeeder::createHmoProperties()` via `$property->rooms()->create()`, a relationship call `grep "Room::"` doesn't match) and `PropertyHistory` (28→48 rows — auto-populated by `PropertyObserver::created()` on every seeded property with a `list_date`, then enriched by the newly-wired `PropertyHistorySeeder`). `Branch` was likewise already non-empty (1 row, auto-created alongside the demo team) and was left alone rather than wiring in the standalone `BranchSeeder.php`, which has no dedup guard and would have created a redundant second branch.
+
+**Genuine gaps found and fixed** (verified empty via real counts, not just grep):
+
+| Model | Before → After | Fix |
+|---|---|---|
+| `PropertyFeature` | 0 → 140 | New `DemoDataCompletionSeeder`: 4-6 realistic Arabic amenities per property, deterministic by id |
+| `Review` | 0 → 10 | Property + neighborhood reviews, tied to personas who plausibly interacted (buyer's bookings, tenant's lease); `approved => true` set explicitly — confirmed via `PropertyDetail.php:78` that the public page only renders `approved` reviews; one deliberately `pending` for a non-empty moderation queue |
+| `CommunityEvent` | 0 → 30 | Wired the pre-existing, previously-unwired `CommunityEventSeeder` into `DatabaseSeeder` |
+| `Favorite` | 0 → 6 | Buyer/tenant sample favorites so the Wishlist page isn't empty |
+| `KeyLocation`, `PropertyTemplate`, `EmailCampaign` | 0 → 3 each | Staff-panel resources that had zero backing rows |
+| `EnergyConsumption` / `UtilityPayment` | 0 → 4 / 0 → 2 | Linked consumption + payment records for a handful of rented properties |
+| `Message` (Communication Hub, Staff+Tenant panels) | 0 → 4 | A short realistic staff↔tenant and landlord↔staff thread |
+| `ChatConversation` / `ChatMessage` | 0 → 3 / 0 → 7 | Three sample chatbot conversations (closed/active/escalated), one genuinely anonymous (`user_id => null`) |
+| `ContactMessage` | 0 → 4 | Sample inbound public contact-form submissions, mixed read/unread |
+| `Tenant` / `MaintenanceRequest` / `Booking` / `Transaction` / `RentalApplication` | 3/4/3/2/3 → 7/9/6/4/6 | `DemoWorkflowSeeder`'s existing volumes enriched (more `take()`, more seed rows) so panels read as an active agency rather than a bare fixture set |
+| `Property.moderation_status` | all `NULL` → mixed (2 approved, 2 pending, 1 rejected, rest approved) | So the Staff "Property Moderation" resource shows an active-looking workflow instead of a uniformly blank column. Verified this has zero effect on public visibility — no public query filters by `moderation_status`, confirmed via a full grep before making the change |
+
+**A real bug caught mid-pass:** the first version of `DemoDataCompletionSeeder` authored 3 of its reviews (2 generic + 1 pending) against `appuser@darhadhramaut.ye` — a persona referenced defensively elsewhere in `DemoWorkflowSeeder` but which, verified via `User::pluck('email')` on a fresh seed, **does not actually exist** in `UserSeeder`'s output (only the 8 documented role personas do). The `if ($appUser)` guard meant this failed silently rather than crashing, but it silently dropped 3 rows. Fixed by re-targeting that content at real, always-present personas (`buyer`, `tenant`) instead of a persona that has never been seeded.
+
+**Verification performed:**
+- `php artisan migrate:fresh --seed --force` — 4 runs this pass. One failed with a transient Windows file-permission error writing the Spatie permission cache (`storage/framework/cache/data/...`, unrelated to any seeder code — confirmed by an immediate clean retry succeeding); the other three exited 0. Final row counts confirmed via a direct tinker script against the live database, not just the seeders' own summary line.
+- `php artisan test --no-ansi` — **553 passed / 0 failed / 32 skipped (2135 assertions)**, exact match to the established baseline. Zero regressions from any of the above.
+- Deleted `database/seeders/UKASTTemplateSeeder.php` — a pre-existing, completely empty (0-byte) seeder file, unreferenced anywhere in the codebase or tests (confirmed via project-wide grep before deleting).
+
+**Staging deployment prep:** `docs/STAGING_DEMO_DEPLOYMENT_PROMPT.md` (written this session) documents the full Railway environment-variable matrix, the one-time `RUNNING_MIGRATIONS_AND_SEEDERS=true` full-reseed step, and a post-deploy verification checklist. Railway CLI installed locally (`@railway/cli` via npm) ready for the deploy step, pending a `RAILWAY_TOKEN` from the user to authenticate against the actual project.
+
+**Verdict: FULL DEMO DATA READY.** Every panel/page audited against real seeded row counts (not assumed) now has non-empty, realistic content. Not yet deployed to Railway as of this entry — see `docs/STAGING_DEMO_DEPLOYMENT_PROMPT.md` for the exact remaining steps and required input.

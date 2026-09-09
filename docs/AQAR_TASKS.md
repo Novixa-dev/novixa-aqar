@@ -223,3 +223,21 @@ User-requested final verification that the exact code about to be published matc
 **Final test suite state**: run 4× this pass as fixes landed — PASS → PASS → FAIL (P18-6, investigated) → FAIL (P18-2, fixed) → **PASS (553/0/32, final)**.
 
 **Verdict: DEMO READY.** P18-1 was the most severe finding across both this phase and Phase 17 — a real visitor could never have completed self-registration before this fix.
+
+## Phase 19 (2026-09-09) — Full demo-data completion for staging review
+
+Full detail and before/after row counts: `docs/AQAR_PROGRESS.md` Phase 19. Goal: no panel/page/section renders empty against a fresh seed. Verified against real row counts from `migrate:fresh --seed --force`, not static grep alone (which produced 2 false positives — see below).
+
+| ID | Finding | Fix | Status | File(s) |
+|---|---|---|---|---|
+| P19-1 | `PropertyFeature`, `Review`, `CommunityEvent`, `Favorite`, `KeyLocation`, `PropertyTemplate`, `EmailCampaign`, `EnergyConsumption`/`UtilityPayment`, `Message`, `ChatConversation`/`ChatMessage`, `ContactMessage` — all 0 rows against a fresh seed, each with a real Filament/public-facing UI that rendered empty | New `DemoDataCompletionSeeder` (production-guarded like `DemoWorkflowSeeder`) + wired the pre-existing, previously-unwired `CommunityEventSeeder`/`PropertyHistorySeeder` into `DatabaseSeeder` | **FIXED** | `database/seeders/DemoDataCompletionSeeder.php` (new), `DatabaseSeeder.php` |
+| P19-2 | `DemoWorkflowSeeder`'s volumes (3 tenants, 4 maintenance requests, 3 bookings, 2 transactions, 3 rental applications) read as a bare fixture set, not an active agency | Enriched arrays/`take()` counts: 7/9/6/4/6 respectively | **FIXED** | `database/seeders/DemoWorkflowSeeder.php` |
+| P19-3 | All 28 seeded properties had `moderation_status = NULL` — Staff "Property Moderation" resource showed a uniformly blank status column | Set a realistic mixed distribution (2 approved, 2 pending, 1 rejected, rest approved); confirmed via full-repo grep that no public query filters by `moderation_status`, so this has zero public-visibility side effect | **FIXED** | `database/seeders/DemoWorkflowSeeder.php` |
+| P19-4 | Initial static-grep audit falsely flagged `Room` and `PropertyHistory` as empty | Re-verified against actual DB counts: `Room` (24 rows, created via `$property->rooms()->create()` inside `PropertySeeder::createHmoProperties()`, which a `grep "Room::"` pattern can't see) and `PropertyHistory` (28 rows auto-created by `PropertyObserver::created()`) were already non-empty — left untouched, no fix needed | **FALSE POSITIVE, NO ACTION** | — |
+| P19-5 | `Branch` had exactly 1 row (auto-created with the demo team), not 0 as first assumed; the standalone `BranchSeeder.php` has no dedup guard | Deliberately did not wire `BranchSeeder` in — would create a redundant, unguarded second branch for no real gap | **NOT AN ISSUE, DELIBERATELY SKIPPED** | — |
+| P19-6 | First version of `DemoDataCompletionSeeder` authored 3 reviews against `appuser@darhadhramaut.ye`, a persona referenced defensively elsewhere in `DemoWorkflowSeeder` but never actually created by `UserSeeder` (verified via `User::pluck('email')` — only the 8 documented role accounts exist) | Re-targeted that content at real, always-present personas (`buyer`, `tenant`) | **FIXED** | `database/seeders/DemoDataCompletionSeeder.php` |
+| P19-7 | Dead, 0-byte `database/seeders/UKASTTemplateSeeder.php`, unreferenced anywhere | Deleted | **FIXED** | — |
+
+**Verification:** `migrate:fresh --seed --force` — 4 runs, one transient Windows file-permission failure on the Spatie permission cache (unrelated to any seeder code, confirmed by an immediate clean retry), 3 clean exits. `php artisan test --no-ansi` — **553 passed / 0 failed / 32 skipped (2135 assertions)**, exact match to baseline, zero regressions.
+
+**Not yet done:** actual deployment to the live Railway staging environment (need a `RAILWAY_TOKEN` to proceed) and the corresponding live-URL QA pass — see `docs/STAGING_DEMO_DEPLOYMENT_PROMPT.md`.
