@@ -16,10 +16,10 @@ AI investment-analysis feature silently failing on every property page, a blank-
 a dead-code bug in Rental Applications (Landlord + Staff panels), a currency-formatting inconsistency
 (USD shown instead of YER), and — the single largest cluster — 4 independent stacked crashes that made
 the Tenant maintenance-request/work-order creation flow, and the property-review flow (any
-buyer/tenant, any property), **100% non-functional**. All merged or in CI at time of writing; the
-first 5 are live and verified via a fully-read deploy log end to end, not an early status flag; every
-fix from this point on is verified locally end-to-end (real record created and persisted, or real UI
-state change confirmed via screenshot/tinker) but not yet redeployed to Railway. See §5 for full detail
+buyer/tenant, any property), **100% non-functional**. All 14 fixes are merged into `main` (PR #21)
+and live on Railway — every one is verified both locally end-to-end (a real record created and
+persisted, or a real UI state change confirmed via screenshot/tinker) and via a fully-read Railway
+deploy log after the redeploy, not an early status flag. See §5 for full detail
 (§5.4 in particular carries the honest multi-attempt timeline for the deploy crash-loop — a first fix
 that didn't stick, and a second bug that only became visible once it did) and §7 for what remains
 untested.
@@ -198,12 +198,19 @@ anything today.
 | `b4ae817` | `fix(seed)`: skip responsive-image generation for seeded photos — **first attempt, turned out ineffective, see §5.4** | #17 | ✅ merged (superseded by `3cbbf74`) |
 | `3cbbf74` | `fix(seed)`: `Property::$skipResponsiveImagesForSeeding`, gated inside `registerMediaCollections()` itself — genuinely fixed the responsive-images bug, but a second bug was hiding underneath (see next row) | #18 | ✅ merged |
 | `70960b7` | `fix(deploy)`: clear `storage/app/public` before `RESEED_FRESH`'s `migrate:fresh --seed` — the volume was completely full (~504MB/500MB) from every earlier crashed attempt's orphaned photos, which is the real reason the crash-loop continued after `3cbbf74` | #19 | ✅ merged, redeployed, and live-verified (§5.4) |
-| `ee3a017` | `fix(booking)`: fix two stacked crashes (route-param/mount mismatch, nonexistent method call) that made the property-viewing booking feature 100% broken — see §5.5 | #21 | ✅ pushed, CI re-running with later commits |
-| `6cddf16` | `fix(recommendations)`: add missing `saved_searches` migration and `User::activities()` relationship — AI investment analysis was silently failing on every property page — see §5.6 | #21 | ✅ pushed, CI re-running with later commits |
-| `54c89d9` | `fix(rental-applications)`: `applicant_name` accessor (blank "Applicant" column, Landlord + Staff) and a duplicate `->filters()`/`->recordActions()` merge (dead approve/reject actions) — see §5.7 | #21 | ✅ pushed, CI re-running with later commits |
-| `97bc81e` | `fix(maintenance)`: 4 stacked crashes across the tenant maintenance-request + work-order creation flow — see §5.8 | #21 | ✅ pushed, CI re-running with later commits |
-| `873f0e2` | `fix(reviews)`: add missing `User::bookings()`/`rentals()` relationships — property review submission was 100% broken — see §5.9 | #21 | ✅ pushed, CI green |
-| `68ffba7` | `fix(currency)`: `UtilityPaymentResource` + `LeaseRelationManager` showed USD instead of YER — see §5.10 | #21 | ⏳ CI running at time of writing |
+| `ee3a017` | `fix(booking)`: fix two stacked crashes (route-param/mount mismatch, nonexistent method call) that made the property-viewing booking feature 100% broken — see §5.5 | #21 | ✅ merged, redeployed, live-verified |
+| `6cddf16` | `fix(recommendations)`: add missing `saved_searches` migration and `User::activities()` relationship — AI investment analysis was silently failing on every property page — see §5.6 | #21 | ✅ merged, redeployed, live-verified |
+| `54c89d9` | `fix(rental-applications)`: `applicant_name` accessor (blank "Applicant" column, Landlord + Staff) and a duplicate `->filters()`/`->recordActions()` merge (dead approve/reject actions) — see §5.7 | #21 | ✅ merged, redeployed, live-verified |
+| `97bc81e` | `fix(maintenance)`: 4 stacked crashes across the tenant maintenance-request + work-order creation flow — see §5.8 | #21 | ✅ merged, redeployed, live-verified |
+| `873f0e2` | `fix(reviews)`: add missing `User::bookings()`/`rentals()` relationships — property review submission was 100% broken — see §5.9 | #21 | ✅ merged, redeployed, live-verified |
+| `68ffba7` | `fix(currency)`: `UtilityPaymentResource` + `LeaseRelationManager` showed USD instead of YER — see §5.10 | #21 | ✅ merged, redeployed, live-verified |
+
+**PR #21 merged** (`1c2242b`) — all 7 CI checks green on the final commit, `mergeable_state: clean`.
+Railway auto-triggered deployment `4f68988e` for the merge commit; read the full deploy log end to
+end (not just the `SUCCESS` status flag, per the §5.4 lesson): the new `saved_searches` migration ran
+cleanly (`127.73ms DONE`), config/routes/views/Filament caches rebuilt with zero errors, RoadRunner
+started, and supervisord confirmed the `octane_0` process reached the RUNNING state and stayed up.
+No exceptions anywhere in the log. Every fix in §5.5-§5.10 above is now live, not just merged.
 
 Each merge auto-triggered a Railway redeploy (confirmed via `list-deployments` matching commit SHAs
 to deployment records) — the GitHub→Railway pipeline is genuinely live and working, not just
@@ -707,10 +714,10 @@ single QA pass and is recommended as ongoing work, not a gap in this session.
    as of this report (§5.4). If a future re-seed is ever needed, it should now complete cleanly in one
    pass — but per the lesson in §5.4, verify that via a fully-read deploy log each time, not an early
    status flag.
-2. **Merge PR #21** (booking, AI investment analysis, rental-applications, tenant maintenance/work-
-   orders, property-review, and currency-formatting fixes — §5.5 through §5.10) once CI is green, then
-   live-verify via a fully-read Railway deploy log per the §5.4 lesson (an early "SUCCESS" status is
-   not verification).
+2. ~~Merge PR #21~~ — **done**: merged (`1c2242b`), all 7 CI checks green, `mergeable_state: clean`.
+   Redeployed to Railway (deployment `4f68988e`) and live-verified via a fully-read deploy log per the
+   §5.4 lesson — clean migration, clean cache rebuild, RoadRunner started, no exceptions. Every fix in
+   §5.5 through §5.10 is now live, not just merged.
 3. Decide whether/where to add a real "Book a Viewing" entry point to the property detail page — the
    feature is now fully functional (§5.5) but still has no button linking to it anywhere in the UI.
    This is a product decision, not something fixed in this pass.
