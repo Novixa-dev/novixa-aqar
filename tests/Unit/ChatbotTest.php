@@ -59,24 +59,45 @@ class ChatbotTest extends TestCase
 
     public function test_detects_greeting_intent()
     {
+        app()->setLocale('en');
         $response = $this->chatbotService->processMessage('Hello!');
-        
+
         $this->assertEquals('greeting', $response['intent']);
         $this->assertStringContainsString('Welcome', $response['message']);
     }
 
+    public function test_detects_greeting_intent_in_arabic()
+    {
+        app()->setLocale('ar');
+        $response = $this->chatbotService->processMessage('مرحبا');
+
+        $this->assertEquals('greeting', $response['intent']);
+        $this->assertStringContainsString('مرحباً', $response['message']);
+    }
+
+    public function test_detects_property_search_intent_in_arabic()
+    {
+        app()->setLocale('ar');
+        $response = $this->chatbotService->processMessage('أبحث عن شقة للبيع');
+
+        $this->assertEquals('property_search', $response['intent']);
+        $this->assertGreaterThan(0, $response['confidence']);
+    }
+
     public function test_detects_property_search_intent()
     {
+        app()->setLocale('en');
         $response = $this->chatbotService->processMessage('I am looking for a property');
-        
+
         $this->assertEquals('property_search', $response['intent']);
         $this->assertGreaterThan(0, $response['confidence']);
     }
 
     public function test_detects_price_inquiry_intent()
     {
+        app()->setLocale('en');
         $response = $this->chatbotService->processMessage('How much does it cost?');
-        
+
         $this->assertEquals('price_inquiry', $response['intent']);
     }
 

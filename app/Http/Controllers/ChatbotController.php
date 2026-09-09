@@ -37,7 +37,9 @@ class ChatbotController extends Controller
             'conversation_id' => $conversation->id,
             'session_id' => $sessionId,
             'access_token' => $guestToken,
-            'message' => 'Welcome! How can I help you today?',
+            'message' => app()->getLocale() === 'ar'
+                ? 'مرحباً بك! كيف يمكنني مساعدتك اليوم؟'
+                : 'Welcome! How can I help you today?',
         ]);
     }
 
@@ -57,7 +59,9 @@ class ChatbotController extends Controller
         // Check if conversation is escalated
         if ($conversation->isEscalated()) {
             return response()->json([
-                'message' => 'This conversation has been escalated to a live agent. An agent will respond to you shortly.',
+                'message' => app()->getLocale() === 'ar'
+                    ? 'تم تحويل هذه المحادثة إلى موظف مباشر. سيقوم أحد الموظفين بالرد عليك قريباً.'
+                    : 'This conversation has been escalated to a live agent. An agent will respond to you shortly.',
                 'escalated' => true,
             ]);
         }
@@ -133,7 +137,9 @@ class ChatbotController extends Controller
 
         if ($conversation->isEscalated()) {
             return response()->json([
-                'message' => 'This conversation is already escalated to an agent.',
+                'message' => app()->getLocale() === 'ar'
+                    ? 'تم تحويل هذه المحادثة بالفعل إلى موظف.'
+                    : 'This conversation is already escalated to an agent.',
                 'success' => false,
             ]);
         }
@@ -153,14 +159,20 @@ class ChatbotController extends Controller
             'sender_id' => auth()->id(),
         ]);
 
+        $isArabic = app()->getLocale() === 'ar';
+
         ChatMessage::create([
             'conversation_id' => $conversation->id,
-            'message' => 'Your conversation has been escalated to a live agent. An agent will be with you shortly.',
+            'message' => $isArabic
+                ? 'تم تحويل محادثتك إلى موظف مباشر. سيكون أحد الموظفين معك قريباً.'
+                : 'Your conversation has been escalated to a live agent. An agent will be with you shortly.',
             'sender_type' => 'bot',
         ]);
 
         return response()->json([
-            'message' => 'Your conversation has been escalated to a live agent.',
+            'message' => $isArabic
+                ? 'تم تحويل محادثتك إلى موظف مباشر.'
+                : 'Your conversation has been escalated to a live agent.',
             'success' => true,
         ]);
     }
@@ -180,7 +192,7 @@ class ChatbotController extends Controller
         $conversation->update(['status' => 'closed']);
 
         return response()->json([
-            'message' => 'Conversation closed.',
+            'message' => app()->getLocale() === 'ar' ? 'تم إغلاق المحادثة.' : 'Conversation closed.',
             'success' => true,
         ]);
     }

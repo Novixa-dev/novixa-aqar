@@ -7,7 +7,7 @@ inventory, and every bug found and fixed along the way. Requested as a professio
 test pass ("من الاهم فالاهم") with a complete `.md` report as the deliverable.
 
 **Headline result:** the staging deployment is live, auto-deploying from `main`, fully seeded, and
-passed every P0 (blocking) and the large majority of P1/P2/P3 checks executed. **14 real bugs were
+passed every P0 (blocking) and the large majority of P1/P2/P3 checks executed. **15 real bugs were
 found and fixed this session** (plus one confirmed-dormant, unreachable defect documented but
 deliberately not fixed — §5.11): 1 data-integrity, 1 crash (Chat Conversations), 1 authorization gap,
 a deploy-reliability crash-loop that turned out to be 2 independent bugs stacked on top of each other,
@@ -56,6 +56,7 @@ untested.
 | PDF/Excel report export | ⚪ not implemented anywhere in the codebase (no export package installed, no export actions) — not a bug, a missing feature |
 | Dormant duplicate maintenance-request form (`app/Livewire/MaintenanceRequestForm.php`) | 🔴 found (2 bugs, incl. the same tenant_id/tenants.id confusion) but unreachable from any route/view → documented, deliberately not fixed (§5.11) |
 | Full navigation-reachability sweep, all 8 personas | ✅ PASS — 103 pages visited (every sidebar link discovered per persona, up to 40 each), zero HTTP 500s, zero new `laravel.log` errors |
+| Chatbot bilingual behavior (follow-up on this report's own §6.4 finding) | 🔴 found (never spoke Arabic; never even understood Arabic input, fell through to a generic fallback) → ✅ fixed and verified end-to-end, incl. the live chat widget (§5.12) |
 
 ---
 
@@ -560,6 +561,41 @@ unreachable, fixing it now would be effort spent on code nobody can hit; documen
 useful action, so that if a future session ever wires this component into a view, the two bugs above
 are already known and don't repeat the tenant_id/tenants.id confusion a third time.
 
+### 5.12 Chatbot never spoke Arabic, and never understood it either (MEDIUM — follow-up on §6.4's minor finding)
+
+**Found** following up on this report's own earlier minor finding (§6.4: "chatbot replied in English
+to an Arabic-locale question", originally listed as low-severity and not fixed). Root-caused it
+properly rather than leaving it as a cosmetic note, and it turned out to be more than cosmetic:
+
+- Every response string in `ChatbotService::generateResponse()`, and every hardcoded string in
+  `ChatbotController` (conversation start, 3 escalation messages, close), was English-only —
+  `app()->getLocale()` was never consulted anywhere in the chatbot feature. On this Arabic-first
+  platform (`config('app.locale')` is `ar`), the chatbot could never reply in Arabic under any
+  circumstance.
+- Worse, `detectIntent()`'s regex patterns only matched English keywords. An Arabic message like
+  "مرحبا، أبحث عن شقة للبيع" didn't just get an English reply — it wasn't recognized as a greeting or
+  property search *at all*, and fell through to the generic `general_inquiry` fallback. Confirmed via
+  `tinker`: this exact message returned `intent: general_inquiry` before the fix.
+
+**Fixed:** `detectIntent()` now matches Arabic keyword patterns alongside the English ones for every
+intent; `generateResponse()` returns a full Arabic translation of every intent's response when
+`app()->getLocale() === 'ar'`, matching this codebase's existing `app()->getLocale() === 'ar' ? ... :
+...` convention; `getIntentKeywords()` (confidence scoring) includes the matching Arabic terms;
+`ChatbotController`'s five hardcoded strings are localized the same way; `calculateConfidence()` uses
+`mb_stripos` instead of `stripos` for multibyte-safe matching.
+
+**Test fix required:** `ChatbotTest.php`'s one existing test asserting English text
+(`test_detects_greeting_intent`) was only passing before because the bug made every locale return
+English — the test environment's actual default locale is `ar`. Pinned `app()->setLocale('en')`
+explicitly where English is being tested (not weakened — the assertion is unchanged, just no longer
+relying on an accidental default), and added two new tests covering the same intents in Arabic.
+
+**Verified end-to-end**, twice: via the real HTTP API (`POST /api/chatbot/start`/`message` with the
+default `ar` locale, and again with `?lang=en` to regression-check English), and via the actual chat
+widget in a real browser — sent "مرحبا، أبحث عن عقار للبيع" through the live widget UI and got a
+correctly-classified, fully Arabic, RTL-rendered reply (screenshot on file). No new `laravel.log`
+errors in either path.
+
 ---
 
 ## 6. Detailed Test Results
@@ -723,8 +759,9 @@ single QA pass and is recommended as ongoing work, not a gap in this session.
    This is a product decision, not something fixed in this pass.
 4. ~~Continue the remaining Tier P3 item from §7 (full Resource-class reachability sweep)~~ — **done**:
    103-page crawl across all 8 personas, zero HTTP 500s, zero new log errors (§7).
-5. Consider the low-severity chatbot locale finding (§6.4) — reply language should follow
-   `app()->getLocale()`.
+5. ~~Consider the low-severity chatbot locale finding (§6.4)~~ — **done, and turned out to be more
+   than cosmetic**: the chatbot never spoke Arabic and never understood Arabic input either. Fixed and
+   verified end-to-end, including in the live chat widget (§5.12). PR #23, pending merge/redeploy.
 6. Consider reviewing the 10 stale Dependabot PRs (§4.5) — none urgent, but 2 weeks old.
 7. `docs/DEPLOYMENT-ENVIRONMENT-INVENTORY.md` still frames itself around "Laravel Cloud" — worth a
    pass to reflect the actual Railway deployment, now that this report has established the current
