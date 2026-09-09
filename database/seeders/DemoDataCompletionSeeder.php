@@ -44,7 +44,6 @@ class DemoDataCompletionSeeder extends Seeder
 
         $admin = User::where('email', 'admin@darhadhramaut.ye')->first();
         $staff = User::where('email', 'staff@darhadhramaut.ye')->first();
-        $agent = User::where('email', 'agent@darhadhramaut.ye')->first();
         $buyer = User::where('email', 'buyer@darhadhramaut.ye')->first();
         $seller = User::where('email', 'seller@darhadhramaut.ye')->first();
         $landlord = User::where('email', 'landlord@darhadhramaut.ye')->first();

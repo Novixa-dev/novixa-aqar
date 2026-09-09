@@ -52,7 +52,7 @@ class PropertyFeatureResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('property.name')
+                TextColumn::make('property.title')
                     ->sortable(),
                 TextColumn::make('feature_name')
                     ->searchable(),
