@@ -7,20 +7,22 @@ inventory, and every bug found and fixed along the way. Requested as a professio
 test pass ("من الاهم فالاهم") with a complete `.md` report as the deliverable.
 
 **Headline result:** the staging deployment is live, auto-deploying from `main`, fully seeded, and
-passed every P0 (blocking) and the large majority of P1/P2 checks executed. **13 real bugs were found
-and fixed this session**: 1 data-integrity, 1 crash (Chat Conversations), 1 authorization gap, a
-deploy-reliability crash-loop that turned out to be 2 independent bugs stacked on top of each other,
+passed every P0 (blocking) and the large majority of P1/P2/P3 checks executed. **14 real bugs were
+found and fixed this session** (plus one confirmed-dormant, unreachable defect documented but
+deliberately not fixed — §5.11): 1 data-integrity, 1 crash (Chat Conversations), 1 authorization gap,
+a deploy-reliability crash-loop that turned out to be 2 independent bugs stacked on top of each other,
 2 crash bugs that had left the entire property-viewing booking feature completely non-functional, the
 AI investment-analysis feature silently failing on every property page, a blank-data display bug plus
-a dead-code bug in Rental Applications (Landlord + Staff panels), and — the single largest cluster —
-4 independent stacked crashes that made the Tenant maintenance-request/work-order creation flow, and
-the property-review flow (any buyer/tenant, any property), **100% non-functional**. All merged or in
-CI at time of writing; the first 5 are live and verified via a fully-read deploy log end to end, not
-an early status flag; every fix from this point on is verified locally end-to-end (real record created
-and persisted, or real UI state change confirmed via screenshot/tinker) but not yet redeployed to
-Railway. See §5 for full detail (§5.4 in particular carries the honest multi-attempt timeline for the
-deploy crash-loop — a first fix that didn't stick, and a second bug that only became visible once it
-did) and §7 for what remains untested.
+a dead-code bug in Rental Applications (Landlord + Staff panels), a currency-formatting inconsistency
+(USD shown instead of YER), and — the single largest cluster — 4 independent stacked crashes that made
+the Tenant maintenance-request/work-order creation flow, and the property-review flow (any
+buyer/tenant, any property), **100% non-functional**. All merged or in CI at time of writing; the
+first 5 are live and verified via a fully-read deploy log end to end, not an early status flag; every
+fix from this point on is verified locally end-to-end (real record created and persisted, or real UI
+state change confirmed via screenshot/tinker) but not yet redeployed to Railway. See §5 for full detail
+(§5.4 in particular carries the honest multi-attempt timeline for the deploy crash-loop — a first fix
+that didn't stick, and a second bug that only became visible once it did) and §7 for what remains
+untested.
 
 ---
 
@@ -49,8 +51,13 @@ did) and §7 for what remains untested.
 | Buyer favorites/wishlist toggle | ✅ PASS, no bug found |
 | Seller "My Listings" data accuracy | ✅ PASS, no bug found |
 | Contractor work-order assignment + status actions | ✅ PASS, no bug found |
+| Compare-properties tool | ✅ PASS, real data, correct math (minor: some feature/status labels untranslated in Arabic — low severity, noted not fixed) |
+| Utility Payments / Energy Consumption / Email Campaigns admin content | ✅ PASS, real seeded content — Utility Payments had a real currency bug (USD shown, not YER) → 🔴 found → ✅ fixed and verified |
+| PDF/Excel report export | ⚪ not implemented anywhere in the codebase (no export package installed, no export actions) — not a bug, a missing feature |
+| Dormant duplicate maintenance-request form (`app/Livewire/MaintenanceRequestForm.php`) | 🔴 found (2 bugs, incl. the same tenant_id/tenants.id confusion) but unreachable from any route/view → documented, deliberately not fixed (§5.11) |
 
-**Not yet executed** (see §7): PDF/Excel report exports and remaining secondary Tier-P3 surfaces.
+**Not yet executed:** a full reachability sweep of every remaining Filament Resource class not
+explicitly covered above (dozens of secondary resources across 9 panels) — see §7.
 
 ---
 
@@ -197,7 +204,8 @@ anything today.
 | `6cddf16` | `fix(recommendations)`: add missing `saved_searches` migration and `User::activities()` relationship — AI investment analysis was silently failing on every property page — see §5.6 | #21 | ✅ pushed, CI re-running with later commits |
 | `54c89d9` | `fix(rental-applications)`: `applicant_name` accessor (blank "Applicant" column, Landlord + Staff) and a duplicate `->filters()`/`->recordActions()` merge (dead approve/reject actions) — see §5.7 | #21 | ✅ pushed, CI re-running with later commits |
 | `97bc81e` | `fix(maintenance)`: 4 stacked crashes across the tenant maintenance-request + work-order creation flow — see §5.8 | #21 | ✅ pushed, CI re-running with later commits |
-| `873f0e2` | `fix(reviews)`: add missing `User::bookings()`/`rentals()` relationships — property review submission was 100% broken — see §5.9 | #21 | ⏳ CI running at time of writing |
+| `873f0e2` | `fix(reviews)`: add missing `User::bookings()`/`rentals()` relationships — property review submission was 100% broken — see §5.9 | #21 | ✅ pushed, CI green |
+| `68ffba7` | `fix(currency)`: `UtilityPaymentResource` + `LeaseRelationManager` showed USD instead of YER — see §5.10 | #21 | ⏳ CI running at time of writing |
 
 Each merge auto-triggered a Railway redeploy (confirmed via `list-deployments` matching commit SHAs
 to deployment records) — the GitHub→Railway pipeline is genuinely live and working, not just
@@ -505,6 +513,48 @@ correctly instead of crashing: attempting to review a property never booked/rent
 "You are not eligible to review this property" (a real product rule, not a bug) instead of an HTTP
 500.
 
+### 5.10 Utility Payments + Lease relation manager — showing USD instead of YER (LOW-MEDIUM)
+
+**Found** during the Tier P3 sweep of Staff-panel secondary resources: `/staff/utility-payments`
+displayed amounts as `$US 45,000.00` — a US-dollar-formatted figure — while every other money column
+in the app (Payments, Leases, Rental Applications' `annual_income`, etc.) correctly displays Yemeni
+Rial (`ر.ي`). CLAUDE.md states YER-primary pricing is a core product requirement for this Yemen-focused
+platform, so a USD-formatted figure sitting next to YER-formatted ones elsewhere is a real, live
+inconsistency, not merely cosmetic.
+
+**Root cause:** `UtilityPaymentResource`'s `amount` column and `LeaseRelationManager`'s `rent_amount`
+column (found via a codebase-wide grep for every other bare `->money()` call, once the pattern was
+identified) both called `->money()` with no currency argument — Filament's `money()` defaults to USD
+when none is given — instead of `->money(strtolower(config('currencies.default')))`, the pattern every
+other money column in this codebase already follows. A grep confirmed these were the only two such
+call sites in the whole app; no others remain.
+
+**Fixed:** both columns now pass the configured default currency, matching every other money column.
+**Verified via screenshot:** Utility Payments now shows `٤٥'٠٠٠٫٠٠ ر.ي` for the same seeded row.
+
+### 5.11 Found, not fixed — an unreachable duplicate maintenance-request form has the same tenant_id bug (dormant, documentation only)
+
+While auditing every call site of `NotificationService`'s tenant-notification methods (to confirm the
+`Tenant`-vs-`User` mismatch fixed in §5.8 wasn't repeated elsewhere), found a second, completely
+separate maintenance-request submission component: `app/Livewire/MaintenanceRequestForm.php` (not the
+Filament Tenant-panel resource fixed in §5.8 — a different, older-looking public Livewire form). It:
+
+- Sets `tenant_id => auth()->user()->id` — the user's own ID, not a `Tenant` row's ID. Since
+  `maintenance_requests.tenant_id` → `tenants.id` (not `users.id`, the exact distinction CLAUDE.md
+  flags as the cause of a prior live P0), this would either violate the foreign-key constraint or
+  silently attribute the request to an unrelated `tenants` row that happens to share the numeric ID.
+- Queries `Property::where('tenant_id', auth()->user()->id)` in `render()` — but confirmed via
+  `Schema::getColumnListing('properties')` that **no `tenant_id` column exists on `properties` at
+  all**, so this line would throw `Column not found` the instant the component rendered.
+
+**Not fixed, and confirmed why:** grepped the entire `resources/views` tree and `routes/` for any
+reference to `maintenance-request-form` or `MaintenanceRequestForm` — there are none. This component is
+not embedded in any Blade view and not reachable from any route, so it cannot currently be triggered by
+any user (the exact same "dead code, zero live impact" situation as `AlertResource`, §5.3). Given it's
+unreachable, fixing it now would be effort spent on code nobody can hit; documenting it here is the
+useful action, so that if a future session ever wires this component into a view, the two bugs above
+are already known and don't repeat the tenant_id/tenants.id confusion a third time.
+
 ---
 
 ## 6. Detailed Test Results
@@ -626,12 +676,22 @@ resumed down the plan. Completed since the previous version of this report:
 - ✅ Seller "My Listings" data correctness — matched the database exactly, no bug found.
 - ✅ Contractor Work-Order assignment view — correct scoping, status-transition actions verified live
   (pending → in_progress), no bug found.
+- ✅ Tier P3: compare-properties tool — real data, correct math, no crash; minor untranslated labels
+  noted, not fixed (low severity).
+- ✅ Tier P3: PDF/Excel report export — confirmed not implemented anywhere (no package, no export
+  actions); not a bug, a missing feature, out of scope for a QA pass.
+- ✅ Tier P3: email-campaign admin UI content review — real seeded campaigns, correct statuses, no bug.
+- ✅ Tier P3: energy/utility record display — real seeded data; Utility Payments had a real currency
+  bug (USD instead of YER), found and fixed (§5.10); a codebase-wide grep confirmed no other instances.
+- Found (not part of the original checklist, surfaced while auditing every `NotificationService`
+  tenant-notification call site for the §5.8 mismatch): a second, unreachable maintenance-request form
+  with the same class of bug, documented but deliberately not fixed since it is dead code (§5.11).
 
 **Still not yet tested this session:**
 
-- Tier P3 in full: compare-properties tool, PDF/Excel report export, email-campaign admin UI content
-  review, energy/utility record display, a full reachability sweep of every remaining Filament
-  Resource class not explicitly covered above.
+- A full reachability sweep of every remaining Filament Resource class not explicitly covered above —
+  dozens of secondary resources across all 9 panels (Documents, Vendors, Offers, Appointments,
+  Automations, and others not directly implicated by a finding above).
 
 None of these gaps are known to be broken — they are simply not yet verified. Recommended as the next
 session's starting point, in the same priority order.
@@ -647,12 +707,13 @@ session's starting point, in the same priority order.
    pass — but per the lesson in §5.4, verify that via a fully-read deploy log each time, not an early
    status flag.
 2. **Merge PR #21** (booking, AI investment analysis, rental-applications, tenant maintenance/work-
-   orders, and property-review fixes — §5.5 through §5.9) once CI is green, then live-verify via a
-   fully-read Railway deploy log per the §5.4 lesson (an early "SUCCESS" status is not verification).
+   orders, property-review, and currency-formatting fixes — §5.5 through §5.10) once CI is green, then
+   live-verify via a fully-read Railway deploy log per the §5.4 lesson (an early "SUCCESS" status is
+   not verification).
 3. Decide whether/where to add a real "Book a Viewing" entry point to the property detail page — the
    feature is now fully functional (§5.5) but still has no button linking to it anywhere in the UI.
    This is a product decision, not something fixed in this pass.
-4. Continue the Tier P3 items listed in §7.
+4. Continue the remaining Tier P3 item from §7 (full Resource-class reachability sweep).
 5. Consider the low-severity chatbot locale finding (§6.4) — reply language should follow
    `app()->getLocale()`.
 6. Consider reviewing the 10 stale Dependabot PRs (§4.5) — none urgent, but 2 weeks old.
@@ -661,6 +722,13 @@ session's starting point, in the same priority order.
    Railway-specific facts in §4.
 8. The orphaned `app/Filament/Resources/AlertResource.php` (confirmed dead code, §5.3) is a safe,
    minor cleanup candidate whenever convenient — not urgent, not a live gap.
+9. If `app/Livewire/MaintenanceRequestForm.php` (§5.11) is ever wired into a view/route in the future,
+   fix its `tenant_id`/`properties.tenant_id` bugs *before* it goes live — do not assume it works just
+   because it mirrors the already-fixed Filament flow; it's an older, separate implementation.
+10. Consider a project-wide pass for untranslated column labels (raw English attribute names showing
+    on Arabic-locale pages — seen on the compare-properties tool and a few table columns across this
+    session). Low severity, cosmetic, but numerous enough to be worth a dedicated pass rather than
+    one-off fixes.
 
 ---
 
