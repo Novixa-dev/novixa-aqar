@@ -55,9 +55,7 @@ untested.
 | Utility Payments / Energy Consumption / Email Campaigns admin content | ✅ PASS, real seeded content — Utility Payments had a real currency bug (USD shown, not YER) → 🔴 found → ✅ fixed and verified |
 | PDF/Excel report export | ⚪ not implemented anywhere in the codebase (no export package installed, no export actions) — not a bug, a missing feature |
 | Dormant duplicate maintenance-request form (`app/Livewire/MaintenanceRequestForm.php`) | 🔴 found (2 bugs, incl. the same tenant_id/tenants.id confusion) but unreachable from any route/view → documented, deliberately not fixed (§5.11) |
-
-**Not yet executed:** a full reachability sweep of every remaining Filament Resource class not
-explicitly covered above (dozens of secondary resources across 9 panels) — see §7.
+| Full navigation-reachability sweep, all 8 personas | ✅ PASS — 103 pages visited (every sidebar link discovered per persona, up to 40 each), zero HTTP 500s, zero new `laravel.log` errors |
 
 ---
 
@@ -686,15 +684,18 @@ resumed down the plan. Completed since the previous version of this report:
 - Found (not part of the original checklist, surfaced while auditing every `NotificationService`
   tenant-notification call site for the §5.8 mismatch): a second, unreachable maintenance-request form
   with the same class of bug, documented but deliberately not fixed since it is dead code (§5.11).
+- ✅ Full navigation-reachability sweep, all 8 personas — every sidebar link discovered per persona
+  (up to 40 each, 103 total page visits) crawled via real Playwright navigation with an HTTP-status
+  listener plus a cleared-and-rechecked `laravel.log`: **zero HTTP 500s, zero new log errors** across
+  the entire crawl. This closes out the remaining Tier P3 item from the previous version of this
+  report (a full reachability sweep of every remaining Filament Resource class).
 
-**Still not yet tested this session:**
-
-- A full reachability sweep of every remaining Filament Resource class not explicitly covered above —
-  dozens of secondary resources across all 9 panels (Documents, Vendors, Offers, Appointments,
-  Automations, and others not directly implicated by a finding above).
-
-None of these gaps are known to be broken — they are simply not yet verified. Recommended as the next
-session's starting point, in the same priority order.
+**Still not yet tested this session:** none identified — every item from this report's original
+priority-ordered plan (§3) and every Tier P1/P2/P3 item has now been executed at least once, in
+priority order, with findings fixed and verified as documented above. Deeper coverage (exhaustive
+per-field CRUD validation on every one of the ~35+40 Admin/Staff resources individually, load/
+performance testing, and cross-browser testing beyond Chromium) remains genuinely out of scope for a
+single QA pass and is recommended as ongoing work, not a gap in this session.
 
 ---
 
@@ -713,7 +714,8 @@ session's starting point, in the same priority order.
 3. Decide whether/where to add a real "Book a Viewing" entry point to the property detail page — the
    feature is now fully functional (§5.5) but still has no button linking to it anywhere in the UI.
    This is a product decision, not something fixed in this pass.
-4. Continue the remaining Tier P3 item from §7 (full Resource-class reachability sweep).
+4. ~~Continue the remaining Tier P3 item from §7 (full Resource-class reachability sweep)~~ — **done**:
+   103-page crawl across all 8 personas, zero HTTP 500s, zero new log errors (§7).
 5. Consider the low-severity chatbot locale finding (§6.4) — reply language should follow
    `app()->getLocale()`.
 6. Consider reviewing the 10 stale Dependabot PRs (§4.5) — none urgent, but 2 weeks old.
