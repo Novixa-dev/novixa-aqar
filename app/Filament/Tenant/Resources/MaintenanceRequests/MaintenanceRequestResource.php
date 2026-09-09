@@ -131,7 +131,7 @@ class MaintenanceRequestResource extends Resource
                             'status' => 'pending',
                             'scheduled_date' => now(),
                         ]);
-                        $notificationService->notifyTenantWorkOrderCreated($record->tenant, $workOrder);
+                        $notificationService->notifyTenantWorkOrderCreated($record->tenant->user, $workOrder);
                         Notification::make()
                             ->title(app()->getLocale() === 'ar' ? 'تم إنشاء أمر العمل' : 'Work Order Created')
                             ->success()
