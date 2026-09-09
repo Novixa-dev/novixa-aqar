@@ -298,7 +298,7 @@
                                         @forelse($property->features ?? [] as $feature)
                                             <li class="flex items-center gap-1.5">
                                                 <span class="text-emerald-500"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></span>
-                                                <span>{{ $feature->name }}</span>
+                                                <span>{{ $feature->feature_name }}</span>
                                             </li>
                                         @empty
                                             <li class="text-gray-400 col-span-2">{{ app()->getLocale() === 'ar' ? 'تشمل: كهرباء، مياه، موقف سيارات، حراسة أمنية' : 'Includes: Electricity, Water, Parking, Security' }}</li>

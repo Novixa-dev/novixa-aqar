@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             PropertyCategorySeeder::class,
             NeighborhoodSeeder::class,
             PropertySeeder::class,
+            CommunityEventSeeder::class,
+            PropertyHistorySeeder::class,
             LeadAndBuyerSeeder::class,
             AppointmentTypeSeeder::class,
             VirtualTourAppointmentTypeSeeder::class,
@@ -40,6 +42,7 @@ class DatabaseSeeder extends Seeder
             ComponentSettingsSeeder::class,
             NewsSeeder::class,
             DemoWorkflowSeeder::class,
+            DemoDataCompletionSeeder::class,
         ]);
     }
 }

@@ -70,14 +70,23 @@ class DemoWorkflowSeeder extends Seeder
         Property::where('status', Property::STATUS_FOR_SALE)
             ->where('user_id', '!=', $seller?->id)
             ->orderBy('id')
-            ->take(2)
+            ->take(4)
             ->update(['status' => Property::STATUS_SOLD, 'sold_date' => now()->subDays(10)]);
 
         Property::where('status', Property::STATUS_FOR_RENT)
             ->where('user_id', '!=', $landlord?->id)
             ->orderBy('id')
-            ->take(1)
+            ->take(3)
             ->update(['status' => Property::STATUS_RENTED]);
+
+        // A small, honest moderation queue: most seeded listings are
+        // already live/approved, but a couple sit "pending" and one
+        // "rejected" so the Staff "Property Moderation" resource shows a
+        // real, active workflow rather than a uniform blank column.
+        Property::orderBy('id')->take(2)->update(['moderation_status' => 'approved']);
+        Property::orderBy('id')->skip(2)->take(2)->update(['moderation_status' => 'pending']);
+        Property::orderBy('id')->skip(4)->take(1)->update(['moderation_status' => 'rejected', 'moderation_notes' => 'الصور المرفقة غير واضحة، يرجى إعادة رفع صور أحدث للعقار قبل النشر.']);
+        Property::whereNull('moderation_status')->update(['moderation_status' => 'approved', 'moderated_at' => now()->subDays(5)]);
 
         // --- Transactions, for the just-sold properties above. Without
         // these, `transactions` was permanently empty against fresh seed
@@ -87,7 +96,7 @@ class DemoWorkflowSeeder extends Seeder
         if ($buyerUser && $seller) {
             Property::where('status', Property::STATUS_SOLD)
                 ->orderBy('id')
-                ->take(2)
+                ->take(4)
                 ->get()
                 ->each(function (Property $prop) use ($buyerUser, $seller, $teamId) {
                     Transaction::updateOrCreate(
@@ -182,6 +191,10 @@ class DemoWorkflowSeeder extends Seeder
             ['name' => 'أحمد صالح باوزير', 'email' => 'ahmed.bawazir@example.ye', 'phone' => '+967 771 234 567', 'user_id' => $tenantUser?->id],
             ['name' => 'منى عبدالله بكري', 'email' => 'mona.bakri@example.ye', 'phone' => '+967 773 555 142', 'user_id' => null],
             ['name' => 'خالد عمر السقاف', 'email' => 'khaled.saqqaf@example.ye', 'phone' => '+967 775 808 930', 'user_id' => null],
+            ['name' => 'فاطمة ناصر العمودي', 'email' => 'fatima.amoudi@example.ye', 'phone' => '+967 770 442 918', 'user_id' => null],
+            ['name' => 'ياسر محمد باعشن', 'email' => 'yasser.bashan@example.ye', 'phone' => '+967 772 663 501', 'user_id' => null],
+            ['name' => 'هدى سالم الكثيري', 'email' => 'huda.kathiri@example.ye', 'phone' => '+967 774 219 837', 'user_id' => null],
+            ['name' => 'عمر عبدالرحمن باجرش', 'email' => 'omar.bajarash@example.ye', 'phone' => '+967 776 550 274', 'user_id' => null],
         ];
         $tenants = [];
         foreach ($tenantSeeds as $t) {
@@ -284,6 +297,11 @@ class DemoWorkflowSeeder extends Seeder
             ['title' => 'عطل في مكيف الصالة', 'description' => 'المكيف لا يبرد منذ يومين، ويُسمع صوت احتكاك من الوحدة الخارجية.', 'status' => 'pending', 'priority' => 'normal'],
             ['title' => 'استبدال سخان مياه الدورة', 'description' => 'السخان القديم توقف عن العمل تمامًا، ومطلوب تركيب وحدة جديدة بسعة 80 لتر.', 'status' => 'completed', 'priority' => 'normal'],
             ['title' => 'انقطاع الكهرباء في غرفة النوم الرئيسية', 'description' => 'القاطعة تفصل باستمرار عند تشغيل مكيف غرفة النوم الرئيسية.', 'status' => 'pending', 'priority' => 'urgent'],
+            ['title' => 'صيانة باب الحديقة الخلفية', 'description' => 'مفصلات باب الحديقة صدئة وتصدر صريراً عالياً، تحتاج تشحيم أو استبدال.', 'status' => 'pending', 'priority' => 'normal'],
+            ['title' => 'إصلاح تسريب في خزان المياه العلوي', 'description' => 'ملاحظة تسريب بسيط من قاعدة الخزان العلوي أثناء الامتلاء الكامل.', 'status' => 'in_progress', 'priority' => 'high'],
+            ['title' => 'استبدال مصابيح الإنارة الخارجية', 'description' => 'ثلاث مصابيح في واجهة المبنى متوقفة عن العمل منذ أسبوع.', 'status' => 'completed', 'priority' => 'normal'],
+            ['title' => 'فحص شبكة الإنترنت الداخلية', 'description' => 'ضعف ملحوظ في تغطية الواي فاي بالطابق العلوي.', 'status' => 'pending', 'priority' => 'normal'],
+            ['title' => 'تصليح قفل الباب الرئيسي', 'description' => 'القفل الإلكتروني للباب الرئيسي يتعطل أحياناً عند إدخال الرمز.', 'status' => 'in_progress', 'priority' => 'urgent'],
         ];
         foreach ($maintSeeds as $i => $m) {
             $prop = $fallbackRentals->get($i % max(1, $fallbackRentals->count()));
@@ -310,6 +328,9 @@ class DemoWorkflowSeeder extends Seeder
             ['first_name' => 'وليد', 'last_name' => 'بن بريك', 'email' => 'walid.benbrik@example.ye', 'phones' => ['+967 777 100 200']],
             ['first_name' => 'سماح', 'last_name' => 'الحضرمي', 'email' => 'samah.alhadhrami@example.ye', 'phones' => ['+967 778 300 400']],
             ['first_name' => 'طارق', 'last_name' => 'العطاس', 'email' => 'tareq.alattas@example.ye', 'phones' => ['+967 779 500 600']],
+            ['first_name' => 'ريم', 'last_name' => 'باحميد', 'email' => 'reem.bahamid@example.ye', 'phones' => ['+967 771 900 810']],
+            ['first_name' => 'فيصل', 'last_name' => 'الجابري', 'email' => 'faisal.jaberi@example.ye', 'phones' => ['+967 773 220 660']],
+            ['first_name' => 'نجلاء', 'last_name' => 'باوزير', 'email' => 'najla.bawazir@example.ye', 'phones' => ['+967 775 440 330']],
         ];
         $applicants = [];
         foreach ($applicantSeeds as $c) {
@@ -325,7 +346,7 @@ class DemoWorkflowSeeder extends Seeder
                 'team_id' => $teamId,
             ]);
         }
-        $statuses = ['pending', 'approved', 'rejected'];
+        $statuses = ['pending', 'approved', 'rejected', 'approved', 'pending', 'approved'];
         foreach ($applicants as $i => $contact) {
             $prop = $fallbackRentals->get($i % max(1, $fallbackRentals->count()));
             if (! $prop) {
@@ -353,8 +374,8 @@ class DemoWorkflowSeeder extends Seeder
         }
 
         // --- Property viewings / bookings ---
-        $bookingStatuses = ['confirmed', 'completed', 'pending'];
-        foreach ([0, 1, 2] as $i) {
+        $bookingStatuses = ['confirmed', 'completed', 'pending', 'confirmed', 'completed', 'pending'];
+        foreach ([0, 1, 2, 3, 4, 5] as $i) {
             $prop = Property::orderBy('id')->skip($i * 2)->first();
             if (! $prop || ! $buyerUser || ! $agent) {
                 break;
