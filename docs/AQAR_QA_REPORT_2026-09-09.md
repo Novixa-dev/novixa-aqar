@@ -7,16 +7,20 @@ inventory, and every bug found and fixed along the way. Requested as a professio
 test pass ("من الاهم فالاهم") with a complete `.md` report as the deliverable.
 
 **Headline result:** the staging deployment is live, auto-deploying from `main`, fully seeded, and
-passed every P0 (blocking) and the large majority of P1/P2 checks executed. **7 real bugs were found
+passed every P0 (blocking) and the large majority of P1/P2 checks executed. **13 real bugs were found
 and fixed this session**: 1 data-integrity, 1 crash (Chat Conversations), 1 authorization gap, a
 deploy-reliability crash-loop that turned out to be 2 independent bugs stacked on top of each other,
-and — found while executing Tier P1's booking-flow item — 2 more crash bugs that had left the entire
-property-viewing booking feature completely non-functional plus the AI investment-analysis feature
-silently failing on every property page. All merged or in CI at time of writing; the first 5 are live
-and verified via a fully-read deploy log end to end, not an early status flag. See §5 for full detail
-(§5.4 in particular carries the honest multi-attempt timeline for the deploy crash-loop — a first fix
-that didn't stick, and a second bug that only became visible once it did) and §7 for what remains
-untested.
+2 crash bugs that had left the entire property-viewing booking feature completely non-functional, the
+AI investment-analysis feature silently failing on every property page, a blank-data display bug plus
+a dead-code bug in Rental Applications (Landlord + Staff panels), and — the single largest cluster —
+4 independent stacked crashes that made the Tenant maintenance-request/work-order creation flow, and
+the property-review flow (any buyer/tenant, any property), **100% non-functional**. All merged or in
+CI at time of writing; the first 5 are live and verified via a fully-read deploy log end to end, not
+an early status flag; every fix from this point on is verified locally end-to-end (real record created
+and persisted, or real UI state change confirmed via screenshot/tinker) but not yet redeployed to
+Railway. See §5 for full detail (§5.4 in particular carries the honest multi-attempt timeline for the
+deploy crash-loop — a first fix that didn't stick, and a second bug that only became visible once it
+did) and §7 for what remains untested.
 
 ---
 
@@ -39,10 +43,14 @@ untested.
 | RESEED_FRESH deploy reliability | 🔴 found (crash-loop, 2 independent bugs stacked) → ✅ both fixed, merged, redeployed, and verified via a fully-read deploy log (1 clean container boot, disk usage back to healthy, `RESEED_FRESH` set back to `false`) |
 | Property-viewing booking feature | 🔴 found (100% broken — 2 stacked crashes, unreachable via UI navigation) → ✅ both fixed and verified end-to-end (real booking created and persisted) |
 | AI investment analysis on property pages | 🔴 found (silently failing on every property page — missing migration + missing model relationship) → ✅ both fixed and verified via tinker |
+| Rental Applications (Landlord + Staff panels) | 🔴 found (blank "Applicant" column on every row; dead approve/reject actions + filters) → ✅ both fixed and verified via screenshot |
+| Tenant maintenance-request + work-order creation | 🔴 found (100% broken, 4 stacked crashes) → ✅ all fixed and verified end-to-end (real records created and persisted) |
+| Property review submission (any buyer/tenant, any property) | 🔴 found (100% broken — missing `User` relationships) → ✅ fixed and verified end-to-end (real review created and persisted) |
+| Buyer favorites/wishlist toggle | ✅ PASS, no bug found |
+| Seller "My Listings" data accuracy | ✅ PASS, no bug found |
+| Contractor work-order assignment + status actions | ✅ PASS, no bug found |
 
-**Not yet executed** (see §7): per-role deep interaction testing beyond Admin/Staff (Landlord/Tenant/
-Buyer/Seller/Contractor panels were reachability-checked but not feature-by-feature exercised),
-booking/appointment creation flow, PDF/Excel report exports, secondary Tier-P3 surfaces.
+**Not yet executed** (see §7): PDF/Excel report exports and remaining secondary Tier-P3 surfaces.
 
 ---
 
@@ -185,8 +193,11 @@ anything today.
 | `b4ae817` | `fix(seed)`: skip responsive-image generation for seeded photos — **first attempt, turned out ineffective, see §5.4** | #17 | ✅ merged (superseded by `3cbbf74`) |
 | `3cbbf74` | `fix(seed)`: `Property::$skipResponsiveImagesForSeeding`, gated inside `registerMediaCollections()` itself — genuinely fixed the responsive-images bug, but a second bug was hiding underneath (see next row) | #18 | ✅ merged |
 | `70960b7` | `fix(deploy)`: clear `storage/app/public` before `RESEED_FRESH`'s `migrate:fresh --seed` — the volume was completely full (~504MB/500MB) from every earlier crashed attempt's orphaned photos, which is the real reason the crash-loop continued after `3cbbf74` | #19 | ✅ merged, redeployed, and live-verified (§5.4) |
-| `ee3a017` | `fix(booking)`: fix two stacked crashes (route-param/mount mismatch, nonexistent method call) that made the property-viewing booking feature 100% broken — see §5.5 | #21 | ⏳ CI running at time of writing (6/7 checks green) |
-| `6cddf16` | `fix(recommendations)`: add missing `saved_searches` migration and `User::activities()` relationship — AI investment analysis was silently failing on every property page — see §5.6 | #21 | ⏳ CI running at time of writing (6/7 checks green) |
+| `ee3a017` | `fix(booking)`: fix two stacked crashes (route-param/mount mismatch, nonexistent method call) that made the property-viewing booking feature 100% broken — see §5.5 | #21 | ✅ pushed, CI re-running with later commits |
+| `6cddf16` | `fix(recommendations)`: add missing `saved_searches` migration and `User::activities()` relationship — AI investment analysis was silently failing on every property page — see §5.6 | #21 | ✅ pushed, CI re-running with later commits |
+| `54c89d9` | `fix(rental-applications)`: `applicant_name` accessor (blank "Applicant" column, Landlord + Staff) and a duplicate `->filters()`/`->recordActions()` merge (dead approve/reject actions) — see §5.7 | #21 | ✅ pushed, CI re-running with later commits |
+| `97bc81e` | `fix(maintenance)`: 4 stacked crashes across the tenant maintenance-request + work-order creation flow — see §5.8 | #21 | ✅ pushed, CI re-running with later commits |
+| `873f0e2` | `fix(reviews)`: add missing `User::bookings()`/`rentals()` relationships — property review submission was 100% broken — see §5.9 | #21 | ⏳ CI running at time of writing |
 
 Each merge auto-triggered a Railway redeploy (confirmed via `list-deployments` matching commit SHAs
 to deployment records) — the GitHub→Railway pipeline is genuinely live and working, not just
@@ -412,6 +423,88 @@ fully-populated result (`market_analysis`, `valuation`, `recommendations`, `pred
 `/properties/{1,2,3}` after clearing the log and confirmed neither error appears again — only the
 known, already-documented sandbox artifact (blocked external neighborhood-data API, HTTP 403) remains.
 
+### 5.7 Rental Applications — blank "Applicant" column + dead approve/reject actions (MEDIUM)
+
+**Found** executing the Landlord data-accuracy item: the "Applicant"/"المتقدم" column was blank on
+every single row of `/landlord/rental-applications` and `/staff/rental-applications`, for every
+seeded application. Root cause: the column was bound to `tenant.name` (`tenant_id` → `users`), but
+every seeded rental application links via `applicant_id` → `contacts` instead — a lead who applied
+without (yet) being a registered platform user. Both columns are legitimate: the tenant-facing
+application form (`RentalApplicationForm`) sets `tenant_id`; staff-entered leads set `applicant_id`.
+This is the same "column means different things depending on how the row was created" trap CLAUDE.md
+already flags for `tenant_id`, just with a second column (`applicant_id`) rather than a second table.
+
+**Fixed:** added `RentalApplication::applicant_name`, an accessor resolving `tenant?->name ??
+applicant?->full_name` (also added `Contact::getFullNameAttribute()`, matching the `Tenant`/`Buyer`
+models' existing pattern), and pointed both resources' tables at it instead of the always-null column.
+
+**Also found, same file (Staff resource):** `->filters([...])` and `->recordActions([...])` were each
+called **twice** in the same fluent chain. Filament's `Table::filters()`/`recordActions()` reset and
+replace on every call rather than merging, so the second call in each pair silently discarded the
+first — the `background_check_status`/`credit_report_status` filters and the "approve"/"reject" quick
+actions were dead code that had never actually rendered. Merged into one call each.
+
+**Verified:** screenshots before/after as `landlord@darhadhramaut.ye` and `staff@darhadhramaut.ye`
+confirm real applicant names now render on every row; confirmed via a scrolled screenshot that the
+"Reject" quick action now renders on pending Staff rows (Approve correctly stays hidden until
+screening is actually complete/passed — that visibility condition was already correct, just
+unreachable before this fix).
+
+### 5.8 Tenant maintenance-request + work-order creation — 100% broken, 4 stacked crashes (HIGH)
+
+**Found** executing the Tenant Maintenance-Request creation flow (Tier P1 QA item): submitting
+`/tenant/maintenance-requests/create` — a core tenant-facing feature — failed with HTTP 500 every
+time, for every tenant. Root-caused via `storage/logs/laravel.log` to **four independent, stacked
+bugs**, all in the same short user journey:
+
+1. `maintenance_requests.tenant_id` is NOT NULL (`tenant_id` → `tenants.id`, not `users.id` — the
+   exact distinction CLAUDE.md calls out), but the create form has no `tenant_id` field and nothing
+   set it programmatically. Every submission failed that constraint. **Fixed** via
+   `mutateFormDataBeforeCreate()`, using the same `Tenant::where('user_id', ...)` lookup
+   `MaintenanceRequestResource::getEloquentQuery()` already relies on.
+2. (Only reachable once #1 was fixed.) `work_orders.property_id`/`title`/`work_type`/`team_id`/
+   `created_by` are all NOT NULL, but neither place that creates a `WorkOrder` from the tenant panel
+   (the request form's `workOrders` repeater, and the list page's "create work order" quick action)
+   ever supplies them — only `description`/`status`/`scheduled_date`. **Fixed** at the model layer
+   (`WorkOrder::booted()`), so every creation path derives the rest from the parent
+   `MaintenanceRequest`/property/authenticated user when not already explicitly set — a targeted
+   default, not a validation bypass, and additive only (never overrides an explicit value).
+3. (Only reachable via the "create work order" quick action.) It passed `$record->tenant` — a
+   `Tenant` model (`MaintenanceRequest::tenant()` → `Tenant`) — into
+   `NotificationService::notifyTenantWorkOrderCreated(User $tenant, ...)`, a type mismatch (`Tenant`
+   given, `User` expected) → `TypeError`. **Fixed** to pass `$record->tenant->user`.
+4. (Only reachable once #3 was fixed.) `App\Notifications\WorkOrderCreated` — imported and used by
+   `NotificationService`, and referenced from the very start — **never existed as a class** anywhere
+   in the codebase. **Fixed** by adding it, matching the shape of the existing
+   `MaintenanceRequestSubmitted` notification.
+
+**Verified end-to-end** as `tenant@darhadhramaut.ye`: submitted a real maintenance request with a
+nested work order (previously HTTP 500 at step 1) — got the "تمت الإضافة" success notification, and
+confirmed via `tinker` that both rows persisted with every required column correctly populated
+(`property_id`, `title`, `work_type`, `team_id`, `created_by` all derived correctly). Also clicked the
+list page's "create work order" quick action on an existing request (previously a hard crash at steps
+2-4) — now creates cleanly, confirmed via `tinker` and a cleared log with no new errors.
+
+### 5.9 Property review submission — 100% broken for every user, every property (HIGH)
+
+**Found** continuing into the Buyer review flow: `PropertyReviewForm::canUserReview()` — the
+eligibility gate requiring a buyer/tenant to have actually booked or rented a property before
+reviewing it — calls `$user->bookings()` and `$user->rentals()`. **Neither relationship existed on
+`User` at all.** Every attempt to submit a property review, by any user, on any property, crashed
+with `Call to undefined method App\Models\User::bookings()` (or `rentals()`).
+
+**Fixed:** added `User::bookings(): hasMany(Booking::class)` (`Booking.user_id` → `users.id`) and
+`User::rentals(): hasMany(Lease::class, 'tenant_id')` (`Lease.tenant_id` → `users.id` — confirmed
+against the existing, already-correct `LeaseResource`/`PaymentResource` scoping, per the tenant_id
+distinction CLAUDE.md documents).
+
+**Verified end-to-end** as `buyer@darhadhramaut.ye`: submitted a real review on a property they had
+actually booked (property 3) — form reset, and `tinker` confirmed a real, `pending`-moderation
+`Review` row was created and persisted. Also confirmed the eligibility gate itself now behaves
+correctly instead of crashing: attempting to review a property never booked/rented correctly shows
+"You are not eligible to review this property" (a real product rule, not a bug) instead of an HTTP
+500.
+
 ---
 
 ## 6. Detailed Test Results
@@ -524,12 +617,18 @@ resumed down the plan. Completed since the previous version of this report:
   `/robots.txt` both serve real content (200, real URLs).
 - ✅ Booking/viewing appointment creation end-to-end — see §5.5 (was completely broken, now fixed and
   verified with a real persisted booking).
+- ✅ Landlord Leases/Payments/Rental-Applications data-accuracy — Leases and Payments matched the
+  database exactly; Rental Applications had a real bug, found and fixed (§5.7).
+- ✅ Tenant Maintenance-Request creation flow — found completely broken (4 stacked crashes), all fixed
+  and verified end-to-end (§5.8).
+- ✅ Buyer favorite/review flows — favorites toggle worked correctly with no bug; property review
+  submission was completely broken, found and fixed (§5.9).
+- ✅ Seller "My Listings" data correctness — matched the database exactly, no bug found.
+- ✅ Contractor Work-Order assignment view — correct scoping, status-transition actions verified live
+  (pending → in_progress), no bug found.
 
 **Still not yet tested this session:**
 
-- Deep per-role feature interaction beyond reachability: Landlord Leases/Payments/Rental-Applications
-  data-accuracy, Tenant Maintenance-Request creation flow, Buyer favorite/review flows on the public
-  site, Seller "My Listings" data correctness, Contractor Work-Order assignment view.
 - Tier P3 in full: compare-properties tool, PDF/Excel report export, email-campaign admin UI content
   review, energy/utility record display, a full reachability sweep of every remaining Filament
   Resource class not explicitly covered above.
@@ -547,11 +646,13 @@ session's starting point, in the same priority order.
    as of this report (§5.4). If a future re-seed is ever needed, it should now complete cleanly in one
    pass — but per the lesson in §5.4, verify that via a fully-read deploy log each time, not an early
    status flag.
-2. **Merge PR #21** (booking feature + AI investment analysis fixes, §5.5/§5.6) once CI is green.
+2. **Merge PR #21** (booking, AI investment analysis, rental-applications, tenant maintenance/work-
+   orders, and property-review fixes — §5.5 through §5.9) once CI is green, then live-verify via a
+   fully-read Railway deploy log per the §5.4 lesson (an early "SUCCESS" status is not verification).
 3. Decide whether/where to add a real "Book a Viewing" entry point to the property detail page — the
    feature is now fully functional (§5.5) but still has no button linking to it anywhere in the UI.
    This is a product decision, not something fixed in this pass.
-4. Continue the Tier P1/P3 items listed in §7, in that order.
+4. Continue the Tier P3 items listed in §7.
 5. Consider the low-severity chatbot locale finding (§6.4) — reply language should follow
    `app()->getLocale()`.
 6. Consider reviewing the 10 stale Dependabot PRs (§4.5) — none urgent, but 2 weeks old.
