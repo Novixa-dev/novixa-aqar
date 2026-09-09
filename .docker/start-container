@@ -10,6 +10,18 @@ set -e
 # command runs.
 mkdir -p /tmp/opcache-file-cache
 
+# Diagnostic only, temporary: the guarded mkdir below has failed with a
+# genuine "Permission denied" (not just "doesn't exist yet") on the last
+# two deploys, meaning the volume mount itself has ownership/mode this
+# container's runtime user can't write into -- unlike /tmp/opcache-file-cache
+# above, this isn't fixable by mkdir -p alone. Log who we are and what the
+# mount actually looks like so the real fix (chown vs. move off local disk
+# entirely) can be chosen from evidence instead of another guess. Remove
+# once root-caused.
+echo "DIAG: whoami=$(whoami 2>&1) id=$(id 2>&1)"
+echo "DIAG: ls -ld storage storage/app: $(ls -ld storage storage/app 2>&1)"
+echo "DIAG: stat storage/app: $(stat storage/app 2>&1)"
+
 # Same root cause, different mount: Railway's persistent volume is bound at
 # storage/app, which overlays whatever the image built at that path with the
 # volume's own (initially empty) content. The build-time `mkdir -p
