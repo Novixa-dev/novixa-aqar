@@ -340,7 +340,7 @@ The code from Phase 18 was pushed to `main` and a real deployment was stood up: 
 
 ---
 
-## 2026-09-09 — Phase 21: full priority-ordered QA sweep + 6 real bugs found and fixed
+## 2026-09-09 — Phase 21: full priority-ordered QA sweep + 10 real bugs found and fixed
 
 **Context:** by this point Railway hosting was already live (project `novixa-aqar-staging`, `web` +
 `mysql` services, auto-deploy from `main` confirmed working) and full of seed data (Phase 20). The
@@ -368,7 +368,7 @@ English locale (zero raw keys, correct RTL→LTR icon mirroring), dark mode on `
 check on the historical P13-6 gap — still fixed), and 375/768/1440px responsive (zero horizontal
 overflow at any breakpoint).
 
-**6 real bugs found and fixed, all via live reproduction before any fix was written:**
+**10 real bugs found and fixed, all via live reproduction before any fix was written:**
 
 1. **`ChatConversationResource` — 100%-reproducible HTTP 500** on `/admin/chat-conversations` and
    `/staff/chat-conversations`. Root cause: the `escalated_at` column chained
@@ -467,6 +467,18 @@ overflow at any breakpoint).
    existed on `User`. Added both relationships. Verified end-to-end: a real review submitted on a
    previously-booked property persisted correctly, and the eligibility gate itself (a real product
    rule) now works instead of crashing.
+10. **Utility Payments / Lease relation manager — USD shown instead of YER.** Both used bare
+    `->money()` (Filament's default currency), unlike every other money column in the app. Fixed both
+    to pass the configured default currency; a codebase-wide grep confirmed no other instances.
+    Verified via screenshot.
+
+**Found, deliberately not fixed:** while auditing every call site of the notification methods
+involved in finding 8, found a second, separate maintenance-request Livewire component
+(`app/Livewire/MaintenanceRequestForm.php`) with the same class of `tenant_id`/`tenants.id` confusion
+plus a reference to a `properties.tenant_id` column that doesn't exist. Confirmed via a route/view
+grep that this component is unreachable — not embedded anywhere, not routed anywhere — so it's dead
+code with zero live impact, unlike finding 8's Filament flow. Documented in the QA report (§5.11) so
+it isn't rediscovered the hard way if a future session wires it into a view.
 
 **Commits:** `f424db0` (idempotent PropertySeeder + RESEED_FRESH), `43f96b6` (ChatConversationResource
 fix), `f46c65e` (ContactMessagePolicy) — all merged via PR #16, all 6 CI checks green, auto-deployed
@@ -474,12 +486,12 @@ to Railway (confirmed live). `b4ae817` (responsive-images fix, first attempt) �
 later found ineffective live. `3cbbf74` (the real responsive-images fix, confirmed to have worked) —
 PR #18. `70960b7` (clear the full volume before reseeding — the actual remaining cause) — PR #19.
 All merged, redeployed, and verified via a fully-read deploy log. `ee3a017`/`6cddf16`/`54c89d9`/
-`97bc81e`/`873f0e2` — PR #21, findings 5-9 above; pushed and CI-validated, not yet merged/redeployed
-as of this entry.
+`97bc81e`/`873f0e2`/`68ffba7` — PR #21, findings 5-10 above; pushed and CI-validated, not yet
+merged/redeployed as of this entry.
 
-**Verdict:** staging demo is live, seeded, and passes every P0 check plus the large majority of P1/P2.
-Zero unresolved P0s from this pass. Every Tier P1 deep-interaction item planned for this phase has now
-been exercised — findings 5-9 above cover all of them, five more real bugs found and fixed. Not yet
-exercised: Tier P3 secondary surfaces (compare-properties, PDF/Excel export, email-campaign content
-review, energy/utility record display, remaining Resource-class reachability) — see
+**Verdict:** staging demo is live, seeded, and passes every P0 check plus the large majority of
+P1/P2/P3. Zero unresolved P0s from this pass. Every Tier P1 deep-interaction item and every Tier P3
+item planned for this phase has now been exercised — findings 5-10 above cover six more real bugs
+found and fixed, plus one confirmed-dormant defect documented. Not yet exercised: a full reachability
+sweep of every remaining Filament Resource class not explicitly covered above — see
 `docs/AQAR_QA_REPORT_2026-09-09.md` §7 for the full, honest list, in priority order for the next pass.
