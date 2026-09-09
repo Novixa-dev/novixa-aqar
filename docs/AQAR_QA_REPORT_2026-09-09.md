@@ -7,12 +7,12 @@ inventory, and every bug found and fixed along the way. Requested as a professio
 test pass ("من الاهم فالاهم") with a complete `.md` report as the deliverable.
 
 **Headline result:** the staging deployment is live, auto-deploying from `main`, fully seeded, and
-passed every P0 (blocking) and the large majority of P1/P2 checks executed. **4 real bugs were found
-and fixed this session** (1 data-integrity, 1 crash, 1 authorization gap, 1 deploy-reliability
-crash-loop) — all committed. The first three are merged and live; the fourth took two attempts (the
-first, merged fix turned out not to work when watched through an actual live redeploy — see §5.4 for
-the full honest account, including how that was caught and the real fix that followed). See §5 for
-full detail and §7 for what remains untested.
+passed every P0 (blocking) and the large majority of P1/P2 checks executed. **5 real bugs were found
+and fixed this session** (1 data-integrity, 1 crash, 1 authorization gap, and a deploy-reliability
+crash-loop that turned out to be 2 independent bugs stacked on top of each other) — all merged, live,
+and verified via a fully-read deploy log end to end, not an early status flag. See §5 for full detail
+(§5.4 in particular carries the honest multi-attempt timeline — a first fix that didn't stick, and a
+second bug that only became visible once it did) and §7 for what remains untested.
 
 ---
 
@@ -32,7 +32,7 @@ full detail and §7 for what remains untested.
 | Data integrity (property duplication) | 🔴 found → ✅ fixed → ✅ live-verified on Railway |
 | Chat Conversations resource (Admin+Staff) | 🔴 found (HTTP 500, 100% reproducible) → ✅ fixed → ✅ verified |
 | Contact Messages authorization | 🔴 found (fail-open gap) → ✅ fixed → ✅ verified |
-| RESEED_FRESH deploy reliability | 🔴 found (crash-loop) → first fix merged (PR #17) → 🔴 found ineffective on the next live redeploy → root-caused deeper → ✅ real fix verified locally, PR #18 open |
+| RESEED_FRESH deploy reliability | 🔴 found (crash-loop, 2 independent bugs stacked) → ✅ both fixed, merged, redeployed, and verified via a fully-read deploy log (1 clean container boot, disk usage back to healthy, `RESEED_FRESH` set back to `false`) |
 
 **Not yet executed** (see §7): per-role deep interaction testing beyond Admin/Staff (Landlord/Tenant/
 Buyer/Seller/Contractor panels were reachability-checked but not feature-by-feature exercised),
@@ -177,7 +177,8 @@ anything today.
 | `43f96b6` | `fix(filament)`: stop `ChatConversationResource` 500 on null `escalated_at` | #16 | ✅ merged |
 | `f46c65e` | `fix(security)`: add missing `ContactMessagePolicy` | #16 | ✅ merged |
 | `b4ae817` | `fix(seed)`: skip responsive-image generation for seeded photos — **first attempt, turned out ineffective, see §5.4** | #17 | ✅ merged (superseded by `3cbbf74`) |
-| `3cbbf74` | `fix(seed)`: the actual fix — `Property::$skipResponsiveImagesForSeeding`, gated inside `registerMediaCollections()` itself | #18 | ⏳ open at time of writing |
+| `3cbbf74` | `fix(seed)`: `Property::$skipResponsiveImagesForSeeding`, gated inside `registerMediaCollections()` itself — genuinely fixed the responsive-images bug, but a second bug was hiding underneath (see next row) | #18 | ✅ merged |
+| `70960b7` | `fix(deploy)`: clear `storage/app/public` before `RESEED_FRESH`'s `migrate:fresh --seed` — the volume was completely full (~504MB/500MB) from every earlier crashed attempt's orphaned photos, which is the real reason the crash-loop continued after `3cbbf74` | #19 | ✅ merged, redeployed, and live-verified (§5.4) |
 
 Each merge auto-triggered a Railway redeploy (confirmed via `list-deployments` matching commit SHAs
 to deployment records) — the GitHub→Railway pipeline is genuinely live and working, not just
@@ -247,7 +248,7 @@ entirely on Laravel's model-name auto-discovery convention, confirmed working vi
 `shield:generate --option=permissions`, which only needs a discovered Resource, not a Policy) — no
 re-seeding was needed, just the missing enforcement class.
 
-### 5.4 `RESEED_FRESH` crash-loop on Railway — Spatie MediaLibrary `DiskCannotBeAccessed` (deploy reliability, HIGH — caught live, mid-operation, took two attempts to actually fix)
+### 5.4 `RESEED_FRESH` crash-loop on Railway — two real bugs stacked, both found and fixed live, fully resolved and verified (deploy reliability, HIGH)
 
 This one was found *while executing the cleanup this session's other fixes made possible* — using
 `RESEED_FRESH=true` (added in §5.1) to clear out the already-duplicated live property data. It is
@@ -297,11 +298,51 @@ now completes in **607ms** (down from 75,990ms even on the one earlier run where
 crash — responsive-image generation was the expensive part too, not only the crash trigger). Confirmed
 via `tinker`: 28/28 properties have photos (70 media rows), and a sample media row's
 `responsive_images` field is genuinely empty (`[]`) — generation is actually skipped, not silently
-swallowing an error.
+swallowing an error. **Merged (PR #18) and redeployed — but the crash-loop continued anyway**,
+because a second, independent bug had been masked underneath the first one the whole time (below).
 
-**Outstanding as of this report:** PR #18 open, CI subscribed. Once merged: trigger the next
-`RESEED_FRESH` redeploy, confirm via deploy logs that it's a genuinely clean single pass this time
-(not just "no error yet"), then set `RESEED_FRESH` back to `false`.
+**Second bug, found on that very next live redeploy:** the crash's stack trace had changed — no longer
+routed through `ResponsiveImageGenerator` at all (proof the PR #18 fix genuinely worked), but still
+throwing `DiskCannotBeAccessed`, now from the base media file copy itself
+(`FileAdder.php:616` → `Filesystem->put()` returning `false`), deterministically, on `PropertySeeder`'s
+very first `addMedia()` call, every attempt. Checked Railway's own `DISK_USAGE_GB` service metric:
+the `web` service's 500MB persistent volume was reading **~504MB used — completely full**.
+`migrate:fresh --seed` only ever resets the *database*; it never touches the filesystem, so every
+earlier crashed or partial `RESEED_FRESH` attempt across this whole investigation (and likely before
+it) had left its already-written property photos orphaned on the volume, with nothing ever cleaning
+them up, until it filled completely and every subsequent write failed outright.
+
+**Real, complete fix (PR #19, `70960b7`):** `.docker/start-container`'s `RESEED_FRESH` branch now
+clears `storage/app/public` (`rm -rf` + recreate) *before* running `migrate:fresh --seed --force`, so
+the flag's own "reset the demo to a clean slate" promise actually covers the filesystem too, not only
+the database. Deleting doesn't require free space, so this works correctly even starting from an
+already-full volume.
+
+**Verified live, fully resolved:** merged, redeployed, and this time watched the complete deploy log
+end to end rather than trusting an early "SUCCESS" status or an absence-of-error snapshot (both had
+been misleading earlier in this investigation — one Railway deployment status flips to `SUCCESS`
+before the actual boot-time seed chain even starts, and an `environment-status` "healthy" read had
+earlier turned out to be a timing artifact against a build that later showed `CRASHED`). This redeploy:
+exactly **1 container boot** (no restart loop), full migration set applied, full seed chain completed
+including `PropertySeeder` (1,259ms, zero errors) through `DemoDataCompletionSeeder`, reached
+`Octane Server: roadrunner` and a running RoadRunner process — genuinely serving, not just reported as
+such. `DISK_USAGE_GB` confirmed back to a healthy ~70MB (from the prior ~504MB/full). `RESEED_FRESH`
+was then set back to `false` on the `web` service (per its own "never leave this on" documentation),
+which itself triggered one more redeploy — logs confirm it correctly took the normal boot path
+("Nothing to migrate", not another fresh rebuild), admin account ensured, `storage:link` connected,
+config cached, and the server started cleanly. The live staging demo is confirmed healthy, fully and
+correctly seeded, with `RESEED_FRESH` correctly off, as of this report.
+
+**Why this took three PRs to actually resolve, honestly stated:** each of the three fixes (PR #17,
+#18, #19) addressed a real thing — #17's reasoning was sound even though its mechanism didn't stick;
+#18 correctly fixed the mechanism and is independently verified to have worked; #19 found and fixed a
+second, entirely separate bug that had been hiding behind the first one's symptom the whole time. None
+of the three was a wasted or incorrect fix — the crash-loop simply had two independent causes stacked
+on top of each other, and the second one only became visible once the first was actually gone. The
+lesson carried into the rest of this report and this project's practice going forward: a local
+verification plus a merge is not "done" for anything that runs against live infrastructure — only a
+fully-read deploy log, from the same commit, showing the actual expected end state (not just an early
+or ambiguous status flag), counts as verified.
 
 ---
 
@@ -410,10 +451,12 @@ session's starting point, in the same priority order.
 
 ## 8. Recommendations
 
-1. **Merge PR #18**, confirm one clean `RESEED_FRESH` redeploy via Railway logs (single pass, no
-   crash-loop — verify this via the logs each time, not by absence of an error after a fixed wait; see
-   §5.4 for why the first attempt's "verified locally, merged, done" wasn't actually done), then
-   **set `RESEED_FRESH` back to `false`** — it must not be left on.
+1. ~~Merge the RESEED_FRESH fix, confirm one clean redeploy, set the flag back to `false`~~ — **done**:
+   PR #19 merged and redeployed; the deploy log shows exactly 1 container boot, a complete seed chain,
+   disk usage back to healthy (~70MB, was ~504MB/full), and `RESEED_FRESH` is confirmed `false` again
+   as of this report (§5.4). If a future re-seed is ever needed, it should now complete cleanly in one
+   pass — but per the lesson in §5.4, verify that via a fully-read deploy log each time, not an early
+   status flag.
 2. Continue the Tier P1/P2/P3 items listed in §7, in that order.
 3. Consider the low-severity chatbot locale finding (§6.4) — reply language should follow
    `app()->getLocale()`.
