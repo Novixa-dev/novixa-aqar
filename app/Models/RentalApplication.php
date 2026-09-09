@@ -80,6 +80,17 @@ class RentalApplication extends Model
         return $this->belongsTo(User::class, 'decided_by');
     }
 
+    /**
+     * Applications submitted through the tenant-facing form carry a
+     * `tenant_id` (a registered User); applications entered by staff for a
+     * lead who isn't a platform user yet carry `applicant_id` (a Contact)
+     * instead. Resolve whichever one is actually set.
+     */
+    public function getApplicantNameAttribute(): ?string
+    {
+        return $this->tenant?->name ?? $this->applicant?->full_name;
+    }
+
     public function isPending()
     {
         return $this->status === 'pending';
