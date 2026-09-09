@@ -450,18 +450,36 @@ overflow at any breakpoint).
    full real result instead of the silent fallback, and re-confirmed via a cleared log that the error
    never recurs on repeat visits.
 
+7. **Rental Applications — blank "Applicant" column + dead approve/reject actions (Landlord + Staff).**
+   Bound to `tenant.name`, but every seeded application links via `applicant_id`→`contacts` instead.
+   Added `RentalApplication::applicant_name`, resolving whichever relation is actually set; also
+   merged a duplicate `->filters()`/`->recordActions()` call pair in the Staff resource that had been
+   silently discarding the approve/reject quick actions and two filters. Verified via screenshots.
+8. **Tenant maintenance-request + work-order creation — 100% broken, 4 stacked crashes.** NOT NULL
+   `tenant_id` never set by the create form; NOT NULL `property_id`/`title`/`work_type`/`team_id`/
+   `created_by` never set by either work-order creation path; a `Tenant` model passed where `User` was
+   typed; and `App\Notifications\WorkOrderCreated` never existed as a class. All four fixed (form hook,
+   a model-level `booted()` default, a relation-chain correction, and a new notification class).
+   Verified end-to-end: a real request + nested work order created and persisted with every column
+   correctly populated.
+9. **Property review submission — 100% broken for every user, every property.**
+   `PropertyReviewForm::canUserReview()` called `$user->bookings()`/`rentals()`, neither of which
+   existed on `User`. Added both relationships. Verified end-to-end: a real review submitted on a
+   previously-booked property persisted correctly, and the eligibility gate itself (a real product
+   rule) now works instead of crashing.
+
 **Commits:** `f424db0` (idempotent PropertySeeder + RESEED_FRESH), `43f96b6` (ChatConversationResource
 fix), `f46c65e` (ContactMessagePolicy) — all merged via PR #16, all 6 CI checks green, auto-deployed
 to Railway (confirmed live). `b4ae817` (responsive-images fix, first attempt) — merged via PR #17,
 later found ineffective live. `3cbbf74` (the real responsive-images fix, confirmed to have worked) —
 PR #18. `70960b7` (clear the full volume before reseeding — the actual remaining cause) — PR #19.
-All merged, redeployed, and verified via a fully-read deploy log. `ee3a017` (booking feature fix) and
-`6cddf16` (saved_searches migration + `User::activities()`) — PR #21, both findings above.
+All merged, redeployed, and verified via a fully-read deploy log. `ee3a017`/`6cddf16`/`54c89d9`/
+`97bc81e`/`873f0e2` — PR #21, findings 5-9 above; pushed and CI-validated, not yet merged/redeployed
+as of this entry.
 
 **Verdict:** staging demo is live, seeded, and passes every P0 check plus the large majority of P1/P2.
-Zero unresolved P0s from this pass. Not yet exercised: deep per-role interaction beyond Admin/Staff,
-virtual tour rendering, form-validation messaging, 404/500 pages, SEO basics, and Tier P3 secondary
-surfaces — see `docs/AQAR_QA_REPORT_2026-09-09.md` §7 for the full, honest list of what remains, in
-priority order for the next pass. Booking/appointment creation and AI investment analysis, both listed
-as "not yet exercised" earlier in this same phase, were in fact exercised before this entry was
-finalized — both found broken and fixed (see findings 5-6 above).
+Zero unresolved P0s from this pass. Every Tier P1 deep-interaction item planned for this phase has now
+been exercised — findings 5-9 above cover all of them, five more real bugs found and fixed. Not yet
+exercised: Tier P3 secondary surfaces (compare-properties, PDF/Excel export, email-campaign content
+review, energy/utility record display, remaining Resource-class reachability) — see
+`docs/AQAR_QA_REPORT_2026-09-09.md` §7 for the full, honest list, in priority order for the next pass.
