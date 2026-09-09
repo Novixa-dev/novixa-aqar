@@ -9,8 +9,10 @@ test pass ("من الاهم فالاهم") with a complete `.md` report as the d
 **Headline result:** the staging deployment is live, auto-deploying from `main`, fully seeded, and
 passed every P0 (blocking) and the large majority of P1/P2 checks executed. **4 real bugs were found
 and fixed this session** (1 data-integrity, 1 crash, 1 authorization gap, 1 deploy-reliability
-crash-loop) — all committed, and all but the last already merged and live. See §5 for full detail
-and §7 for what remains untested.
+crash-loop) — all committed. The first three are merged and live; the fourth took two attempts (the
+first, merged fix turned out not to work when watched through an actual live redeploy — see §5.4 for
+the full honest account, including how that was caught and the real fix that followed). See §5 for
+full detail and §7 for what remains untested.
 
 ---
 
@@ -30,7 +32,7 @@ and §7 for what remains untested.
 | Data integrity (property duplication) | 🔴 found → ✅ fixed → ✅ live-verified on Railway |
 | Chat Conversations resource (Admin+Staff) | 🔴 found (HTTP 500, 100% reproducible) → ✅ fixed → ✅ verified |
 | Contact Messages authorization | 🔴 found (fail-open gap) → ✅ fixed → ✅ verified |
-| RESEED_FRESH deploy reliability | 🔴 found (crash-loop, 2/3 attempts) → ✅ fixed locally, PR #17 open |
+| RESEED_FRESH deploy reliability | 🔴 found (crash-loop) → first fix merged (PR #17) → 🔴 found ineffective on the next live redeploy → root-caused deeper → ✅ real fix verified locally, PR #18 open |
 
 **Not yet executed** (see §7): per-role deep interaction testing beyond Admin/Staff (Landlord/Tenant/
 Buyer/Seller/Contractor panels were reachability-checked but not feature-by-feature exercised),
@@ -174,7 +176,8 @@ anything today.
 | `f424db0` | `fix(seed)`: idempotent `PropertySeeder` + `RESEED_FRESH` mechanism | #16 | ✅ merged |
 | `43f96b6` | `fix(filament)`: stop `ChatConversationResource` 500 on null `escalated_at` | #16 | ✅ merged |
 | `f46c65e` | `fix(security)`: add missing `ContactMessagePolicy` | #16 | ✅ merged |
-| `b4ae817` | `fix(seed)`: skip responsive-image generation for seeded photos (fixes the `RESEED_FRESH` crash-loop found while executing the cleanup below) | #17 | ⏳ CI running at time of writing |
+| `b4ae817` | `fix(seed)`: skip responsive-image generation for seeded photos — **first attempt, turned out ineffective, see §5.4** | #17 | ✅ merged (superseded by `3cbbf74`) |
+| `3cbbf74` | `fix(seed)`: the actual fix — `Property::$skipResponsiveImagesForSeeding`, gated inside `registerMediaCollections()` itself | #18 | ⏳ open at time of writing |
 
 Each merge auto-triggered a Railway redeploy (confirmed via `list-deployments` matching commit SHAs
 to deployment records) — the GitHub→Railway pipeline is genuinely live and working, not just
@@ -244,45 +247,61 @@ entirely on Laravel's model-name auto-discovery convention, confirmed working vi
 `shield:generate --option=permissions`, which only needs a discovered Resource, not a Policy) — no
 re-seeding was needed, just the missing enforcement class.
 
-### 5.4 `RESEED_FRESH` crash-loop on Railway — Spatie MediaLibrary `DiskCannotBeAccessed` (deploy reliability, HIGH — caught live, mid-operation)
+### 5.4 `RESEED_FRESH` crash-loop on Railway — Spatie MediaLibrary `DiskCannotBeAccessed` (deploy reliability, HIGH — caught live, mid-operation, took two attempts to actually fix)
 
 This one was found *while executing the cleanup this session's other fixes made possible* — using
-`RESEED_FRESH=true` (added in §5.1) to clear out the already-duplicated live property data.
+`RESEED_FRESH=true` (added in §5.1) to clear out the already-duplicated live property data. It is
+reported here with the full honest timeline, including a first fix that turned out not to work —
+per this project's own rule that nothing is `FIXED` without an actual verification step, a claim of
+success gets withdrawn the moment live evidence contradicts it, not left standing in the report.
 
 **What happened, observed directly via Railway's deploy logs:** `migrate:fresh --seed --force`
-crash-looped. Attempts 1 and 2 (of at least 3 observed, ~90 seconds apart) both threw
+crash-looped. Multiple attempts, ~90 seconds apart, each threw
 `Spatie\MediaLibrary\MediaCollections\Exceptions\DiskCannotBeAccessed` deep inside
 `ResponsiveImageGenerator`, reached from `PropertySeeder::attachGalleryPhotos()`'s
 `toMediaCollection()` call. `.docker/start-container`'s `RESEED_FRESH` branch runs this command under
-`set -e` with **no** `|| true` fallback (unlike the normal boot path, which deliberately tolerates
-`UserSeeder`'s expected production exception) — so each crash aborted the whole container boot, and
-Railway auto-restarted it, re-running the entire fresh reseed from scratch each time.
+`set -e` with **no** `|| true` fallback — so each crash aborted the whole container boot, and Railway
+auto-restarted it, re-running the entire fresh reseed from scratch each time. (The deployment that sat
+on the crash-looping code, `f34661d9`, was later independently confirmed `CRASHED` in Railway's own
+deployment history — an earlier `environment-status` snapshot that had looked transiently healthy was
+a timing artifact, not evidence the boot ever actually succeeded; this report no longer relies on that
+signal.)
 
-**Root cause:** `Property::images`'s media collection has `->withResponsiveImages()` registered
-(`app/Models/Property.php`). `QUEUE_CONNECTION` on Railway is `sync` (confirmed via the stack trace's
-`SyncQueue` frames), so `GenerateResponsiveImagesJob` runs **inline**, synchronously, as part of the
-same seeding call — and that inline post-processing step intermittently failed to access the `public`
-disk. The exact trigger for the *intermittent* failure was not fully isolated (it never reproduced
-locally, only under Railway's specific runtime — a genuine "works on my machine" case), but pinning
-that down further wasn't necessary for the fix: **seeded demo photos never needed responsive srcset
-variants in the first place.**
+**First fix attempt (PR #17, `b4ae817`) — verified locally, then found NOT to work live:** added
+`->withResponsiveImagesIf(false)` to the seeder's `addMedia()` call, reasoning that seeded photos never
+needed responsive srcset variants. Verified locally (`migrate:fresh --seed --force` clean, 28/28
+properties with photos) and merged. **On the very next live `RESEED_FRESH` redeploy after merging,
+the identical crash happened again, at the identical line.** The fix had no effect in production —
+a real miss caught only by watching the actual redeploy through to completion rather than trusting the
+local verification and the merge as sufficient.
 
-**Fixed:** added `->withResponsiveImagesIf(false)` to the seeder's `addMedia()` chain — verified
-against Spatie MediaLibrary's own source that this correctly overrides the collection-level default
-per-call, without touching `Property::images`'s own `->withResponsiveImages()` registration (so real
-user-uploaded photos via Filament still get responsive variants exactly as designed).
+**Actual root cause of why the first fix didn't work:** traced into
+`vendor/spatie/laravel-medialibrary/src/MediaCollections/FileAdder.php`. `toMediaCollection()` →
+`attachMedia()` → `processMediaItem()` **unconditionally** calls `checkGenerateResponsiveImages()`,
+which re-derives the responsive-images flag from the **media collection's own registered default**
+(`Property::images` has `->withResponsiveImages()`) and silently re-enables it — discarding whatever
+`withResponsiveImagesIf(false)` had set on the `addMedia()` chain moments earlier. There is no way to
+override this per-call once the collection itself has responsive images enabled; only the collection
+registration is authoritative.
 
-**Verified locally:** `migrate:fresh --seed --force` end-to-end after the fix — exit 0, zero errors,
-`PropertySeeder` completed in a single pass. Confirmed via `tinker`: 28/28 seeded properties have
-photos attached (70 `images`-collection media rows total, matching the pre-existing expected count).
+**Real fix (PR #18, `3cbbf74`):** added `Property::$skipResponsiveImagesForSeeding`, a plain instance
+property checked *inside* `registerMediaCollections()` itself
+(`->withResponsiveImagesIf(! $this->skipResponsiveImagesForSeeding)`). `registerMediaCollections()` is
+re-invoked fresh on the specific model instance every time `FileAdder` needs the collection's settings,
+so this is the one place in the call chain that actually sticks. `PropertySeeder` sets the flag on each
+`$property` before its gallery-photo loop; real user uploads via Filament are unaffected (the flag
+defaults `false`).
 
-**Current live state:** the `web` service is confirmed healthy and online right now (checked via
-Railway's `environment-status`: `running: 1, crashed: 0, hasIssues: false`) — some attempt beyond the
-2 observed crashes eventually got past the race and completed successfully, so **the live demo is not
-currently broken**. This fix (PR #17, CI running at time of writing) makes future re-seeds reliable
-instead of depending on that race resolving in the seeder's favor. **Outstanding**: merge #17, trigger
-one more clean `RESEED_FRESH` redeploy to confirm a single-pass success with this fix live, then set
-`RESEED_FRESH` back to `false`.
+**Verified locally:** `migrate:fresh --seed --force` end-to-end — exit 0, zero errors. `PropertySeeder`
+now completes in **607ms** (down from 75,990ms even on the one earlier run where it happened not to
+crash — responsive-image generation was the expensive part too, not only the crash trigger). Confirmed
+via `tinker`: 28/28 properties have photos (70 media rows), and a sample media row's
+`responsive_images` field is genuinely empty (`[]`) — generation is actually skipped, not silently
+swallowing an error.
+
+**Outstanding as of this report:** PR #18 open, CI subscribed. Once merged: trigger the next
+`RESEED_FRESH` redeploy, confirm via deploy logs that it's a genuinely clean single pass this time
+(not just "no error yet"), then set `RESEED_FRESH` back to `false`.
 
 ---
 
@@ -391,8 +410,10 @@ session's starting point, in the same priority order.
 
 ## 8. Recommendations
 
-1. **Merge PR #17**, confirm one clean `RESEED_FRESH` redeploy via Railway logs (single pass, no
-   crash-loop), then **set `RESEED_FRESH` back to `false`** — it must not be left on.
+1. **Merge PR #18**, confirm one clean `RESEED_FRESH` redeploy via Railway logs (single pass, no
+   crash-loop — verify this via the logs each time, not by absence of an error after a fixed wait; see
+   §5.4 for why the first attempt's "verified locally, merged, done" wasn't actually done), then
+   **set `RESEED_FRESH` back to `false`** — it must not be left on.
 2. Continue the Tier P1/P2/P3 items listed in §7, in that order.
 3. Consider the low-severity chatbot locale finding (§6.4) — reply language should follow
    `app()->getLocale()`.
