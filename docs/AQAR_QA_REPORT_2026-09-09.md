@@ -7,12 +7,16 @@ inventory, and every bug found and fixed along the way. Requested as a professio
 test pass ("من الاهم فالاهم") with a complete `.md` report as the deliverable.
 
 **Headline result:** the staging deployment is live, auto-deploying from `main`, fully seeded, and
-passed every P0 (blocking) and the large majority of P1/P2 checks executed. **5 real bugs were found
-and fixed this session** (1 data-integrity, 1 crash, 1 authorization gap, and a deploy-reliability
-crash-loop that turned out to be 2 independent bugs stacked on top of each other) — all merged, live,
+passed every P0 (blocking) and the large majority of P1/P2 checks executed. **7 real bugs were found
+and fixed this session**: 1 data-integrity, 1 crash (Chat Conversations), 1 authorization gap, a
+deploy-reliability crash-loop that turned out to be 2 independent bugs stacked on top of each other,
+and — found while executing Tier P1's booking-flow item — 2 more crash bugs that had left the entire
+property-viewing booking feature completely non-functional plus the AI investment-analysis feature
+silently failing on every property page. All merged or in CI at time of writing; the first 5 are live
 and verified via a fully-read deploy log end to end, not an early status flag. See §5 for full detail
-(§5.4 in particular carries the honest multi-attempt timeline — a first fix that didn't stick, and a
-second bug that only became visible once it did) and §7 for what remains untested.
+(§5.4 in particular carries the honest multi-attempt timeline for the deploy crash-loop — a first fix
+that didn't stick, and a second bug that only became visible once it did) and §7 for what remains
+untested.
 
 ---
 
@@ -33,6 +37,8 @@ second bug that only became visible once it did) and §7 for what remains untest
 | Chat Conversations resource (Admin+Staff) | 🔴 found (HTTP 500, 100% reproducible) → ✅ fixed → ✅ verified |
 | Contact Messages authorization | 🔴 found (fail-open gap) → ✅ fixed → ✅ verified |
 | RESEED_FRESH deploy reliability | 🔴 found (crash-loop, 2 independent bugs stacked) → ✅ both fixed, merged, redeployed, and verified via a fully-read deploy log (1 clean container boot, disk usage back to healthy, `RESEED_FRESH` set back to `false`) |
+| Property-viewing booking feature | 🔴 found (100% broken — 2 stacked crashes, unreachable via UI navigation) → ✅ both fixed and verified end-to-end (real booking created and persisted) |
+| AI investment analysis on property pages | 🔴 found (silently failing on every property page — missing migration + missing model relationship) → ✅ both fixed and verified via tinker |
 
 **Not yet executed** (see §7): per-role deep interaction testing beyond Admin/Staff (Landlord/Tenant/
 Buyer/Seller/Contractor panels were reachability-checked but not feature-by-feature exercised),
@@ -179,6 +185,8 @@ anything today.
 | `b4ae817` | `fix(seed)`: skip responsive-image generation for seeded photos — **first attempt, turned out ineffective, see §5.4** | #17 | ✅ merged (superseded by `3cbbf74`) |
 | `3cbbf74` | `fix(seed)`: `Property::$skipResponsiveImagesForSeeding`, gated inside `registerMediaCollections()` itself — genuinely fixed the responsive-images bug, but a second bug was hiding underneath (see next row) | #18 | ✅ merged |
 | `70960b7` | `fix(deploy)`: clear `storage/app/public` before `RESEED_FRESH`'s `migrate:fresh --seed` — the volume was completely full (~504MB/500MB) from every earlier crashed attempt's orphaned photos, which is the real reason the crash-loop continued after `3cbbf74` | #19 | ✅ merged, redeployed, and live-verified (§5.4) |
+| `ee3a017` | `fix(booking)`: fix two stacked crashes (route-param/mount mismatch, nonexistent method call) that made the property-viewing booking feature 100% broken — see §5.5 | #21 | ⏳ CI running at time of writing (6/7 checks green) |
+| `6cddf16` | `fix(recommendations)`: add missing `saved_searches` migration and `User::activities()` relationship — AI investment analysis was silently failing on every property page — see §5.6 | #21 | ⏳ CI running at time of writing (6/7 checks green) |
 
 Each merge auto-triggered a Railway redeploy (confirmed via `list-deployments` matching commit SHAs
 to deployment records) — the GitHub→Railway pipeline is genuinely live and working, not just
@@ -344,6 +352,66 @@ verification plus a merge is not "done" for anything that runs against live infr
 fully-read deploy log, from the same commit, showing the actual expected end state (not just an early
 or ambiguous status flag), counts as verified.
 
+### 5.5 Property-viewing booking feature — completely broken, 2 stacked crashes (HIGH)
+
+**Found** executing Tier P1 item 19 ("Booking/viewing scheduling: create a real appointment, confirm
+it persists"): `/properties/1/book` returned HTTP 500 for every user, every property, no exceptions.
+
+**Bug 1:** `routes/web.php`'s `/properties/{property}/book` route parameter was named `property`, but
+`App\Livewire\PropertyBooking::mount($propertyId)` expects `propertyId`. Livewire full-page component
+route binding matches parameters by name, so this threw `Unable to resolve dependency [Parameter #0
+[ <required> $propertyId ]]` on every single page load. **Fixed:** renamed the route parameter to
+`propertyId`.
+
+**Bug 2** (only reachable once Bug 1 was fixed): `bookViewing()`'s submit handler called
+`Property::find(...)->getAvailableDates()` — a method that does not exist. `mount()`, a few lines
+above it in the same file, correctly calls the real method, `getAvailableDatesForTeam()`. Every
+booking submission failed with `Call to undefined method App\Models\Property::getAvailableDates()`,
+caught by the component's own generic error handler and shown to the user as a vague "An unexpected
+error occurred." **Fixed:** call the same real method `mount()` already uses.
+
+**Also noted, not fixed** (separate, lower-severity finding): this route is not linked from anywhere
+in the UI — no view references `route('property.book', ...)` or a matching URL. It was reachable only
+by typing the URL directly, meaning this fully-built feature (Livewire component with real booking
+logic, calendar integration, notifications) currently has no discoverable entry point for a real user.
+Whether/where to add a "Book a Viewing" button is a product decision for the project owner, not a bug
+fix, so intentionally left alone here.
+
+**Verified end-to-end:** logged in as `buyer@darhadhramaut.ye`, opened the booking page (now HTTP
+200), selected a real date/time from the form, submitted, got a genuine confirmation ("تم جدولة موعد
+المعاينة...") with working Google Calendar / Outlook / .ics download links. Confirmed via `tinker`
+that a real `bookings` row was created and persisted (property_id, date, time, name, status=confirmed)
+— not just a UI success message.
+
+### 5.6 AI investment analysis — silently failing on every property page (MEDIUM)
+
+**Found** while re-verifying property detail pages immediately after the booking fix:
+`storage/logs/laravel.log` showed `Investment analysis failed: SQLSTATE[42S02]: Base table or view not
+found: 1146 Table 'aqar.saved_searches' doesn't exist` on **every single** `/properties/{id}` page
+view. Caught and swallowed by `AIInvestmentAnalysisService::analyzeProperty()`'s own try/catch (falls
+back to a default/placeholder analysis), so nothing visibly crashed — the property detail page always
+rendered fine — but the real AI investment-analysis feature had silently never run, on any property,
+for as long as this code has existed.
+
+**Root cause, part 1:** `App\Models\SavedSearch` (fillable `user_id`, `criteria`) and
+`User::savedSearches()` have always existed and are actively queried by
+`PropertyRecommendationService::getSearchHistory()` — but no migration was ever written to create the
+table at all (confirmed: no `*saved_search*` or `*wishlist*` file anywhere in
+`database/migrations/`). **Fixed:** added the missing migration, matching the model's existing
+fillable/cast shape (`criteria` as `json`, cascade-deletes with the user).
+
+**Root cause, part 2** (only visible once part 1 was fixed): `PropertyRecommendationService::
+getRecommendations()` also calls `$user->activities()` — a relationship that was never defined on
+`User` at all, despite `App\Models\Activity` having a `user_id` column ready for exactly this
+relationship. **Fixed:** added `User::activities(): hasMany(Activity::class)`, matching the existing
+`savedSearches()` pattern immediately above it in the same file.
+
+**Verified:** via `tinker`, `AIInvestmentAnalysisService::analyzeInvestment()` now returns a real,
+fully-populated result (`market_analysis`, `valuation`, `recommendations`, `prediction`,
+`cash_flow_analysis`, `market_position`) instead of the silent fallback. Re-visited
+`/properties/{1,2,3}` after clearing the log and confirmed neither error appears again — only the
+known, already-documented sandbox artifact (blocked external neighborhood-data API, HTTP 403) remains.
+
 ---
 
 ## 6. Detailed Test Results
@@ -423,26 +491,48 @@ modal.
 | Responsive 768px (tablet) — homepage + property detail | ✅ zero horizontal overflow |
 | Responsive 1440px (desktop) — homepage + property detail | ✅ zero horizontal overflow |
 
+### 6.6 Tier P2 (remaining) + booking flow — PASS, 2 real bugs found and fixed
+
+| Check | Result |
+|---|---|
+| Virtual tour on property detail (property #1, has `virtual_tour_url`) | ✅ present, confirmed |
+| Contact form validation (empty submit) | ✅ PASS — native HTML5 "Please fill out this field." blocks submission correctly (visually confirmed via screenshot) |
+| Booking form validation (empty submit) | ✅ PASS — real server-side field-level Arabic error messages shown |
+| 404: nonexistent property ID | ✅ PASS — 200→404, no stack-trace/SQL leakage |
+| 404: nonexistent route | ✅ PASS — same |
+| SEO: homepage `<title>`/OG/meta description | ✅ PASS — all present and correctly localized |
+| SEO: `/sitemap.xml` | ✅ PASS — 200, real URLs |
+| SEO: `/robots.txt` | ✅ PASS — 200, real disallow rules per panel |
+| Booking/viewing scheduling end-to-end | 🔴 found completely broken (2 stacked crashes) → ✅ fixed and verified with a real persisted booking — see §5.5 |
+| AI investment analysis (surfaced while re-testing property pages) | 🔴 found silently failing on every property page → ✅ fixed and verified — see §5.6 |
+
 ---
 
 ## 7. Not Yet Executed (honest scope boundary)
 
-Per the priority ordering in §3, execution reached deep into Tier P2 before the live `RESEED_FRESH`
-incident (§5.4) took priority (a real, in-progress production/staging issue outranks continuing a
-QA checklist). The following remain **not yet tested this session**:
+Per the priority ordering in §3, execution continued through the `RESEED_FRESH` incident (§5.4, a
+real in-progress deploy issue that outranked continuing the checklist while it was live) and then
+resumed down the plan. Completed since the previous version of this report:
+
+- ✅ Virtual tour rendering on property detail — confirmed present.
+- ✅ Form validation messaging — confirmed working (native HTML5 required-field validation on the
+  contact form; server-side validation with real field-level Arabic error messages on the booking
+  form).
+- ✅ 404/500 error page correctness — both a nonexistent property ID and a nonexistent route return a
+  proper localized 404, no stack-trace leakage.
+- ✅ SEO basics — `<title>`/OG/canonical/meta-description present on the homepage, `/sitemap.xml` and
+  `/robots.txt` both serve real content (200, real URLs).
+- ✅ Booking/viewing appointment creation end-to-end — see §5.5 (was completely broken, now fixed and
+  verified with a real persisted booking).
+
+**Still not yet tested this session:**
 
 - Deep per-role feature interaction beyond reachability: Landlord Leases/Payments/Rental-Applications
-  data-accuracy, Tenant Maintenance-Request creation flow, Buyer favorite/booking/review flows on the
-  public site, Seller "My Listings" data correctness, Contractor Work-Order assignment view.
-- Booking/viewing appointment creation end-to-end (create → persists → visible to the right roles).
-- Virtual tour / 3D model viewer rendering (a seeded property has a `virtual_tour_url` set — not yet
-  opened and visually confirmed).
-- Form validation messaging (deliberately-invalid input on public forms).
-- 404/500 error page correctness (nonexistent property ID / nonexistent route).
-- SEO basics (`<title>`/OG/canonical tags, `/sitemap.xml`, `/robots.txt`).
-- Tier P3 in full: compare-properties tool, saved searches, PDF/Excel report export, email-campaign
-  admin UI content review, energy/utility record display, a full reachability sweep of every
-  remaining Filament Resource class not explicitly covered above.
+  data-accuracy, Tenant Maintenance-Request creation flow, Buyer favorite/review flows on the public
+  site, Seller "My Listings" data correctness, Contractor Work-Order assignment view.
+- Tier P3 in full: compare-properties tool, PDF/Excel report export, email-campaign admin UI content
+  review, energy/utility record display, a full reachability sweep of every remaining Filament
+  Resource class not explicitly covered above.
 
 None of these gaps are known to be broken — they are simply not yet verified. Recommended as the next
 session's starting point, in the same priority order.
@@ -457,14 +547,18 @@ session's starting point, in the same priority order.
    as of this report (§5.4). If a future re-seed is ever needed, it should now complete cleanly in one
    pass — but per the lesson in §5.4, verify that via a fully-read deploy log each time, not an early
    status flag.
-2. Continue the Tier P1/P2/P3 items listed in §7, in that order.
-3. Consider the low-severity chatbot locale finding (§6.4) — reply language should follow
+2. **Merge PR #21** (booking feature + AI investment analysis fixes, §5.5/§5.6) once CI is green.
+3. Decide whether/where to add a real "Book a Viewing" entry point to the property detail page — the
+   feature is now fully functional (§5.5) but still has no button linking to it anywhere in the UI.
+   This is a product decision, not something fixed in this pass.
+4. Continue the Tier P1/P3 items listed in §7, in that order.
+5. Consider the low-severity chatbot locale finding (§6.4) — reply language should follow
    `app()->getLocale()`.
-4. Consider reviewing the 10 stale Dependabot PRs (§4.5) — none urgent, but 2 weeks old.
-5. `docs/DEPLOYMENT-ENVIRONMENT-INVENTORY.md` still frames itself around "Laravel Cloud" — worth a
+6. Consider reviewing the 10 stale Dependabot PRs (§4.5) — none urgent, but 2 weeks old.
+7. `docs/DEPLOYMENT-ENVIRONMENT-INVENTORY.md` still frames itself around "Laravel Cloud" — worth a
    pass to reflect the actual Railway deployment, now that this report has established the current
    Railway-specific facts in §4.
-6. The orphaned `app/Filament/Resources/AlertResource.php` (confirmed dead code, §5.3) is a safe,
+8. The orphaned `app/Filament/Resources/AlertResource.php` (confirmed dead code, §5.3) is a safe,
    minor cleanup candidate whenever convenient — not urgent, not a live gap.
 
 ---
