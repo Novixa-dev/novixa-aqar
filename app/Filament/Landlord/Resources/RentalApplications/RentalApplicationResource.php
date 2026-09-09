@@ -66,9 +66,8 @@ class RentalApplicationResource extends Resource
                     ->label(__('filament.fields.property'))
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('tenant.name')
-                    ->label(app()->getLocale() === 'ar' ? 'المتقدم' : 'Applicant')
-                    ->searchable(),
+                TextColumn::make('applicant_name')
+                    ->label(app()->getLocale() === 'ar' ? 'المتقدم' : 'Applicant'),
                 TextColumn::make('status')
                     ->formatStateUsing(\App\Support\StatusLabels::for('rental_application'))
                     ->badge()
@@ -134,6 +133,6 @@ class RentalApplicationResource extends Resource
     {
         return parent::getEloquentQuery()
             ->whereHas('property', fn (Builder $query) => $query->where('user_id', auth()->id()))
-            ->with(['property', 'tenant']);
+            ->with(['property', 'tenant', 'applicant']);
     }
 }

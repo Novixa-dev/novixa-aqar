@@ -75,7 +75,7 @@ class UtilityPaymentResource extends Resource
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('amount')
-                    ->money()
+                    ->money(strtolower(config('currencies.default')))
                     ->sortable(),
                 TextColumn::make('payment_date')
                     ->date()

@@ -340,7 +340,7 @@ The code from Phase 18 was pushed to `main` and a real deployment was stood up: 
 
 ---
 
-## 2026-09-09 — Phase 21: full priority-ordered QA sweep + 4 real bugs found and fixed
+## 2026-09-09 — Phase 21: full priority-ordered QA sweep + 10 real bugs found and fixed
 
 **Context:** by this point Railway hosting was already live (project `novixa-aqar-staging`, `web` +
 `mysql` services, auto-deploy from `main` confirmed working) and full of seed data (Phase 20). The
@@ -368,7 +368,7 @@ English locale (zero raw keys, correct RTL→LTR icon mirroring), dark mode on `
 check on the historical P13-6 gap — still fixed), and 375/768/1440px responsive (zero horizontal
 overflow at any breakpoint).
 
-**4 real bugs found and fixed, all via live reproduction before any fix was written:**
+**10 real bugs found and fixed, all via live reproduction before any fix was written:**
 
 1. **`ChatConversationResource` — 100%-reproducible HTTP 500** on `/admin/chat-conversations` and
    `/staff/chat-conversations`. Root cause: the `escalated_at` column chained
@@ -426,16 +426,72 @@ overflow at any breakpoint).
    non-idempotency** — every re-seed created 28 brand-new duplicate properties; live Railway logs
    showed 560 `property_features` rows where 140 was expected (exactly 4×). Fixed via a
    `Property::exists()` guard.
+5. **Property-viewing booking feature — 100% broken, 2 stacked crashes.** Found executing Tier P1
+   item 19 (booking/viewing scheduling): `/properties/{id}/book` returned HTTP 500 for every
+   user/property. Bug A: `routes/web.php`'s route parameter was named `property` but
+   `App\Livewire\PropertyBooking::mount($propertyId)` expects `propertyId` — Livewire full-page route
+   binding matches by name, so this threw `Unable to resolve dependency` on every load. Bug B (only
+   reachable once A was fixed): `bookViewing()`'s submit handler called the nonexistent
+   `Property::getAvailableDates()` instead of the real method `getAvailableDatesForTeam()` already
+   used a few lines above in `mount()` — every submission failed with a generic "unexpected error."
+   Fixed both; verified end-to-end as `buyer@darhadhramaut.ye` (real confirmation with working
+   calendar links, and `tinker` confirmed a real `bookings` row persisted). Also noted, not fixed: the
+   route has no UI entry point anywhere — a product decision for the owner, out of scope here.
+6. **AI investment analysis — silently failing on every property page.** Found while re-verifying
+   property pages right after the booking fix: `storage/logs/laravel.log` showed
+   `Table 'aqar.saved_searches' doesn't exist` on every single `/properties/{id}` view, caught and
+   swallowed by `AIInvestmentAnalysisService::analyzeProperty()`'s own try/catch — the page always
+   rendered fine, but the real AI analysis had silently never run, on any property, ever. Root cause
+   part 1: the `SavedSearch` model and `User::savedSearches()` have always existed and are queried by
+   `PropertyRecommendationService::getSearchHistory()`, but no migration was ever written for the
+   table. Root cause part 2 (only visible once part 1 fixed): `getRecommendations()` also calls
+   `$user->activities()`, a relationship that was never defined on `User` despite `Activity` having a
+   ready `user_id` column. Fixed both; verified via `tinker` that `analyzeInvestment()` now returns a
+   full real result instead of the silent fallback, and re-confirmed via a cleared log that the error
+   never recurs on repeat visits.
+
+7. **Rental Applications — blank "Applicant" column + dead approve/reject actions (Landlord + Staff).**
+   Bound to `tenant.name`, but every seeded application links via `applicant_id`→`contacts` instead.
+   Added `RentalApplication::applicant_name`, resolving whichever relation is actually set; also
+   merged a duplicate `->filters()`/`->recordActions()` call pair in the Staff resource that had been
+   silently discarding the approve/reject quick actions and two filters. Verified via screenshots.
+8. **Tenant maintenance-request + work-order creation — 100% broken, 4 stacked crashes.** NOT NULL
+   `tenant_id` never set by the create form; NOT NULL `property_id`/`title`/`work_type`/`team_id`/
+   `created_by` never set by either work-order creation path; a `Tenant` model passed where `User` was
+   typed; and `App\Notifications\WorkOrderCreated` never existed as a class. All four fixed (form hook,
+   a model-level `booted()` default, a relation-chain correction, and a new notification class).
+   Verified end-to-end: a real request + nested work order created and persisted with every column
+   correctly populated.
+9. **Property review submission — 100% broken for every user, every property.**
+   `PropertyReviewForm::canUserReview()` called `$user->bookings()`/`rentals()`, neither of which
+   existed on `User`. Added both relationships. Verified end-to-end: a real review submitted on a
+   previously-booked property persisted correctly, and the eligibility gate itself (a real product
+   rule) now works instead of crashing.
+10. **Utility Payments / Lease relation manager — USD shown instead of YER.** Both used bare
+    `->money()` (Filament's default currency), unlike every other money column in the app. Fixed both
+    to pass the configured default currency; a codebase-wide grep confirmed no other instances.
+    Verified via screenshot.
+
+**Found, deliberately not fixed:** while auditing every call site of the notification methods
+involved in finding 8, found a second, separate maintenance-request Livewire component
+(`app/Livewire/MaintenanceRequestForm.php`) with the same class of `tenant_id`/`tenants.id` confusion
+plus a reference to a `properties.tenant_id` column that doesn't exist. Confirmed via a route/view
+grep that this component is unreachable — not embedded anywhere, not routed anywhere — so it's dead
+code with zero live impact, unlike finding 8's Filament flow. Documented in the QA report (§5.11) so
+it isn't rediscovered the hard way if a future session wires it into a view.
 
 **Commits:** `f424db0` (idempotent PropertySeeder + RESEED_FRESH), `43f96b6` (ChatConversationResource
 fix), `f46c65e` (ContactMessagePolicy) — all merged via PR #16, all 6 CI checks green, auto-deployed
 to Railway (confirmed live). `b4ae817` (responsive-images fix, first attempt) — merged via PR #17,
 later found ineffective live. `3cbbf74` (the real responsive-images fix, confirmed to have worked) —
 PR #18. `70960b7` (clear the full volume before reseeding — the actual remaining cause) — PR #19.
-All merged, redeployed, and verified via a fully-read deploy log.
+All merged, redeployed, and verified via a fully-read deploy log. `ee3a017`/`6cddf16`/`54c89d9`/
+`97bc81e`/`873f0e2`/`68ffba7` — PR #21, findings 5-10 above; pushed and CI-validated, not yet
+merged/redeployed as of this entry.
 
-**Verdict:** staging demo is live, seeded, and passes every P0 check plus the large majority of P1/P2.
-Zero unresolved P0s from this pass. Not yet exercised: deep per-role interaction beyond Admin/Staff,
-booking/appointment creation, virtual tour rendering, form-validation messaging, 404/500 pages, SEO
-basics, and Tier P3 secondary surfaces — see `docs/AQAR_QA_REPORT_2026-09-09.md` §7 for the full,
-honest list of what remains, in priority order for the next pass.
+**Verdict:** staging demo is live, seeded, and passes every P0 check plus the large majority of
+P1/P2/P3. Zero unresolved P0s from this pass. Every Tier P1 deep-interaction item and every Tier P3
+item planned for this phase has now been exercised — findings 5-10 above cover six more real bugs
+found and fixed, plus one confirmed-dormant defect documented. Not yet exercised: a full reachability
+sweep of every remaining Filament Resource class not explicitly covered above — see
+`docs/AQAR_QA_REPORT_2026-09-09.md` §7 for the full, honest list, in priority order for the next pass.

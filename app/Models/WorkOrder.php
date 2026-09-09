@@ -60,6 +60,44 @@ class WorkOrder extends Model
         'safety_requirements' => 'array',
     ];
 
+    protected static function booted(): void
+    {
+        // property_id, title, work_type, team_id and created_by are all
+        // NOT NULL, but every creation path reachable from the tenant panel
+        // (the maintenance-request work-order repeater, its "create work
+        // order" quick action) only ever supplies description/status/
+        // scheduled_date/maintenance_request_id. Derive the rest from the
+        // parent request rather than crash.
+        static::creating(function (self $workOrder) {
+            $maintenanceRequest = $workOrder->maintenance_request_id
+                ? MaintenanceRequest::find($workOrder->maintenance_request_id)
+                : null;
+
+            if (! $workOrder->property_id && $maintenanceRequest) {
+                $workOrder->property_id = $maintenanceRequest->property_id;
+            }
+
+            if (! $workOrder->title) {
+                $workOrder->title = $maintenanceRequest
+                    ? $maintenanceRequest->title
+                    : ($workOrder->description ? str($workOrder->description)->limit(255) : 'Work Order');
+            }
+
+            if (! $workOrder->work_type) {
+                $workOrder->work_type = 'maintenance';
+            }
+
+            if (! $workOrder->team_id) {
+                $workOrder->team_id = $maintenanceRequest?->team_id
+                    ?? $workOrder->property?->team_id;
+            }
+
+            if (! $workOrder->created_by && auth()->check()) {
+                $workOrder->created_by = auth()->id();
+            }
+        });
+    }
+
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class);

@@ -86,7 +86,7 @@ class PropertyBooking extends Component
         $this->validate();
 
         try {
-            $availableDates = Property::find($this->propertyId)->getAvailableDates();
+            $availableDates = Property::find($this->propertyId)->getAvailableDatesForTeam();
             if (!in_array($this->selectedDate, $availableDates)) {
                 throw new Exception('Selected date is no longer available.');
             }

@@ -131,9 +131,8 @@ class RentalApplicationResource extends Resource
                 TextColumn::make('property.title')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('tenant.name')
-                    ->searchable()
-                    ->sortable(),
+                TextColumn::make('applicant_name')
+                    ->label(app()->getLocale() === 'ar' ? 'المتقدم' : 'Applicant'),
                 SelectColumn::make('status')
                     ->options(fn () => app()->getLocale() === 'ar' ? [
                         'pending' => 'قيد المراجعة',
@@ -195,6 +194,18 @@ class RentalApplicationResource extends Resource
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
                     ]),
+                SelectFilter::make('employment_status')
+                    ->options(fn () => app()->getLocale() === 'ar' ? [
+                        'employed' => 'موظف',
+                        'self_employed' => 'يعمل لحسابه الخاص',
+                        'unemployed' => 'عاطل عن العمل',
+                        'student' => 'طالب',
+                    ] : [
+                        'employed' => 'Employed',
+                        'self_employed' => 'Self-employed',
+                        'unemployed' => 'Unemployed',
+                        'student' => 'Student',
+                    ]),
                 SelectFilter::make('background_check_status')
                     ->options(fn () => app()->getLocale() === 'ar' ? [
                         'passed' => 'ناجح',
@@ -227,33 +238,6 @@ class RentalApplicationResource extends Resource
                     ->requiresConfirmation()
                     ->visible(fn (RentalApplication $record): bool => $record->status === 'pending'),
             ])
-            ->filters([
-                SelectFilter::make('status')
-                    ->options(fn () => app()->getLocale() === 'ar' ? [
-                        'pending' => 'قيد المراجعة',
-                        'approved' => 'موافق عليه',
-                        'rejected' => 'مرفوض',
-                    ] : [
-                        'pending' => 'Pending',
-                        'approved' => 'Approved',
-                        'rejected' => 'Rejected',
-                    ]),
-                SelectFilter::make('employment_status')
-                    ->options(fn () => app()->getLocale() === 'ar' ? [
-                        'employed' => 'موظف',
-                        'self_employed' => 'يعمل لحسابه الخاص',
-                        'unemployed' => 'عاطل عن العمل',
-                        'student' => 'طالب',
-                    ] : [
-                        'employed' => 'Employed',
-                        'self_employed' => 'Self-employed',
-                        'unemployed' => 'Unemployed',
-                        'student' => 'Student',
-                    ]),
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
@@ -285,5 +269,11 @@ class RentalApplicationResource extends Resource
     public static function shouldRegisterNavigation(): bool
     {
         return auth()->user()->hasRole(['admin', 'staff']);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with(['property', 'tenant', 'applicant']);
     }
 }
