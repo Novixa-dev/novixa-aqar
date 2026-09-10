@@ -505,3 +505,51 @@ more real bugs found, fixed, merged, and confirmed live on staging, plus one con
 documented (not fixed, since it's unreachable dead code) and a full reachability sweep confirming zero
 new errors anywhere in the app. See `docs/AQAR_QA_REPORT_2026-09-09.md` for the complete, final
 report.
+
+---
+
+## 2026-09-09 — Phase 19 close-out: remaining seeder idempotency guards, merged and live-verified
+
+Final item from the deployment phase. A sweep of `database/seeders/` for create-paths with no
+duplication guard found three still unguarded, all inside `DatabaseSeeder`'s chain, so every
+additive re-seed on deploy grew the demo dataset without bound:
+`DemoDataCompletionSeeder::seedCommunicationHub` (4 internal messages per run — confirmed live, the
+seed summary read **8** after a second run against the four that method defines),
+`CommunityEventSeeder` (30 events per run), and `PropertyHistorySeeder` (~5 timeline rows × 5
+properties per run). Guarded with `firstOrCreate` on the natural key where one exists, and with the
+same `::exists()` early-return `PropertySeeder` already uses where the rows are factory-generated or
+property-derived and have no natural key. `PropertyHistory` guards per-property rather than globally
+so a property added later still gets its timeline backfilled. Ten other seeders were audited and
+confirmed already safe. `BranchSeeder` is the only unguarded seeder left in the tree and is not
+registered in the chain, so it never runs on deploy — left alone deliberately rather than widening
+the PR.
+
+Also added `docs/AQAR_STAGING_MANUAL_QA_GUIDE_AR.md`, an Arabic hand-off document for the manual QA
+pass (current state, fix history, quick-start, the nine demo accounts with their panels, and a
+priority-ordered five-stage test plan).
+
+**Merged as PR #25** (`ca6e96b`) with all six substantive CI checks green (`tests`, `laravel-tests`,
+`Full Install Smoke Test`, `PHP Insights`, `PHP Copy/Paste Detector`, `PHP Security Checker`;
+`docker` skipped, which is normal on a PR) and `mergeable_state: clean`.
+
+**Live-verified on the resulting Railway deployment (`2bc83b59`), by reading the deploy log rather
+than trusting the deploy status** — the lesson this whole phase was built on, since Railway reported
+"SUCCESS" throughout the original 60-hour outage while the container was in fact dead: migrations
+applied cleanly ("Nothing to migrate"), admin bootstrap succeeded, the storage symlink connected,
+config/routes/views/Filament caches rebuilt with zero errors, RoadRunner started and supervisord
+confirmed `octane_0` reached RUNNING and stayed up. Resource metrics after the deploy: memory
+**0.16 GB current / 0.22 GB peak against the 1 GB limit** (this is the ceiling that was pinned at
+100% during the OOM crash-loop), disk **0.07 GB of 0.5 GB** (was 100% full during the seed-crash
+saga), CPU idle.
+
+**Steady state confirmed, not assumed:** this boot ran no seed pass at all, which is the behavioral
+proof that `RUNNING_MIGRATIONS_AND_SEEDERS` is now `false` — the documented steady state, with
+migrations still running unconditionally on every boot in their own right.
+
+**Deliberately not done:** a `RESEED_FRESH` rebuild. It runs `migrate:fresh --seed --force`, dropping
+every table and wiping the media volume, and with the guards above merged its only remaining benefit
+is cosmetic — clearing demo rows that duplicated *before* the guards existed (8 internal messages
+instead of 4, duplicate community events and property-history rows). Properties are already correct
+at 28. That is not worth a destructive wipe taken unilaterally, particularly with a manual QA pass
+about to start that it would erase; left as an explicit, documented, opt-in call for the project
+owner.
