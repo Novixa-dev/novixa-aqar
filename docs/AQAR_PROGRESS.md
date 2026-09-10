@@ -553,3 +553,75 @@ instead of 4, duplicate community events and property-history rows). Properties 
 at 28. That is not worth a destructive wipe taken unilaterally, particularly with a manual QA pass
 about to start that it would erase; left as an explicit, documented, opt-in call for the project
 owner.
+
+---
+
+## 2026-09-10 — Phase 22: closing the structural gap that let the outage go unnoticed, and restoring opcache
+
+Earlier phases fixed *why* the app died. This one fixed *why nobody knew for 60 hours*, which is the
+more important defect.
+
+**Root cause of the silence — three things, each sufficient on its own:**
+
+1. **No HTTP healthcheck was configured on Railway.** `healthcheckPath` was unset, so the platform never
+   asked the application whether it could actually serve a request.
+2. **The application already had the endpoint.** `bootstrap/app.php:17` declares `health: '/up'` —
+   Laravel's built-in health route existed the whole time. The app could answer; the platform was never
+   told to ask.
+3. **supervisord is PID 1.** When Octane died, supervisord stayed alive, so the container never *exited*.
+   Railway saw a running container and a `SUCCESS` deployment, and had no reason to restart anything.
+
+Configured `healthcheckPath=/up`, `healthcheckTimeout=300`, `restartPolicyType=ON_FAILURE` (10 retries).
+
+**The first deploy with the healthcheck enabled FAILED — and diagnosing it produced the most reusable
+lesson of this whole effort.** The container booted perfectly (migrations clean, caches built, Octane
+`RUNNING` in ~4s), then the deploy sat for exactly 300 seconds and was marked failed. Per Railway's own
+documentation (`docs.railway.com/deployments/healthchecks`):
+
+> Railway will inject a `PORT` environment variable that your application should listen on. This
+> variable's value is also used when performing health checks on your deployments. If your application
+> doesn't listen on the `PORT` variable, **possibly due to using target ports**, you can manually set a
+> `PORT` variable to inform Railway of the port to use for health checks.
+
+That is this service exactly: the public domain uses a **target port** (→ 8000), the app listens on a
+hardcoded 8000 (`--port=8000` in `supervisord.roadrunner.conf`), and no `PORT` variable existed — so
+Railway was probing a port nothing listened on. Fixed by setting `PORT=8000`; no code change. The next
+deploy was marked `SUCCESS` **3 seconds after Octane reached RUNNING**, versus a 300-second timeout
+before — proof the probe now finds the app immediately.
+
+**An important limit, recorded so it is not over-claimed.** The same documentation states the healthcheck
+is called only at the start of a deployment and is explicitly *not* used for continuous monitoring. It
+therefore protects against exactly the failure mode that produced a false `SUCCESS` (a deployment that
+never serves) but will **not** catch an app that dies hours after a healthy deploy — which is what
+actually happened on 2026-09-02. **Continuous uptime monitoring remains an open gap** requiring an
+external monitor; it is not solved by this change.
+
+**Also verified as a real benefit:** the failed deploy did not replace the running one. Railway's
+documented behaviour — "the deploy is marked failed and the previous deployment keeps serving traffic" —
+means a broken build can no longer silently take over the demo. Before this, it would have.
+
+**opcache re-enabled** (PR #27). It was disabled during the OOM incident because a shared-memory segment
+is not guaranteed to be released on SIGKILL, which mattered in a once-per-second crash loop. That
+condition is gone (workers pinned to 1, memory flat for days), while the cost of leaving it off was
+user-visible: PHP recompiled every file on every request. Sized conservatively at 64M bytecode + 8M
+interned strings; CLI off, JIT off, `file_cache` deliberately unset (its missing directory was what
+fatally errored on every PHP invocation on a fresh container).
+
+**Live verification of deployment `73579c90`, read from logs and metrics rather than deploy status:**
+storage symlink connected, all seven caches rebuilt with zero errors, RoadRunner started, `octane_0`
+entered RUNNING and stayed. Memory **0.214 GB of the 1 GB limit** — matching the predicted ~70MB rise
+from the 0.15 GB baseline almost exactly, and nowhere near the ceiling that caused the original OOM.
+Disk 0.07 GB of 0.5 GB.
+
+**Deliberately not done, with reasons:**
+- **`accept-deploy` on the stale staged patch** (dated 2026-09-02T00:15, the project's creation moment).
+  It carries wanted volume-usage alerts at 80/95/100%, but its diff renders every service variable as
+  `removed` — `APP_KEY` among them. Losing that key invalidates every session and makes encrypted
+  `LeaseAgreement.content` unreadable (`docs/PRODUCTION-DEPLOYMENT.md` §1). Monitoring alerts do not
+  justify that risk on a working demo; set them from the Railway dashboard instead. This also resolves
+  the "~30 staged changes, origin unknown" item carried forward from an earlier phase: the patch is
+  vestigial from project creation, not someone's pending edit.
+- **`RESEED_FRESH`** — still destructive and its only remaining benefit is cosmetic now that the seeders
+  are idempotent.
+- **`checkSuites` is still `false`**, so a push to `main` deploys without waiting for CI. The MCP
+  `update-service` tool does not expose source settings; this needs the Railway dashboard.
