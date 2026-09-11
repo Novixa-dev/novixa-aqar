@@ -306,3 +306,22 @@ above. P21-11: found, confirmed dormant/unreachable, documented — see above.
 **PR #21 merged** (`1c2242b`) — all 7 CI checks green, redeployed to Railway (deployment `4f68988e`)
 and live-verified via a fully-read deploy log: clean migration, clean cache rebuild, RoadRunner
 started, no exceptions. Every fix P21-5 through P21-10 above is now live on staging, not just merged.
+
+---
+
+## Phase 23 — External services (PR #29)
+
+| ID | Problem | Root cause | Change | Verification | Status |
+|---|---|---|---|---|---|
+| P23-1 | Media tied to one container's disk | `FILESYSTEM_DISK=local`; a lost volume or a `migrate:fresh` took every photo with it, and no second replica could ever run | `media` + `documents` disks backed by an S3-compatible bucket, switched on by `AWS_BUCKET` alone; `/media` route serves them by cacheable redirect to a signed URL | CI green; live verification recorded in `AQAR_PROGRESS.md` Phase 23 | **FIXED** |
+| P23-2 | Every document upload threw at runtime | `Document::registerMediaCollections()` calls `->useDisk('documents')`, a disk that was never defined in `config/filesystems.php` | Disk defined in both shapes, with no `url` so it can never be linked directly | `MediaProxyTest` asserts the disk exists, has a driver, and has no public URL | **FIXED** |
+| P23-3 | The `s3` disk would have fataled if selected | Neither `aws/aws-sdk-php` nor `league/flysystem-aws-s3-v3` was installed | Adapter added as a real dependency | `composer validate`; CI install | **FIXED** |
+| P23-4 | `MEDIA_URL` as documented would 404 every photo | `AwsS3V3Adapter::url()` appends the disk root to `url`, so `https://host/media` produced `/media/media/...` | `MEDIA_URL` is the bare origin; route prefix and bucket root must stay equal, stated in three places | Test builds the s3-shaped disk and asserts the URL round-trips back to its key — no local or CI run using the local disk shape could have caught this | **FIXED** |
+| P23-5 | No mail ever left the process | No `MAIL_HOST`/`MAIL_USERNAME`/`MAIL_PASSWORD` anywhere; contact form, team invites, viewing confirmations and 12 notifications all silently produced nothing | Resend over SMTP, sending-only key, wired on Railway | Provider reported a real send as `delivered` | **FIXED** |
+| P23-6 | Queued notifications would never have sent | 10 of 12 notifications implement `ShouldQueue`, and no queue worker runs in `http` mode | `QUEUE_CONNECTION=sync` | Read from the RoadRunner supervisord config — only `[program:octane]` is defined | **FIXED** |
+| P23-7 | "Generate description" returned a 500 | `config('services.openai.api_key')` was never declared, so the call 401'd and the service threw into a caller with no try/catch | Key declared; service composes the description locally instead of throwing | `AiFallbackTest`, `AIDescriptionServiceTest` | **FIXED** |
+| P23-8 | AI assistant showed raw English error text | Same missing key, plus an endpoint (`/v1/engines/davinci-codex/completions`) OpenAI removed years ago — it could never have succeeded | Modern endpoint; falls back to the rule-based Arabic/English chatbot | `AiFallbackTest` | **FIXED** |
+| P23-9 | Financial report figures rendered blank | `"${$income}"` is a variable variable in PHP, not a dollar sign followed by a value | Explicit locale-aware formatter | Code read; covered by the surrounding service tests | **FIXED** |
+| P23-10 | Nine `config('services.*')` keys read but never declared | Silently `null`, failing far from the cause | All declared, deliberately empty | `ServiceConfigurationTest` scans `app/` and fails on any undeclared key | **FIXED** |
+| P23-11 | Mail domain not verified | Needs DNS records on `novixa.dev` | Domain created, records published in `AQAR_KEYS_AND_SERVICES_AR.md` | — | **BLOCKED** — needs owner DNS access |
+| P23-12 | No continuous uptime monitoring | Railway's healthcheck runs at deploy time only; this is what let the earlier 60-hour outage stay invisible | Recommended UptimeRobot check on `/up` | — | **BLOCKED** — needs owner signup |

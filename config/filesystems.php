@@ -1,5 +1,34 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| Object storage switch
+|--------------------------------------------------------------------------
+|
+| The `media` and `documents` disks below are the same two disks in two
+| different shapes: backed by S3-compatible object storage when a bucket is
+| configured, and by the container's own disk when it isn't.
+|
+| The switch is deliberately driven by AWS_BUCKET rather than by a separate
+| "use s3?" flag, because those two facts can never disagree: there is no way
+| to end up asking for the S3 shape without the credentials that shape needs.
+| Local development, CI and the test suite set no bucket, so they keep the
+| local shape and behave exactly as they did before object storage existed.
+|
+*/
+$usesObjectStorage = filled(env('AWS_BUCKET'));
+
+$s3Credentials = [
+    'driver' => 's3',
+    'key' => env('AWS_ACCESS_KEY_ID'),
+    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    'region' => env('AWS_DEFAULT_REGION', 'auto'),
+    'bucket' => env('AWS_BUCKET'),
+    'endpoint' => env('AWS_ENDPOINT'),
+    'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+    'throw' => false,
+];
+
 return [
 
     /*
@@ -59,16 +88,74 @@ return [
         ],
 
         's3' => [
-            'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_BUCKET'),
+            ...$s3Credentials,
             'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
         ],
+
+        /*
+         * Public-facing media: property photos, avatars, anything an <img>
+         * tag points at. Spatie MediaLibrary is pointed here with MEDIA_DISK.
+         *
+         * The bucket is private -- Railway Buckets do not support public
+         * objects -- so `url` is NOT the bucket's own address. It is this
+         * application's /media route, which answers with a redirect to a
+         * short-lived signed bucket URL. That keeps the URL written into the
+         * HTML stable and cacheable while the image bytes still travel from
+         * the bucket straight to the browser, never through PHP. See
+         * App\Http\Controllers\MediaProxyController.
+         */
+        'media' => $usesObjectStorage
+            ? [
+                ...$s3Credentials,
+                // Must stay equal to the /media route's own prefix. Laravel's
+                // S3 adapter builds a URL as `url` + '/' + prefixPath($path),
+                // so this root is appended to MEDIA_URL on its way into the
+                // HTML -- which is exactly what makes the two line up:
+                //
+                //   MEDIA_URL           https://host
+                //   + root              /media
+                //   + path              /properties/1/photo.jpg
+                //   = the route         /media/{path}  ->  properties/1/photo.jpg
+                //
+                // That is also why MEDIA_URL is the bare origin and must NOT
+                // have /media appended to it: doing so yields /media/media/...
+                // and every photo 404s.
+                'root' => 'media',
+                'url' => env('MEDIA_URL'),
+                'visibility' => 'private',
+            ]
+            : [
+                'driver' => 'local',
+                'root' => storage_path('app/public'),
+                'url' => env('ASSET_URL', '/storage'),
+                'visibility' => 'public',
+                'throw' => false,
+            ],
+
+        /*
+         * Private documents: contracts, compliance files, lease agreements.
+         *
+         * This disk is referenced by App\Models\Document::registerMediaCollections()
+         * via ->useDisk('documents') but was never defined here, so every
+         * document upload threw "Disk [documents] does not have a configured
+         * driver". Defining it is a fix, not just a migration to S3.
+         *
+         * It deliberately has no `url`: nothing may link to these files
+         * directly. Access goes through DocumentAccessService, which decides
+         * per user and per document, and only then hands out a signed URL.
+         */
+        'documents' => $usesObjectStorage
+            ? [
+                ...$s3Credentials,
+                'root' => 'documents',
+                'visibility' => 'private',
+            ]
+            : [
+                'driver' => 'local',
+                'root' => storage_path('app/documents'),
+                'visibility' => 'private',
+                'throw' => false,
+            ],
 
     ],
 
