@@ -107,6 +107,19 @@ return [
         'media' => $usesObjectStorage
             ? [
                 ...$s3Credentials,
+                // Must stay equal to the /media route's own prefix. Laravel's
+                // S3 adapter builds a URL as `url` + '/' + prefixPath($path),
+                // so this root is appended to MEDIA_URL on its way into the
+                // HTML -- which is exactly what makes the two line up:
+                //
+                //   MEDIA_URL           https://host
+                //   + root              /media
+                //   + path              /properties/1/photo.jpg
+                //   = the route         /media/{path}  ->  properties/1/photo.jpg
+                //
+                // That is also why MEDIA_URL is the bare origin and must NOT
+                // have /media appended to it: doing so yields /media/media/...
+                // and every photo 404s.
                 'root' => 'media',
                 'url' => env('MEDIA_URL'),
                 'visibility' => 'private',

@@ -72,7 +72,7 @@ AWS_BUCKET             = ${{aqar-media.BUCKET}}
 AWS_DEFAULT_REGION     = ${{aqar-media.REGION}}
 AWS_ENDPOINT           = ${{aqar-media.ENDPOINT}}
 MEDIA_DISK             = media
-MEDIA_URL              = https://web-production-68b34.up.railway.app/media
+MEDIA_URL              = https://web-production-68b34.up.railway.app
 ```
 
 `AWS_BUCKET` هو **المفتاح الحاكم**: إن كان فارغًا يعود التطبيق تلقائيًا
@@ -88,6 +88,13 @@ bucket إلى المتصفح مباشرة بلا مرور بـ PHP.
 - عمر التوقيع: 120 دقيقة
 - عمر الكاش: 3600 ثانية (أقصر من التوقيع عمدًا)
 - الكود: `app/Http/Controllers/MediaProxyController.php`
+
+> **تنبيه مهم عند التعديل:** `MEDIA_URL` يجب أن يكون **النطاق وحده بلا مسار**،
+> أي `https://…app` وليس `https://…app/media`. السبب أن محوّل S3 في Laravel
+> يبني الرابط هكذا: `MEDIA_URL` + `/` + جذر القرص (`media`) + `/` + مسار الملف.
+> فجذر القرص هو ما يُنتج مقطع `/media` في الرابط، وإضافته يدويًا تُنتج
+> `/media/media/...` فتفشل كل الصور بـ 404. ولهذا أيضًا يجب أن يبقى جذر القرص
+> مطابقًا لبادئة المسار في `routes/web.php`.
 
 ### ملاحظة صيانة
 

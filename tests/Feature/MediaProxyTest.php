@@ -108,6 +108,51 @@ class MediaProxyTest extends TestCase
         $this->assertSame('local', config('filesystems.disks.documents.driver'));
     }
 
+    /**
+     * The URL written into the HTML must land back on this route, with the
+     * key intact.
+     *
+     * Laravel's S3 adapter builds a URL as `url` + '/' + prefixPath($path),
+     * so the disk's root is appended to MEDIA_URL on its way into the page.
+     * That is what makes the /media route prefix and the bucket's media/
+     * prefix line up -- and it is also why MEDIA_URL must be the bare origin.
+     * Setting it to https://host/media instead yields /media/media/... and
+     * every photo 404s, which is not visible in any local or CI run because
+     * neither uses the S3 shape.
+     *
+     * Building the disk directly exercises that concatenation without any
+     * network: url() is pure string work over the configured prefix.
+     */
+    public function test_a_bucket_media_url_round_trips_through_this_route(): void
+    {
+        $origin = 'https://demo.example';
+        $key = 'properties/1/photo.jpg';
+
+        $disk = Storage::build([
+            'driver' => 's3',
+            'key' => 'test-key',
+            'secret' => 'test-secret',
+            'region' => 'auto',
+            'bucket' => 'test-bucket',
+            'endpoint' => 'https://s3.example.invalid',
+            // Literal on purpose: in CI the media disk is local, so its
+            // root is an absolute filesystem path. The value pinned here is
+            // the bucket prefix the s3 shape uses, which must stay equal to
+            // the route prefix below.
+            'root' => 'media',
+            'url' => $origin,
+        ]);
+
+        $url = $disk->url($key);
+
+        $this->assertSame("{$origin}/media/{$key}", $url);
+
+        // And the route must be able to take that URL's path back apart.
+        $path = ltrim(parse_url($url, PHP_URL_PATH) ?: '', '/');
+        $this->assertStringStartsWith('media/', $path);
+        $this->assertSame($key, substr($path, strlen('media/')));
+    }
+
     public function test_an_uploaded_document_can_be_stored_on_the_documents_disk(): void
     {
         Storage::fake('documents');
