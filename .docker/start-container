@@ -172,6 +172,24 @@ elif [ "${container_mode}" = "http" ]; then
     # `fuser`).
     fuser -k -n tcp 8000 2>/dev/null || true
 
+    # DEMO_AUDIT: exercise the running demo over real HTTP once it is up.
+    #
+    # Backgrounded with a delay because it has to talk to the server this
+    # script is about to exec, not to the one that is not running yet. It is
+    # read-only -- GETs plus the login POST each persona needs -- and its
+    # output is the point: the staging host is unreachable from the machines
+    # this project is developed on, so without it "does the demo work" can
+    # only be answered by a person with a browser.
+    #
+    # Leave it off in normal operation. Every run logs in as all eight demo
+    # personas, which is noise on a box that is serving real visitors.
+    if [ "${DEMO_AUDIT:-false}" = "true" ]; then
+        (
+            sleep 25
+            php artisan demo:audit || echo "AUDIT| command failed to run"
+        ) &
+    fi
+
     if [ "${OCTANE_SERVER}" = "frankenphp" ]; then
         exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.frankenphp.conf
     elif [ "${OCTANE_SERVER}" = "swoole" ]; then
