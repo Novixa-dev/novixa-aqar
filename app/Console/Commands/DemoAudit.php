@@ -26,7 +26,7 @@ use Throwable;
  */
 class DemoAudit extends Command
 {
-    protected $signature = 'demo:audit {--base=http://127.0.0.1:8000 : Base URL to exercise}';
+    protected $signature = 'demo:audit {--base= : Base URL to exercise (defaults to the public origin)}';
 
     protected $description = 'Exercise every public page, persona and panel of the deployed demo over real HTTP';
 
@@ -61,7 +61,7 @@ class DemoAudit extends Command
 
     public function handle(): int
     {
-        $this->base = rtrim((string) $this->option('base'), '/');
+        $this->base = rtrim((string) ($this->option('base') ?: $this->defaultBase()), '/');
 
         $this->out('=== DEMO AUDIT START === '.now()->toIso8601String());
         $this->out('base='.$this->base);
@@ -241,9 +241,21 @@ class DemoAudit extends Command
 
             $this->check("panel {$panel} ({$label})", function () use ($panel, $jar) {
                 $started = microtime(true);
-                $response = $this->client($jar)->get($this->base.$panel);
+
+                // Deliberately not following redirects. A panel that bounces
+                // an unauthenticated visitor to /login answers 200 at the end
+                // of the redirect chain, so following it turns "this persona
+                // cannot reach its panel" into a passing check.
+                $response = Http::withOptions(['cookies' => $jar, 'allow_redirects' => false])
+                    ->timeout(45)
+                    ->get($this->base.$panel);
+
                 $ms = (int) ((microtime(true) - $started) * 1000);
                 $body = $response->body();
+
+                if ($response->status() !== 200) {
+                    return [false, $response->status().' -> '.($response->header('Location') ?: '(no location)')];
+                }
 
                 $broken = null;
 
@@ -339,6 +351,26 @@ class DemoAudit extends Command
         $body = $this->client($jar)->get($this->base.'/login')->body();
 
         return preg_match('/name="_token"\s+value="([^"]+)"/', $body, $m) ? $m[1] : null;
+    }
+
+    /**
+     * The public origin, not localhost.
+     *
+     * Sessions are issued with SESSION_SECURE_COOKIE=true, so a cookie
+     * handed out over https is simply never sent back over plain http --
+     * every login then fails CSRF with a 419 that says nothing about the
+     * application. Exercising the real public URL also covers the proxy in
+     * front of it, which localhost does not.
+     */
+    private function defaultBase(): string
+    {
+        $domain = env('RAILWAY_PUBLIC_DOMAIN');
+
+        if (filled($domain)) {
+            return 'https://'.$domain;
+        }
+
+        return rtrim((string) config('app.url'), '/') ?: 'http://127.0.0.1:8000';
     }
 
     private function client(?CookieJar $jar = null)
