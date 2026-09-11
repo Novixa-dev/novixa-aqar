@@ -151,6 +151,19 @@ initialStuff() {
     # silently 404ing in a browser nobody has opened yet.
     php artisan media:doctor || echo "WARNING: media configuration check failed, continuing boot anyway."
 
+    # MAIL_DOCTOR: send one message through the application's own mailer.
+    #
+    # A provider reporting a message as delivered and this application being
+    # able to send one are two different facts, and only the second matters:
+    # an API call says nothing about whether MAIL_HOST, MAIL_USERNAME and
+    # MAIL_PASSWORD are right or the SMTP port is reachable from here.
+    #
+    # Off by default -- it really does send mail, so leaving it on would
+    # email the contact inbox on every single boot.
+    if [ "${MAIL_DOCTOR:-false}" = "true" ]; then
+        php artisan mail:doctor || echo "WARNING: mail check failed, continuing boot anyway."
+    fi
+
     php artisan storage:link
     php artisan optimize
 }
