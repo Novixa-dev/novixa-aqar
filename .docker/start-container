@@ -143,6 +143,14 @@ initialStuff() {
             || echo "WARNING: media migration failed, continuing boot anyway."
     fi
 
+    # Reports whether media storage and its public URLs agree with each
+    # other. Cheap (one list + one signature) and safe to leave on: it only
+    # reads. Its value is that the one failure mode no test can reach -- a
+    # deployed MEDIA_URL that makes the disk, the route and the URL disagree
+    # -- becomes one readable line in the deploy log instead of every photo
+    # silently 404ing in a browser nobody has opened yet.
+    php artisan media:doctor || echo "WARNING: media configuration check failed, continuing boot anyway."
+
     php artisan storage:link
     php artisan optimize
 }
