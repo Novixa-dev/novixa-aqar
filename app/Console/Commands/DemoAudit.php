@@ -4,7 +4,10 @@ namespace App\Console\Commands;
 
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Throwable;
 
 /**
@@ -69,6 +72,8 @@ class DemoAudit extends Command
         $this->auditPublicPages();
         $this->auditLanguages();
         $this->auditMedia();
+        $this->auditContent();
+        $this->auditForms();
         $this->auditPersonas();
         $this->auditAuthorization();
         $this->auditErrorHandling();
@@ -206,6 +211,108 @@ class DemoAudit extends Command
                 "{$image->status()} {$type} {$bytes}b",
             ];
         });
+    }
+
+    /**
+     * A demo with empty tables looks broken even when nothing is.
+     *
+     * Every page can answer 200 while the listings behind them are empty,
+     * so status codes alone cannot tell a working demo from a hollow one.
+     */
+    private function auditContent(): void
+    {
+        $this->out('--- CONTENT ---');
+
+        $expected = [
+            'properties' => 10,
+            'users' => 8,
+            'media' => 10,
+        ];
+
+        foreach ($expected as $table => $minimum) {
+            $this->check("{$table} has content", function () use ($table, $minimum) {
+                if (! Schema::hasTable($table)) {
+                    return [false, 'table does not exist'];
+                }
+
+                $count = DB::table($table)->count();
+
+                return [$count >= $minimum, "{$count} row(s), expected at least {$minimum}"];
+            });
+        }
+
+        // Optional tables: report what is there without failing over it, so
+        // this stays useful as the seed data changes shape.
+        foreach (['news', 'teams', 'leases', 'maintenance_requests'] as $table) {
+            if (Schema::hasTable($table)) {
+                $this->out("[INFO] {$table}: ".DB::table($table)->count().' row(s)');
+            }
+        }
+    }
+
+    /**
+     * Everything else here only reads. A demo nobody can submit anything to
+     * is not a working demo, and a write path exercises validation, CSRF,
+     * the database and -- for the contact form -- the entire mail chain
+     * through the same route a visitor uses.
+     */
+    private function auditForms(): void
+    {
+        $this->out('--- FORMS (write paths) ---');
+
+        $before = Schema::hasTable('contact_messages')
+            ? DB::table('contact_messages')->count()
+            : null;
+
+        $jar = new CookieJar;
+        $token = $this->csrfToken($jar);
+
+        if ($token === null) {
+            $this->note('no csrf token available -- skipping the contact form check');
+
+            return;
+        }
+
+        $marker = 'audit-'.Str::random(10);
+
+        $this->check('contact form accepts a submission', function () use ($jar, $token, $marker) {
+            $response = Http::withOptions(['cookies' => $jar, 'allow_redirects' => false])
+                ->timeout(45)
+                ->asForm()
+                ->post($this->base.'/contact', [
+                    '_token' => $token,
+                    'name' => 'Automated Audit',
+                    'email' => 'audit@example.com',
+                    'phone' => '+967000000000',
+                    'interest' => 'buying',
+                    'message' => "Automated check {$marker}. Safe to delete.",
+                ]);
+
+            // A validation failure also redirects, so a 302 alone proves
+            // nothing -- the row landing in the table is what does.
+            return [in_array($response->status(), [200, 302], true), (string) $response->status()];
+        });
+
+        if ($before === null) {
+            $this->note('no contact_messages table -- cannot confirm the submission was stored');
+
+            return;
+        }
+
+        $this->check('the submission was stored', function () use ($before, $marker) {
+            $after = DB::table('contact_messages')->count();
+            $found = DB::table('contact_messages')->where('message', 'like', "%{$marker}%")->exists();
+
+            return [$found, $found ? "stored ({$before} -> {$after})" : "not found ({$before} -> {$after})"];
+        });
+
+        // Leave nothing behind: this is a demo database people look at.
+        try {
+            $deleted = DB::table('contact_messages')->where('message', 'like', "%{$marker}%")->delete();
+            $this->out("[INFO] cleaned up {$deleted} audit row(s) from contact_messages");
+        } catch (Throwable $e) {
+            $this->note('could not clean up the audit row: '.$e->getMessage());
+        }
     }
 
     private function auditPersonas(): void
