@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -110,6 +112,61 @@ class MigrateMediaToObjectStorage extends Command
         $this->newLine();
         $this->info("Copied: {$copied}   Already present: {$skipped}   Failed: {$failed}");
 
-        return $failed === 0 ? self::SUCCESS : self::FAILURE;
+        if ($failed > 0) {
+            $this->error('Some files did not copy -- not repointing the media table, since a row whose bytes are missing would render a broken image.');
+
+            return self::FAILURE;
+        }
+
+        $this->repointMediaRecords($fromName, $toName, $dryRun);
+
+        return self::SUCCESS;
+    }
+
+    /**
+     * Points existing MediaLibrary records at the new disk.
+     *
+     * Copying the bytes is only half the job. Spatie stores the disk name on
+     * every `media` row, so changing MEDIA_DISK affects new uploads only --
+     * everything already in the library keeps resolving through whichever
+     * disk it was created on. Without this, the files sit in the bucket
+     * while the site carries on serving them from the container, and the
+     * migration silently accomplishes nothing.
+     *
+     * Only ever runs after a clean copy: a row pointed at a disk that does
+     * not hold its bytes is a broken image on a page.
+     */
+    private function repointMediaRecords(string $fromName, string $toName, bool $dryRun): void
+    {
+        if (! Schema::hasTable('media')) {
+            $this->line('No media table -- nothing to repoint.');
+
+            return;
+        }
+
+        $originals = DB::table('media')->where('disk', $fromName)->count();
+        $conversions = Schema::hasColumn('media', 'conversions_disk')
+            ? DB::table('media')->where('conversions_disk', $fromName)->count()
+            : 0;
+
+        if ($originals === 0 && $conversions === 0) {
+            $this->line("No media records still point at [{$fromName}].");
+
+            return;
+        }
+
+        if ($dryRun) {
+            $this->line("Would repoint {$originals} record(s) and {$conversions} conversion disk(s) from [{$fromName}] to [{$toName}].");
+
+            return;
+        }
+
+        DB::table('media')->where('disk', $fromName)->update(['disk' => $toName]);
+
+        if ($conversions > 0) {
+            DB::table('media')->where('conversions_disk', $fromName)->update(['conversions_disk' => $toName]);
+        }
+
+        $this->info("Repointed {$originals} media record(s) and {$conversions} conversion disk(s) to [{$toName}].");
     }
 }
