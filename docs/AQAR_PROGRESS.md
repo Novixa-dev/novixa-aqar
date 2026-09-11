@@ -625,3 +625,100 @@ Disk 0.07 GB of 0.5 GB.
   are idempotent.
 - **`checkSuites` is still `false`**, so a push to `main` deploys without waiting for CI. The MCP
   `update-service` tool does not expose source settings; this needs the Railway dashboard.
+
+---
+
+## 2026-09-11 — Phase 23: wiring the external services the demo actually depends on
+
+**PR #29.** The app was full of integrations that were fully written but not actually connected.
+Files lived on the container's own disk, no mail ever left the process, and several services read
+configuration keys that did not exist — so they received `null`, constructed themselves
+misconfigured, and failed much later at a point that said nothing about the cause.
+
+Plan and decisions: `docs/AQAR_EXTERNAL_SERVICES_PLAN_AR.md`.
+Service/credential map: `docs/AQAR_KEYS_AND_SERVICES_AR.md`.
+Manual pass: `docs/AQAR_BROWSER_TEST_PLAN_AR.md`.
+
+### Storage — moved to S3-compatible object storage
+
+Property photos and uploaded documents now live in a Railway Storage Bucket (`aqar-media`, `ams`,
+Tigris-backed, encrypted at rest, $0.015/GB-month with free API operations and egress). The same
+code runs unchanged against R2, B2, Tigris or AWS; `AWS_BUCKET` being set is the only switch, so
+local development, CI and the test suite keep the exact shape they had before.
+
+Railway Buckets are private with no public-object mode, so a bucket URL cannot go in an `<img>`
+tag. Streaming every image through PHP would push all of it through the single Octane worker and
+convert free bucket egress into paid service egress; putting a signed URL directly in the HTML
+would change it on every render and defeat caching everywhere downstream. The `media` disk's URL
+is therefore this app's `/media` route, which answers with a **cacheable 302 to a short-lived
+signed URL** — stable link in the HTML, signature-only work in PHP, bytes straight from bucket to
+browser. Signature 120 min, cache 3600 s (deliberately shorter, so a cached redirect can never
+outlive the signature it points at).
+
+The route is public and unauthenticated, so it is confined to the media disk and rejects traversal.
+Private documents sit under a different bucket prefix on a disk with **no** `url` at all, reachable
+only through `DocumentAccessService`.
+
+### Three real bugs found while wiring it
+
+1. **The `documents` disk never existed.** `App\Models\Document::registerMediaCollections()` has
+   called `->useDisk('documents')` all along, so every document upload threw *"Disk [documents] does
+   not have a configured driver"* at runtime while the suite stayed green.
+2. **The `s3` disk was dead configuration.** Neither `aws/aws-sdk-php` nor
+   `league/flysystem-aws-s3-v3` was installed, so anything selecting it would have fataled.
+3. **`MEDIA_URL` would have 404'd every photo.** `Illuminate\Filesystem\AwsS3V3Adapter::url()` builds
+   `url` + `/` + `prefixPath($path)`, so the disk's root is appended to `MEDIA_URL` on its way into
+   the page. Configured as `https://host/media`, that produced `/media/media/...`. Found by reading
+   the framework source for the installed version — **no local or CI run could have caught it**,
+   because both use the local disk shape where none of that concatenation happens. Now pinned by a
+   test that builds the s3-shaped disk directly and asserts the URL round-trips back to its key.
+
+### Mail — sends for the first time
+
+Resend over SMTP, sending-only API key, wired on Railway. Verified end to end: a test message came
+back `delivered` from the provider, not merely accepted by the app.
+
+`QUEUE_CONNECTION` set to `sync` deliberately: 10 of the 12 notifications in `app/Notifications/`
+implement `ShouldQueue`, and no queue worker runs in `http` mode (the RoadRunner supervisord config
+has only `[program:octane]`). On any other value those notifications would have queued and never sent.
+
+The custom domain `aqar.novixa.dev` is created and awaiting DNS records; until it verifies, Resend
+only delivers to the account owner. That is sufficient here — contact-form notifications go to the
+owner anyway, and the demo personas' `@darhadhramaut.ye` addresses are not real inboxes.
+
+### AI — worked in neither direction, now works in both
+
+`config('services.openai.api_key')` was read by two services and declared nowhere.
+`PropertySubmissionForm::generateAIDescription()` has no try/catch, so a seller clicking "generate
+description" got a 500; `AIAssistant` caught the exception and printed its raw English message into
+the answer box of an Arabic-first product. `AIAssistantService` also pointed at
+`/v1/engines/davinci-codex/completions`, removed by OpenAI years ago — it could never have
+succeeded, key or no key. And `generateFinancialReport()` interpolated `"${$income}"`, which PHP
+reads as a variable variable, so every figure in that report rendered blank.
+
+Neither service throws now. Running without an AI subscription is a supported configuration:
+descriptions are composed from the listing's own facts in the visitor's language, and the assistant
+answers through the rule-based `ChatbotService`, which already understood Arabic and English. Both
+fall back the same way when a configured provider errors — the case that used to take the page down.
+
+`AIDescriptionServiceTest::test_throws_exception_on_api_failure` asserted the old behaviour and had
+to be answered rather than left red. Its expectation described the defect, not a requirement, so it
+was replaced with the stronger contract (a failing provider still returns usable text). Two other
+tests in that file were also not testing what they appeared to: both faked `api.openai.com` and then
+asserted only `assertIsString`, while with no key configured the service never called that endpoint
+— so the fake was never matched and the assertions passed on the fallback's output.
+
+### Nine further undeclared config keys
+
+`background_check`, `credit_report`, `insurance`, `postcodes`, `locrating`, `allagents`, `plaid`,
+`quickbooks`, `accounting` — all read by app code, none declared. They stay empty (most are UK
+market services that are not part of this product), but declaring them makes the absence deliberate
+and visible in one place. `tests/Feature/ServiceConfigurationTest.php` now scans `app/` for every
+`config('services.*')` read and fails if any is undeclared, so this class of bug cannot recur silently.
+
+### Method note
+
+The authoring sandbox could not install vendor — its egress proxy blocks third-party GitHub package
+downloads — so the local suite could not be run at all. **CI on the PR was used as the test harness**,
+which is why several commits here are answers to specific CI output rather than speculative fixes.
+Three of them were mistakes in the new tests, not in the code under test, and are recorded as such.
