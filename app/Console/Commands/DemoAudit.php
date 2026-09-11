@@ -253,6 +253,26 @@ class DemoAudit extends Command
                 $ms = (int) ((microtime(true) - $started) * 1000);
                 $body = $response->body();
 
+                // Filament panels answer their own root with a redirect to
+                // their dashboard, so one hop that stays inside this panel is
+                // success. A hop that leaves it -- to /login, say -- is the
+                // failure this check exists to catch.
+                if (in_array($response->status(), [301, 302, 303, 307, 308], true)) {
+                    $location = (string) $response->header('Location');
+                    $path = (string) parse_url($location, PHP_URL_PATH);
+
+                    if (! str_starts_with($path, rtrim($panel, '/').'/')) {
+                        return [false, "left the panel: {$response->status()} -> ".($location ?: '(no location)')];
+                    }
+
+                    $response = Http::withOptions(['cookies' => $jar, 'allow_redirects' => false])
+                        ->timeout(45)
+                        ->get($this->base.$path);
+
+                    $ms = (int) ((microtime(true) - $started) * 1000);
+                    $body = $response->body();
+                }
+
                 if ($response->status() !== 200) {
                     return [false, $response->status().' -> '.($response->header('Location') ?: '(no location)')];
                 }

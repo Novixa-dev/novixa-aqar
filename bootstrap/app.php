@@ -17,6 +17,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Railway terminates TLS at its edge and forwards to this container
+        // over plain HTTP, so without trusting the forwarded headers the app
+        // believes every request is insecure: Request::isSecure() is false,
+        // and every generated absolute URL and post-login redirect comes out
+        // as http:// on an https-only site.
+        //
+        // App\Http\Middleware\TrustProxies exists in this repo but is
+        // Laravel 10-style configuration that nothing registers, so it has
+        // never taken effect. Trusting all proxies is the correct setting on
+        // a platform where the container is only ever reachable through that
+        // edge -- there is no path by which a client can set these headers
+        // itself.
+        $middleware->trustProxies(at: '*');
+
         // Locale must resolve on EVERY request — including unmatched URLs
         // rendering 404 pages — so it lives on the global stack, not the web
         // group (which never runs for non-routed paths). The middleware falls
