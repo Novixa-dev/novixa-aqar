@@ -2,74 +2,161 @@
 
 namespace App\Services;
 
-use Exception;
-use App\Models\Property;
 use App\Models\MaintenanceRequest;
+use App\Models\Property;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
+/**
+ * The staff-facing assistant: answers free-text questions and drafts tenant
+ * messages.
+ *
+ * Like AIDescriptionService this works with or without a text-generation
+ * provider. Without one it answers through ChatbotService, which is
+ * rule-based and already understands both Arabic and English, so the
+ * assistant stays genuinely useful rather than showing an error.
+ *
+ * It also no longer throws. The Livewire component caught the exception and
+ * printed its raw English message into the response box -- in an
+ * Arabic-first product, on a screen where the user asked a question and got
+ * "Error: Failed to generate AI response" back.
+ */
 class AIAssistantService
 {
-    protected $apiKey;
-    protected $apiEndpoint;
+    public function __construct(private readonly ChatbotService $chatbot) {}
 
-    public function __construct()
+    public function generateResponse($input, $context): string
     {
-        $this->apiKey = config('services.openai.api_key');
-        $this->apiEndpoint = 'https://api.openai.com/v1/engines/davinci-codex/completions';
-    }
+        $remote = $this->generateRemotely((string) $input, (string) $context);
 
-    public function generateResponse($input, $context)
-    {
-        $prompt = $this->createPrompt($input, $context);
-
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
-            'Content-Type' => 'application/json',
-        ])->post($this->apiEndpoint, [
-            'prompt' => $prompt,
-            'max_tokens' => 150,
-            'temperature' => 0.7,
-        ]);
-
-        if ($response->successful()) {
-            return $response->json()['choices'][0]['text'];
+        if ($remote !== null) {
+            return $remote;
         }
 
-        throw new Exception('Failed to generate AI response');
+        return $this->chatbot->processMessage((string) $input)['message'];
     }
 
-    protected function createPrompt($input, $context)
+    public function usesRemoteProvider(): bool
     {
-        return "As an AI assistant for property management, respond to the following input based on the given context:\n\nContext: {$context}\n\nInput: {$input}\n\nResponse:";
+        return filled(config('services.openai.api_key'));
     }
 
-    public function scheduleMaintenance(MaintenanceRequest $request)
+    /**
+     * @return string|null the generated text, or null to fall back locally
+     */
+    private function generateRemotely(string $input, string $context): ?string
     {
-        // Logic to schedule maintenance
-        // This is a placeholder and should be implemented based on your specific requirements
+        if (! $this->usesRemoteProvider()) {
+            return null;
+        }
+
+        try {
+            // The previous endpoint here was /v1/engines/davinci-codex/
+            // completions, which OpenAI removed years ago -- this call could
+            // never have succeeded, key or no key.
+            $response = Http::withToken(config('services.openai.api_key'))
+                ->timeout((int) config('services.openai.timeout', 20))
+                ->asJson()
+                ->post(rtrim((string) config('services.openai.base_uri'), '/').'/chat/completions', [
+                    'model' => config('services.openai.chat_model'),
+                    'messages' => [
+                        ['role' => 'system', 'content' => $this->systemPrompt()],
+                        ['role' => 'user', 'content' => "Context: {$context}\n\nQuestion: {$input}"],
+                    ],
+                    'max_tokens' => 400,
+                    'temperature' => 0.7,
+                ]);
+
+            if (! $response->successful()) {
+                Log::warning('AI assistant provider returned an error; answering locally instead.', [
+                    'status' => $response->status(),
+                ]);
+
+                return null;
+            }
+
+            $text = trim((string) data_get($response->json(), 'choices.0.message.content', ''));
+
+            return $text !== '' ? $text : null;
+        } catch (Throwable $e) {
+            Log::warning('AI assistant provider was unreachable; answering locally instead.', [
+                'exception' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    private function systemPrompt(): string
+    {
+        return app()->getLocale() === 'ar'
+            ? 'أنت مساعد ذكي لإدارة العقارات في منصة عقارية يمنية. أجب بالعربية بإيجاز ووضوح.'
+            : 'You are an assistant for a real-estate management platform. Answer concisely and clearly.';
+    }
+
+    public function scheduleMaintenance(MaintenanceRequest $request): string
+    {
         $request->update(['status' => 'scheduled']);
-        return "Maintenance scheduled for " . $request->property->address . " on " . now()->addDays(3)->toDateString();
+
+        $date = now()->addDays(3)->toDateString();
+        $address = $request->property->address ?? '';
+
+        return app()->getLocale() === 'ar'
+            ? "تمت جدولة الصيانة للعقار {$address} بتاريخ {$date}."
+            : "Maintenance scheduled for {$address} on {$date}.";
     }
 
-    public function generateFinancialReport(Property $property)
+    public function generateFinancialReport(Property $property): string
     {
-        // Logic to generate financial report
-        // This is a placeholder and should be implemented based on your specific requirements
-        $income = $property->leases()->sum('rent_amount');
-        $expenses = $property->maintenanceRequests()->sum('cost');
+        $income = (float) $property->leases()->sum('rent_amount');
+        $expenses = (float) $property->maintenanceRequests()->sum('cost');
         $profit = $income - $expenses;
 
-        return "Financial Report for {$property->address}:\nIncome: ${$income}\nExpenses: ${$expenses}\nProfit: ${$profit}";
+        // These were written as "${$income}" -- PHP reads that as a variable
+        // variable, not a dollar sign followed by a value, so every figure in
+        // this report rendered blank.
+        $format = fn (float $amount): string => app()->getLocale() === 'ar'
+            ? number_format($amount, 2).' ريال يمني'
+            : number_format($amount, 2).' YER';
+
+        $address = $property->address ?? '';
+
+        if (app()->getLocale() === 'ar') {
+            return "التقرير المالي للعقار {$address}:\n"
+                ."الإيرادات: {$format($income)}\n"
+                ."المصروفات: {$format($expenses)}\n"
+                ."صافي الربح: {$format($profit)}";
+        }
+
+        return "Financial Report for {$address}:\n"
+            ."Income: {$format($income)}\n"
+            ."Expenses: {$format($expenses)}\n"
+            ."Profit: {$format($profit)}";
     }
 
-    public function generateTenantCommunication(User $tenant, $subject)
+    public function generateTenantCommunication(User $tenant, $subject): string
     {
-        // Logic to generate tenant communication
-        // This is a placeholder and should be implemented based on your specific requirements
-        $context = "Tenant: {$tenant->name}, Property: {$tenant->property->address}, Subject: {$subject}";
-        $input = "Generate a polite and professional message to the tenant regarding the subject.";
+        $property = $tenant->property->address ?? '';
+        $context = "Tenant: {$tenant->name}, Property: {$property}, Subject: {$subject}";
 
-        return $this->generateResponse($input, $context);
+        $input = app()->getLocale() === 'ar'
+            ? "اكتب رسالة مهذبة ومهنية للمستأجر بخصوص: {$subject}"
+            : "Write a polite, professional message to the tenant regarding: {$subject}";
+
+        $remote = $this->generateRemotely($input, $context);
+
+        if ($remote !== null) {
+            return $remote;
+        }
+
+        return app()->getLocale() === 'ar'
+            ? "عزيزي/عزيزتي {$tenant->name}،\n\n"
+                ."نتواصل معك بخصوص {$subject} فيما يتعلق بالعقار {$property}.\n\n"
+                ."يسعدنا الرد على أي استفسار لديك عبر المنصة.\n\nمع التحية،\nفريق إدارة العقارات"
+            : "Dear {$tenant->name},\n\n"
+                ."We are writing to you regarding {$subject} in connection with {$property}.\n\n"
+                ."We are happy to answer any questions through the platform.\n\nKind regards,\nProperty Management";
     }
 }
