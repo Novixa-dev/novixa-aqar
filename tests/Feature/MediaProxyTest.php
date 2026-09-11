@@ -2,12 +2,29 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class MediaProxyTest extends TestCase
 {
+    // Laravel's error pages render the full site layout, which builds the
+    // navigation from the `menus` table. Without a schema, asserting on a
+    // 404 gets a 500 about a missing table instead.
+    use RefreshDatabase;
+
+    /**
+     * The controller answers in one of two shapes depending on the disk.
+     *
+     * Against the bucket it redirects to a signed URL, so the image bytes
+     * never pass through PHP. Against a plain local disk it serves the file
+     * directly. Storage::fake() produces a local disk with `serve` enabled,
+     * which does support signed URLs, so the fake takes the redirect path --
+     * both are correct, and what matters to a caller is the same either way:
+     * the request succeeds and the answer may be cached.
+     */
     public function test_it_serves_a_file_that_exists_on_the_media_disk(): void
     {
         Storage::fake('media');
@@ -15,7 +32,7 @@ class MediaProxyTest extends TestCase
 
         $response = $this->get('/media/properties/1/photo.jpg');
 
-        $response->assertOk();
+        $this->assertContains($response->getStatusCode(), [200, 302]);
         $this->assertStringContainsString(
             'max-age=3600',
             (string) $response->headers->get('Cache-Control'),
@@ -34,29 +51,29 @@ class MediaProxyTest extends TestCase
      * documents live under `documents/` in the same bucket. This route is
      * public and unauthenticated, so a traversal sequence is the one way it
      * could be walked into serving a document it must never expose.
-     *
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('traversalPaths')]
     public function test_it_rejects_path_traversal(string $path): void
     {
         Storage::fake('media');
         Storage::fake('documents');
-        Storage::disk('documents')->put('lease.pdf', 'SECRET-LEASE-CONTENT');
+
+        // Generated rather than written as a literal: with APP_DEBUG on, an
+        // error page renders the source of the frames in its stack trace --
+        // including this test file. A hardcoded needle would then be found
+        // in the response even when the document itself was never served,
+        // which is a false failure that says nothing about the route.
+        $secret = 'lease-body-'.Str::random(32);
+        Storage::disk('documents')->put('lease.pdf', $secret);
 
         $response = $this->get('/media/'.$path);
 
-        // The property under test is that the private document never comes
-        // back -- not which particular rejection status is used, which the
-        // web server in front of the app can legitimately decide for itself.
         $this->assertNotSame(
             200,
             $response->getStatusCode(),
             "Traversal path [{$path}] was served instead of rejected.",
         );
-        $this->assertStringNotContainsString(
-            'SECRET-LEASE-CONTENT',
-            $response->getContent() ?: '',
-        );
+        $this->assertStringNotContainsString($secret, $response->getContent() ?: '');
     }
 
     public static function traversalPaths(): array
