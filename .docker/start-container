@@ -129,6 +129,20 @@ initialStuff() {
         ' || echo "WARNING: admin bootstrap failed, continuing boot anyway."
     fi
 
+    # MIGRATE_MEDIA_TO_BUCKET: one-shot copy of media that predates object
+    # storage. Switching MEDIA_DISK to the bucket does not move any bytes --
+    # MediaLibrary keeps resolving the same relative paths, just against a
+    # different disk -- so without this every photo seeded onto the volume
+    # would 404 the moment the switch was flipped. The command never deletes
+    # from the source and skips anything already present at the destination,
+    # so leaving the flag on merely wastes a few seconds per boot rather than
+    # doing harm; still, turn it off once the copy has been confirmed.
+    if [ "${MIGRATE_MEDIA_TO_BUCKET:-false}" = "true" ]; then
+        echo "MIGRATE_MEDIA_TO_BUCKET=true: copying existing media into object storage ..."
+        php artisan media:migrate-to-object-storage --from=public --to=media \
+            || echo "WARNING: media migration failed, continuing boot anyway."
+    fi
+
     php artisan storage:link
     php artisan optimize
 }

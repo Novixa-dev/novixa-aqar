@@ -5,6 +5,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomReportController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MediaProxyController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
@@ -99,5 +100,17 @@ Route::get('/calculators', CalculatorsComponent::class)->name('calculators');
 Route::get('/news', NewsList::class)->name('news');
 Route::get('/news-list', NewsList::class)->name('news.list');
 Route::get('/news/{slug}', NewsDetail::class)->name('news.detail');
+
+/*
+ * Public delivery for the private media bucket. `media` disk URLs are built
+ * against this prefix (MEDIA_URL), so this route is what every property
+ * photo resolves to once object storage is switched on. It is intentionally
+ * unauthenticated -- these are the same images already shown to anonymous
+ * visitors on the public listings -- and it can only reach the media disk,
+ * never the documents one.
+ */
+Route::get('/media/{path}', MediaProxyController::class)
+    ->where('path', '.*')
+    ->name('media.proxy');
 
 require __DIR__.'/socialstream.php';
