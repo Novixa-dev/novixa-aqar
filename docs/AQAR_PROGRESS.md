@@ -722,3 +722,41 @@ The authoring sandbox could not install vendor — its egress proxy blocks third
 downloads — so the local suite could not be run at all. **CI on the PR was used as the test harness**,
 which is why several commits here are answers to specific CI output rather than speculative fixes.
 Three of them were mistakes in the new tests, not in the code under test, and are recorded as such.
+
+### Live verification (deployments `81b1c40c`, `30d8d1c0`, `1c370ff0`)
+
+Read from deploy logs and resource metrics, not from deploy status.
+
+**Media migration** — `Copying 70 file(s) from [public] to [media]` → `Copied: 70  Already present: 0
+Failed: 0`. This is also the proof that the bucket credentials resolve: they are Railway variable
+references (`${{aqar-media.ACCESS_KEY_ID}}` and siblings), so 70 successful writes means the
+references expanded and the bucket accepted them. The rollout was deliberately two-phase —
+credentials and the copy first with `MEDIA_DISK` still unset, so a bad reference could not have
+taken the site's photos down; `MEDIA_DISK=media` only after the copy was confirmed.
+
+**`media:doctor` against the live configuration:**
+
+```
+MediaLibrary disk: media
+Driver:            s3
+Bucket prefix:     media
+Configured URL:    https://web-production-68b34.up.railway.app
+Sample object:     1/property-1-1.jpg
+Public URL:        https://web-production-68b34.up.railway.app/media/1/property-1-1.jpg
+Signed URL host:   aqar-media-fmv8aqadu4lo9j.t3.storageapi.dev
+Media delivery is configured coherently.
+```
+
+The public URL is the route's own shape with the object's key intact — the exact thing that was
+wrong before the `MEDIA_URL` fix — and a signature was issued against the real Tigris bucket.
+
+**Mail** — verified at the provider: a real send returned `delivered`, not merely accepted.
+
+**Resources after the change:** memory **0.189 GB of 1 GB** (down from 0.214 GB, since media no
+longer passes through the app), disk **0.07 GB of 0.5 GB**, CPU idle. Healthcheck on `/up` passing.
+
+**Not verified here, and why:** the browser round trip — a visitor following the 302 and rendering
+the image. The authoring environment's egress proxy blocks `*.railway.app`, so no tool available to
+this session can load the site. The route itself is covered by tests (serving, 404s, traversal
+rejection), the URL is confirmed correct on the live box, and the signature is confirmed issuable;
+what remains is the visual pass, which is exactly what `docs/AQAR_BROWSER_TEST_PLAN_AR.md` §8.1 is for.
