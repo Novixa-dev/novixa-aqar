@@ -3,9 +3,9 @@
 namespace Tests\Unit;
 
 use App\Services\WalkScoreService;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
+use Tests\TestCase;
 
 class WalkScoreServiceTest extends TestCase
 {
@@ -17,121 +17,142 @@ class WalkScoreServiceTest extends TestCase
         $this->walkScoreService = new WalkScoreService();
     }
 
-    public function test_returns_mock_data_when_api_key_not_configured()
+    public function test_returns_null_when_api_key_not_configured(): void
     {
         Config::set('services.walkscore.api_key', null);
-        
+
+        Http::fake();
+
         $result = $this->walkScoreService->getWalkScore(
-            '123 Main St, London',
-            51.5074,
-            -0.1278
+            'Al Mukalla, Hadhramaut',
+            14.5425,
+            49.1242
         );
 
-        $this->assertNotNull($result);
-        $this->assertIsArray($result);
-        $this->assertArrayHasKey('walk_score', $result);
-        $this->assertArrayHasKey('walk_description', $result);
-        $this->assertArrayHasKey('transit_score', $result);
-        $this->assertArrayHasKey('bike_score', $result);
+        // No key means no real data. The service must say so rather than
+        // invent scores the visitor cannot tell from real ones.
+        $this->assertNull($result);
+
+        // And it must not make a network call at all - an unconfigured
+        // integration that still dials out costs a request timeout on
+        // every page load.
+        Http::assertNothingSent();
     }
 
-    public function test_mock_scores_are_within_valid_range()
-    {
-        Config::set('services.walkscore.api_key', null);
-        
-        $result = $this->walkScoreService->getWalkScore(
-            '123 Main St, London',
-            51.5074,
-            -0.1278
-        );
-
-        $this->assertGreaterThanOrEqual(0, $result['walk_score']);
-        $this->assertLessThanOrEqual(100, $result['walk_score']);
-        $this->assertGreaterThanOrEqual(0, $result['transit_score']);
-        $this->assertLessThanOrEqual(100, $result['transit_score']);
-        $this->assertGreaterThanOrEqual(0, $result['bike_score']);
-        $this->assertLessThanOrEqual(100, $result['bike_score']);
-    }
-
-    public function test_mock_scores_are_deterministic()
-    {
-        Config::set('services.walkscore.api_key', null);
-        
-        $result1 = $this->walkScoreService->getWalkScore(
-            '123 Main St, London',
-            51.5074,
-            -0.1278
-        );
-
-        $result2 = $this->walkScoreService->getWalkScore(
-            '123 Main St, London',
-            51.5074,
-            -0.1278
-        );
-
-        $this->assertEquals($result1['walk_score'], $result2['walk_score']);
-        $this->assertEquals($result1['transit_score'], $result2['transit_score']);
-        $this->assertEquals($result1['bike_score'], $result2['bike_score']);
-    }
-
-    public function test_returns_proper_descriptions()
-    {
-        Config::set('services.walkscore.api_key', null);
-        
-        $result = $this->walkScoreService->getWalkScore(
-            '123 Main St, London',
-            51.5074,
-            -0.1278
-        );
-
-        $this->assertNotEmpty($result['walk_description']);
-        $this->assertNotEmpty($result['transit_description']);
-        $this->assertNotEmpty($result['bike_description']);
-        $this->assertIsString($result['walk_description']);
-        $this->assertIsString($result['transit_description']);
-        $this->assertIsString($result['bike_description']);
-    }
-
-    public function test_handles_api_failure_gracefully()
+    public function test_returns_null_when_api_request_fails(): void
     {
         Config::set('services.walkscore.api_key', 'test_key');
         Config::set('services.walkscore.base_uri', 'https://api.walkscore.com');
 
         Http::fake([
-            'api.walkscore.com/*' => Http::response([], 500)
+            'api.walkscore.com/*' => Http::response([], 500),
         ]);
 
         $result = $this->walkScoreService->getWalkScore(
-            '123 Main St, London',
-            51.5074,
-            -0.1278
+            '123 Main St, Seattle',
+            47.6062,
+            -122.3321
         );
 
-        // Should fall back to mock data
-        $this->assertNotNull($result);
-        $this->assertIsArray($result);
-        $this->assertArrayHasKey('walk_score', $result);
+        $this->assertNull($result);
     }
 
-    public function test_validates_scores_within_range()
+    public function test_returns_null_when_provider_reports_non_success_status(): void
     {
         Config::set('services.walkscore.api_key', 'test_key');
         Config::set('services.walkscore.base_uri', 'https://api.walkscore.com');
 
-        // Mock API response with out-of-range scores
+        // Status 2 = score not available for this location. Walk Score
+        // returns HTTP 200 with a non-1 status for unsupported or
+        // uncalculated locations, which is exactly what a Yemeni
+        // coordinate would produce.
         Http::fake([
             'api.walkscore.com/*' => Http::response([
+                'status' => 2,
+                'walkscore' => null,
+            ], 200),
+        ]);
+
+        $result = $this->walkScoreService->getWalkScore(
+            'Al Mukalla, Hadhramaut',
+            14.5425,
+            49.1242
+        );
+
+        $this->assertNull($result);
+    }
+
+    public function test_returns_null_when_provider_omits_a_walk_score(): void
+    {
+        Config::set('services.walkscore.api_key', 'test_key');
+        Config::set('services.walkscore.base_uri', 'https://api.walkscore.com');
+
+        Http::fake([
+            'api.walkscore.com/*' => Http::response([
+                'status' => 1,
+                'description' => 'Test',
+            ], 200),
+        ]);
+
+        $result = $this->walkScoreService->getWalkScore(
+            '123 Main St, Seattle',
+            47.6062,
+            -122.3321
+        );
+
+        $this->assertNull($result);
+    }
+
+    public function test_returns_real_scores_when_provider_succeeds(): void
+    {
+        Config::set('services.walkscore.api_key', 'test_key');
+        Config::set('services.walkscore.base_uri', 'https://api.walkscore.com');
+
+        Http::fake([
+            'api.walkscore.com/*' => Http::response([
+                'status' => 1,
+                'walkscore' => 88,
+                'description' => "Very Walkable",
+                'transit' => ['score' => 72, 'description' => 'Excellent Transit'],
+                'bike' => ['score' => 65, 'description' => 'Bikeable'],
+            ], 200),
+        ]);
+
+        $result = $this->walkScoreService->getWalkScore(
+            '123 Main St, Seattle',
+            47.6062,
+            -122.3321
+        );
+
+        $this->assertIsArray($result);
+        $this->assertSame(88, $result['walk_score']);
+        $this->assertSame('Very Walkable', $result['walk_description']);
+        $this->assertSame(72, $result['transit_score']);
+        $this->assertSame('Excellent Transit', $result['transit_description']);
+        $this->assertSame(65, $result['bike_score']);
+        $this->assertSame('Bikeable', $result['bike_description']);
+    }
+
+    public function test_validates_scores_within_range(): void
+    {
+        Config::set('services.walkscore.api_key', 'test_key');
+        Config::set('services.walkscore.base_uri', 'https://api.walkscore.com');
+
+        // Provider response with out-of-range scores.
+        Http::fake([
+            'api.walkscore.com/*' => Http::response([
+                'status' => 1,
                 'walkscore' => 150, // Invalid: > 100
                 'description' => 'Test',
                 'transit' => ['score' => -10, 'description' => 'Test'], // Invalid: < 0
                 'bike' => ['score' => 75, 'description' => 'Test'], // Valid
-            ], 200)
+            ], 200),
         ]);
 
         $result = $this->walkScoreService->getWalkScore(
-            '123 Main St, London',
-            51.5074,
-            -0.1278
+            '123 Main St, Seattle',
+            47.6062,
+            -122.3321
         );
 
         // Scores should be clamped to valid range

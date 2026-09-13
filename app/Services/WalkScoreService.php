@@ -9,6 +9,7 @@ use Exception;
 class WalkScoreService
 {
     protected $baseUri;
+
     protected $apiKey;
 
     public function __construct()
@@ -18,44 +19,82 @@ class WalkScoreService
     }
 
     /**
-     * Fetch walkability score for a given address
+     * Fetch walkability, transit and bike scores for a location.
      *
-     * @param string $address
-     * @param float $latitude
-     * @param float $longitude
-     * @return array|null
+     * Returns null whenever real scores are not available: no API key
+     * configured, the request failed, or the provider returned nothing
+     * usable. Callers must treat null as "no data" and render the
+     * not-available state (property-detail.blade.php already does). This
+     * service never invents scores - a fabricated walkability number is
+     * indistinguishable from a real one to a visitor, which makes it
+     * worse than showing nothing.
+     *
+     * Coverage note: Walk Score covers the United States and Canada only.
+     * Yemeni locations are flagged "Unsupported Country" by the provider
+     * itself (verified against Al Mukalla and Sana'a), so leaving
+     * WALKSCORE_API_KEY empty is the correct configuration for this
+     * product's primary market, and the not-available state is the
+     * honest, permanent outcome there.
+     *
+     * @param  string  $address
+     * @param  float  $latitude
+     * @param  float  $longitude
      */
-    public function getWalkScore($address, $latitude, $longitude)
+    public function getWalkScore($address, $latitude, $longitude): ?array
     {
-        $apiKey = config('services.walkscore.api_key');
+        $apiKey = config('services.walkscore.api_key') ?? $this->apiKey;
         $baseUri = config('services.walkscore.base_uri') ?? $this->baseUri;
 
-        try {
-            // If API key is not configured, return mock data for development
-            if (empty($apiKey)) {
-                return $this->getMockWalkScore($latitude, $longitude);
-            }
+        if (empty($apiKey)) {
+            return null;
+        }
 
-            $response = Http::get("{$baseUri}/score", [
-                'format' => 'json',
-                'address' => $address,
-                'lat' => $latitude,
-                'lon' => $longitude,
-                'wsapikey' => $apiKey,
-            ]);
+        try {
+            // Deliberately short: this runs inside a web request, so a slow
+            // or unreachable optional integration must not hold the page
+            // load open (same rationale as OPENAI_TIMEOUT).
+            $response = Http::timeout(5)
+                ->connectTimeout(3)
+                ->get("{$baseUri}/score", [
+                    'format' => 'json',
+                    'address' => $address,
+                    'lat' => $latitude,
+                    'lon' => $longitude,
+                    'wsapikey' => $apiKey,
+                ]);
 
             if ($response->failed()) {
                 Log::warning('Walk Score API request failed', [
                     'status' => $response->status(),
-                    'body' => $response->body()
                 ]);
-                return $this->getMockWalkScore($latitude, $longitude);
+
+                return null;
             }
 
             $data = $response->json();
 
+            // Walk Score signals coverage and quota problems in the body,
+            // not the HTTP status: status 1 is the only success case.
+            // Anything else (2 = still calculating, 30/31 = bad request or
+            // internal error, 41 = quota exceeded, 42 = blocked) means we
+            // have no score to show.
+            $providerStatus = $data['status'] ?? null;
+            if ($providerStatus !== null && (int) $providerStatus !== 1) {
+                Log::warning('Walk Score API returned a non-success status', [
+                    'provider_status' => $providerStatus,
+                ]);
+
+                return null;
+            }
+
+            $walkScore = $this->validateScore($data['walkscore'] ?? null);
+
+            if ($walkScore === null) {
+                return null;
+            }
+
             return [
-                'walk_score' => $this->validateScore($data['walkscore'] ?? null),
+                'walk_score' => $walkScore,
                 'walk_description' => $data['description'] ?? null,
                 'transit_score' => $this->validateScore($data['transit']['score'] ?? null),
                 'transit_description' => $data['transit']['description'] ?? null,
@@ -63,93 +102,25 @@ class WalkScoreService
                 'bike_description' => $data['bike']['description'] ?? null,
             ];
         } catch (Exception $e) {
-            Log::error('Walk Score fetch failed: ' . $e->getMessage());
-            return $this->getMockWalkScore($latitude, $longitude);
+            Log::error('Walk Score fetch failed: '.$e->getMessage());
+
+            return null;
         }
     }
 
     /**
-     * Generate mock walkability scores for development/testing
+     * Validate and clamp a score to the 0-100 range.
      *
-     * @param float $latitude
-     * @param float $longitude
-     * @return array
+     * @param  mixed  $score
      */
-    protected function getMockWalkScore($latitude, $longitude)
-    {
-        // Generate deterministic scores based on location
-        $seed = abs(($latitude + $longitude) * 100);
-        $walkScore = (int) (($seed % 60) + 30); // Score between 30-90
-        $transitScore = (int) (($seed % 50) + 40); // Score between 40-90
-        $bikeScore = (int) (($seed % 55) + 35); // Score between 35-90
-
-        return [
-            'walk_score' => $walkScore,
-            'walk_description' => $this->getWalkScoreDescription($walkScore),
-            'transit_score' => $transitScore,
-            'transit_description' => $this->getTransitScoreDescription($transitScore),
-            'bike_score' => $bikeScore,
-            'bike_description' => $this->getBikeScoreDescription($bikeScore),
-        ];
-    }
-
-    /**
-     * Get description for walk score
-     *
-     * @param int $score
-     * @return string
-     */
-    protected function getWalkScoreDescription($score)
-    {
-        if ($score >= 90) return 'Walker\'s Paradise';
-        if ($score >= 70) return 'Very Walkable';
-        if ($score >= 50) return 'Somewhat Walkable';
-        if ($score >= 25) return 'Car-Dependent';
-        return 'Very Car-Dependent';
-    }
-
-    /**
-     * Get description for transit score
-     *
-     * @param int $score
-     * @return string
-     */
-    protected function getTransitScoreDescription($score)
-    {
-        if ($score >= 90) return 'Rider\'s Paradise';
-        if ($score >= 70) return 'Excellent Transit';
-        if ($score >= 50) return 'Good Transit';
-        if ($score >= 25) return 'Some Transit';
-        return 'Minimal Transit';
-    }
-
-    /**
-     * Get description for bike score
-     *
-     * @param int $score
-     * @return string
-     */
-    protected function getBikeScoreDescription($score)
-    {
-        if ($score >= 90) return 'Biker\'s Paradise';
-        if ($score >= 70) return 'Very Bikeable';
-        if ($score >= 50) return 'Bikeable';
-        return 'Somewhat Bikeable';
-    }
-
-    /**
-     * Validate and clamp score to 0-100 range
-     *
-     * @param mixed $score
-     * @return int|null
-     */
-    protected function validateScore($score)
+    protected function validateScore($score): ?int
     {
         if ($score === null) {
             return null;
         }
 
         $score = (int) $score;
+
         return max(0, min(100, $score));
     }
 }
