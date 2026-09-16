@@ -2,111 +2,113 @@
 
 namespace App\Jobs;
 
+use App\Models\Alert;
 use App\Models\Property;
-use App\Models\User;
 use App\Notifications\PropertyAlert;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
+/**
+ * Notifies users when newly listed or updated properties match one of their
+ * saved alerts.
+ *
+ * Runs daily from routes/console.php. It was previously written against a
+ * schema that does not exist - it called $user->propertyAlerts (no such
+ * relationship), read alert_types / price_change_threshold / min_bathrooms
+ * (no such columns on `alerts`), and handed PropertyAlert plain arrays when
+ * that notification reads Property models. It threw BadMethodCallException on
+ * every run; nobody saw it because no scheduler was running on the server.
+ * This rewrite matches the real `alerts` table.
+ */
 class CheckPropertyAlerts implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function handle()
+    public function handle(): void
     {
-        $recentProperties = Property::where('created_at', '>=', now()->subDay())
-            ->orWhere('updated_at', '>=', now()->subDay())
+        $recentProperties = Property::query()
+            ->where(function ($query) {
+                $query->where('created_at', '>=', now()->subDay())
+                    ->orWhere('updated_at', '>=', now()->subDay());
+            })
             ->get();
-    
-        if ($recentProperties->isNotEmpty()) {
-            $users = User::whereHas('propertyAlerts')->get();
-    
-            foreach ($users as $user) {
-                $matchingProperties = $this->getMatchingProperties($user, $recentProperties);
-    
-                if ($matchingProperties->isNotEmpty()) {
-                    $alertData = $this->prepareAlertData($user, $matchingProperties);
-                    $user->notify(new PropertyAlert($alertData));
+
+        if ($recentProperties->isEmpty()) {
+            return;
+        }
+
+        // Group by user so someone with three overlapping alerts gets one
+        // digest rather than three near-identical emails.
+        $matchesByUser = [];
+
+        Alert::query()
+            ->where('is_active', true)
+            ->with('user')
+            ->chunk(100, function (Collection $alerts) use ($recentProperties, &$matchesByUser) {
+                foreach ($alerts as $alert) {
+                    if (! $alert->user) {
+                        continue;
+                    }
+
+                    foreach ($this->matchingProperties($alert, $recentProperties) as $property) {
+                        $matchesByUser[$alert->user_id]['user'] = $alert->user;
+                        $matchesByUser[$alert->user_id]['properties'][$property->id] = $property;
+                    }
+                }
+            });
+
+        foreach ($matchesByUser as $match) {
+            $match['user']->notify(new PropertyAlert(array_values($match['properties'])));
+        }
+    }
+
+    /**
+     * Properties satisfying every criterion the alert actually specifies.
+     *
+     * Each column on `alerts` is nullable, and a null criterion means "no
+     * constraint" - not "match nothing". Treating null as a constraint would
+     * silently stop every alert from ever firing.
+     */
+    private function matchingProperties(Alert $alert, Collection $properties): Collection
+    {
+        return $properties->filter(function (Property $property) use ($alert) {
+            if ($alert->min_price !== null && (float) $property->price < (float) $alert->min_price) {
+                return false;
+            }
+
+            if ($alert->max_price !== null && (float) $property->price > (float) $alert->max_price) {
+                return false;
+            }
+
+            if ($alert->min_bedrooms !== null && (int) $property->bedrooms < (int) $alert->min_bedrooms) {
+                return false;
+            }
+
+            if ($alert->max_bedrooms !== null && (int) $property->bedrooms > (int) $alert->max_bedrooms) {
+                return false;
+            }
+
+            if (filled($alert->property_type) && $property->property_type !== $alert->property_type) {
+                return false;
+            }
+
+            // Location is free text on both sides (a city, a district, a
+            // building name), so an exact string comparison would almost
+            // never match. Substring, case-insensitive, is the useful rule.
+            if (filled($alert->location)) {
+                $needle = mb_strtolower(trim($alert->location));
+                $haystack = mb_strtolower((string) $property->location);
+
+                if ($needle !== '' && ! str_contains($haystack, $needle)) {
+                    return false;
                 }
             }
-        }
-    }
-    
-    private function getMatchingProperties($user, $properties)
-    {
-        return $properties->filter(function ($property) use ($user) {
-            $alertCriteria = $user->propertyAlerts;
-            return $property->price >= $alertCriteria->min_price &&
-                   $property->price <= $alertCriteria->max_price &&
-                   $property->bedrooms >= $alertCriteria->min_bedrooms &&
-                   $property->bathrooms >= $alertCriteria->min_bathrooms &&
-                   $property->location == $alertCriteria->location &&
-                   $this->matchesAlertTypes($property, $alertCriteria);
-        });
-    }
-    
-    private function matchesAlertTypes($property, $alertCriteria)
-    {
-        foreach ($alertCriteria->alert_types as $alertType) {
-            switch ($alertType) {
-                case 'price_change':
-                    if ($this->hasPriceChanged($property, $alertCriteria->price_change_threshold)) {
-                        return true;
-                    }
-                    break;
-                case 'new_listing':
-                    if ($property->created_at->isToday()) {
-                        return true;
-                    }
-                    break;
-                case 'open_house':
-                    if ($property->hasUpcomingOpenHouse()) {
-                        return true;
-                    }
-                    break;
-                case 'status_change':
-                    if ($property->status_changed_at && $property->status_changed_at->isToday()) {
-                        return true;
-                    }
-                    break;
-            }
-        }
-        return false;
-    }
-    
-    private function hasPriceChanged($property, $threshold)
-    {
-        $previousPrice = $property->price_history()->orderBy('created_at', 'desc')->skip(1)->first()->price ?? $property->price;
-        $percentageChange = abs(($property->price - $previousPrice) / $previousPrice * 100);
-        return $percentageChange >= $threshold;
-    }
-    
-    private function prepareAlertData($user, $properties)
-    {
-        return $properties->map(function ($property) use ($user) {
-            $alertTypes = [];
-            $alertCriteria = $user->propertyAlerts;
-    
-            if (in_array('price_change', $alertCriteria->alert_types) && $this->hasPriceChanged($property, $alertCriteria->price_change_threshold)) {
-                $alertTypes[] = 'Price Change';
-            }
-            if (in_array('new_listing', $alertCriteria->alert_types) && $property->created_at->isToday()) {
-                $alertTypes[] = 'New Listing';
-            }
-            if (in_array('open_house', $alertCriteria->alert_types) && $property->hasUpcomingOpenHouse()) {
-                $alertTypes[] = 'Open House';
-            }
-            if (in_array('status_change', $alertCriteria->alert_types) && $property->status_changed_at && $property->status_changed_at->isToday()) {
-                $alertTypes[] = 'Status Change';
-            }
-    
-            return [
-                'property' => $property->toArray(),
-                'alert_types' => $alertTypes,
-            ];
-        })->toArray();
+
+            return true;
+        })->values();
     }
 }

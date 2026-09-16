@@ -167,6 +167,14 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         return $this->hasMany(SavedSearch::class);
     }
 
+    /**
+     * Saved property alerts (see App\Jobs\CheckPropertyAlerts).
+     */
+    public function alerts()
+    {
+        return $this->hasMany(Alert::class);
+    }
+
     public function activities()
     {
         return $this->hasMany(Activity::class);

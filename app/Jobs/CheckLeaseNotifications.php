@@ -20,8 +20,12 @@ class CheckLeaseNotifications implements ShouldQueue
             ->where('end_date', '<=', now()->addDays(30))
             ->get();
 
+        // Lease.tenant_id points at users.id, and it is nullable - a lease can
+        // exist before a tenant is assigned. Without this guard the whole
+        // scheduled run dies on the first such lease and every later
+        // notification is silently skipped.
         foreach ($leasesUpForRenewal as $lease) {
-            $lease->tenant->notify(new LeaseNotification($lease, 'renewal'));
+            $lease->tenant?->notify(new LeaseNotification($lease, 'renewal'));
         }
 
         $terminatedLeases = Lease::where('status', 'terminated')
@@ -29,7 +33,7 @@ class CheckLeaseNotifications implements ShouldQueue
             ->get();
 
         foreach ($terminatedLeases as $lease) {
-            $lease->tenant->notify(new LeaseNotification($lease, 'termination'));
+            $lease->tenant?->notify(new LeaseNotification($lease, 'termination'));
         }
     }
 }
