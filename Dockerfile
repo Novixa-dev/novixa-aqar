@@ -1,20 +1,13 @@
-# Supported PHP versions: 8.2, 8.3, 8.5
-ARG PHP_VERSION=8.5
+# Supported PHP versions: 8.2, 8.3, 8.4, 8.5
+ARG PHP_VERSION=8.4
 # PHP 8.5 support requires compatible extension builds (check install-php-extensions)
 
 ###########################################
 # Composer dependencies stage
 ###########################################
-FROM php:${PHP_VERSION}-cli-alpine AS composer-deps
+FROM composer:latest AS composer-deps
 
 WORKDIR /app
-
-# Install required extensions for composer install
-ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN install-php-extensions intl sockets zip
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy composer files
 COPY composer.json composer.lock ./
@@ -27,8 +20,7 @@ RUN composer install \
     --no-ansi \
     --no-scripts \
     --prefer-dist \
-    --ignore-platform-req=ext-pcntl \
-    --ignore-platform-req=ext-exif
+    --ignore-platform-reqs
 
 ###########################################
 # Main application stage
@@ -65,9 +57,7 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
 # Install system dependencies and PHP extensions in one layer
-RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache \
+RUN apk add --no-cache \
     curl \
     wget \
     nano \
@@ -84,8 +74,6 @@ RUN apk update && \
     mbstring \
     bcmath \
     sockets \
-    pgsql \
-    pdo_pgsql \
     opcache \
     exif \
     pdo_mysql \
@@ -93,7 +81,6 @@ RUN apk update && \
     intl \
     gd \
     redis \
-    pcntl \
     igbinary && \
     docker-php-source delete && \
     rm -rf /var/cache/apk/* /tmp/* /var/tmp/*
