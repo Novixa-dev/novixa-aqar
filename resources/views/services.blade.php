@@ -17,7 +17,7 @@
         <!-- Service 1: Property Sales -->
         <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
             <div>
-                <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-[#8C7869]/10 text-[#8C7869] flex items-center justify-center text-3xl mb-6">
                     <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M3 21l3.75-9M21 21l-3.75-9M6.75 21h10.5" /></svg>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ __('Property Sales') }}</h3>
@@ -25,7 +25,7 @@
                     {{ app()->getLocale() === 'ar' ? 'تسويق احترافي للعقارات عبر شبكة قنوات متقدمة وتقييم تسعيري عادل يضمن سرعة البيع بأعلى عائد.' : 'Professional property marketing across advanced channels with accurate valuations ensuring fast closing at top market value.' }}
                 </p>
             </div>
-            <a href="{{ route('contact') }}" class="inline-flex items-center gap-1 text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">
+            <a href="{{ route('contact') }}" class="inline-flex items-center gap-1 text-sm font-bold text-[#8C7869] hover:underline">
                 <span>{{ __('Contact Us') }}</span>
                 <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
             </a>

@@ -11,7 +11,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
                 <label for="name" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">{{ __('Name') }}:</label>
-                <input type="text" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white" id="name" name="name" value="{{ old('name') }}" required>
+                <input type="text" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8C7869] focus:outline-none text-sm text-gray-900 dark:text-white" id="name" name="name" value="{{ old('name') }}" required>
                 @error('name')
                     <div class="text-red-500 text-xs mt-1.5 font-medium">{{ $message }}</div>
                 @enderror
@@ -19,7 +19,7 @@
 
             <div>
                 <label for="email" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">{{ __('Email') }}:</label>
-                <input type="email" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white" id="email" name="email" value="{{ old('email') }}" required>
+                <input type="email" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8C7869] focus:outline-none text-sm text-gray-900 dark:text-white" id="email" name="email" value="{{ old('email') }}" required>
                 @error('email')
                     <div class="text-red-500 text-xs mt-1.5 font-medium">{{ $message }}</div>
                 @enderror
@@ -29,7 +29,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
                 <label for="phone" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">{{ __('Phone Number') }}:</label>
-                <input type="tel" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white" id="phone" name="phone" value="{{ old('phone') }}">
+                <input type="tel" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8C7869] focus:outline-none text-sm text-gray-900 dark:text-white" id="phone" name="phone" value="{{ old('phone') }}">
                 @error('phone')
                     <div class="text-red-500 text-xs mt-1.5 font-medium">{{ $message }}</div>
                 @enderror
@@ -38,7 +38,7 @@
             <div>
                 <label for="interest" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">{{ app()->getLocale() === 'ar' ? 'نوع الاهتمام' : 'Interest' }}:</label>
                 <div class="relative">
-                    <select class="w-full ps-4 pe-10 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white appearance-none cursor-pointer" id="interest" name="interest">
+                    <select class="w-full ps-4 pe-10 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8C7869] focus:outline-none text-sm text-gray-900 dark:text-white appearance-none cursor-pointer" id="interest" name="interest">
                         <option value="">{{ app()->getLocale() === 'ar' ? '-- حدد طبيعة الاستفسار --' : '-- Select your interest --' }}</option>
                         <option value="buying" {{ old('interest') == 'buying' ? 'selected' : '' }}>{{ app()->getLocale() === 'ar' ? 'شراء عقار' : 'Buying a property' }}</option>
                         <option value="selling" {{ old('interest') == 'selling' ? 'selected' : '' }}>{{ app()->getLocale() === 'ar' ? 'بيع عقار' : 'Selling a property' }}</option>
@@ -59,13 +59,13 @@
 
         <div>
             <label for="message" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">{{ __('Message') }}:</label>
-            <textarea class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white" id="message" name="message" rows="5" required placeholder="{{ app()->getLocale() === 'ar' ? 'اكتب تفاصيل طلبك أو استفسارك هنا...' : 'Type your detailed inquiry here...' }}">{{ old('message') }}</textarea>
+            <textarea class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-[#8C7869] focus:outline-none text-sm text-gray-900 dark:text-white" id="message" name="message" rows="5" required placeholder="{{ app()->getLocale() === 'ar' ? 'اكتب تفاصيل طلبك أو استفسارك هنا...' : 'Type your detailed inquiry here...' }}">{{ old('message') }}</textarea>
             @error('message')
                 <div class="text-red-500 text-xs mt-1.5 font-medium">{{ $message }}</div>
             @enderror
         </div>
 
-        <button type="submit" class="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all text-sm">
+        <button type="submit" class="px-8 py-3.5 bg-[#8C7869] hover:bg-[#7A6759] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all text-sm">
             {{ __('Send Message') }}
         </button>
     </form>

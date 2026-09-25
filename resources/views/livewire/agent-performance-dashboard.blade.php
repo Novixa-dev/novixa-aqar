@@ -6,7 +6,7 @@
         <input type="date" wire:model="startDate" id="startDate" class="border rounded px-2 py-1">
         <label for="endDate" class="ms-4 me-2">End Date:</label>
         <input type="date" wire:model="endDate" id="endDate" class="border rounded px-2 py-1">
-        <button wire:click="updateMetrics" class="ms-4 bg-blue-500 text-white px-4 py-2 rounded">Update</button>
+        <button wire:click="updateMetrics" class="ms-4 bg-[#8C7869] hover:bg-[#7A6759] text-white px-4 py-2 rounded">Update</button>
     </div>
 
     <div class="grid grid-cols-2 gap-4 mb-8">

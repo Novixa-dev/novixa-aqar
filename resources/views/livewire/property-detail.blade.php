@@ -52,7 +52,7 @@
                                     alt="{{ $property->title }}"
                                     class="w-full h-80 sm:h-96 md:h-[450px] object-cover transition-transform duration-500 hover:scale-105">
                                 <div class="absolute top-4 start-4 flex gap-2">
-                                    <span class="px-3.5 py-1.5 rounded-xl text-xs font-black shadow-lg {{ $property->status === 'for_rent' ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white' }}">
+                                    <span class="px-3.5 py-1.5 rounded-xl text-xs font-black shadow-lg {{ $property->status === 'for_rent' ? 'bg-emerald-600 text-white' : 'bg-[#8C7869] text-white' }}">
                                         {{ $property->status === 'for_rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
                                     </span>
                                     <span class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gray-900/80 backdrop-blur-md text-white shadow-lg">
@@ -66,8 +66,8 @@
                                     @foreach($galleryMedia as $media)
                                         <button type="button"
                                             @click="activeImage = @js($media->getUrl())"
-                                            :class="activeImage === @js($media->getUrl()) ? 'ring-2 ring-blue-600' : 'ring-1 ring-gray-200 dark:ring-gray-700 hover:ring-blue-400'"
-                                            class="relative rounded-xl overflow-hidden aspect-square transition-all focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                            :class="activeImage === @js($media->getUrl()) ? 'ring-2 ring-[#8C7869]' : 'ring-1 ring-gray-200 dark:ring-gray-700 hover:ring-[#8C7869]/60'"
+                                            class="relative rounded-xl overflow-hidden aspect-square transition-all focus:outline-none focus:ring-2 focus:ring-[#8C7869]">
                                             <img src="{{ $media->getUrl() }}"
                                                 alt="{{ app()->getLocale() === 'ar' ? $property->title . ' - صورة ' . ($loop->iteration) : $property->title . ' - photo ' . ($loop->iteration) }}"
                                                 class="w-full h-full object-cover">
@@ -102,7 +102,7 @@
                         <!-- Right: Property Info & Actions -->
                         <div class="mt-6 sm:mt-8 lg:mt-0">
                             <div class="flex items-center gap-2 mb-3">
-                                <span class="text-xs font-bold text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 px-3 py-1 rounded-lg">
+                                <span class="text-xs font-bold text-[#8C7869] bg-[#8C7869]/10 px-3 py-1 rounded-lg">
                                     {{ $property->translated_type }}
                                 </span>
                                 <span class="text-xs text-gray-400">
@@ -115,7 +115,7 @@
                             </h1>
 
                             <p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1.5 mb-4">
-                                <span class="text-blue-500"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg></span>
+                                <span class="text-[#8C7869]"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg></span>
                                 <span>{{ $property->location ?: 'المكلا - حضرموت' }}</span>
                             </p>
 
@@ -235,7 +235,7 @@
                                 </button>
                                 
                                 <button wire:click="openInquiryModal" type="button"
-                                     class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-md transition-colors">
+                                     class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-white bg-[#8C7869] hover:bg-[#7A6759] rounded-2xl shadow-md transition-colors">
                                      <svg class="w-4 h-4 me-1.5 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                                      </svg>
@@ -288,7 +288,7 @@
                                 @endphp
                                 <div class="flex items-center gap-2 mb-4">
                                     <span class="text-xs font-bold text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'التصنيف:' : 'Category:' }}</span>
-                                    <span class="bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 text-xs font-bold px-3 py-1 rounded-lg">
+                                    <span class="bg-[#8C7869]/15 text-[#8C7869] dark:text-[#8C7869] text-xs font-bold px-3 py-1 rounded-lg">
                                         {{ $categoryName }}
                                     </span>
                                 </div>
@@ -501,9 +501,9 @@
                                         </div>
                                         <p class="mt-2 text-sm text-gray-600">
                                             @if(app()->getLocale() === 'ar')
-                                                يتم تصنيف العقارات من A (الأعلى كفاءة) إلى G (الأقل كفاءة). لمزيد من المعلومات حول <a href="#" class="text-blue-600 hover:underline" @click="$dispatch('open-modal', 'energy-efficiency-info')">تصنيفات كفاءة الطاقة</a>.
+                                                يتم تصنيف العقارات من A (الأعلى كفاءة) إلى G (الأقل كفاءة). لمزيد من المعلومات حول <a href="#" class="text-[#8C7869] hover:underline" @click="$dispatch('open-modal', 'energy-efficiency-info')">تصنيفات كفاءة الطاقة</a>.
                                             @else
-                                                Properties are rated from A (most efficient) to G (least efficient). Learn more about <a href="#" class="text-blue-600 hover:underline" @click="$dispatch('open-modal', 'energy-efficiency-info')">energy efficiency ratings</a>.
+                                                Properties are rated from A (most efficient) to G (least efficient). Learn more about <a href="#" class="text-[#8C7869] hover:underline" @click="$dispatch('open-modal', 'energy-efficiency-info')">energy efficiency ratings</a>.
                                             @endif
                                         </p>
                                     @else
@@ -516,7 +516,7 @@
                                 <div class="">
                                     <span class="text-gray-500">{{ app()->getLocale() === 'ar' ? 'الفرع/الفريق' : 'Branch/Team' }}</span>
                                     <span
-                                        class="bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ $team->name ?? (app()->getLocale() === 'ar' ? 'لا تتوفر معلومات عن الفريق' : 'No team information available') }}</span>
+                                        class="bg-[#8C7869]/15 text-[#8C7869] px-2 py-1 rounded">{{ $team->name ?? (app()->getLocale() === 'ar' ? 'لا تتوفر معلومات عن الفريق' : 'No team information available') }}</span>
                                 </div>
                                 
                                 <!-- Investment Analytics Section -->
@@ -528,7 +528,7 @@
                                         <span class="text-xs text-gray-400">{{ app()->getLocale() === 'ar' ? 'رؤى مدعومة بالذكاء الاصطناعي' : 'AI-Powered Insights' }}</span>
                                     </div>
                                     
-                                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 space-y-4">
+                                    <div class="bg-gradient-to-r from-[#FAF8F5] to-stone-100 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 space-y-4">
                                         <!-- Investment Prediction -->
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
@@ -547,7 +547,7 @@
                                                     </p>
                                                     <div class="ms-3 flex-1">
                                                         <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ ($investmentAnalytics['prediction']['risk_score'] / 10) * 100 }}%"></div>
+                                                            <div class="bg-[#8C7869] h-2.5 rounded-full" style="width: {{ ($investmentAnalytics['prediction']['risk_score'] / 10) * 100 }}%"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -580,7 +580,7 @@
                                                 </div>
                                                 <div>
                                                     <p class="text-xs text-gray-500">{{ app()->getLocale() === 'ar' ? 'عائد نقدي على نقدي' : 'Cash-on-Cash' }}</p>
-                                                    <p class="text-lg font-semibold text-blue-600">
+                                                    <p class="text-lg font-semibold text-[#8C7869]">
                                                         {{ number_format($investmentAnalytics['cash_flow_analysis']['cash_on_cash_return'], 2) }}%
                                                     </p>
                                                 </div>
@@ -609,7 +609,7 @@
                                         <!-- Investment Simulator Link -->
                                         <div class="text-center pt-2">
                                             <button wire:click="toggleInvestmentSimulation" 
-                                                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-150 ease-in-out">
+                                                class="inline-flex items-center px-4 py-2 bg-[#8C7869] hover:bg-[#7A6759] text-white text-sm font-medium rounded-lg transition duration-150 ease-in-out">
                                                 <svg class="w-4 h-4 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                                 </svg>
@@ -646,12 +646,12 @@
                                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Virtual Tour') }}</h2>
                                 <div class="flex flex-wrap gap-2">
                                     <button type="button" wire:click="toggleVirtualTour"
-                                        class="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">
+                                        class="inline-flex items-center px-4 py-2 rounded-lg bg-[#8C7869] hover:bg-[#7A6759] text-white text-sm font-medium transition-colors">
                                         {{ $showVirtualTour ? __('Hide Virtual Tour') : __('View Virtual Tour') }}
                                     </button>
                                     @if($property->live_tour_available)
                                         <button type="button" wire:click="openScheduleLiveTourModal"
-                                            class="inline-flex items-center px-4 py-2 rounded-lg border border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 text-sm font-medium transition-colors">
+                                            class="inline-flex items-center px-4 py-2 rounded-lg border border-[#8C7869] text-[#8C7869] dark:text-[#8C7869] dark:border-[#8C7869] hover:bg-[#8C7869]/10 dark:hover:bg-gray-800 text-sm font-medium transition-colors">
                                             {{ __('Schedule Live Tour') }}
                                         </button>
                                     @endif
@@ -682,7 +682,7 @@
                             @if($priceHistory->count() > 0)
                                 <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                                        <svg class="w-5 h-5 me-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-5 h-5 me-2 text-[#8C7869]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
                                         </svg>
                                         Price Changes
@@ -757,14 +757,14 @@
                                                 <div class="flex-shrink-0">
                                                     <div class="w-10 h-10 rounded-full flex items-center justify-center
                                                         {{ $event->event_type === 'sale' ? 'bg-green-100 dark:bg-green-800' : 
-                                                           ($event->event_type === 'price_change' ? 'bg-blue-100 dark:bg-blue-800' : 
+                                                           ($event->event_type === 'price_change' ? 'bg-[#8C7869]/20' : 
                                                            ($event->event_type === 'status_change' ? 'bg-yellow-100 dark:bg-yellow-800' : 'bg-gray-100 dark:bg-gray-700')) }}">
                                                         @if($event->event_type === 'sale')
                                                             <svg class="w-5 h-5 text-green-600 dark:text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                             </svg>
                                                         @elseif($event->event_type === 'price_change')
-                                                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <svg class="w-5 h-5 text-[#8C7869] dark:text-[#8C7869]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
                                                             </svg>
                                                         @elseif($event->event_type === 'status_change')
@@ -823,7 +823,7 @@
                     @if($communityEvents->count() > 0)
                         <div class="w-full mt-8 mb-8">
                             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                                <svg class="w-6 h-6 me-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 me-2 text-[#8C7869]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
                                 Community Events Calendar
@@ -855,7 +855,7 @@
                                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
                                             <div class="flex items-start gap-4">
                                                 <!-- Event Date Badge -->
-                                                <div class="flex-shrink-0 w-16 h-16 bg-blue-600 rounded-lg flex flex-col items-center justify-center text-white">
+                                                <div class="flex-shrink-0 w-16 h-16 bg-[#8C7869] rounded-lg flex flex-col items-center justify-center text-white">
                                                     <span class="text-xs font-semibold uppercase">{{ $event->event_date->translatedFormat('M') }}</span>
                                                     <span class="text-2xl font-bold">{{ $event->event_date->format('d') }}</span>
                                                 </div>
@@ -883,14 +883,14 @@
                                                         </svg>
                                                         {{ $event->location }}
                                                         @if(isset($event->distance_from_property))
-                                                            <span class="ms-2 text-xs text-blue-600 dark:text-blue-400">
+                                                            <span class="ms-2 text-xs text-[#8C7869]">
                                                                 ({{ number_format($event->distance_from_property, 1) }} km away)
                                                             </span>
                                                         @endif
                                                     </div>
                                                     
                                                     @if($event->category)
-                                                        <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 mb-2">
+                                                        <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-[#8C7869]/15 text-[#8C7869] mb-2">
                                                             {{ ucfirst($event->category) }}
                                                         </span>
                                                     @endif
@@ -909,7 +909,7 @@
                                                     
                                                     @if($event->website_url)
                                                         <a href="{{ $event->website_url }}" target="_blank" 
-                                                           class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mt-2">
+                                                           class="inline-flex items-center text-sm text-[#8C7869] hover:text-[#7A6759] mt-2">
                                                             Learn more
                                                             <svg class="w-4 h-4 ms-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
@@ -971,7 +971,7 @@
                         @livewire('property-review-form', ['propertyId' => $property->id])
                     @else
                         <p class="mt-4 text-gray-600">{{ app()->getLocale() === 'ar' ? 'يرجى' : 'Please' }} <a href="{{ url('/login') }}"
-                                class="text-blue-500 hover:underline">{{ app()->getLocale() === 'ar' ? 'تسجيل الدخول' : 'login' }}</a> {{ app()->getLocale() === 'ar' ? 'لإضافة تقييم.' : 'to leave a review.' }}</p>
+                                class="text-[#8C7869] hover:underline">{{ app()->getLocale() === 'ar' ? 'تسجيل الدخول' : 'login' }}</a> {{ app()->getLocale() === 'ar' ? 'لإضافة تقييم.' : 'to leave a review.' }}</p>
                     @endauth
                 </div>
             </section>
@@ -1011,7 +1011,7 @@
                         </div>
                         <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                             <button data-modal-hide="bookValuationModal" type="button"
-                                class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">{{ app()->getLocale() === 'ar' ? 'إغلاق' : 'Close' }}</button>
+                                class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-[#8C7869] focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">{{ app()->getLocale() === 'ar' ? 'إغلاق' : 'Close' }}</button>
                         </div>
                     </div>
                 </div>
@@ -1084,7 +1084,7 @@
                                     <label for="tourDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'التاريخ المفضل' : 'Preferred Date' }}</label>
                                     <input type="date" id="tourDate" wire:model="tourDate"
                                         min="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#8C7869] focus:border-[#8C7869] block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                         required>
                                     @error('tourDate') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                 </div>
@@ -1092,7 +1092,7 @@
                                 <div>
                                     <label for="tourTime" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'الوقت المفضل' : 'Preferred Time' }}</label>
                                     <input type="time" id="tourTime" wire:model="tourTime"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#8C7869] focus:border-[#8C7869] block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                         required>
                                     @error('tourTime') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                 </div>
@@ -1100,7 +1100,7 @@
                                 <div>
                                     <label for="tourNotes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'ملاحظات إضافية (اختياري)' : 'Additional Notes (Optional)' }}</label>
                                     <textarea id="tourNotes" wire:model="tourNotes" rows="3"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#8C7869] focus:border-[#8C7869] block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                         placeholder="Any specific areas you'd like to focus on or questions you have..."></textarea>
                                     @error('tourNotes') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                 </div>
@@ -1111,7 +1111,7 @@
                                     Schedule Tour
                                 </button>
                                 <button type="button" wire:click="closeScheduleLiveTourModal"
-                                    class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                                    class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-[#8C7869] focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                                     Cancel
                                 </button>
                             </div>

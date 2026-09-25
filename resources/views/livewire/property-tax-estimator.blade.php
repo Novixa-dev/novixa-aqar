@@ -90,7 +90,7 @@
 
                 <!-- Key Metrics -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-blue-50 dark:bg-blue-900 p-4 rounded-lg">
+                    <div class="bg-[#8C7869]/10 p-4 rounded-lg border border-[#8C7869]/20">
                         <p class="text-sm text-gray-600 dark:text-gray-300">{{ app()->getLocale() === 'ar' ? 'إجمالي الضريبة' : 'Total Tax' }}</p>
                         <p class="text-2xl font-bold text-gray-900 dark:text-white">
                             {{ app(\App\Services\CurrencyService::class)->format($estimatedTax['total_tax'], $property->currency) }}

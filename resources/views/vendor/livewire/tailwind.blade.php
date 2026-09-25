@@ -76,7 +76,7 @@
                     @if (is_array($element))
                         @foreach ($element as $page => $url)
                             @if ($page == $paginator->currentPage())
-                                <span aria-current="page" class="inline-flex items-center justify-center w-9 h-9 border-t border-b border-blue-600 bg-blue-600 text-sm font-semibold text-white">{{ $page }}</span>
+                                <span aria-current="page" class="inline-flex items-center justify-center w-9 h-9 border-t border-b border-[#8C7869] bg-[#8C7869] text-sm font-semibold text-white">{{ $page }}</span>
                             @else
                                 <a href="{{ $url }}" aria-label="{{ app()->getLocale() === 'ar' ? 'الذهاب إلى صفحة ' . $page : 'Go to page ' . $page }}" class="inline-flex items-center justify-center w-9 h-9 border-t border-b border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">{{ $page }}</a>
                             @endif

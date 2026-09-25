@@ -246,7 +246,7 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-blue-500/25">
+                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-[#8C7869]/25">
                             <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
                             <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
                         </a>
@@ -262,7 +262,7 @@
                          loading="lazy"
                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                     <div class="absolute top-4 start-4 flex gap-2 z-10">
-                        <span class="px-3.5 py-1 bg-blue-600 text-white text-[11px] font-bold rounded-full shadow-md">
+                        <span class="px-3.5 py-1 bg-[#8C7869] text-white text-[11px] font-bold rounded-full shadow-md">
                             {{ app()->getLocale() === 'ar' ? 'متاح للبيع' : 'For Sale' }}
                         </span>
                         <span class="px-3 py-1 bg-emerald-500 text-white text-[11px] font-bold rounded-full shadow-md">
@@ -308,7 +308,7 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-blue-500/25">
+                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-[#8C7869]/25">
                             <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
                             <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
                         </a>
@@ -367,7 +367,7 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-blue-500/25">
+                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-[#8C7869]/25">
                             <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
                             <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
                         </a>

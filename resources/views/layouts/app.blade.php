@@ -10,7 +10,7 @@
     <link rel="canonical" href="{{ url()->current() }}">
     <link rel="icon" href="{{ asset('images/logo.svg') }}" type="image/svg+xml">
     <link rel="alternate icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#1C1816">
     <meta property="og:site_name" content="Dar Hadhramaut Real Estate | دار حضرموت العقارية">
     <meta property="og:type" content="website">
     <meta property="og:title" content="@yield('title', $title ?? (app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut Real Estate'))">
@@ -46,13 +46,13 @@
             inset-inline-start: 0;
             height: 3px;
             width: 0%;
-            background: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa, #93c5fd);
+            background: linear-gradient(to right, #7A6759, #8C7869, #A38F7F, #D5C7BC);
             z-index: 99999;
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
+            box-shadow: 0 0 10px rgba(140, 120, 105, 0.7);
         }
         html[dir="rtl"] #top-progress-bar {
-            background: linear-gradient(to left, #2563eb, #3b82f6, #60a5fa, #93c5fd);
+            background: linear-gradient(to left, #7A6759, #8C7869, #A38F7F, #D5C7BC);
         }
     </style>
     <!-- Theme Initialization Script (Prevent Flash) -->

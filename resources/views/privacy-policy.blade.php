@@ -17,7 +17,7 @@
     <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-8 lg:p-12 space-y-8 text-gray-700 dark:text-gray-300 leading-relaxed">
         <section>
             <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold">1</span>
+                <span class="w-8 h-8 rounded-lg bg-[#8C7869]/10 text-[#8C7869] flex items-center justify-center text-sm font-bold">1</span>
                 <span>{{ app()->getLocale() === 'ar' ? 'البيانات التي نجمعها' : 'Information We Collect' }}</span>
             </h2>
             <p class="text-sm sm:text-base">
@@ -27,7 +27,7 @@
 
         <section>
             <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold">2</span>
+                <span class="w-8 h-8 rounded-lg bg-[#8C7869]/10 text-[#8C7869] flex items-center justify-center text-sm font-bold">2</span>
                 <span>{{ app()->getLocale() === 'ar' ? 'كيفية استخدام البيانات' : 'How We Use Your Information' }}</span>
             </h2>
             <p class="text-sm sm:text-base">
@@ -37,7 +37,7 @@
 
         <section>
             <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold">3</span>
+                <span class="w-8 h-8 rounded-lg bg-[#8C7869]/10 text-[#8C7869] flex items-center justify-center text-sm font-bold">3</span>
                 <span>{{ app()->getLocale() === 'ar' ? 'الأمان والتشفير' : 'Security & Encryption' }}</span>
             </h2>
             <p class="text-sm sm:text-base">

@@ -3,7 +3,7 @@
     <button 
         @click="toggleChat()" 
         x-show="!isOpen"
-        class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center"
+        class="bg-[#8C7869] hover:bg-[#7A6759] text-white rounded-full p-4 shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center"
         aria-label="{{ app()->getLocale() === 'ar' ? 'فتح المحادثة' : 'Open chat' }}"
     >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,7 +24,7 @@
         style="display: none;"
     >
         <!-- Header -->
-        <div class="bg-blue-600 text-white p-4 flex justify-between items-center">
+        <div class="bg-[#8C7869] text-white p-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <div class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></div>
                 <h3 class="font-bold text-sm">{{ __('Customer Support') }}</h3>
@@ -42,7 +42,7 @@
                 <div :class="message.sender_type === 'user' ? 'flex justify-end' : 'flex justify-start'">
                     <div 
                         :class="message.sender_type === 'user' 
-                            ? 'bg-blue-600 text-white' 
+                            ? 'bg-[#8C7869] text-white' 
                             : message.sender_type === 'agent' 
                                 ? 'bg-green-100 text-gray-800' 
                                 : 'bg-gray-100 text-gray-800'"
@@ -73,7 +73,7 @@
         <div x-show="showEscalationOption && !isEscalated" class="px-4 py-2 bg-yellow-50 border-t border-yellow-200">
             <button 
                 @click="escalateToAgent()"
-                class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                class="text-sm text-[#8C7869] hover:text-[#7A6759] flex items-center gap-1 font-bold"
             >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -95,12 +95,12 @@
                     x-model="currentMessage" 
                     :disabled="isEscalated"
                     placeholder="{{ app()->getLocale() === 'ar' ? 'اكتب رسالتك...' : 'Type your message...' }}" 
-                    class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:bg-gray-100"
+                    class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#8C7869] disabled:bg-gray-100"
                 />
                 <button 
                     type="submit" 
                     :disabled="!currentMessage.trim() || isEscalated"
-                    class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    class="bg-[#8C7869] hover:bg-[#7A6759] text-white rounded-lg px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>

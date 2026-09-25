@@ -1,7 +1,7 @@
 <div>
     <!-- Hero Banner -->
     <div
-        class="bg-gradient-to-b from-blue-50 to-gray-50 dark:from-blue-950/40 dark:via-gray-900 dark:to-gray-900 py-12 border-b border-gray-200 dark:border-gray-800">
+        class="bg-gradient-to-b from-[#FAF8F5] to-stone-50 dark:from-stone-900/60 dark:via-gray-900 dark:to-gray-900 py-12 border-b border-gray-200 dark:border-gray-800">
         <div class="container mx-auto px-4 lg:px-8 text-center max-w-4xl">
             <h1 class="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-4">
                 {{ app()->getLocale() === 'ar' ? 'استكشف أفضل العقارات المتاحة للبيع والإيجار' : 'Explore Properties for
@@ -28,7 +28,7 @@
                     </label>
                     <div class="relative">
                         <input type="text" wire:model.live.debounce.300ms="search"
-                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#8C7869] focus:border-[#8C7869] focus:outline-none text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             placeholder="{{ app()->getLocale() === 'ar' ? 'ابحث عن شقة، فيلا، حي فوه، الديس، حدة...' : 'Search apartment, villa, Mukalla, Sanaa...' }}">
                         <span class="absolute end-3 top-3.5 text-gray-400"><svg class="w-4 h-4 shrink-0" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -45,7 +45,7 @@
                     </label>
                     <div class="relative">
                         <select wire:model.live="status"
-                            class="w-full ps-4 pe-10 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-gray-900 dark:text-white appearance-none cursor-pointer">
+                            class="w-full ps-4 pe-10 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#8C7869] focus:border-[#8C7869] focus:outline-none text-sm text-gray-900 dark:text-white appearance-none cursor-pointer">
                             <option value="">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)'
                                 }}</option>
                             <option value="for_sale">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
@@ -67,7 +67,7 @@
                     </label>
                     <div class="relative">
                         <select wire:model.live="propertyType"
-                            class="w-full ps-4 pe-10 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-gray-900 dark:text-white appearance-none cursor-pointer">
+                            class="w-full ps-4 pe-10 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#8C7869] focus:border-[#8C7869] focus:outline-none text-sm text-gray-900 dark:text-white appearance-none cursor-pointer">
                             <option value="">{{ app()->getLocale() === 'ar' ? 'جميع الأنواع' : 'All Types' }}</option>
                             <option value="Apartment">{{ app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment' }}
                             </option>
@@ -162,7 +162,7 @@
             </p>
             @if ($this->active_filters_count > 0)
             <button type="button" wire:click="resetFilters" wire:loading.attr="disabled"
-                class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+                class="inline-flex items-center gap-1.5 text-xs font-bold text-[#8C7869] hover:text-[#7A6759] dark:text-[#C2B2A3] transition-colors">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                     aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -178,7 +178,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-12">
             @forelse($properties as $property)
             <div
-                class="bg-white dark:bg-gray-800/90 rounded-2xl shadow-sm hover:shadow-2xl hover:border-blue-500/50 transition-all duration-300 border border-gray-100 dark:border-gray-700/80 overflow-hidden flex flex-col justify-between group">
+                class="bg-white dark:bg-gray-800/90 rounded-2xl shadow-sm hover:shadow-2xl hover:border-[#8C7869]/50 transition-all duration-300 border border-gray-100 dark:border-gray-700/80 overflow-hidden flex flex-col justify-between group">
                 <div>
                     <!-- Property Image with Badges -->
                     <div class="relative h-56 w-full overflow-hidden bg-gray-100 dark:bg-gray-900">
@@ -188,7 +188,7 @@
                         </a>
                         <div class="absolute top-3 start-3 flex flex-wrap gap-1.5 z-10">
                             <span
-                                class="rounded-lg px-3 py-1 text-xs font-black shadow-md {{ $property->status === 'for_rent' ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white' }}">
+                                class="rounded-lg px-3 py-1 text-xs font-black shadow-md {{ $property->status === 'for_rent' ? 'bg-emerald-600 text-white' : 'bg-[#8C7869] text-white' }}">
                                 {{ $property->status === 'for_rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For
                                 Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
                             </span>
@@ -205,7 +205,7 @@
                                 {{ $property->translated_type }}
                             </span>
                             <span
-                                class="bg-white/90 dark:bg-gray-900/80 backdrop-blur-md text-blue-600 dark:text-blue-400 text-xs px-2.5 py-1 rounded-md font-semibold">
+                                class="bg-white/90 dark:bg-gray-900/80 backdrop-blur-md text-[#8C7869] dark:text-[#C2B2A3] text-xs px-2.5 py-1 rounded-md font-semibold">
                                 <svg class="w-4 h-4 inline-block align-[-2px]" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -224,7 +224,7 @@
                         </div>
 
                         <h3
-                            class="text-base font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            class="text-base font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-[#8C7869] dark:group-hover:text-[#C2B2A3] transition-colors">
                             <a href="{{ route('property.detail', $property->id) }}">
                                 {{ $property->title }}
                             </a>
@@ -273,7 +273,7 @@
                 <!-- Card Footer Action -->
                 <div class="p-5 pt-0">
                     <a href="{{ route('property.detail', $property->id) }}"
-                        class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-blue-500/25">
+                        class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-[#8C7869]/25">
                         <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
                         <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
                     </a>
@@ -296,7 +296,7 @@
                 </p>
                 @if ($this->active_filters_count > 0)
                 <button type="button" wire:click="resetFilters"
-                    class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-xl transition-colors">
+                    class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-[#8C7869] hover:bg-[#7A6759] rounded-xl transition-colors">
                     {{ app()->getLocale() === 'ar' ? 'إعادة تعيين الفلاتر' : 'Reset filters' }}
                 </button>
                 @endif

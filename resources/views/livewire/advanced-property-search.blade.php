@@ -94,7 +94,7 @@
             </div>
         </div>
         <div class="mt-4">
-            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            <button type="submit" class="w-full bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 {{ app()->getLocale() === 'ar' ? 'بحث عن عقارات' : 'Search Properties' }}
             </button>
         </div>

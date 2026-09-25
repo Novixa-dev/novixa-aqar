@@ -14,7 +14,7 @@
                 : 'We are performing some improvements and will be back soon.' }}
         </p>
         <div class="mt-8">
-            <a href="{{ route('home') }}" class="inline-flex items-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+            <a href="{{ route('home') }}" class="inline-flex items-center rounded-lg bg-[#8C7869] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#7A6759] focus:outline-none focus:ring-2 focus:ring-[#8C7869] focus:ring-offset-2 dark:focus:ring-offset-gray-900">
                 {{ app()->getLocale() === 'ar' ? 'إعادة المحاولة' : 'Try Again' }}
             </a>
         </div>

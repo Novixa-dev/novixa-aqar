@@ -22,7 +22,7 @@
             @endforeach
         </div>
 
-        <button wire:click="generateDocument" class="px-4 py-2 bg-blue-500 text-white rounded">Generate Document</button>
+        <button wire:click="generateDocument" class="px-4 py-2 bg-[#8C7869] hover:bg-[#7A6759] text-white rounded">Generate Document</button>
     @endif
 
     @if($generatedDocument)

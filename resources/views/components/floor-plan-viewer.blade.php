@@ -21,11 +21,11 @@
         <!-- Annotation Details Modal -->
         <div x-show="selectedAnnotation" 
              x-cloak
-             class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg"
+             class="mt-4 p-4 bg-[#8C7869]/10 border border-[#8C7869]/20 rounded-lg"
         >
             <div class="flex items-center justify-between">
                 <div>
-                    <span class="inline-block w-6 h-6 text-blue-500"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" /></svg></span>
+                    <span class="inline-block w-6 h-6 text-[#8C7869]"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" /></svg></span>
                     <span class="ms-2 font-semibold text-gray-900 dark:text-white" x-text="selectedAnnotation?.label"></span>
                 </div>
                 <button @click="selectedAnnotation = null" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
@@ -39,7 +39,7 @@
         <!-- Legend -->
         <div class="mt-4 flex gap-4 flex-wrap">
             <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded-full bg-blue-500 border-2 border-blue-800"></div>
+                <div class="w-6 h-6 rounded-full bg-[#8C7869] border-2 border-[#7A6759]"></div>
                 <span class="text-sm text-gray-700 dark:text-gray-300">{{ app()->getLocale() === 'ar' ? 'غرفة' : 'Room' }}</span>
             </div>
             <div class="flex items-center gap-2">
