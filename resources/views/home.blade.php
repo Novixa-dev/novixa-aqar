@@ -19,12 +19,7 @@
     </div>
 
     <!-- Main Hero Center Content -->
-    <div class="relative z-10 container mx-auto px-4 lg:px-8 pt-12 pb-8 text-center max-w-4xl">
-        <!-- Top Pill Tag -->
-        <div class="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-black/40 backdrop-blur-md text-stone-200 text-xs font-bold border border-white/20 mb-8 shadow-md">
-            <span class="w-1.5 h-1.5 rounded-full bg-stone-300"></span>
-            <span>{{ app()->getLocale() === 'ar' ? 'تطوير عقاري فاخر في المملكة' : 'Luxury Real Estate Development' }}</span>
-        </div>
+    <div class="relative z-10 container mx-auto px-4 lg:px-8 pt-20 sm:pt-24 lg:pt-28 pb-8 text-center max-w-4xl">
 
         <!-- Main Headline -->
         <h1 class="text-5xl sm:text-7xl lg:text-8xl font-black text-white leading-[1.05] tracking-tight font-sans mb-6">
@@ -59,10 +54,10 @@
         </p>
 
         <!-- White Pill Search Input Container -->
-        <div class="w-full max-w-3xl mx-auto">
-            <form action="{{ route('property.list') }}" method="GET" class="bg-white rounded-full p-2 shadow-2xl flex items-center justify-between border border-white/80">
+        <div class="w-full max-w-4xl mx-auto">
+            <form action="{{ route('property.list') }}" method="GET" class="bg-white rounded-2xl md:rounded-full p-2 shadow-2xl flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-0 border border-white/80">
                 <!-- Search Input with Icon on Right (RTL context) -->
-                <div class="flex-1 flex items-center gap-3 px-4">
+                <div class="flex-1 flex items-center gap-3 px-4 min-w-[180px]">
                     <svg class="w-5 h-5 text-stone-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
@@ -72,8 +67,45 @@
                            class="w-full py-2.5 bg-transparent border-none focus:outline-none text-xs sm:text-sm text-stone-900 placeholder-stone-400 font-medium">
                 </div>
 
+                <!-- Select Filters (Status & Property Type) -->
+                <div class="flex items-center border-t md:border-t-0 md:border-s border-stone-200 pt-2 md:pt-0">
+                    <!-- Status Filter: الكل (بيع وإيجار) -->
+                    <div class="relative flex-1 md:flex-initial flex items-center px-3">
+                        <select name="status" class="w-full md:w-auto appearance-none bg-transparent border-0 border-none text-stone-700 text-xs sm:text-sm font-bold focus:outline-none focus:ring-0 focus:border-0 shadow-none cursor-pointer pe-6 ps-1 py-2" style="border: 0 !important; outline: none !important; box-shadow: none !important;">
+                            <option value="">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
+                            <option value="for_sale">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
+                            <option value="for_rent">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
+                        </select>
+                        <div class="absolute end-2 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Divider Between Status and Property Type -->
+                    <div class="w-px h-6 md:h-7 bg-stone-200 shrink-0"></div>
+
+                    <!-- Property Type Filter: جميع الأنواع -->
+                    <div class="relative flex-1 md:flex-initial flex items-center px-3">
+                        <select name="property_type" class="w-full md:w-auto appearance-none bg-transparent border-0 border-none text-stone-700 text-xs sm:text-sm font-bold focus:outline-none focus:ring-0 focus:border-0 shadow-none cursor-pointer pe-6 ps-1 py-2" style="border: 0 !important; outline: none !important; box-shadow: none !important;">
+                            <option value="">{{ app()->getLocale() === 'ar' ? 'جميع الأنواع' : 'All Types' }}</option>
+                            <option value="Apartment">{{ app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment' }}</option>
+                            <option value="Villa">{{ app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Luxury Villa' }}</option>
+                            <option value="Land">{{ app()->getLocale() === 'ar' ? 'أرض' : 'Land' }}</option>
+                            <option value="Commercial">{{ app()->getLocale() === 'ar' ? 'عقار تجاري' : 'Commercial' }}</option>
+                            <option value="Building">{{ app()->getLocale() === 'ar' ? 'عمارة' : 'Building' }}</option>
+                        </select>
+                        <div class="absolute end-2 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Submit Pill Button on Left (RTL context) -->
-                <button type="submit" class="px-8 py-3 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold text-xs sm:text-sm rounded-full shadow-md transition-all active:scale-95 shrink-0">
+                <button type="submit" class="px-8 py-3 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold text-xs sm:text-sm rounded-xl md:rounded-full shadow-md transition-all active:scale-95 shrink-0 text-center">
                     {{ app()->getLocale() === 'ar' ? 'بحث' : 'Search' }}
                 </button>
             </form>
@@ -137,9 +169,6 @@
     <section id="featured-projects" class="mb-20">
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
             <div>
-                <span class="inline-block px-4 py-1 rounded-full bg-[#EBE6DF] dark:bg-stone-800 text-[#26201D] dark:text-stone-200 text-xs font-bold mb-3">
-                    • {{ app()->getLocale() === 'ar' ? 'مشاريعنا المميزة' : 'Featured Projects' }}
-                </span>
                 <h2 class="text-3xl sm:text-4xl font-black text-[#26201D] dark:text-white tracking-tight">
                     {{ app()->getLocale() === 'ar' ? 'استثمر في التميز' : 'Invest in Excellence' }}
                 </h2>
@@ -181,25 +210,35 @@
                                 {{ app()->getLocale() === 'ar' ? 'رسو ريزيدنس' : 'RUSU Residence' }}
                             </h3>
                         </div>
-                        <p class="text-xs text-stone-500 dark:text-stone-400 mb-6 flex items-center gap-1.5 font-medium">
+                        <p class="text-xs text-stone-500 dark:text-stone-400 mb-2 flex items-center gap-1.5 font-medium">
                             <svg class="w-3.5 h-3.5 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             {{ app()->getLocale() === 'ar' ? 'الرياض، حي النرجس' : 'Riyadh, Al Nargis' }}
                         </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 line-clamp-2 leading-relaxed">
+                            {{ app()->getLocale() === 'ar' ? 'مجمع غرف سكنية مجهزة بتكييف وخدمات مشتركة وانترنت مجاني بالقرب من كليات جامعة حضرموت.' : 'Furnished rooms complex equipped with AC, shared facilities, and free internet near Hadhramout University.' }}
+                        </p>
                     </div>
                     
-                    <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300">
-                        <div>
-                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'التسليم' : 'Delivery' }}</span>
-                            <span class="font-black">2026</span>
+                    <div>
+                        <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300 mb-4">
+                            <div>
+                                <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'التسليم' : 'Delivery' }}</span>
+                                <span class="font-black">2026</span>
+                            </div>
+                            <div class="border-x border-stone-100 dark:border-stone-800">
+                                <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'وحدة' : 'Units' }}</span>
+                                <span class="font-black">12</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
+                                <span class="font-black">180 م²</span>
+                            </div>
                         </div>
-                        <div class="border-x border-stone-100 dark:border-stone-800">
-                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'وحدة' : 'Units' }}</span>
-                            <span class="font-black">12</span>
-                        </div>
-                        <div>
-                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
-                            <span class="font-black">180 م²</span>
-                        </div>
+
+                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-blue-500/25">
+                            <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
+                            <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -233,25 +272,35 @@
                                 {{ app()->getLocale() === 'ar' ? 'رسو جاردنز' : 'RUSU Gardens' }}
                             </h3>
                         </div>
-                        <p class="text-xs text-stone-500 dark:text-stone-400 mb-6 flex items-center gap-1.5 font-medium">
+                        <p class="text-xs text-stone-500 dark:text-stone-400 mb-2 flex items-center gap-1.5 font-medium">
                             <svg class="w-3.5 h-3.5 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             {{ app()->getLocale() === 'ar' ? 'الرياض، حي الياسمين' : 'Riyadh, Al Yasmin' }}
                         </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 line-clamp-2 leading-relaxed">
+                            {{ app()->getLocale() === 'ar' ? 'مجمع غرف سكنية مجهزة بتكييف وخدمات مشتركة وانترنت مجاني بالقرب من كليات جامعة حضرموت.' : 'Furnished rooms complex equipped with AC, shared facilities, and free internet near Hadhramout University.' }}
+                        </p>
                     </div>
                     
-                    <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300">
-                        <div>
-                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'التسليم' : 'Delivery' }}</span>
-                            <span class="font-black">2025</span>
+                    <div>
+                        <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300 mb-4">
+                            <div>
+                                <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'التسليم' : 'Delivery' }}</span>
+                                <span class="font-black">2025</span>
+                            </div>
+                            <div class="border-x border-stone-100 dark:border-stone-800">
+                                <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'وحدة' : 'Units' }}</span>
+                                <span class="font-black">3</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
+                                <span class="font-black">48 م²</span>
+                            </div>
                         </div>
-                        <div class="border-x border-stone-100 dark:border-stone-800">
-                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'وحدة' : 'Units' }}</span>
-                            <span class="font-black">3</span>
-                        </div>
-                        <div>
-                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
-                            <span class="font-black">48 م²</span>
-                        </div>
+
+                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-blue-500/25">
+                            <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
+                            <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -282,25 +331,35 @@
                                 {{ app()->getLocale() === 'ar' ? 'رسو هايتس' : 'RUSU Heights' }}
                             </h3>
                         </div>
-                        <p class="text-xs text-stone-500 dark:text-stone-400 mb-6 flex items-center gap-1.5 font-medium">
+                        <p class="text-xs text-stone-500 dark:text-stone-400 mb-2 flex items-center gap-1.5 font-medium">
                             <svg class="w-3.5 h-3.5 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             {{ app()->getLocale() === 'ar' ? 'الرياض، حي الملقا' : 'Riyadh, Al Malqa' }}
                         </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 line-clamp-2 leading-relaxed">
+                            {{ app()->getLocale() === 'ar' ? 'مجمع غرف سكنية مجهزة بتكييف وخدمات مشتركة وانترنت مجاني بالقرب من كليات جامعة حضرموت.' : 'Furnished rooms complex equipped with AC, shared facilities, and free internet near Hadhramout University.' }}
+                        </p>
                     </div>
                     
-                    <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300">
-                        <div>
-                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'التسليم' : 'Delivery' }}</span>
-                            <span class="font-black">2026</span>
+                    <div>
+                        <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300 mb-4">
+                            <div>
+                                <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'التسليم' : 'Delivery' }}</span>
+                                <span class="font-black">2026</span>
+                            </div>
+                            <div class="border-x border-stone-100 dark:border-stone-800">
+                                <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'وحدة' : 'Units' }}</span>
+                                <span class="font-black">28</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
+                                <span class="font-black">120 م²</span>
+                            </div>
                         </div>
-                        <div class="border-x border-stone-100 dark:border-stone-800">
-                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'وحدة' : 'Units' }}</span>
-                            <span class="font-black">28</span>
-                        </div>
-                        <div>
-                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
-                            <span class="font-black">120 م²</span>
-                        </div>
+
+                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-blue-500/25">
+                            <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
+                            <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -312,9 +371,6 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <!-- Left Features -->
             <div>
-                <span class="inline-block px-4 py-1 rounded-full bg-[#EBE6DF] dark:bg-stone-800 text-[#26201D] dark:text-stone-200 text-xs font-bold mb-3">
-                    • {{ app()->getLocale() === 'ar' ? 'لماذا رسو' : 'Why RUSU' }}
-                </span>
                 <h2 class="text-3xl sm:text-4xl font-black text-[#26201D] dark:text-white leading-tight mb-4">
                     {{ app()->getLocale() === 'ar' ? 'نرتقي بتجربة الاستثمار العقاري' : 'Elevating Real Estate Investment' }}
                 </h2>
@@ -416,9 +472,6 @@
             </div>
 
             <div class="order-1 lg:order-2">
-                <span class="inline-block px-4 py-1 rounded-full bg-[#EBE6DF] dark:bg-stone-800 text-[#26201D] dark:text-stone-200 text-xs font-bold mb-3">
-                    • {{ app()->getLocale() === 'ar' ? 'عن الشركة' : 'About Company' }}
-                </span>
                 <h2 class="text-3xl sm:text-4xl font-black text-[#26201D] dark:text-white leading-tight mb-4">
                     {{ app()->getLocale() === 'ar' ? 'رسو.. أكثر من مجرد عقار' : 'RUSU.. More Than Real Estate' }}
                 </h2>
@@ -457,9 +510,6 @@
     <!-- Section 5: Testimonials ("يقولون عن تجربتهم") -->
     <section class="mb-20">
         <div class="text-center max-w-2xl mx-auto mb-12">
-            <span class="inline-block px-4 py-1 rounded-full bg-[#EBE6DF] dark:bg-stone-800 text-[#26201D] dark:text-stone-200 text-xs font-bold mb-3">
-                • {{ app()->getLocale() === 'ar' ? 'آراء العملاء' : 'Testimonials' }}
-            </span>
             <h2 class="text-3xl sm:text-4xl font-black text-[#26201D] dark:text-white mb-2">
                 {{ app()->getLocale() === 'ar' ? 'يقولون عن تجربتهم' : 'What Our Clients Say' }}
             </h2>
@@ -522,9 +572,6 @@
     <!-- Interactive Property Map Section -->
     <section class="mb-16">
         <div class="text-center max-w-2xl mx-auto mb-8">
-            <span class="inline-block px-4 py-1 rounded-full bg-[#EBE6DF] dark:bg-stone-800 text-[#26201D] dark:text-stone-200 text-xs font-bold mb-3">
-                • {{ app()->getLocale() === 'ar' ? 'الخريطة التفاعلية' : 'Interactive Map' }}
-            </span>
             <h2 class="text-2xl sm:text-3xl font-black text-[#26201D] dark:text-white mb-2">{{ __('Interactive Property Map') }}</h2>
             <p class="text-stone-500 dark:text-stone-400 text-xs sm:text-sm font-light">{{ __('Explore listings geographically across cities and neighborhoods') }}</p>
         </div>

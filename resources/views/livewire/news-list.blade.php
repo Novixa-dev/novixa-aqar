@@ -1,9 +1,7 @@
 <div>
     <div class="bg-gradient-to-b from-blue-50/50 to-white dark:from-gray-900 dark:to-gray-800 py-12 border-b border-gray-100 dark:border-gray-800">
         <div class="container mx-auto px-4 lg:px-8 text-center max-w-3xl">
-            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider mb-4 border border-blue-100 dark:border-blue-800">
-                {{ __('News') }}
-            </span>
+
             <h1 class="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-4">
                 {{ app()->getLocale() === 'ar' ? 'أخبار وتقارير السوق العقاري' : 'Real Estate News & Market Reports' }}
             </h1>
