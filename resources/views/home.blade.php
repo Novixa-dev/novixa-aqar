@@ -8,19 +8,30 @@
 
 @section('content')
 <!-- Hero Section (Full 100% Match to Mockup Screenshot) -->
-<div class="relative w-full bg-[#1C1816] text-white overflow-hidden min-h-[660px] lg:min-h-[720px] flex flex-col justify-between pt-4 pb-0">
+<style>
+    #hero-viewport-section {
+        min-height: calc(100vh - 5rem);
+        min-height: calc(100dvh - 5rem);
+    }
+    @media (min-width: 768px) {
+        #hero-viewport-section {
+            height: calc(100vh - 5rem);
+            height: calc(100dvh - 5rem);
+        }
+    }
+</style>
+<div id="hero-viewport-section" class="relative w-full bg-[#1C1816] text-white overflow-hidden flex flex-col justify-center items-center py-6 sm:py-8">
     <!-- Hero Background Image (Luxury Modern Villa with Pool matching mockup) -->
     <div class="absolute inset-0 z-0">
         <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80" 
              alt="RUSU Real Estate Luxury Villa" 
-             class="w-full h-full object-cover">
+             class="w-full h-full object-cover object-center">
         <!-- Dark Overlay Gradient -->
         <div class="absolute inset-0 bg-gradient-to-b from-[#1C1816]/75 via-[#1C1816]/50 to-[#1C1816]/95"></div>
     </div>
 
     <!-- Main Hero Center Content -->
-    <div class="relative z-10 container mx-auto px-4 lg:px-8 pt-20 sm:pt-24 lg:pt-28 pb-8 text-center max-w-4xl">
-
+    <div class="relative z-10 container mx-auto px-4 lg:px-8 py-6 text-center max-w-4xl my-auto">
         <!-- Main Headline -->
         <h1 class="text-5xl sm:text-7xl lg:text-8xl font-black text-white leading-[1.05] tracking-tight font-sans mb-6">
             {{ app()->getLocale() === 'ar' ? 'نصنع الفخامة' : 'Crafting Luxury' }}<br>
@@ -111,53 +122,53 @@
             </form>
         </div>
     </div>
+</div>
 
-    <!-- Bottom Statistics Dark Bar (Matching 100% Screenshot Bottom Bar) -->
-    <div class="relative z-10 w-full bg-[#1C1816] border-t border-white/10 py-6">
-        <div class="container mx-auto px-4 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center divide-x divide-white/10 rtl:divide-x-reverse">
-                <!-- Stat 1 -->
-                <div class="flex items-center justify-center gap-3 p-2">
-                    <div class="text-2xl sm:text-4xl font-black text-white font-mono">350+</div>
-                    <div class="flex flex-col items-start text-start">
-                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                        </div>
-                        <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'عميل سعيد' : 'Happy Clients' }}</span>
+<!-- Bottom Statistics Dark Bar (Appears on scroll down) -->
+<div class="relative z-20 w-full bg-[#1C1816] border-y border-white/10 py-8 sm:py-10 shadow-2xl">
+    <div class="container mx-auto px-4 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center divide-x divide-white/10 rtl:divide-x-reverse">
+            <!-- Stat 1 -->
+            <div class="flex items-center justify-center gap-3 p-2">
+                <div class="text-2xl sm:text-4xl font-black text-white font-mono">350+</div>
+                <div class="flex flex-col items-start text-start">
+                    <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                     </div>
+                    <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'عميل سعيد' : 'Happy Clients' }}</span>
                 </div>
+            </div>
 
-                <!-- Stat 2 -->
-                <div class="flex items-center justify-center gap-3 p-2">
-                    <div class="text-2xl sm:text-4xl font-black text-white font-mono">5+</div>
-                    <div class="flex flex-col items-start text-start">
-                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                        </div>
-                        <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'مشاريع جديدة' : 'New Projects' }}</span>
+            <!-- Stat 2 -->
+            <div class="flex items-center justify-center gap-3 p-2">
+                <div class="text-2xl sm:text-4xl font-black text-white font-mono">5+</div>
+                <div class="flex flex-col items-start text-start">
+                    <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
                     </div>
+                    <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'مشاريع جديدة' : 'New Projects' }}</span>
                 </div>
+            </div>
 
-                <!-- Stat 3 -->
-                <div class="flex items-center justify-center gap-3 p-2">
-                    <div class="text-2xl sm:text-4xl font-black text-white font-mono">15+</div>
-                    <div class="flex flex-col items-start text-start">
-                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                        </div>
-                        <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'سنة خبرة' : 'Years Experience' }}</span>
+            <!-- Stat 3 -->
+            <div class="flex items-center justify-center gap-3 p-2">
+                <div class="text-2xl sm:text-4xl font-black text-white font-mono">15+</div>
+                <div class="flex flex-col items-start text-start">
+                    <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                     </div>
+                    <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'سنة خبرة' : 'Years Experience' }}</span>
                 </div>
+            </div>
 
-                <!-- Stat 4 -->
-                <div class="flex items-center justify-center gap-3 p-2">
-                    <div class="text-2xl sm:text-4xl font-black text-white font-mono">400+</div>
-                    <div class="flex flex-col items-start text-start">
-                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                        </div>
-                        <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'وحدة سكنية' : 'Housing Units' }}</span>
+            <!-- Stat 4 -->
+            <div class="flex items-center justify-center gap-3 p-2">
+                <div class="text-2xl sm:text-4xl font-black text-white font-mono">400+</div>
+                <div class="flex flex-col items-start text-start">
+                    <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                     </div>
+                    <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'وحدة سكنية' : 'Housing Units' }}</span>
                 </div>
             </div>
         </div>
