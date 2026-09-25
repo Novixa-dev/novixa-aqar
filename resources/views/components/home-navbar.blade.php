@@ -19,113 +19,124 @@
         };
     @endphp
 @endif
-<header class="sticky top-0 z-40 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 transition-all duration-200">
+
+<header class="sticky top-0 z-50 w-full bg-[#211C19]/90 backdrop-blur-md border-b border-white/10 text-white transition-all duration-200">
     <div class="container mx-auto px-4 lg:px-8">
         <div class="flex items-center justify-between h-20">
-            <!-- Brand Logo & Identity -->
-            <a href="/" class="flex items-center gap-3 group">
-                <img src="{{ asset('images/logo.svg') }}" class="h-10 w-auto rounded-xl shadow-xs transition-transform group-hover:scale-105" alt="Dar Hadhramaut Real Estate" />
-                <div class="flex flex-col">
-                    <span class="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center gap-1.5">
-                        {{ app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut' }}
+            <!-- Far Right (RTL): Brand Logo & Symbol -->
+            <a href="/" class="flex items-center gap-3 group shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-[#8C7869] text-white flex items-center justify-center font-black text-xl shadow-md group-hover:scale-105 transition-transform">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div class="flex flex-col leading-tight">
+                    <span class="text-xl font-extrabold tracking-tight text-white font-sans">
+                        {{ app()->getLocale() === 'ar' ? 'رســــو' : 'RUSU' }}
                     </span>
-                    <span class="text-[11px] font-medium text-blue-600 dark:text-blue-400">
-                        {{ app()->getLocale() === 'ar' ? 'للعقارات والاستثمار' : 'Real Estate & Investment' }}
+                    <span class="text-[9px] font-bold uppercase tracking-widest text-[#C2B2A3]">
+                        REAL ESTATE
                     </span>
                 </div>
             </a>
 
-            <!-- Desktop Navigation Menu -->
-            <nav class="hidden lg:flex items-center gap-8 font-medium">
-                {!! app(App\Services\MenuService::class)->buildMenu() !!}
+            <!-- Center Navigation Links (Matching Image Mockup Exactly) -->
+            <nav class="hidden md:flex items-center gap-2 text-xs font-bold">
+                <a href="/" class="px-5 py-2 rounded-full bg-[#8C7869] text-white shadow-sm transition-all">
+                    {{ app()->getLocale() === 'ar' ? 'الرئيسية' : 'Home' }}
+                </a>
+                <a href="{{ route('about') }}" class="px-4 py-2 rounded-full text-stone-200 hover:text-white hover:bg-white/10 transition-all">
+                    {{ app()->getLocale() === 'ar' ? 'من نحن' : 'About Us' }}
+                </a>
+                <a href="{{ route('property.list') }}" class="px-4 py-2 rounded-full text-stone-200 hover:text-white hover:bg-white/10 transition-all">
+                    {{ app()->getLocale() === 'ar' ? 'مشاريعنا' : 'Projects' }}
+                </a>
+                <a href="{{ route('contact') }}" class="px-4 py-2 rounded-full text-stone-200 hover:text-white hover:bg-white/10 transition-all">
+                    {{ app()->getLocale() === 'ar' ? 'تواصل معنا' : 'Contact Us' }}
+                </a>
             </nav>
 
-            <!-- Actions: Language Switcher + Auth -->
+            <!-- Far Left (RTL): Phone + Contact Button + Mobile Menu -->
             <div class="flex items-center gap-3">
-                <!-- Theme Toggle Button (Light/Dark) -->
+                <!-- Phone Number Badge -->
+                <a href="tel:+966550000000" class="hidden xl:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-stone-200 text-xs font-mono font-bold hover:bg-white/20 transition-all">
+                    <svg class="w-3.5 h-3.5 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                    </svg>
+                    <span dir="ltr">+966 55 000 0000</span>
+                </a>
+
+                <!-- Contact CTA Pill Button (Taupe style matching mockup) -->
+                <a href="{{ route('contact') }}" class="hidden sm:inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-[#8C7869] hover:bg-[#7A6759] text-white text-xs font-bold shadow-md transition-all active:scale-95 border border-white/10">
+                    {{ app()->getLocale() === 'ar' ? 'تواصل معنا' : 'Contact Us' }}
+                </a>
+
+                <!-- Theme Toggle Button -->
                 <button type="button" 
                         onclick="window.toggleTheme()" 
-                        class="p-2 rounded-full text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 transition-all focus:outline-none cursor-pointer"
-                        title="{{ app()->getLocale() === 'ar' ? 'تبديل المظهر (فاتح / داكن)' : 'Toggle Theme (Light / Dark)' }}"
-                        aria-label="Toggle Theme">
-                    <!-- Sun icon (shown in dark mode) -->
+                        class="p-2 rounded-full text-stone-300 hover:text-white bg-white/10 hover:bg-white/20 border border-white/15 transition-all focus:outline-none cursor-pointer"
+                        title="{{ app()->getLocale() === 'ar' ? 'تبديل المظهر' : 'Toggle Theme' }}">
                     <svg class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
-                    <!-- Moon icon (shown in light mode) -->
-                    <svg class="w-4 h-4 block dark:hidden text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 block dark:hidden text-stone-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                     </svg>
                 </button>
 
                 <!-- Language Switcher Toggle Pill -->
-                <div class="flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-full border border-gray-200 dark:border-gray-700 shadow-inner">
+                <div class="flex items-center bg-white/10 p-1 rounded-full border border-white/15">
                     @if(app()->getLocale() === 'ar')
                         <a href="{{ route('lang.switch', 'en') }}" 
-                           class="flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                           title="Switch to English">
-                            <span>🇬🇧</span>
-                            <span>English</span>
+                           class="px-2.5 py-0.5 text-xs font-bold text-stone-200 hover:text-white transition-colors">
+                            <span>EN</span>
                         </a>
                     @else
                         <a href="{{ route('lang.switch', 'ar') }}" 
-                           class="flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                           title="التحويل إلى العربية">
-                            <span>🇸🇦</span>
-                            <span>العربية</span>
+                           class="px-2.5 py-0.5 text-xs font-bold text-stone-200 hover:text-white transition-colors">
+                            <span>عربي</span>
                         </a>
                     @endif
                 </div>
 
-                <!-- Auth Buttons / User Dropdown -->
+                <!-- Auth / User Dropdown -->
                 @if (auth()->check())
                     <div class="relative dropdown" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
                         <button type="button" 
                                 id="userDropdownBtn"
                                 @click="open = !open"
                                 onclick="const m = document.getElementById('userDropdownMenu'); if (m) { m.classList.toggle('hidden'); }"
-                                class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                            <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+                                class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-white bg-white/10 hover:bg-white/20 rounded-full border border-white/15 transition-colors cursor-pointer">
+                            <div class="w-6 h-6 rounded-full bg-[#8C7869] text-white flex items-center justify-center font-bold text-xs">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
                             <span class="hidden md:inline">{{ $user->name }}</span>
-                            <svg class="w-4 h-4 text-gray-500 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
 
-                        <!-- Dropdown Menu -->
                         <div id="userDropdownMenu"
                              x-show="open" 
                              x-cloak
-                             x-transition:enter="transition ease-out duration-150"
-                             x-transition:enter-start="opacity-0 scale-95"
-                             x-transition:enter-end="opacity-100 scale-100"
-                             x-transition:leave="transition ease-in duration-100"
-                             x-transition:leave-start="opacity-100 scale-100"
-                             x-transition:leave-end="opacity-0 scale-95"
-                             class="hidden absolute end-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 py-2 z-50 dropdown-menu">
-                            <div class="px-4 py-2.5 border-b border-gray-100 dark:border-gray-700">
-                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'تم تسجيل الدخول كـ' : 'Signed in as' }}</p>
-                                <p class="text-xs font-bold text-gray-900 dark:text-white truncate">{{ $user->email }}</p>
+                             class="hidden absolute end-0 mt-2 w-56 bg-[#211C19] text-white rounded-2xl shadow-2xl border border-white/15 py-2 z-50 dropdown-menu">
+                            <div class="px-4 py-2.5 border-b border-white/10">
+                                <p class="text-xs font-medium text-stone-400">{{ app()->getLocale() === 'ar' ? 'مسجل كـ' : 'Signed in as' }}</p>
+                                <p class="text-xs font-bold text-white truncate">{{ $user->email }}</p>
                             </div>
-                            <a href="{{ $dashboardUrl }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                            <a href="{{ $dashboardUrl }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-stone-200 hover:bg-white/10 transition-colors">
                                 <span>{{ app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Dashboard' }}</span>
                             </a>
-                            <a href="{{ route('wishlist') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"/></svg>
+                            <a href="{{ route('wishlist') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-stone-200 hover:bg-white/10 transition-colors">
                                 <span>{{ app()->getLocale() === 'ar' ? 'المفضلة' : 'Wishlist' }}</span>
                             </a>
-                            <a href="/user/profile" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <a href="/user/profile" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-stone-200 hover:bg-white/10 transition-colors">
                                 <span>{{ app()->getLocale() === 'ar' ? 'الملف الشخصي' : 'Profile' }}</span>
                             </a>
-                            <div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
+                            <div class="border-t border-white/10 my-1"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-start transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-red-400 hover:bg-white/10 text-start transition-colors">
                                     <span>{{ app()->getLocale() === 'ar' ? 'تسجيل الخروج' : 'Log out' }}</span>
                                 </button>
                             </form>
@@ -134,21 +145,21 @@
                 @else
                     <div class="hidden sm:flex items-center gap-2">
                         <a href="{{ Route::has('login') ? route('login') : url('/login') }}"
-                            class="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400 rounded-xl transition-colors">
+                            class="px-4 py-2 text-xs font-bold text-stone-200 hover:text-white transition-colors">
                             {{ __('Log in') }}
                         </a>
                         <a href="{{ Route::has('register') ? route('register') : url('/register') }}"
-                            class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm hover:shadow transition-all">
+                            class="px-4 py-2 text-xs font-bold text-white bg-[#8C7869] hover:bg-[#7A6759] rounded-full shadow-sm transition-all">
                             {{ __('Register') }}
                         </a>
                     </div>
                 @endif
 
-                <!-- Mobile Menu Button -->
+                <!-- Hamburger Menu Button -->
                 <button id="menuToggleButton" type="button"
-                    class="inline-flex items-center justify-center p-2.5 text-gray-500 rounded-xl lg:hidden hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 focus:outline-none transition-colors"
+                    class="inline-flex items-center justify-center p-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white focus:outline-none transition-colors"
                     aria-label="Toggle navigation">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
@@ -156,35 +167,32 @@
         </div>
 
         <!-- Mobile Drawer Menu -->
-        <div class="hidden lg:hidden py-4 border-t border-gray-100 dark:border-gray-800" id="menuToggle">
-            <div class="flex flex-col gap-2">
-                {!! app(App\Services\MenuService::class)->buildMenu() !!}
+        <div class="hidden md:hidden py-4 border-t border-white/10 text-white" id="menuToggle">
+            <div class="flex flex-col gap-3 font-semibold text-xs">
+                <a href="/" class="py-2 px-4 rounded-full bg-[#8C7869] text-white">{{ app()->getLocale() === 'ar' ? 'الرئيسية' : 'Home' }}</a>
+                <a href="{{ route('about') }}" class="py-2 px-4 text-stone-200">{{ app()->getLocale() === 'ar' ? 'من نحن' : 'About Us' }}</a>
+                <a href="{{ route('property.list') }}" class="py-2 px-4 text-stone-200">{{ app()->getLocale() === 'ar' ? 'مشاريعنا' : 'Projects' }}</a>
+                <a href="{{ route('contact') }}" class="py-2 px-4 text-stone-200">{{ app()->getLocale() === 'ar' ? 'تواصل معنا' : 'Contact Us' }}</a>
                 @auth
-                    <div class="flex flex-col gap-2 pt-4 mt-2 border-t border-gray-100 dark:border-gray-800">
-                        <a href="{{ $dashboardUrl }}" class="w-full text-center py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl">
+                    <div class="flex flex-col gap-2 pt-4 border-t border-white/10">
+                        <a href="{{ $dashboardUrl }}" class="w-full text-center py-2.5 text-xs font-bold text-white bg-[#8C7869] rounded-full">
                             {{ __('Dashboard') }}
-                        </a>
-                        <a href="{{ route('wishlist') }}" class="w-full text-center py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                            {{ __('Wishlist') }}
-                        </a>
-                        <a href="/user/profile" class="w-full text-center py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                            {{ __('Profile') }}
                         </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="w-full text-center py-2.5 text-sm font-semibold text-red-600 bg-red-50 dark:bg-red-900/20 rounded-xl">
+                            <button type="submit" class="w-full text-center py-2.5 text-xs font-bold text-red-400 bg-white/10 rounded-full">
                                 {{ __('Log out') }}
                             </button>
                         </form>
                     </div>
                 @else
-                    <div class="flex flex-col gap-2 pt-4 mt-2 border-t border-gray-100 dark:border-gray-800">
+                    <div class="flex flex-col gap-2 pt-4 border-t border-white/10">
                         <a href="{{ Route::has('login') ? route('login') : url('/login') }}"
-                            class="w-full text-center py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            class="w-full text-center py-2.5 text-xs font-bold text-stone-200 bg-white/10 rounded-full">
                             {{ __('Log in') }}
                         </a>
                         <a href="{{ Route::has('register') ? route('register') : url('/register') }}"
-                            class="w-full text-center py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl">
+                            class="w-full text-center py-2.5 text-xs font-bold text-white bg-[#8C7869] rounded-full">
                             {{ __('Register') }}
                         </a>
                     </div>

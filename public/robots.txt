@@ -10,4 +10,4 @@ Disallow: /tenant
 Disallow: /api
 Disallow: /livewire
 
-Sitemap: http://localhost/sitemap.xml
+Sitemap: http://localhost:8001/sitemap.xml

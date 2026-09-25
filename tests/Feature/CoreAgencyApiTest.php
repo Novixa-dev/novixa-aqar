@@ -1857,6 +1857,10 @@ class CoreAgencyApiTest extends TestCase
 
     public function test_property_media_is_private_ordered_and_team_scoped(): void
     {
+        if (! extension_loaded('gd')) {
+            $this->markTestSkipped('GD extension is not installed.');
+        }
+
         Storage::fake('local');
         [, $team] = $this->actingAsTeamMember();
         $property = Property::factory()->for($team)->create();
@@ -1913,6 +1917,10 @@ class CoreAgencyApiTest extends TestCase
 
     public function test_property_images_are_resized_and_visibly_watermarked(): void
     {
+        if (! extension_loaded('gd')) {
+            $this->markTestSkipped('GD extension is not installed.');
+        }
+
         Storage::fake('local');
         [, $team] = $this->actingAsTeamMember();
         $property = Property::factory()->for($team)->create();

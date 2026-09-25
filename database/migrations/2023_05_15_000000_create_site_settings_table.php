@@ -19,6 +19,8 @@ return new class extends Migration
                 $table->string('payload')->nullable();
                 $table->integer('locked')->nullable();
                 $table->timestamps();
+
+                $table->unique(['group', 'name']);
             });
         }
     }

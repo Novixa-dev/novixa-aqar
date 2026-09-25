@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 @custom-variant dark (&:where(.dark, .dark *));
 @plugin "@tailwindcss/forms";
@@ -6,19 +6,48 @@
 
 :root {
     --font-arabic: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif;
+    --bg-luxury-light: #FAF8F5;
+    --bg-luxury-dark: #141211;
+    --color-espresso: #26201D;
+    --color-espresso-hover: #171412;
+    --color-sand: #EBE6DF;
 }
 
-[dir="rtl"] body {
+body {
     font-family: var(--font-arabic);
+    background-color: var(--bg-luxury-light);
+}
+
+.dark body {
+    background-color: var(--bg-luxury-dark);
+}
+
+/* Custom luxury scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #FAF8F5;
+}
+.dark ::-webkit-scrollbar-track {
+    background: #141211;
+}
+::-webkit-scrollbar-thumb {
+    background: #D9D2C9;
+    border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #3A332F;
 }
 
 .property-card-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .property-card-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-6px);
+    box-shadow: 0 25px 35px -10px rgba(38, 32, 29, 0.12), 0 10px 15px -5px rgba(38, 32, 29, 0.06);
 }
 
 .whatsapp-btn {
@@ -33,7 +62,7 @@
 }
 
 .badge-featured {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    background: linear-gradient(135deg, #26201D 0%, #3D3430 100%);
     color: #ffffff;
 }
 
@@ -55,5 +84,6 @@ select[style*="background-image: none"] {
     -moz-appearance: none !important;
     appearance: none !important;
 }
+
 
 

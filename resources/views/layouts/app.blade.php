@@ -75,7 +75,7 @@
         };
     </script>
 </head>
-<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 selection:bg-blue-600 selection:text-white transition-colors duration-200">
+<body class="font-sans antialiased bg-[#FAF8F5] dark:bg-[#141211] text-[#26201D] dark:text-stone-100 selection:bg-[#26201D] selection:text-white transition-colors duration-200">
     <!-- Top Progress Bar Element -->
     <div id="top-progress-bar"></div>
 
@@ -83,7 +83,7 @@
         @include('googletagmanager::body')
     @endif
 
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div class="min-h-screen bg-[#FAF8F5] dark:bg-[#141211] flex flex-col">
         @include('components.home-navbar')
 
         <main class="grow">

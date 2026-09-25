@@ -1,221 +1,535 @@
 @extends('layouts.app')
 
-@section('title', app()->getLocale() === 'ar' ? 'دار حضرموت العقارية | عقارات في اليمن' : 'Dar Hadhramaut Real Estate | Properties in Yemen')
+@section('title', app()->getLocale() === 'ar' ? 'رسو العقارية | نصنع الفخامة في كل تفصيلة' : 'RUSU Real Estate | Crafting Luxury in Every Detail')
 
 @section('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 @endsection
 
 @section('content')
-<div class="container mx-auto px-4 lg:px-8 py-8">
-    <!-- Hero Banner & Smart Search -->
-    <div class="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 rounded-3xl p-8 lg:p-14 text-white shadow-2xl mb-12 relative overflow-hidden">
-        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="max-w-4xl lg:max-w-5xl mx-auto text-center relative z-10">
-            <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-blue-200 text-xs font-semibold uppercase tracking-wider mb-6 border border-white/10">
-                {{ app()->getLocale() === 'ar' ? 'الجيل القادم من المنصات العقارية' : 'Next Generation Real Estate Platform' }}
+<!-- Hero Section (Full 100% Match to Mockup Screenshot) -->
+<div class="relative w-full bg-[#1C1816] text-white overflow-hidden min-h-[660px] lg:min-h-[720px] flex flex-col justify-between pt-4 pb-0">
+    <!-- Hero Background Image (Luxury Modern Villa with Pool matching mockup) -->
+    <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80" 
+             alt="RUSU Real Estate Luxury Villa" 
+             class="w-full h-full object-cover">
+        <!-- Dark Overlay Gradient -->
+        <div class="absolute inset-0 bg-gradient-to-b from-[#1C1816]/75 via-[#1C1816]/50 to-[#1C1816]/95"></div>
+    </div>
+
+    <!-- Main Hero Center Content -->
+    <div class="relative z-10 container mx-auto px-4 lg:px-8 pt-12 pb-8 text-center max-w-4xl">
+        <!-- Top Pill Tag -->
+        <div class="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-black/40 backdrop-blur-md text-stone-200 text-xs font-bold border border-white/20 mb-8 shadow-md">
+            <span class="w-1.5 h-1.5 rounded-full bg-stone-300"></span>
+            <span>{{ app()->getLocale() === 'ar' ? 'تطوير عقاري فاخر في المملكة' : 'Luxury Real Estate Development' }}</span>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="text-5xl sm:text-7xl lg:text-8xl font-black text-white leading-[1.05] tracking-tight font-sans mb-6">
+            {{ app()->getLocale() === 'ar' ? 'نصنع الفخامة' : 'Crafting Luxury' }}<br>
+            <span class="text-stone-200 font-extrabold text-4xl sm:text-6xl lg:text-7xl block mt-2">
+                {{ app()->getLocale() === 'ar' ? 'في كل تفصيلة' : 'In Every Detail' }}
             </span>
-            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight mb-6">
-                {{ __('Find Your Dream Property in Yemen & Beyond') }}
-            </h1>
-            <p class="text-base sm:text-lg text-blue-100/90 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-                {{ __('Explore wide range of residential and commercial properties with Dar Hadhramaut Real Estate.') }}
-            </p>
+        </h1>
 
-            <!-- Search Form Card -->
-            <form action="{{ route('property.list') }}" method="GET" class="bg-gray-900/90 backdrop-blur-xl p-4 sm:p-6 rounded-3xl shadow-2xl text-white flex flex-col md:flex-row gap-3 border border-gray-700/80 items-center">
-                <!-- Keyword Input -->
-                <div class="flex-1 relative w-full">
-                    <div class="absolute start-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
-                    <input type="text" name="search" 
-                           placeholder="{{ app()->getLocale() === 'ar' ? 'ابحث عن عقارات، مناطق، أحياء...' : 'Search properties, areas, neighborhoods...' }}" 
-                           class="w-full ps-11 pe-4 py-3.5 bg-gray-800/90 border border-gray-700/80 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white placeholder-gray-400 transition-all">
-                </div>
-                
-                <!-- Status Select Dropdown -->
-                <div class="relative w-full md:w-48 group">
-                    <select name="status" 
-                            style="background-image: none !important; -webkit-appearance: none; -moz-appearance: none; appearance: none;"
-                            class="w-full ps-4 pe-10 py-3.5 bg-gray-800/90 border border-gray-700/80 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer [background-image:none] transition-all">
-                        <option value="" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
-                        <option value="for_sale" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
-                        <option value="for_rent" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}</option>
-                    </select>
-                    <div class="absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-white transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                </div>
+        <!-- Subtitle Paragraph -->
+        <p class="text-xs sm:text-sm lg:text-base text-stone-200/90 mb-8 max-w-2xl mx-auto font-light leading-relaxed">
+            {{ app()->getLocale() === 'ar' ? 'رسو الاستثمارية تضع معايير جديدة للسكن الفاخر والاستثمار الموثوق، اكتشف مشاريعنا التي صممت لتلائم أسلوب حياتك.' : 'RUSU Real Estate sets new standards for luxury residential living and trusted investments. Explore properties designed to match your lifestyle.' }}
+        </p>
 
-                <!-- Property Type Select Dropdown -->
-                <div class="relative w-full md:w-56 group">
-                    <select name="property_type" 
-                            style="background-image: none !important; -webkit-appearance: none; -moz-appearance: none; appearance: none;"
-                            class="w-full ps-4 pe-10 py-3.5 bg-gray-800/90 border border-gray-700/80 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer [background-image:none] transition-all">
-                        <option value="" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'جميع الأنواع' : 'All Types' }}</option>
-                        <option value="Apartment" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment' }}</option>
-                        <option value="Villa" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Villa' }}</option>
-                        <option value="Land" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'أرض سكنية / تجارية' : 'Land / Plot' }}</option>
-                        <option value="Commercial" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'عقار تجاري' : 'Commercial' }}</option>
-                        <option value="Building" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'عمارة استثمارية' : 'Building' }}</option>
-                    </select>
-                    <div class="absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-white transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                </div>
+        <!-- CTA Pill Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-4 mb-10">
+            <!-- Secondary Contact Button -->
+            <a href="{{ route('contact') }}" class="inline-flex items-center justify-center px-8 py-3.5 bg-black/30 hover:bg-black/50 text-white border border-white/30 font-bold text-xs sm:text-sm rounded-full backdrop-blur-md transition-all shadow-md">
+                {{ app()->getLocale() === 'ar' ? 'تواصل معنا' : 'Contact Us' }}
+            </a>
 
-                <!-- Submit Button -->
-                <button type="submit" 
-                        class="w-full md:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 text-sm shrink-0 active:scale-95">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <!-- Primary Explore Button (Warm Taupe Pill) -->
+            <a href="#featured-projects" class="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold text-xs sm:text-sm rounded-full shadow-xl transition-all active:scale-95 border border-white/10">
+                <span>{{ app()->getLocale() === 'ar' ? 'استكشف المشاريع' : 'Explore Projects' }}</span>
+                <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
+            </a>
+        </div>
+
+        <!-- Small Title Above Search Bar -->
+        <p class="text-xs text-stone-300 font-bold mb-3 tracking-wide">
+            {{ app()->getLocale() === 'ar' ? 'ابحث في مشاريعنا' : 'Search in Our Projects' }}
+        </p>
+
+        <!-- White Pill Search Input Container -->
+        <div class="w-full max-w-3xl mx-auto">
+            <form action="{{ route('property.list') }}" method="GET" class="bg-white rounded-full p-2 shadow-2xl flex items-center justify-between border border-white/80">
+                <!-- Search Input with Icon on Right (RTL context) -->
+                <div class="flex-1 flex items-center gap-3 px-4">
+                    <svg class="w-5 h-5 text-stone-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
-                    <span>{{ app()->getLocale() === 'ar' ? 'بحث' : 'Search' }}</span>
+                    <input type="text" 
+                           name="search" 
+                           placeholder="{{ app()->getLocale() === 'ar' ? 'ابحث عن مشروع، موقع، أو حي...' : 'Search for project, location, or neighborhood...' }}" 
+                           class="w-full py-2.5 bg-transparent border-none focus:outline-none text-xs sm:text-sm text-stone-900 placeholder-stone-400 font-medium">
+                </div>
+
+                <!-- Submit Pill Button on Left (RTL context) -->
+                <button type="submit" class="px-8 py-3 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold text-xs sm:text-sm rounded-full shadow-md transition-all active:scale-95 shrink-0">
+                    {{ app()->getLocale() === 'ar' ? 'بحث' : 'Search' }}
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Featured Properties Grid -->
-    <section class="mb-16">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-            <div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-2">{{ app()->getLocale() === 'ar' ? 'عقارات مميزة ومختارة' : 'Featured Properties' }}</h2>
-                <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ app()->getLocale() === 'ar' ? 'استكشف نخبة العروض العقارية المفحوصة والموثقة' : 'Explore our handpicked verified premium listings' }}</p>
+    <!-- Bottom Statistics Dark Bar (Matching 100% Screenshot Bottom Bar) -->
+    <div class="relative z-10 w-full bg-[#1C1816] border-t border-white/10 py-6">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center divide-x divide-white/10 rtl:divide-x-reverse">
+                <!-- Stat 1 -->
+                <div class="flex items-center justify-center gap-3 p-2">
+                    <div class="text-2xl sm:text-4xl font-black text-white font-mono">350+</div>
+                    <div class="flex flex-col items-start text-start">
+                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        </div>
+                        <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'عميل سعيد' : 'Happy Clients' }}</span>
+                    </div>
+                </div>
+
+                <!-- Stat 2 -->
+                <div class="flex items-center justify-center gap-3 p-2">
+                    <div class="text-2xl sm:text-4xl font-black text-white font-mono">5+</div>
+                    <div class="flex flex-col items-start text-start">
+                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                        </div>
+                        <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'مشاريع جديدة' : 'New Projects' }}</span>
+                    </div>
+                </div>
+
+                <!-- Stat 3 -->
+                <div class="flex items-center justify-center gap-3 p-2">
+                    <div class="text-2xl sm:text-4xl font-black text-white font-mono">15+</div>
+                    <div class="flex flex-col items-start text-start">
+                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        </div>
+                        <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'سنة خبرة' : 'Years Experience' }}</span>
+                    </div>
+                </div>
+
+                <!-- Stat 4 -->
+                <div class="flex items-center justify-center gap-3 p-2">
+                    <div class="text-2xl sm:text-4xl font-black text-white font-mono">400+</div>
+                    <div class="flex flex-col items-start text-start">
+                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-stone-300 mb-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                        </div>
+                        <span class="text-[11px] text-stone-300 font-bold">{{ app()->getLocale() === 'ar' ? 'وحدة سكنية' : 'Housing Units' }}</span>
+                    </div>
+                </div>
             </div>
-            <a href="{{ route('property.list') }}" class="inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">
-                <span>{{ app()->getLocale() === 'ar' ? 'عرض كافة العقارات' : 'Browse All Properties' }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 lg:px-8 py-12">
+    <!-- Section 2: Featured Projects ("استثمر في التميز") -->
+    <section id="featured-projects" class="mb-20">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+            <div>
+                <span class="inline-block px-4 py-1 rounded-full bg-[#EBE6DF] dark:bg-stone-800 text-[#26201D] dark:text-stone-200 text-xs font-bold mb-3">
+                    • {{ app()->getLocale() === 'ar' ? 'مشاريعنا المميزة' : 'Featured Projects' }}
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-black text-[#26201D] dark:text-white tracking-tight">
+                    {{ app()->getLocale() === 'ar' ? 'استثمر في التميز' : 'Invest in Excellence' }}
+                </h2>
+                <p class="text-stone-500 dark:text-stone-400 text-xs sm:text-sm mt-1 max-w-xl font-light">
+                    {{ app()->getLocale() === 'ar' ? 'نخبة من المشاريع العقارية الفاخرة المخصصة لتلبية أعلى مستويات التوقعات.' : 'Handpicked luxury real estate developments designed to exceed your highest expectations.' }}
+                </p>
+            </div>
+            
+            <a href="{{ route('property.list') }}" class="inline-flex items-center gap-2 px-6 py-2.5 border border-[#8C7869] text-[#8C7869] dark:text-stone-200 hover:bg-[#8C7869] hover:text-white rounded-full text-xs font-bold transition-all shadow-xs">
+                <span>{{ app()->getLocale() === 'ar' ? 'جميع المشاريع' : 'All Projects' }}</span>
                 <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
             </a>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @forelse($featuredProperties as $property)
-                <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm hover:shadow-2xl hover:border-blue-500/50 transition-all duration-300 border border-gray-100 dark:border-gray-700/80 overflow-hidden flex flex-col group">
-                    <div class="relative h-60 w-full overflow-hidden bg-gray-100 dark:bg-gray-900">
-                        <a href="{{ route('property.detail', $property->id) }}">
-                            <img src="{{ $property->image_url }}" 
-                                 alt="{{ $property->title }}" 
-                                 loading="lazy"
-                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                        </a>
-                        <div class="absolute top-3 start-3 flex gap-1.5 z-10">
-                            <span class="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-lg shadow-sm">
-                                {{ $property->status === 'for_rent' ? (app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent') : (app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale') }}
-                            </span>
-                            @if($property->is_featured)
-                                <span class="px-2.5 py-1 bg-amber-500 text-gray-900 text-xs font-black rounded-lg shadow-sm">
-                                    {{ app()->getLocale() === 'ar' ? 'مميز' : 'Featured' }}
-                                </span>
-                            @endif
-                        </div>
-                        <div class="absolute bottom-3 start-3 end-3 flex justify-between items-center z-10">
-                            <span class="bg-gray-900/80 backdrop-blur-md text-gray-200 text-xs px-2.5 py-1 rounded-md font-medium">
-                                {{ $property->translated_type }}
-                            </span>
-                            <span class="bg-gray-900/80 backdrop-blur-md text-blue-400 text-xs px-2.5 py-1 rounded-md font-semibold">
-                                <svg class="w-4 h-4 inline-block align-[-2px]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg> {{ Str::limit($property->location, 20) }}
-                            </span>
-                        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Project Card 1: RUSU Residence -->
+            <div class="bg-white dark:bg-stone-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-[#EBE6DF] dark:border-stone-800 group flex flex-col">
+                <div class="relative h-64 w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
+                    <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=800&q=80" 
+                         alt="RUSU Residence" 
+                         loading="lazy"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="absolute top-4 start-4 flex gap-2 z-10">
+                        <span class="px-3.5 py-1 bg-[#8C7869] text-white text-[11px] font-bold rounded-full shadow-md">
+                            {{ app()->getLocale() === 'ar' ? 'مباع بالكامل' : 'Sold Out' }}
+                        </span>
                     </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-baseline justify-between mb-2">
-                                <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-                                    {{ $property->formatted_price }}
-                                </div>
-                            </div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                <a href="{{ route('property.detail', $property->id) }}">
-                                    {{ $property->title }}
-                                </a>
+                    <div class="absolute top-4 end-4 z-10">
+                        <span class="px-3 py-1 bg-white/90 backdrop-blur-md text-stone-800 text-[11px] font-bold rounded-full shadow-xs">
+                            {{ app()->getLocale() === 'ar' ? 'فيلا' : 'Villa' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-6 h-6 rounded-md bg-[#8C7869] text-white flex items-center justify-center text-[10px] font-black">R</div>
+                            <h3 class="text-xl font-bold text-[#26201D] dark:text-white group-hover:text-[#8C7869] transition-colors">
+                                {{ app()->getLocale() === 'ar' ? 'رسو ريزيدنس' : 'RUSU Residence' }}
                             </h3>
-                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">
-                                {{ $property->description }}
-                            </p>
                         </div>
-
+                        <p class="text-xs text-stone-500 dark:text-stone-400 mb-6 flex items-center gap-1.5 font-medium">
+                            <svg class="w-3.5 h-3.5 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            {{ app()->getLocale() === 'ar' ? 'الرياض، حي النرجس' : 'Riyadh, Al Nargis' }}
+                        </p>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300">
                         <div>
-                            <div class="grid grid-cols-3 gap-2 text-center text-xs text-gray-700 dark:text-gray-300 py-3 border-t border-gray-100 dark:border-gray-700/80 bg-gray-50 dark:bg-gray-900/40 rounded-xl px-2 mb-4">
-                                <div>
-                                    <span class="block text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'الغرف' : 'Beds' }}</span>
-                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 18v-5a2 2 0 012-2h14a2 2 0 012 2v5m0 0v2m0-2H3m0 0v2m3.5-10V8a2 2 0 012-2h7a2 2 0 012 2v2" /></svg> {{ $property->bedrooms ?? 1 }}</span>
-                                </div>
-                                <div>
-                                    <span class="block text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'الحمامات' : 'Baths' }}</span>
-                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16v2a4 4 0 01-4 4H8a4 4 0 01-4-4v-2zm2 0V6a2 2 0 012-2h1.5M6 18l-1 2m13-2l1 2" /></svg> {{ $property->bathrooms ?? 1 }}</span>
-                                </div>
-                                <div>
-                                    <span class="block text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
-                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 4.5H4.5M9 4.5L3.75 9.75M15 9V4.5M15 4.5h4.5M15 4.5l5.25 5.25M9 15v4.5M9 19.5H4.5M9 19.5l-5.25-5.25M15 15v4.5M15 19.5h4.5M15 19.5l5.25-5.25" /></svg> {{ $property->area_sqft ?? 150 }} م²</span>
-                                </div>
-                            </div>
-
-                            <a href="{{ route('property.detail', $property->id) }}" 
-                               class="w-full block text-center py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs shadow-sm hover:shadow transition-all">
-                                {{ app()->getLocale() === 'ar' ? 'تفاصيل العقار والتواصل' : 'View Details & Contact' }}
-                            </a>
+                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'التسليم' : 'Delivery' }}</span>
+                            <span class="font-black">2026</span>
+                        </div>
+                        <div class="border-x border-stone-100 dark:border-stone-800">
+                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'وحدة' : 'Units' }}</span>
+                            <span class="font-black">12</span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
+                            <span class="font-black">180 م²</span>
                         </div>
                     </div>
                 </div>
-            @empty
-                <div class="col-span-full text-center py-16 bg-gray-800/50 rounded-3xl border border-dashed border-gray-700">
-                    <p class="text-gray-400 text-sm">{{ app()->getLocale() === 'ar' ? 'لا توجد عقارات مميزة حالياً.' : 'No featured properties available.' }}</p>
+            </div>
+
+            <!-- Project Card 2: RUSU Gardens -->
+            <div class="bg-white dark:bg-stone-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-[#EBE6DF] dark:border-stone-800 group flex flex-col">
+                <div class="relative h-64 w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
+                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80" 
+                         alt="RUSU Gardens" 
+                         loading="lazy"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="absolute top-4 start-4 flex gap-2 z-10">
+                        <span class="px-3.5 py-1 bg-blue-600 text-white text-[11px] font-bold rounded-full shadow-md">
+                            {{ app()->getLocale() === 'ar' ? 'متاح للبيع' : 'For Sale' }}
+                        </span>
+                        <span class="px-3 py-1 bg-emerald-500 text-white text-[11px] font-bold rounded-full shadow-md">
+                            {{ app()->getLocale() === 'ar' ? 'جديد' : 'New' }}
+                        </span>
+                    </div>
+                    <div class="absolute top-4 end-4 z-10">
+                        <span class="px-3 py-1 bg-white/90 backdrop-blur-md text-stone-800 text-[11px] font-bold rounded-full shadow-xs">
+                            {{ app()->getLocale() === 'ar' ? 'تاون هاوس' : 'Townhouse' }}
+                        </span>
+                    </div>
                 </div>
-            @endforelse
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-6 h-6 rounded-md bg-[#8C7869] text-white flex items-center justify-center text-[10px] font-black">R</div>
+                            <h3 class="text-xl font-bold text-[#26201D] dark:text-white group-hover:text-[#8C7869] transition-colors">
+                                {{ app()->getLocale() === 'ar' ? 'رسو جاردنز' : 'RUSU Gardens' }}
+                            </h3>
+                        </div>
+                        <p class="text-xs text-stone-500 dark:text-stone-400 mb-6 flex items-center gap-1.5 font-medium">
+                            <svg class="w-3.5 h-3.5 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            {{ app()->getLocale() === 'ar' ? 'الرياض، حي الياسمين' : 'Riyadh, Al Yasmin' }}
+                        </p>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300">
+                        <div>
+                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'التسليم' : 'Delivery' }}</span>
+                            <span class="font-black">2025</span>
+                        </div>
+                        <div class="border-x border-stone-100 dark:border-stone-800">
+                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'وحدة' : 'Units' }}</span>
+                            <span class="font-black">3</span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
+                            <span class="font-black">48 م²</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Card 3: RUSU Heights -->
+            <div class="bg-white dark:bg-stone-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-[#EBE6DF] dark:border-stone-800 group flex flex-col">
+                <div class="relative h-64 w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
+                    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" 
+                         alt="RUSU Heights" 
+                         loading="lazy"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="absolute top-4 start-4 flex gap-2 z-10">
+                        <span class="px-3.5 py-1 bg-amber-600 text-white text-[11px] font-bold rounded-full shadow-md">
+                            {{ app()->getLocale() === 'ar' ? 'قيد الإنشاء' : 'Under Construction' }}
+                        </span>
+                    </div>
+                    <div class="absolute top-4 end-4 z-10">
+                        <span class="px-3 py-1 bg-white/90 backdrop-blur-md text-stone-800 text-[11px] font-bold rounded-full shadow-xs">
+                            {{ app()->getLocale() === 'ar' ? 'سكني' : 'Residential' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-6 h-6 rounded-md bg-[#8C7869] text-white flex items-center justify-center text-[10px] font-black">R</div>
+                            <h3 class="text-xl font-bold text-[#26201D] dark:text-white group-hover:text-[#8C7869] transition-colors">
+                                {{ app()->getLocale() === 'ar' ? 'رسو هايتس' : 'RUSU Heights' }}
+                            </h3>
+                        </div>
+                        <p class="text-xs text-stone-500 dark:text-stone-400 mb-6 flex items-center gap-1.5 font-medium">
+                            <svg class="w-3.5 h-3.5 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            {{ app()->getLocale() === 'ar' ? 'الرياض، حي الملقا' : 'Riyadh, Al Malqa' }}
+                        </p>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300">
+                        <div>
+                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'التسليم' : 'Delivery' }}</span>
+                            <span class="font-black">2026</span>
+                        </div>
+                        <div class="border-x border-stone-100 dark:border-stone-800">
+                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'وحدة' : 'Units' }}</span>
+                            <span class="font-black">28</span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] text-stone-400">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
+                            <span class="font-black">120 م²</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Why Choose Us ("نرتقي بتجربة الاستثمار العقاري") -->
+    <section class="mb-20 bg-white/70 dark:bg-stone-900/60 rounded-[2.5rem] p-8 sm:p-12 border border-[#EBE6DF] dark:border-stone-800 shadow-sm">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <!-- Left Features -->
+            <div>
+                <span class="inline-block px-4 py-1 rounded-full bg-[#EBE6DF] dark:bg-stone-800 text-[#26201D] dark:text-stone-200 text-xs font-bold mb-3">
+                    • {{ app()->getLocale() === 'ar' ? 'لماذا رسو' : 'Why RUSU' }}
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-black text-[#26201D] dark:text-white leading-tight mb-4">
+                    {{ app()->getLocale() === 'ar' ? 'نرتقي بتجربة الاستثمار العقاري' : 'Elevating Real Estate Investment' }}
+                </h2>
+                <p class="text-stone-500 dark:text-stone-400 text-xs sm:text-sm mb-8 font-light leading-relaxed">
+                    {{ app()->getLocale() === 'ar' ? 'نحن لا نبني مجرد مبان، بل نبتكر أسلوب حياة يرتقي بتطلعاتك وقيم استثمارك.' : 'We don’t just build structures; we innovate a lifestyle that elevates your aspirations.' }}
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Feature 1 -->
+                    <div class="p-5 rounded-2xl bg-white dark:bg-stone-800 border border-[#EBE6DF]/70 dark:border-stone-700/80 shadow-xs">
+                        <div class="w-10 h-10 rounded-xl bg-[#8C7869] text-white flex items-center justify-center text-lg mb-3">
+                            <svg class="w-5 h-5 text-stone-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-[#26201D] dark:text-white mb-1">
+                            {{ app()->getLocale() === 'ar' ? 'الجودة والاستدامة' : 'Quality & Sustainability' }}
+                        </h3>
+                        <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-light">
+                            {{ app()->getLocale() === 'ar' ? 'نلتزم بأعلى معايير البناء المستدام والتصاميم العصرية الممتازة.' : 'We adhere to the highest sustainable construction standards.' }}
+                        </p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="p-5 rounded-2xl bg-white dark:bg-stone-800 border border-[#EBE6DF]/70 dark:border-stone-700/80 shadow-xs">
+                        <div class="w-10 h-10 rounded-xl bg-[#8C7869] text-white flex items-center justify-center text-lg mb-3">
+                            <svg class="w-5 h-5 text-stone-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-[#26201D] dark:text-white mb-1">
+                            {{ app()->getLocale() === 'ar' ? 'الثقة والشفافية' : 'Trust & Transparency' }}
+                        </h3>
+                        <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-light">
+                            {{ app()->getLocale() === 'ar' ? 'نضع رضا العميل أولاً عبر التعامل الشفاف الموثوق في كافة المراحل.' : 'Putting clients first with transparent and trustworthy operations.' }}
+                        </p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="p-5 rounded-2xl bg-white dark:bg-stone-800 border border-[#EBE6DF]/70 dark:border-stone-700/80 shadow-xs">
+                        <div class="w-10 h-10 rounded-xl bg-[#8C7869] text-white flex items-center justify-center text-lg mb-3">
+                            <svg class="w-5 h-5 text-stone-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-[#26201D] dark:text-white mb-1">
+                            {{ app()->getLocale() === 'ar' ? 'الابتكار والتصميم' : 'Innovation & Design' }}
+                        </h3>
+                        <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-light">
+                            {{ app()->getLocale() === 'ar' ? 'تصاميم معمارية فريدة تلبي احتياجات وطموحات الحياة الحديثة.' : 'Architectural designs crafted for contemporary lifestyle.' }}
+                        </p>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="p-5 rounded-2xl bg-white dark:bg-stone-800 border border-[#EBE6DF]/70 dark:border-stone-700/80 shadow-xs">
+                        <div class="w-10 h-10 rounded-xl bg-[#8C7869] text-white flex items-center justify-center text-lg mb-3">
+                            <svg class="w-5 h-5 text-stone-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-[#26201D] dark:text-white mb-1">
+                            {{ app()->getLocale() === 'ar' ? 'الاستجابة السريعة' : 'Rapid Response' }}
+                        </h3>
+                        <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-light">
+                            {{ app()->getLocale() === 'ar' ? 'خدمة عملاء متكاملة تضمن تجربة سلسة من الاستفسار حتى التسليم.' : 'Dedicated customer care ensuring seamless service.' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Showcase Image with Floating Badges -->
+            <div class="relative">
+                <div class="rounded-3xl overflow-hidden shadow-2xl border border-stone-200 dark:border-stone-800">
+                    <img src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=800&q=80" 
+                         alt="Interior Showcase" 
+                         class="w-full h-[480px] object-cover">
+                </div>
+                
+                <!-- Floating Badge Top Right -->
+                <div class="absolute top-6 end-6 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-white/50 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-[#8C7869] text-white flex items-center justify-center font-bold text-xs">ISO</div>
+                    <div>
+                        <p class="text-xs font-bold text-[#26201D] dark:text-white">{{ app()->getLocale() === 'ar' ? 'جودة معتمدة' : 'Certified Quality' }}</p>
+                        <p class="text-[10px] text-stone-500">ISO 9001</p>
+                    </div>
+                </div>
+
+                <!-- Floating Badge Bottom Left -->
+                <div class="absolute bottom-6 start-6 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-white/50 flex items-center gap-4">
+                    <div class="text-2xl font-black text-[#26201D] dark:text-white font-mono">98%</div>
+                    <div class="text-xs">
+                        <div class="flex text-amber-500 mb-0.5">★★★★★</div>
+                        <p class="font-bold text-stone-700 dark:text-stone-300 text-[11px]">{{ app()->getLocale() === 'ar' ? 'نسبة رضا العملاء' : 'Client Satisfaction' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: About Company ("رسو.. أكثر من مجرد عقار") -->
+    <section class="mb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="order-2 lg:order-1 rounded-3xl overflow-hidden shadow-xl border border-stone-200 dark:border-stone-800">
+                <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80" 
+                     alt="RUSU Real Estate Story" 
+                     class="w-full h-[420px] object-cover">
+            </div>
+
+            <div class="order-1 lg:order-2">
+                <span class="inline-block px-4 py-1 rounded-full bg-[#EBE6DF] dark:bg-stone-800 text-[#26201D] dark:text-stone-200 text-xs font-bold mb-3">
+                    • {{ app()->getLocale() === 'ar' ? 'عن الشركة' : 'About Company' }}
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-black text-[#26201D] dark:text-white leading-tight mb-4">
+                    {{ app()->getLocale() === 'ar' ? 'رسو.. أكثر من مجرد عقار' : 'RUSU.. More Than Real Estate' }}
+                </h2>
+                <p class="text-stone-500 dark:text-stone-400 text-xs sm:text-sm leading-relaxed mb-6 font-light">
+                    {{ app()->getLocale() === 'ar' ? 'منذ عام 2009 ونحن نعيد تعريف مفهوم التطوير العقاري في المملكة العربية السعودية، حيث ندمج بين الجمال المعماري والوظيفة العملية، لنقدم مجتمعات سكنية فاخرة تلبي تطلعات المستقبل.' : 'Since 2009, we have been redefining real estate development by fusing architectural elegance with functionality.' }}
+                </p>
+
+                <!-- Value Pill Toggles -->
+                <div class="space-y-3 mb-8">
+                    <div class="p-3.5 rounded-2xl bg-white dark:bg-stone-900 border border-[#EBE6DF] dark:border-stone-800 flex items-center justify-between text-xs font-bold text-[#26201D] dark:text-stone-200 shadow-xs">
+                        <span>• {{ app()->getLocale() === 'ar' ? 'الرؤية والهدف' : 'Vision & Goals' }}</span>
+                        <span class="text-stone-400">&larr;</span>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-white dark:bg-stone-900 border border-[#EBE6DF] dark:border-stone-800 flex items-center justify-between text-xs font-bold text-[#26201D] dark:text-stone-200 shadow-xs">
+                        <span>• {{ app()->getLocale() === 'ar' ? 'الابتكار والحلول' : 'Innovation & Solutions' }}</span>
+                        <span class="text-stone-400">&larr;</span>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-white dark:bg-stone-900 border border-[#EBE6DF] dark:border-stone-800 flex items-center justify-between text-xs font-bold text-[#26201D] dark:text-stone-200 shadow-xs">
+                        <span>• {{ app()->getLocale() === 'ar' ? 'الشغف والاستدامة' : 'Passion & Sustainability' }}</span>
+                        <span class="text-stone-400">&larr;</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="px-5 py-2.5 rounded-full bg-[#8C7869] text-white text-xs font-mono font-bold">
+                        2009 {{ app()->getLocale() === 'ar' ? 'تأسست عام' : 'Founded' }}
+                    </div>
+                    <a href="{{ route('about') }}" class="text-xs font-bold text-[#8C7869] dark:text-stone-200 hover:underline">
+                        {{ app()->getLocale() === 'ar' ? 'تعرف على المزيد عنا ↗' : 'Learn More About Us ↗' }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Testimonials ("يقولون عن تجربتهم") -->
+    <section class="mb-20">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="inline-block px-4 py-1 rounded-full bg-[#EBE6DF] dark:bg-stone-800 text-[#26201D] dark:text-stone-200 text-xs font-bold mb-3">
+                • {{ app()->getLocale() === 'ar' ? 'آراء العملاء' : 'Testimonials' }}
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-black text-[#26201D] dark:text-white mb-2">
+                {{ app()->getLocale() === 'ar' ? 'يقولون عن تجربتهم' : 'What Our Clients Say' }}
+            </h2>
+            <p class="text-stone-500 dark:text-stone-400 text-xs sm:text-sm font-light">
+                {{ app()->getLocale() === 'ar' ? 'انطباعات وآراء عملائنا الذين وثقوا في مشاريعنا العقارية.' : 'Feedback and experiences from clients who trusted our real estate developments.' }}
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-6 rounded-3xl bg-white dark:bg-stone-900 border border-[#EBE6DF] dark:border-stone-800 shadow-sm flex flex-col justify-between">
+                <div class="mb-4">
+                    <div class="text-amber-500 mb-3 text-sm">★★★★★</div>
+                    <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-light">
+                        "تجربة الاستثمار مع شركة رسو كانت ممتازة جداً. الدقة في المواعيد وجودة التشطيب في مشروع رسو ريزيدنس تفوقت على توقعاتي."
+                    </p>
+                </div>
+                <div class="flex items-center gap-3 pt-4 border-t border-stone-100 dark:border-stone-800">
+                    <div class="w-9 h-9 rounded-full bg-[#8C7869] text-white flex items-center justify-center font-bold text-xs">ع</div>
+                    <div>
+                        <h4 class="text-xs font-bold text-[#26201D] dark:text-white">عبدالله الشمري</h4>
+                        <p class="text-[10px] text-stone-400">مستثمر عقاري</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 rounded-3xl bg-white dark:bg-stone-900 border border-[#EBE6DF] dark:border-stone-800 shadow-sm flex flex-col justify-between">
+                <div class="mb-4">
+                    <div class="text-amber-500 mb-3 text-sm">★★★★★</div>
+                    <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-light">
+                        "خدمة العملاء والشفافية في التعامل كانت رائعة. استلمنا الوحدة السكنية في الوقت المحدد وبالمواصفات المتفق عليها بالكامل."
+                    </p>
+                </div>
+                <div class="flex items-center gap-3 pt-4 border-t border-stone-100 dark:border-stone-800">
+                    <div class="w-9 h-9 rounded-full bg-[#8C7869] text-white flex items-center justify-center font-bold text-xs">س</div>
+                    <div>
+                        <h4 class="text-xs font-bold text-[#26201D] dark:text-white">سارة العتيبي</h4>
+                        <p class="text-[10px] text-stone-400">مالكة تاون هاوس</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 rounded-3xl bg-white dark:bg-stone-900 border border-[#EBE6DF] dark:border-stone-800 shadow-sm flex flex-col justify-between">
+                <div class="mb-4">
+                    <div class="text-amber-500 mb-3 text-sm">★★★★★</div>
+                    <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-light">
+                        "الموقع الممتاز والتصاميم الحديثة لمشاريع رسو جعلت القرار الاستثماري سهلاً ومربحاً للغاية."
+                    </p>
+                </div>
+                <div class="flex items-center gap-3 pt-4 border-t border-stone-100 dark:border-stone-800">
+                    <div class="w-9 h-9 rounded-full bg-[#8C7869] text-white flex items-center justify-center font-bold text-xs">ف</div>
+                    <div>
+                        <h4 class="text-xs font-bold text-[#26201D] dark:text-white">م. فيصل المطيري</h4>
+                        <p class="text-[10px] text-stone-400">مشتري وحدة سكنية</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Interactive Property Map Section -->
     <section class="mb-16">
         <div class="text-center max-w-2xl mx-auto mb-8">
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-2">{{ __('Interactive Property Map') }}</h2>
-            <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ __('Explore listings geographically across cities and neighborhoods') }}</p>
+            <span class="inline-block px-4 py-1 rounded-full bg-[#EBE6DF] dark:bg-stone-800 text-[#26201D] dark:text-stone-200 text-xs font-bold mb-3">
+                • {{ app()->getLocale() === 'ar' ? 'الخريطة التفاعلية' : 'Interactive Map' }}
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-black text-[#26201D] dark:text-white mb-2">{{ __('Interactive Property Map') }}</h2>
+            <p class="text-stone-500 dark:text-stone-400 text-xs sm:text-sm font-light">{{ __('Explore listings geographically across cities and neighborhoods') }}</p>
         </div>
-        <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700">
+        <div class="rounded-3xl overflow-hidden shadow-lg border border-[#EBE6DF] dark:border-stone-800">
             <x-property-map :properties="$mapProperties" />
-        </div>
-    </section>
-
-    <!-- Why Choose Us Features Grid -->
-    <section class="mb-12 py-12 bg-gray-50 dark:bg-gray-800/40 rounded-3xl p-8 lg:p-12 border border-gray-100 dark:border-gray-800">
-        <div class="text-center max-w-2xl mx-auto mb-12">
-            <h2 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-3">{{ __('Why Choose Dar Hadhramaut?') }}</h2>
-            <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ __('We provide comprehensive real estate management and marketing solutions') }}</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xs border border-gray-100 dark:border-gray-700">
-                <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mb-4">
-                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z" /></svg>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('Smart Solutions') }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ __('Interactive virtual tours, 3D property models and expert valuations.') }}</p>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xs border border-gray-100 dark:border-gray-700">
-                <div class="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/40 text-green-600 dark:text-green-400 flex items-center justify-center text-2xl mb-4">
-                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('Verified Listings') }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ __('Every listing is reviewed and validated for maximum security and peace of mind.') }}</p>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xs border border-gray-100 dark:border-gray-700">
-                <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl mb-4">
-                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('Seamless Experience') }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ __('Effortless search, direct agent communication and automated bookings.') }}</p>
-            </div>
         </div>
     </section>
 </div>
