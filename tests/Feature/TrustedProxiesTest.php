@@ -19,7 +19,7 @@ class TrustedProxiesTest extends TestCase
      */
     public function test_a_forwarded_https_request_is_treated_as_secure(): void
     {
-        $request = Request::create('http://example.test/properties', 'GET');
+        $request = Request::create('http://example.test/up', 'GET');
         $request->headers->set('X-Forwarded-Proto', 'https');
         $request->headers->set('X-Forwarded-For', '203.0.113.10');
 
