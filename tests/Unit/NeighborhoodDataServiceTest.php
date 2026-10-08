@@ -8,6 +8,25 @@ use Illuminate\Support\Facades\Http;
 
 class NeighborhoodDataServiceTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config([
+            'services.neighborhood_data.api_key' => 'test-key',
+            'services.neighborhood_data.base_uri' => 'https://api.example.com',
+        ]);
+    }
+
+    public function test_get_neighborhood_data_returns_null_when_api_key_not_configured()
+    {
+        config(['services.neighborhood_data.api_key' => null]);
+
+        $service = new NeighborhoodDataService();
+        $data = $service->getNeighborhoodData('12345');
+
+        $this->assertNull($data);
+    }
+
     public function test_get_neighborhood_data_returns_data_on_success()
     {
         // Mock the HTTP response

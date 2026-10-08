@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Property;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class PropertyTest extends TestCase
@@ -114,6 +115,20 @@ class PropertyTest extends TestCase
 
     public function test_update_walkability_scores()
     {
+        Http::fake([
+            'api.walkscore.com/*' => Http::response([
+                'status' => 1,
+                'walkscore' => 88,
+                'description' => 'Very Walkable',
+                'transit' => ['score' => 72, 'description' => 'Excellent Transit'],
+                'bike' => ['score' => 65, 'description' => 'Bikeable'],
+            ], 200),
+        ]);
+        config([
+            'services.walkscore.api_key' => 'test_key',
+            'services.walkscore.base_uri' => 'https://api.walkscore.com',
+        ]);
+
         $property = Property::factory()->create([
             'latitude' => 51.5074,
             'longitude' => -0.1278,
