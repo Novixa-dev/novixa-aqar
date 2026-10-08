@@ -43,6 +43,35 @@ running_migrations_and_seeders=${RUNNING_MIGRATIONS_AND_SEEDERS:-"false"}
 initialStuff() {
     echo "Container mode: $container_mode"
 
+    # Give MySQL a chance to finish starting before the migrate/seed calls
+    # below hit it -- on a fresh compose stack the app container and the
+    # mysql container start at roughly the same time, and MySQL's own
+    # startup (initializing its data directory on first boot) can take
+    # longer than the app takes to reach this point.
+    echo "Waiting for MySQL database connection..."
+    db_retries=60
+    while ! php -r '
+        $host = getenv("DB_HOST") ?: "mysql";
+        $port = getenv("DB_PORT") ?: 3306;
+        $db   = getenv("DB_DATABASE") ?: "aqar";
+        $user = getenv("DB_USERNAME") ?: "aqar";
+        $pass = getenv("DB_PASSWORD") ?: "secret";
+        try {
+            new PDO("mysql:host={$host};port={$port};dbname={$db}", $user, $pass, [PDO::ATTR_TIMEOUT => 2]);
+            exit(0);
+        } catch (Throwable $e) {
+            exit(1);
+        }
+    ' 2>/dev/null; do
+        db_retries=$((db_retries - 1))
+        if [ "$db_retries" -le 0 ]; then
+            echo "WARNING: Database connection timed out after 120s, continuing anyway..."
+            break
+        fi
+        sleep 2
+    done
+    echo "MySQL database is ready and connected!"
+
     # RESEED_FRESH: an explicit, deliberately-named, opt-in demo-reset
     # button for this staging environment specifically -- distinct from
     # RUNNING_MIGRATIONS_AND_SEEDERS (which only ever additively seeds).
