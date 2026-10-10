@@ -1,14 +1,25 @@
-# Deployment — Novixa Aqar → aqar-demo.novixa.dev (Novixa VPS)
+# Deployment — Novixa Aqar demos on the Novixa VPS
 
-Pushing to **`main`** deploys <https://aqar-demo.novixa.dev>. This is
+| Branch | Site | Workflow | Site config |
+|---|---|---|---|
+| `main` | <https://aqar-demo.novixa.dev> | `deploy-aqar-demo.yml` | `deploy/aqar-demo/app.env` |
+| `ui-improves` | <https://aqar-demo2.novixa.dev> | `deploy-aqar-demo2.yml` | `deploy/aqar-demo2/app.env` |
+
+Each site is fully separate on the server (`/opt/<site>`, its own MySQL,
+volumes, secrets and containers); they share only the scripts in this
+directory, which derive every name from the site directory. This is
 separate from the Dexal (cPanel) pipeline in [`../README.md`](../README.md),
 which is unchanged.
+
+**Adding another site** (e.g. `aqar-demo3`): add its DNS record in
+Cloudflare, run `server-setup.sh aqar-demo3` on the server, copy
+`deploy/aqar-demo2/app.env` and the workflow with the names changed.
 
 ```
 main ──push──▶ GitHub Actions ──▶ ghcr.io/novixa-dev/novixa-aqar:sha-… ──ssh──▶ 161.97.75.64
 ```
 
-Workflow: `.github/workflows/deploy-aqar-demo.yml`
+Both workflows have the same jobs:
 
 | Job | Does | Gates deploy |
 |---|---|---|
@@ -32,11 +43,11 @@ Cloudflare (proxied) ─▶ mailcow nginx :443 ── aqar-edge network ─▶ a
 
 | Path on the server | What |
 |---|---|
-| `/opt/aqar-demo/app.env` | non-secret config, from this repo on every deploy |
-| `/opt/aqar-demo/secrets.env` | `APP_KEY`, `DB_PASSWORD` — generated once, never leaves the server |
-| `/opt/aqar-demo/db.env` | MySQL passwords — generated once |
-| `/opt/aqar-demo/.seeded` | present once demo data was seeded (delete it to seed again) |
-| volumes `aqar-demo-db-data`, `aqar-demo-storage`, `aqar-demo-logs` | survive every deploy |
+| `/opt/<site>/app.env` | non-secret config, from this repo on every deploy |
+| `/opt/<site>/secrets.env` | `APP_KEY`, `DB_PASSWORD` — generated once, never leaves the server |
+| `/opt/<site>/db.env` | MySQL passwords — generated once |
+| `/opt/<site>/.seeded` | present once demo data was seeded (delete it to seed again) |
+| volumes `<site>-db-data`, `<site>-storage`, `<site>-logs` | survive every deploy |
 
 `deploy.sh` order: migrate (one-off container) → first deploy seeds →
 start the new release **beside** the old one → wait for 200 on `/` and the
@@ -52,10 +63,11 @@ automatically.
 
    ```bash
    scp deploy/aqar-demo/server-setup.sh root@161.97.75.64:/root/
-   ssh root@161.97.75.64 'bash /root/server-setup.sh "<CI public key line>"'
+   ssh root@161.97.75.64 'bash /root/server-setup.sh aqar-demo  "<CI public key line>"'
+   ssh root@161.97.75.64 'bash /root/server-setup.sh aqar-demo2 "<CI public key line>"'
    ```
 
-   Creates the key-only `aqar` user, `/opt/aqar-demo` + secrets, the
+   Creates the key-only `aqar` user, `/opt/<site>` + secrets, the
    `aqar-edge` network (joined to mailcow's nginx live — no mail restart —
    and persisted in mailcow's `docker-compose.override.yml`), and a copy of
    the `*.novixa.dev` Cloudflare Origin certificate for this site.

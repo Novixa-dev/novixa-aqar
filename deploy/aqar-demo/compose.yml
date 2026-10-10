@@ -1,6 +1,6 @@
 # ==============================================================================
-# Novixa Aqar demo — database for aqar-demo.novixa.dev (installed to
-# /opt/aqar-demo by CI).
+# Novixa Aqar demo — database for <site>.novixa.dev (installed to
+# /opt/<site> by CI). SITE is exported by deploy.sh (aqar-demo, aqar-demo2, …).
 #
 # Only MySQL is managed by compose. The app containers are started by
 # deploy.sh with `docker run`, because a zero-downtime swap needs the old and
@@ -11,12 +11,12 @@
 #                (MYSQL_ROOT_PASSWORD, MYSQL_PASSWORD) — never committed
 # ==============================================================================
 
-name: aqar-demo
+name: ${SITE:?run via deploy.sh}
 
 services:
   db:
     image: mysql:8.0
-    container_name: aqar-demo-db
+    container_name: ${SITE}-db
     restart: unless-stopped
     env_file: [db.env]
     environment:
@@ -32,7 +32,7 @@ services:
       - db-data:/var/lib/mysql
     networks:
       internal:
-        aliases: [aqar-demo-db]
+        aliases: ["${SITE}-db"]
     healthcheck:
       test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent']
       interval: 5s
@@ -46,9 +46,9 @@ services:
 networks:
   # No route out: only the app containers (attached by deploy.sh) reach it.
   internal:
-    name: aqar-demo-internal
+    name: ${SITE}-internal
     internal: true
 
 volumes:
   db-data:
-    name: aqar-demo-db-data
+    name: ${SITE}-db-data

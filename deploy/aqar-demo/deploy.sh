@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 #
-# Novixa Aqar demo — zero-downtime release for aqar-demo.novixa.dev.
+# Novixa Aqar demo — zero-downtime release for <site>.novixa.dev.
 #
-# Runs on the VPS as the `aqar` user, from /opt/aqar-demo, invoked by
-# .github/workflows/deploy-aqar-demo.yml after the image has been pushed and
+# Runs on the VPS as the `aqar` user from /opt/<site>, invoked by
+# .github/workflows/deploy-<site>.yml after the image has been pushed and
 # this directory's files (compose.yml, app.env, nginx.conf) uploaded.
 #
-#   deploy.sh <image-ref>      e.g. ghcr.io/novixa-dev/novixa-aqar:sha-abc123
+# Everything is derived from the directory name, so one script serves every
+# demo site: /opt/aqar-demo → aqar-demo.novixa.dev, /opt/aqar-demo2 →
+# aqar-demo2.novixa.dev, each with its own containers, database and volumes.
+#
+#   /opt/<site>/deploy.sh <image-ref>   e.g. ghcr.io/novixa-dev/novixa-aqar:sha-abc123
 #
 # Order is chosen so that a failure at any step leaves the live site serving
 # the previous release:
@@ -22,16 +26,21 @@
 set -euo pipefail
 
 IMAGE="${1:?usage: deploy.sh <image-ref>}"
-APP_DIR=/opt/aqar-demo
-HOST=aqar-demo.novixa.dev
-EDGE=aqar-edge
-INTERNAL=aqar-demo-internal
-ALIAS=aqar-demo-app
-LABEL=novixa.aqar-demo.role=app
+APP_DIR="$(cd "$(dirname "$0")" && pwd)"
+SITE="$(basename "$APP_DIR")"
+HOST="$SITE.novixa.dev"
+EDGE=aqar-edge                       # shared with mailcow's nginx
+INTERNAL="$SITE-internal"
+ALIAS="$SITE-app"
+LABEL="novixa.$SITE.role=app"
 MAILCOW_NGINX_DIR=/opt/mailcow-dockerized/data/conf/nginx
 KEEP_IMAGES=3
 
 cd "$APP_DIR"
+# Per-site registry login (the workflow logs in with this same path), so two
+# sites deploying at once never log each other out mid-pull.
+export DOCKER_CONFIG="$APP_DIR/.docker"
+export SITE
 
 log()  { printf '\n\033[1m==> %s\033[0m\n' "$*"; }
 warn() { printf '\033[33m!! %s\033[0m\n' "$*"; }
@@ -51,8 +60,8 @@ NGINX_CTR="$(docker ps -q --filter label=com.docker.compose.service=nginx-mailco
 run_args=(
   --env-file "$APP_DIR/app.env"
   --env-file "$APP_DIR/secrets.env"
-  -v aqar-demo-storage:/var/www/html/storage/app
-  -v aqar-demo-logs:/var/www/html/storage/logs
+  -v "$SITE-storage:/var/www/html/storage/app"
+  -v "$SITE-logs:/var/www/html/storage/logs"
   --network "$INTERNAL"
 )
 
@@ -62,7 +71,7 @@ log "image $IMAGE"
 docker image inspect "$IMAGE" >/dev/null 2>&1 || docker pull -q "$IMAGE"
 
 log "database"
-docker compose -f compose.yml up -d --wait db
+docker compose -p "$SITE" -f compose.yml up -d --wait db
 
 # ---------------------------------------------------------- 2. migrate/seed
 log "running migrations"
@@ -78,7 +87,7 @@ fi
 
 # ------------------------------------------------------- 3. start new release
 OLD_CTRS="$(docker ps -aq --filter "label=$LABEL")"
-NEW="aqar-demo-app-$(date +%Y%m%d%H%M%S)"
+NEW="$SITE-app-$(date +%Y%m%d%H%M%S)"
 
 log "starting $NEW"
 # --user 1000 (the image's `octane` user) from the very start: the runtime
@@ -87,7 +96,7 @@ log "starting $NEW"
 # path) leaves supervisord unable to reopen /dev/stdout — octane then dies
 # with "EACCES making dispatchers". The one-off migrate/seed containers above
 # stay root so start-container still fixes storage/app ownership.
-docker create --name "$NEW" --label "$LABEL" --label "novixa.aqar-demo.image=$IMAGE" \
+docker create --name "$NEW" --label "$LABEL" --label "novixa.$SITE.image=$IMAGE" \
   --user 1000:1000 --restart unless-stopped --memory 1536m \
   --log-driver json-file --log-opt max-size=10m --log-opt max-file=5 \
   "${run_args[@]}" "$IMAGE" >/dev/null
@@ -122,12 +131,14 @@ done
 
 # --------------------------------------------------------------- 4. nginx site
 log "nginx site"
-SITE="$MAILCOW_NGINX_DIR/aqar-demo.conf"
-if ! cmp -s nginx.conf "$SITE"; then
-  cp "$SITE" "$APP_DIR/.nginx.conf.prev"
-  cat nginx.conf > "$SITE"          # keep ownership/mode set by server-setup.sh
+# nginx.conf is a template shared by every site: __SITE__ → this site.
+SITE_CONF="$MAILCOW_NGINX_DIR/$SITE.conf"
+sed "s/__SITE__/$SITE/g" nginx.conf > "$APP_DIR/.nginx.conf.rendered"
+if ! cmp -s "$APP_DIR/.nginx.conf.rendered" "$SITE_CONF"; then
+  cp "$SITE_CONF" "$APP_DIR/.nginx.conf.prev"
+  cat "$APP_DIR/.nginx.conf.rendered" > "$SITE_CONF"   # keep ownership/mode set by server-setup.sh
   if ! docker exec "$NGINX_CTR" nginx -t >/dev/null 2>&1; then
-    cat "$APP_DIR/.nginx.conf.prev" > "$SITE"
+    cat "$APP_DIR/.nginx.conf.prev" > "$SITE_CONF"
     docker exec "$NGINX_CTR" nginx -t 2>&1 | tail -5 || true
     discard_new
     die "new nginx site failed nginx -t — previous file restored, live release untouched"
