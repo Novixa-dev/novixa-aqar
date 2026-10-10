@@ -10,6 +10,12 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      # @google/model-viewer pins three as a peer (^0.182.0 for 4.2.x,
+      # ^0.183.0 even for 4.4.0); a newer three makes `npm ci` fail with
+      # ERESOLVE and breaks every build. Remove once model-viewer allows it.
+      - dependency-name: "three"
+        versions: [">= 0.183.0"]
   - package-ecosystem: "github-actions"
     # Workflow files stored in the
     # default location of `.github/workflows`
