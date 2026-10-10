@@ -1,23 +1,26 @@
 #!/usr/bin/env bash
 #
-# Novixa Aqar demo — one-time server preparation for aqar-demo.novixa.dev.
+# Novixa Aqar demo — one-time server preparation for <site>.novixa.dev.
 #
-# Run once, as root, on the VPS (161.97.75.64). Idempotent: re-running only
-# fills in what is missing and never regenerates an existing secret.
+# Run once per site, as root, on the VPS (161.97.75.64). Idempotent:
+# re-running only fills in what is missing and never regenerates a secret.
 #
-#   bash server-setup.sh "<CI public key line>"
+#   bash server-setup.sh aqar-demo  "<CI public key line>"
+#   bash server-setup.sh aqar-demo2 "<CI public key line>"
 #
 # What it does:
 #   * creates the `aqar` deploy user (docker group, SSH key only — no password)
-#   * creates /opt/aqar-demo and its secrets (db.env, secrets.env), once
+#   * creates /opt/<site> and its secrets (db.env, secrets.env), once
 #   * creates the `aqar-edge` network and joins mailcow's nginx to it, both
 #     live (no restart, mail is never interrupted) and in mailcow's
 #     docker-compose.override.yml so it survives mailcow updates
 #   * gives the site its own copy of the *.novixa.dev Cloudflare Origin cert
 set -euo pipefail
 
-CI_PUBKEY="${1:-}"
-APP_DIR=/opt/aqar-demo
+SITE="${1:?usage: server-setup.sh <site> [CI public key line]}"
+CI_PUBKEY="${2:-}"
+case "$SITE" in aqar-demo|aqar-demo[0-9]*) ;; *) echo "unexpected site name: $SITE" >&2; exit 1;; esac
+APP_DIR="/opt/$SITE"
 MAILCOW=/opt/mailcow-dockerized
 NGINX_CONF_DIR="$MAILCOW/data/conf/nginx"
 EDGE=aqar-edge
@@ -116,16 +119,16 @@ fi
 
 # --------------------------------------------- nginx site + certificate
 log "nginx site files"
-install -d -m 750 -o "$USER_NAME" -g root "$NGINX_CONF_DIR/aqar-demo"
+install -d -m 750 -o "$USER_NAME" -g root "$NGINX_CONF_DIR/$SITE"
 for f in origin.pem origin.key; do
-  if [ ! -s "$NGINX_CONF_DIR/aqar-demo/$f" ]; then
+  if [ ! -s "$NGINX_CONF_DIR/$SITE/$f" ]; then
     [ -s "$NGINX_CONF_DIR/novixa/$f" ] || die "no Cloudflare Origin cert at $NGINX_CONF_DIR/novixa/$f to copy"
-    install -m 600 -o "$USER_NAME" -g "$USER_NAME" "$NGINX_CONF_DIR/novixa/$f" "$NGINX_CONF_DIR/aqar-demo/$f"
+    install -m 600 -o "$USER_NAME" -g "$USER_NAME" "$NGINX_CONF_DIR/novixa/$f" "$NGINX_CONF_DIR/$SITE/$f"
   fi
 done
 # deploy.sh (running as $USER_NAME) owns and rewrites this one file only.
-[ -f "$NGINX_CONF_DIR/aqar-demo.conf" ] || : > "$NGINX_CONF_DIR/aqar-demo.conf"
-chown "$USER_NAME:root" "$NGINX_CONF_DIR/aqar-demo.conf"
-chmod 640 "$NGINX_CONF_DIR/aqar-demo.conf"
+[ -f "$NGINX_CONF_DIR/$SITE.conf" ] || : > "$NGINX_CONF_DIR/$SITE.conf"
+chown "$USER_NAME:root" "$NGINX_CONF_DIR/$SITE.conf"
+chmod 640 "$NGINX_CONF_DIR/$SITE.conf"
 
 log "done — $USER_NAME can now deploy into $APP_DIR"

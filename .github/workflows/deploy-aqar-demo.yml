@@ -26,6 +26,7 @@ env:
   IMAGE: ghcr.io/novixa-dev/novixa-aqar
   DEPLOY_HOST: 161.97.75.64
   DEPLOY_USER: aqar
+  SITE: aqar-demo
   SITE_URL: https://aqar-demo.novixa.dev
 
 jobs:
@@ -176,10 +177,11 @@ jobs:
 
       - name: Upload deploy files
         run: |
-          scp -q deploy/aqar-demo/compose.yml deploy/aqar-demo/app.env \
-                 deploy/aqar-demo/nginx.conf deploy/aqar-demo/deploy.sh \
-                 aqar-demo:/opt/aqar-demo/
-          ssh aqar-demo 'chmod 750 /opt/aqar-demo/deploy.sh'
+          # Shared kit from deploy/aqar-demo/, site config from deploy/$SITE/.
+          scp -q deploy/aqar-demo/compose.yml deploy/aqar-demo/nginx.conf \
+                 deploy/aqar-demo/deploy.sh "deploy/$SITE/app.env" \
+                 "aqar-demo:/opt/$SITE/"
+          ssh aqar-demo "chmod 750 /opt/$SITE/deploy.sh"
 
       - name: Release
         env:
@@ -190,11 +192,14 @@ jobs:
           # The registry login lives only for this release: the job token
           # expires when the job ends, and it is removed from the server
           # straight after.
-          printf '%s' "$TOKEN" | ssh aqar-demo "docker login ghcr.io -u '$ACTOR' --password-stdin >/dev/null"
+          # Per-site DOCKER_CONFIG (deploy.sh uses the same path), so two
+          # sites deploying at once never log each other out.
+          DC="DOCKER_CONFIG=/opt/$SITE/.docker"
+          printf '%s' "$TOKEN" | ssh aqar-demo "$DC docker login ghcr.io -u '$ACTOR' --password-stdin >/dev/null"
           set +e
-          ssh aqar-demo "/opt/aqar-demo/deploy.sh '$IMAGE_REF'"
+          ssh aqar-demo "/opt/$SITE/deploy.sh '$IMAGE_REF'"
           status=$?
-          ssh aqar-demo 'docker logout ghcr.io >/dev/null' || true
+          ssh aqar-demo "$DC docker logout ghcr.io >/dev/null" || true
           exit $status
 
       - name: Verify through Cloudflare
