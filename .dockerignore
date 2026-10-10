@@ -1,0 +1,23 @@
+# Keeps the build context to what the image actually needs. Without this,
+# `COPY . .` in the Dockerfile also copies .git, node_modules and any local
+# .env (secrets) into the image.
+.git
+.github
+node_modules
+# The image installs its own (composer-deps stage); a host vendor/ would
+# otherwise overwrite it via `COPY . .`.
+vendor
+.env
+.env.*
+!.env.example
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/public/*
+bootstrap/cache/*.php
+tests/coverage
+coverage.xml
+.phpunit.cache
+.idea
+.vscode
