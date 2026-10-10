@@ -2,11 +2,16 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Tests\TestCase;
 
 class TrustedProxiesTest extends TestCase
 {
+    // /properties queries the database; without a migrated schema it 500s
+    // on "no such table: properties", which has nothing to do with proxies.
+    use RefreshDatabase;
+
     /**
      * Railway terminates TLS at its edge and forwards over plain HTTP.
      *

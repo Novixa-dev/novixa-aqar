@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Property;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class PropertyTest extends TestCase
@@ -114,6 +115,22 @@ class PropertyTest extends TestCase
 
     public function test_update_walkability_scores()
     {
+        // WalkScoreService only returns real provider data (0e80b04), so
+        // configure a key and fake the provider's success response.
+        config([
+            'services.walkscore.api_key' => 'test-key',
+            'services.walkscore.base_uri' => 'https://api.walkscore.com',
+        ]);
+        Http::fake([
+            'api.walkscore.com/*' => Http::response([
+                'status' => 1,
+                'walkscore' => 98,
+                'description' => "Walker's Paradise",
+                'transit' => ['score' => 100, 'description' => "Rider's Paradise"],
+                'bike' => ['score' => 75, 'description' => 'Very Bikeable'],
+            ]),
+        ]);
+
         $property = Property::factory()->create([
             'latitude' => 51.5074,
             'longitude' => -0.1278,
@@ -129,6 +146,29 @@ class PropertyTest extends TestCase
         $this->assertNotNull($property->transit_score);
         $this->assertNotNull($property->bike_score);
         $this->assertNotNull($property->walkability_updated_at);
+        $this->assertSame(98, (int) $property->walkability_score);
+        $this->assertSame(100, (int) $property->transit_score);
+        $this->assertSame(75, (int) $property->bike_score);
+    }
+
+    public function test_update_walkability_scores_stores_nothing_without_a_configured_key()
+    {
+        config(['services.walkscore.api_key' => null]);
+        Http::fake();
+
+        $property = Property::factory()->create([
+            'latitude' => 14.5425,
+            'longitude' => 49.1242,
+            'walkability_updated_at' => null,
+        ]);
+
+        $property->updateWalkabilityScores();
+        $property->refresh();
+
+        // No invented scores, and no "updated" stamp for data never fetched.
+        $this->assertNull($property->walkability_score);
+        $this->assertNull($property->walkability_updated_at);
+        Http::assertNothingSent();
     }
 
     public function test_update_walkability_scores_requires_coordinates()
