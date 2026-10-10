@@ -760,3 +760,13 @@ the image. The authoring environment's egress proxy blocks `*.railway.app`, so n
 this session can load the site. The route itself is covered by tests (serving, 404s, traversal
 rejection), the URL is confirmed correct on the live box, and the signature is confirmed issuable;
 what remains is the visual pass, which is exactly what `docs/AQAR_BROWSER_TEST_PLAN_AR.md` §8.1 is for.
+
+---
+
+## 2026-10-11 — aqar-demo.novixa.dev deployed on the Novixa VPS (verified live)
+
+New, independent pipeline: `.github/workflows/deploy-aqar-demo.yml` + `deploy/aqar-demo/` (Dexal/cPanel pipeline untouched). The VPS (161.97.75.64) is also the mailcow mail server, so the site plugs into mailcow's nginx the same way novixa.dev does (`aqar-edge` network, `data/conf/nginx/aqar-demo.conf`, Cloudflare Origin cert); mailcow was never restarted. App runs from the repo's Octane image, MySQL 8 in its own container, `APP_ENV=staging` so the demo personas are seeded.
+
+**Found and fixed during the first deploy:** (1) `npm run build` fails on a fresh checkout — the Filament theme CSS imports from `vendor/`, so CI installs composer packages first; (2) Octane never started under Docker on this host — supervisord got `EACCES` reopening `/dev/stdout` because the image starts as root and drops to uid 1000, while the runtime gives stdio pipes to the starting user; the app container now starts as `--user 1000:1000`; (3) no `.dockerignore`, so `COPY . .` would have baked `.git`, `node_modules`, local `.env` and a host `vendor/` into the image.
+
+**Verified:** first release via `deploy/aqar-demo/deploy.sh` (migrate + seed + side-by-side start + nginx -t + switch); public checks through Cloudflare (`/`, `/admin/login`, `/landlord/login` → 200, http → 301, assets and property photos 200, `<html lang="ar" dir="rtl">`); `php artisan demo:audit` on the live container → **passed=52 failed=0** (all 8 personas log in and reach their panels, tenant denied `/admin` 403, no debug leak). novixa.dev and mail.novixa.dev unaffected. **Not yet verified:** the GitHub Actions run itself (needs the two `AQAR_DEMO_*` secrets).
