@@ -15,3 +15,15 @@ storage/logs/*
 !storage/logs/.gitignore
 tests
 .phpunit.result.cache
+
+# The image installs its own vendor/ (composer-deps stage); a host vendor/
+# would otherwise overwrite it via `COPY . .`. Local env files hold secrets.
+vendor
+.env
+.env.*
+!.env.example
+storage/app/public/*
+bootstrap/cache/*.php
+coverage.xml
+.phpunit.cache
+.idea
