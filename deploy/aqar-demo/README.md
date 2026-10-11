@@ -16,7 +16,7 @@ Cloudflare, run `server-setup.sh aqar-demo3` on the server, copy
 `deploy/aqar-demo2/app.env` and the workflow with the names changed.
 
 ```
-main ──push──▶ GitHub Actions ──▶ ghcr.io/novixa-dev/novixa-aqar:sha-… ──ssh──▶ 161.97.75.64
+push ──▶ GitHub Actions: test ─▶ build image ─▶ docker save | ssh docker load ─▶ deploy.sh on 161.97.75.64
 ```
 
 Both workflows have the same jobs:
@@ -24,8 +24,10 @@ Both workflows have the same jobs:
 | Job | Does | Gates deploy |
 |---|---|---|
 | `test` | `php artisan test` (PHP 8.5, SQLite) | yes |
-| `build` | `composer install` (for Filament CSS) → `npm ci && npm run build` → Docker image pushed to GHCR | yes |
-| `deploy` | uploads `compose.yml`, `app.env`, `nginx.conf`, `deploy.sh`, runs `deploy.sh`, checks the public URL | — |
+| `deploy` | checks the secrets and SSH first → `composer install` (for Filament CSS) → `npm ci && npm run build` → builds the image → streams it to the server (`docker save \| ssh docker load`, no registry) → uploads `compose.yml`, `app.env`, `nginx.conf`, `deploy.sh` → runs `deploy.sh` → checks the public URL | — |
+
+No container registry is involved, so there are no package permissions to
+configure and no registry credentials on the server.
 
 `workflow_dispatch` has a `skip_tests` toggle for emergencies only.
 
@@ -46,7 +48,8 @@ Cloudflare (proxied) ─▶ mailcow nginx :443 ── aqar-edge network ─▶ a
 | `/opt/<site>/app.env` | non-secret config, from this repo on every deploy |
 | `/opt/<site>/secrets.env` | `APP_KEY`, `DB_PASSWORD` — generated once, never leaves the server |
 | `/opt/<site>/db.env` | MySQL passwords — generated once |
-| `/opt/<site>/.seeded` | present once demo data was seeded (delete it to seed again) |
+| `/opt/<site>/.seeded` | demo-data version currently seeded (see below) |
+| `/opt/<site>/.db-name` | database the live release uses (`aqar`, then `aqar_v<version>`) |
 | volumes `<site>-db-data`, `<site>-storage`, `<site>-logs` | survive every deploy |
 
 `deploy.sh` order: migrate (one-off container) → first deploy seeds →
@@ -56,6 +59,20 @@ failure) → switch traffic → verify through nginx → remove the old release.
 Any failure before the switch leaves the old release serving; a failure
 after it re-attaches the old release. Schema is never rolled back
 automatically.
+
+## Resetting the demo data (zero downtime)
+
+Each site's `app.env` carries `DEMO_SEED_VERSION`. When the deployed value
+differs from the one recorded in `/opt/<site>/.seeded`, `deploy.sh`:
+
+1. creates a fresh database `aqar_v<version>` beside the live one,
+2. migrates and seeds it with a one-off container,
+3. starts the new release against it and switches traffic as usual,
+4. drops the old database only after the switch succeeded.
+
+The live site keeps serving the old data throughout. Bump the value
+whenever the seeders change in a way the demo should show (version 2 moved
+the demo logins to `@novixa.dev`). Visitors' changes on the demo are reset.
 
 ## One-time setup
 
@@ -88,7 +105,5 @@ automatically.
 # logs of the live release
 ssh root@161.97.75.64 'docker logs -f $(docker ps -qf label=novixa.aqar-demo.role=app)'
 
-# reset the demo data from scratch (destroys everything in the demo DB)
-ssh root@161.97.75.64 'cd /opt/aqar-demo && docker compose down && docker volume rm aqar-demo-db-data && rm .seeded'
-# …then re-run the workflow
+# reset the demo data: bump DEMO_SEED_VERSION in deploy/<site>/app.env and push
 ```

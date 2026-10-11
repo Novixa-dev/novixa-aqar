@@ -23,7 +23,7 @@ permissions:
   contents: read
 
 env:
-  IMAGE: ghcr.io/novixa-dev/novixa-aqar
+  IMAGE: novixa-aqar
   DEPLOY_HOST: 161.97.75.64
   DEPLOY_USER: aqar
   SITE: aqar-demo
@@ -65,19 +65,59 @@ jobs:
       - name: Run tests
         run: php artisan test --no-ansi
 
-  build:
-    name: Build image
+  deploy:
+    name: Build and deploy
     needs: test
     # Runs after a green test job, or alone when tests were explicitly skipped.
     if: ${{ always() && (needs.test.result == 'success' || needs.test.result == 'skipped') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    permissions:
-      contents: read
-      packages: write
-    outputs:
-      image: ${{ env.IMAGE }}:sha-${{ github.sha }}
+    timeout-minutes: 40
+    environment:
+      name: aqar-demo
+      url: https://aqar-demo.novixa.dev
     steps:
+      # Secrets first: a misconfigured secret fails in seconds with a clear
+      # message instead of after a 10-minute build.
+      - name: Check deploy secrets
+        env:
+          KEY: ${{ secrets.AQAR_DEMO_SSH_KEY }}
+          KNOWN: ${{ secrets.AQAR_DEMO_KNOWN_HOSTS }}
+        run: |
+          fail=0
+          if [ -z "$KEY" ]; then
+            echo "::error::Secret AQAR_DEMO_SSH_KEY is missing."; fail=1
+          elif ! printf '%s\n' "$KEY" | grep -q -- '-----BEGIN OPENSSH PRIVATE KEY-----'; then
+            echo "::error::AQAR_DEMO_SSH_KEY must be the whole private key file, from -----BEGIN OPENSSH PRIVATE KEY----- to -----END OPENSSH PRIVATE KEY-----."; fail=1
+          fi
+          if [ -z "$KNOWN" ]; then
+            echo "::error::Secret AQAR_DEMO_KNOWN_HOSTS is missing."; fail=1
+          elif ! printf '%s\n' "$KNOWN" | grep -q "^${DEPLOY_HOST} ssh-ed25519 "; then
+            echo "::error::AQAR_DEMO_KNOWN_HOSTS must be the line starting with '${DEPLOY_HOST} ssh-ed25519 ' (see deploy/aqar-demo/README.md)."; fail=1
+          fi
+          exit $fail
+
+      - name: Configure SSH
+        env:
+          KEY: ${{ secrets.AQAR_DEMO_SSH_KEY }}
+          KNOWN: ${{ secrets.AQAR_DEMO_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          # tr: a key pasted from Windows carries CRLF line endings, which
+          # OpenSSH rejects as "invalid format".
+          printf '%s\n' "$KEY" | tr -d '\r' > ~/.ssh/aqar_demo
+          chmod 600 ~/.ssh/aqar_demo
+          printf '%s\n' "$KNOWN" | tr -d '\r' > ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host aqar-demo
+            HostName ${DEPLOY_HOST}
+            User ${DEPLOY_USER}
+            IdentityFile ~/.ssh/aqar_demo
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+            ServerAliveInterval 15
+          EOF
+          ssh aqar-demo true && echo "SSH to ${DEPLOY_USER}@${DEPLOY_HOST} OK"
+
       - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v7
@@ -91,7 +131,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
-          extensions: mbstring, bcmath, zip, gd, intl
+          extensions: mbstring, bcmath, zip, gd, intl, sockets
           coverage: none
 
       - name: Install PHP packages for the asset build
@@ -104,76 +144,27 @@ jobs:
           npm ci
           npm run build
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push
+      - name: Build image
         uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile
           platforms: linux/amd64
-          push: true
-          tags: |
-            ${{ env.IMAGE }}:sha-${{ github.sha }}
-            ${{ env.IMAGE }}:aqar-demo
-          # Overrides the Dockerfile's upstream LABELs so GHCR links the
-          # package to this repository (and GITHUB_TOKEN may push to it).
+          load: true
+          tags: ${{ env.IMAGE }}:sha-${{ github.sha }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.title=novixa-aqar
-          cache-from: type=gha,scope=aqar-demo
-          cache-to: type=gha,scope=aqar-demo,mode=max
+          cache-from: type=gha,scope=${{ env.SITE }}
+          cache-to: type=gha,scope=${{ env.SITE }},mode=max
 
-  deploy:
-    name: Deploy to aqar-demo.novixa.dev
-    needs: build
-    if: ${{ always() && needs.build.result == 'success' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    environment:
-      name: aqar-demo
-      url: https://aqar-demo.novixa.dev
-    permissions:
-      contents: read
-      packages: read
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Check deploy secrets
-        env:
-          KEY: ${{ secrets.AQAR_DEMO_SSH_KEY }}
-          KNOWN: ${{ secrets.AQAR_DEMO_KNOWN_HOSTS }}
+      # Straight to the server — no container registry, so no package
+      # permissions and no registry credentials on the VPS.
+      - name: Ship image to the server
         run: |
-          if [ -z "$KEY" ] || [ -z "$KNOWN" ]; then
-            echo "::error::Add the AQAR_DEMO_SSH_KEY and AQAR_DEMO_KNOWN_HOSTS repository secrets (see deploy/aqar-demo/README.md)."
-            exit 1
-          fi
-
-      - name: Configure SSH
-        env:
-          KEY: ${{ secrets.AQAR_DEMO_SSH_KEY }}
-          KNOWN: ${{ secrets.AQAR_DEMO_KNOWN_HOSTS }}
-        run: |
-          install -d -m 700 ~/.ssh
-          printf '%s\n' "$KEY" > ~/.ssh/aqar_demo
-          chmod 600 ~/.ssh/aqar_demo
-          printf '%s\n' "$KNOWN" > ~/.ssh/known_hosts
-          cat > ~/.ssh/config <<EOF
-          Host aqar-demo
-            HostName ${DEPLOY_HOST}
-            User ${DEPLOY_USER}
-            IdentityFile ~/.ssh/aqar_demo
-            IdentitiesOnly yes
-            StrictHostKeyChecking yes
-            ServerAliveInterval 15
-          EOF
+          docker save "$IMAGE:sha-$GITHUB_SHA" | gzip -1 | ssh aqar-demo 'gunzip | docker load'
 
       - name: Upload deploy files
         run: |
@@ -184,29 +175,13 @@ jobs:
           ssh aqar-demo "chmod 750 /opt/$SITE/deploy.sh"
 
       - name: Release
-        env:
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ACTOR: ${{ github.actor }}
-          IMAGE_REF: ${{ needs.build.outputs.image }}
-        run: |
-          # The registry login lives only for this release: the job token
-          # expires when the job ends, and it is removed from the server
-          # straight after.
-          # Per-site DOCKER_CONFIG (deploy.sh uses the same path), so two
-          # sites deploying at once never log each other out.
-          DC="DOCKER_CONFIG=/opt/$SITE/.docker"
-          printf '%s' "$TOKEN" | ssh aqar-demo "$DC docker login ghcr.io -u '$ACTOR' --password-stdin >/dev/null"
-          set +e
-          ssh aqar-demo "/opt/$SITE/deploy.sh '$IMAGE_REF'"
-          status=$?
-          ssh aqar-demo "$DC docker logout ghcr.io >/dev/null" || true
-          exit $status
+        run: ssh aqar-demo "/opt/$SITE/deploy.sh '$IMAGE:sha-$GITHUB_SHA'"
 
       - name: Verify through Cloudflare
         run: |
           for path in / /admin/login; do
             code=000
-            for attempt in 1 2 3 4 5; do
+            for _ in 1 2 3 4 5; do
               code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 30 "$SITE_URL$path" || echo 000)"
               [ "$code" = 200 ] && break
               sleep 5
