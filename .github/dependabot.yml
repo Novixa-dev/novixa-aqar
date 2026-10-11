@@ -11,11 +11,12 @@ updates:
     schedule:
       interval: "daily"
     ignore:
-      # @google/model-viewer pins three as a peer (^0.182.0 for 4.2.x,
-      # ^0.183.0 even for 4.4.0); a newer three makes `npm ci` fail with
-      # ERESOLVE and breaks every build. Remove once model-viewer allows it.
+      # three is a peer of @google/model-viewer, which pins one minor at a
+      # time (4.2.x: ^0.182, 4.3.x: ^0.183). A lone three minor bump makes
+      # `npm ci` fail with ERESOLVE and breaks every build, so three moves
+      # only together with model-viewer, by hand. Patch updates still flow.
       - dependency-name: "three"
-        versions: [">= 0.183.0"]
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
   - package-ecosystem: "github-actions"
     # Workflow files stored in the
     # default location of `.github/workflows`
