@@ -8,7 +8,7 @@ class GeneralSettings extends Settings
 {
 
     public string $site_name = 'Dar Hadhramaut Real Estate | دار حضرموت العقارية';
-    public string $site_email = 'info@darhadhramaut.ye';
+    public string $site_email = 'info@novixa.dev';
     public ?string $site_phone = '+967 776 248 526';
     public ?string $site_address = 'المكلا - حضرموت';
     public ?string $site_country = 'اليمن';

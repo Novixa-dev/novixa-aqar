@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Support\DemoAccounts;
 use App\Models\Neighborhood;
 use App\Models\Property;
 use App\Models\PropertyCategory;
@@ -29,7 +30,7 @@ class PropertySeeder extends Seeder
     public function run()
     {
         $faker = Faker::create('ar_SA');
-        $this->agentUserId = User::role('agent')->first()?->id ?? User::where('email', 'admin@darhadhramaut.ye')->first()?->id;
+        $this->agentUserId = User::role('agent')->first()?->id ?? User::where('email', DemoAccounts::email('super_admin'))->first()?->id;
 
         // Every property here is Faker-generated (no natural unique key to
         // firstOrCreate against), so re-running this unconditionally created

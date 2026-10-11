@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Support\DemoAccounts;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -47,7 +48,7 @@ class DemoDataSeederTest extends TestCase
         // by properties.user_id). PropertySeeder writes the legacy 'For
         // Rent' status, normalized by Property::setStatusAttribute() to
         // the canonical 'for_rent' on write — assert against that.
-        $landlordId = DB::table('users')->where('email', 'landlord@darhadhramaut.ye')->value('id');
+        $landlordId = DB::table('users')->where('email', DemoAccounts::email('landlord'))->value('id');
         $this->assertGreaterThan(
             0,
             DB::table('properties')->where('user_id', $landlordId)->where('status', 'for_rent')->count(),
@@ -56,7 +57,7 @@ class DemoDataSeederTest extends TestCase
 
         // The contractor persona has an assigned work order (contractor panel
         // scopes by the contractors-table record carrying their email).
-        $contractorEmail = DB::table('users')->where('email', 'contractor@darhadhramaut.ye')->value('email');
+        $contractorEmail = DB::table('users')->where('email', DemoAccounts::email('contractor'))->value('email');
         $contractorId = DB::table('contractors')->where('email', $contractorEmail)->value('id');
         $this->assertNotNull($contractorId, 'no contractors-table record for the contractor persona');
         $this->assertGreaterThan(
