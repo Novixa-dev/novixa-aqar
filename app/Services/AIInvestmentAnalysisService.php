@@ -169,7 +169,7 @@ class AIInvestmentAnalysisService
             return [
                 'position' => 'average',
                 'price_vs_market' => 0,
-                'competitive_advantage' => 'No comparable properties found',
+                'competitive_advantage' => __('No comparable properties found'),
             ];
         }
         
@@ -177,20 +177,20 @@ class AIInvestmentAnalysisService
         $priceVsMarket = (($property->price - $avgMarketPrice) / $avgMarketPrice) * 100;
         
         $position = 'average';
-        $advantage = 'Property is priced at market average';
+        $advantage = __('Property is priced at market average');
         
         if ($priceVsMarket < -10) {
             $position = 'excellent';
-            $advantage = 'Property is priced significantly below market average - great investment opportunity';
+            $advantage = __('Property is priced significantly below market average - great investment opportunity');
         } elseif ($priceVsMarket < -5) {
             $position = 'good';
-            $advantage = 'Property is priced below market average - good value';
+            $advantage = __('Property is priced below market average - good value');
         } elseif ($priceVsMarket > 10) {
             $position = 'premium';
-            $advantage = 'Property is priced above market average - premium location or features';
+            $advantage = __('Property is priced above market average - premium location or features');
         } elseif ($priceVsMarket > 5) {
             $position = 'above_average';
-            $advantage = 'Property is priced slightly above market average';
+            $advantage = __('Property is priced slightly above market average');
         }
         
         return [

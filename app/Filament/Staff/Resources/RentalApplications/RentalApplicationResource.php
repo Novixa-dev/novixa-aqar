@@ -261,9 +261,9 @@ class RentalApplicationResource extends Resource
         ];
     }
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string | \UnitEnum | null
     {
-        return 'Property Management';
+        return \App\Filament\Support\NavigationGroup::PropertyManagement;
     }
 
     public static function shouldRegisterNavigation(): bool

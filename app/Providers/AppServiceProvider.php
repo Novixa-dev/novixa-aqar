@@ -45,6 +45,15 @@ class AppServiceProvider extends ServiceProvider
         // safe under Octane.
         View::share('brand', $this->app->make(Brand::class));
 
+        // Filament derives a label from the column/field name when none is
+        // given ("Monthly rent", "Is signed"), always in English. Passing
+        // every label through the translator lets lang/ar.json supply the
+        // Arabic for all of them at once; explicit labels are unaffected
+        // (an Arabic or already-translated string has no matching key).
+        \Filament\Forms\Components\Field::configureUsing(fn ($component) => $component->translateLabel());
+        \Filament\Tables\Columns\Column::configureUsing(fn ($column) => $column->translateLabel());
+        \Filament\Infolists\Components\Entry::configureUsing(fn ($entry) => $entry->translateLabel());
+
         // Register Property observer for automatic history tracking
         Property::observe(PropertyObserver::class);
 

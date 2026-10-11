@@ -109,9 +109,9 @@ class LandlordResource extends Resource
         return parent::getEloquentQuery()->role('landlord');
     }
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string | \UnitEnum | null
     {
-        return 'User Management';
+        return \App\Filament\Support\NavigationGroup::UserManagement;
     }
 
     public static function shouldRegisterNavigation(): bool

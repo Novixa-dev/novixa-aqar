@@ -44,7 +44,7 @@ class ZooplaSettingsResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Zoopla Settings';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    protected static string | \UnitEnum | null $navigationGroup = \App\Filament\Support\NavigationGroup::Settings;
 
     public static function shouldRegisterNavigation(): bool
     {

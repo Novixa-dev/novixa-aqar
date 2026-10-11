@@ -12,7 +12,7 @@ class PersonalAccessTokensPage extends Page
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-key';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Account';
+    protected static string | \UnitEnum | null $navigationGroup = \App\Filament\Support\NavigationGroup::Account;
 
     protected static ?int $navigationSort = 3;
 

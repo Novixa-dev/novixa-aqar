@@ -97,7 +97,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentShieldPlugin::make()
-                    ->navigationGroup('Administration'),
+                    ->navigationGroup(\App\Filament\Support\NavigationGroup::Administration),
                 new SocialstreamPlugin(),
             ]);
 
