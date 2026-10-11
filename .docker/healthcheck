@@ -9,21 +9,21 @@ if [ "${container_mode}" = "http" ]; then
 elif [ "${container_mode}" = "horizon" ]; then
     php "${ROOT}/artisan" horizon:status
 elif [ "${container_mode}" = "reverb" ]; then
-    if [ "$(supervisorctl status reverb:reverb_0 | awk '{print tolower($2)}')" = "running" ]; then
+    if [ "$(supervisorctl -c /etc/supervisor/supervisord.conf status reverb:reverb_0 | awk '{print tolower($2)}')" = "running" ]; then
         exit 0
     else
         echo "Healthcheck failed."
         exit 1
     fi
 elif [ "${container_mode}" = "scheduler" ]; then
-    if [ "$(supervisorctl status scheduler:scheduler_0 | awk '{print tolower($2)}')" = "running" ]; then
+    if [ "$(supervisorctl -c /etc/supervisor/supervisord.conf status scheduler:scheduler_0 | awk '{print tolower($2)}')" = "running" ]; then
         exit 0
     else
         echo "Healthcheck failed."
         exit 1
     fi
 elif [ "${container_mode}" = "worker" ]; then
-    if [ "$(supervisorctl status worker:worker_0 | awk '{print tolower($2)}')" = "running" ]; then
+    if [ "$(supervisorctl -c /etc/supervisor/supervisord.conf status worker:worker_0 | awk '{print tolower($2)}')" = "running" ]; then
         exit 0
     else
         echo "Healthcheck failed."

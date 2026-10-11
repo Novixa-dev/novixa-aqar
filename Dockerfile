@@ -147,6 +147,7 @@ COPY --chown=${USER}:${USER} .docker/supervisord.scheduler.conf /etc/supervisor/
 COPY --chown=${USER}:${USER} .docker/supervisord.worker.conf /etc/supervisor/conf.d/
 COPY --chown=${USER}:${USER} .docker/php.ini ${PHP_INI_DIR}/conf.d/99-octane.ini
 COPY --chown=${USER}:${USER} .docker/start-container /usr/local/bin/start-container
+COPY --chown=${USER}:${USER} .docker/healthcheck /usr/local/bin/healthcheck
 
 # Copy environment file
 COPY --chown=${USER}:${USER} .env.example ./.env
@@ -160,7 +161,7 @@ COPY --chown=${USER}:${USER} .env.example ./.env
 # container boot just uses the binary already baked into the image.
 RUN mkdir -p /tmp/opcache-file-cache && php artisan octane:install --server=roadrunner --no-interaction
 
-RUN chmod +x /usr/local/bin/start-container && \
+RUN chmod +x /usr/local/bin/start-container /usr/local/bin/healthcheck && \
     cat .docker/utilities.sh >> ~/.bashrc
 
 # Start as root: a host-mounted volume (Railway's storage/app bind mount)
@@ -178,4 +179,6 @@ EXPOSE 8080
 
 ENTRYPOINT ["start-container"]
 
-HEALTHCHECK --start-period=5s --interval=2s --timeout=5s --retries=8 CMD php artisan octane:status || exit 1
+# Mode-aware (http: octane:status; scheduler/worker/horizon/reverb: their
+# supervisor program), so every container mode reports real health.
+HEALTHCHECK --start-period=60s --interval=15s --timeout=10s --retries=4 CMD healthcheck
