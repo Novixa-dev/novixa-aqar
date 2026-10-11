@@ -27,7 +27,11 @@ class SecurityHeaders
             // script-src, per the CSP spec) so a blob: Web Worker — used
             // during file upload — is allowed without broadening script-src
             // itself, which governs actual script/eval execution.
-            "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://matterport.com https://*.matterport.com https://kuula.co https://*.kuula.co https://3dvista.com https://*.3dvista.com https://3dv.st https://*.3dv.st https://seekbeak.com https://*.seekbeak.com"
+            // static.cloudflareinsights.com: Cloudflare injects its Web
+            // Analytics beacon into every page served through its proxy; the
+            // demos run behind Cloudflare, and without this the beacon is
+            // refused with a console error on every page load.
+            "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://matterport.com https://*.matterport.com https://kuula.co https://*.kuula.co https://3dvista.com https://*.3dvista.com https://3dv.st https://*.3dv.st https://seekbeak.com https://*.seekbeak.com"
         );
 
         if ($request->secure()) {

@@ -1,0 +1,54 @@
+# ==============================================================================
+# Novixa Aqar demo — database for <site>.novixa.dev (installed to
+# /opt/<site> by CI). SITE is exported by deploy.sh (aqar-demo, aqar-demo2, …).
+#
+# Only MySQL is managed by compose. The app containers are started by
+# deploy.sh with `docker run`, because a zero-downtime swap needs the old and
+# the new release running side by side for a few seconds, which a single
+# compose service cannot do.
+#
+#   db.env       generated once on the server by server-setup.sh
+#                (MYSQL_ROOT_PASSWORD, MYSQL_PASSWORD) — never committed
+# ==============================================================================
+
+name: ${SITE:?run via deploy.sh}
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: ${SITE}-db
+    restart: unless-stopped
+    env_file: [db.env]
+    environment:
+      MYSQL_DATABASE: aqar
+      MYSQL_USER: aqar
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      # Small demo box shared with mailcow: keep MySQL's footprint modest.
+      - --innodb-buffer-pool-size=256M
+      - --performance-schema=OFF
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      internal:
+        aliases: ["${SITE}-db"]
+    healthcheck:
+      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    logging:
+      driver: json-file
+      options: { max-size: 10m, max-file: '5' }
+
+networks:
+  # No route out: only the app containers (attached by deploy.sh) reach it.
+  internal:
+    name: ${SITE}-internal
+    internal: true
+
+volumes:
+  db-data:
+    name: ${SITE}-db-data

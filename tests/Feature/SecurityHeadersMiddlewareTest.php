@@ -46,4 +46,18 @@ class SecurityHeadersMiddlewareTest extends TestCase
         $this->assertNotNull($response->headers->get('X-Frame-Options'));
         $this->assertNotNull($response->headers->get('X-XSS-Protection'));
     }
+
+    public function test_csp_allows_only_the_cloudflare_beacon_beyond_self_for_scripts()
+    {
+        $response = $this->get('/');
+
+        preg_match('/script-src ([^;]+)/', (string) $response->headers->get('Content-Security-Policy'), $m);
+        $sources = preg_split('/\s+/', trim($m[1] ?? ''));
+
+        // Cloudflare injects its analytics beacon on proxied pages.
+        $this->assertContains('https://static.cloudflareinsights.com', $sources);
+        // ...without opening scripts to any https origin.
+        $this->assertNotContains('https:', $sources);
+        $this->assertNotContains('*', $sources);
+    }
 }

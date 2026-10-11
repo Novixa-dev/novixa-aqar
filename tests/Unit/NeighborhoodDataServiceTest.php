@@ -8,27 +8,31 @@ use Illuminate\Support\Facades\Http;
 
 class NeighborhoodDataServiceTest extends TestCase
 {
-    protected function setUp(): void
+    // The service makes no request at all without a key (see bde9126), so
+    // the paths that exercise the HTTP call configure one.
+    private function configureKey(): void
     {
-        parent::setUp();
         config([
             'services.neighborhood_data.api_key' => 'test-key',
-            'services.neighborhood_data.base_uri' => 'https://api.example.com',
+            'services.neighborhood_data.base_uri' => 'https://neighborhood.test',
         ]);
     }
 
-    public function test_get_neighborhood_data_returns_null_when_api_key_not_configured()
+    public function test_get_neighborhood_data_returns_null_without_calling_out_when_no_key_is_configured()
     {
         config(['services.neighborhood_data.api_key' => null]);
+        Http::fake();
 
-        $service = new NeighborhoodDataService();
-        $data = $service->getNeighborhoodData('12345');
+        $data = (new NeighborhoodDataService())->getNeighborhoodData('12345');
 
         $this->assertNull($data);
+        Http::assertNothingSent();
     }
 
     public function test_get_neighborhood_data_returns_data_on_success()
     {
+        $this->configureKey();
+
         // Mock the HTTP response
         Http::fake([
             '*/neighborhood/*' => Http::response([
@@ -51,6 +55,8 @@ class NeighborhoodDataServiceTest extends TestCase
 
     public function test_get_neighborhood_data_returns_null_on_failure()
     {
+        $this->configureKey();
+
         // Mock a failed HTTP response
         Http::fake([
             '*/neighborhood/*' => Http::response([], 500)

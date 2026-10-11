@@ -9,6 +9,12 @@
 > مفتاح فيه يعني أنه لا يمكن سحبه لاحقًا حتى لو حُذف من الملف.
 >
 > **آخر تحديث:** 2026-09-11
+>
+> **تحديث 2026-10-11:** هذا السجل يصف بيئة Railway. بيئة العرض الحالية هي
+> https://aqar-demo.novixa.dev (و https://aqar-demo2.novixa.dev لفرع `ui-improves`)
+> — راجع `deploy/aqar-demo/README.md`. الحسابات التجريبية أصبحت على النطاق
+> `@novixa.dev` (المصدر الوحيد: `app/Support/DemoAccounts.php`)، وأي بيئة
+> تُبذر بياناتها بعد هذا التاريخ تستخدم العناوين الجديدة.
 
 ---
 
@@ -212,14 +218,14 @@ QUEUE_CONNECTION   = sync
 
 | الدور | البريد | اللوحة |
 |---|---|---|
-| مدير عام | `admin@darhadhramaut.ye` | `/admin` |
-| موظف | `staff@darhadhramaut.ye` | `/staff` |
-| وكيل | `agent@darhadhramaut.ye` | `/agent` |
-| مشترٍ | `buyer@darhadhramaut.ye` | `/buyer` |
-| بائع | `seller@darhadhramaut.ye` | `/seller` |
-| مالك عقار | `landlord@darhadhramaut.ye` | `/landlord` |
-| مستأجر | `tenant@darhadhramaut.ye` | `/tenant` |
-| مقاول | `contractor@darhadhramaut.ye` | `/contractor` |
+| مدير عام | `admin@novixa.dev` | `/admin` |
+| موظف | `staff@novixa.dev` | `/staff` |
+| وكيل | `agent@novixa.dev` | `/agent` |
+| مشترٍ | `buyer@novixa.dev` | `/buyer` |
+| بائع | `seller@novixa.dev` | `/seller` |
+| مالك عقار | `landlord@novixa.dev` | `/landlord` |
+| مستأجر | `tenant@novixa.dev` | `/tenant` |
+| مقاول | `contractor@novixa.dev` | `/contractor` |
 
 > يوجد أيضًا حساب مدير حقيقي تُنشئه متغيرات `ADMIN_EMAIL` و
 > `ADMIN_PASSWORD` على Railway، وكلمته **ليست** `password`. القيمة

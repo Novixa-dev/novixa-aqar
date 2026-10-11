@@ -1,32 +1,44 @@
 # Test Users
 
-Demo/test accounts created by `database/seeders/UserSeeder.php`. These are seeded
-only in non-production environments (the seeder throws if `app()->environment('production')`).
+Demo accounts created by `database/seeders/UserSeeder.php` from the single
+source of truth `app/Support/DemoAccounts.php`. They are seeded only in
+non-production environments (the seeder throws in `production`).
 
-Seed them with:
+**Live demos:** <https://aqar-demo.novixa.dev> (`main`) ·
+<https://aqar-demo2.novixa.dev> (`ui-improves`)
+**Password for every account:** `password`
+
+| Role (Spatie) | Arabic label | Email | Name | Panel |
+|---|---|---|---|---|
+| `super_admin` | مدير النظام | `admin@novixa.dev` | عبدالرحمن باعباد | `/admin` |
+| `staff` | موظف الإدارة | `staff@novixa.dev` | سارة الحضرمي | `/staff` |
+| `agent` | وكيل عقاري | `agent@novixa.dev` | خالد بن طالب | `/agent` |
+| `landlord` | مالك عقار | `landlord@novixa.dev` | سالم باوزير | `/landlord` |
+| `tenant` | مستأجر | `tenant@novixa.dev` | محمد العمودي | `/tenant` |
+| `buyer` | مشتري | `buyer@novixa.dev` | فاطمة الكثيري | `/buyer` |
+| `seller` | بائع | `seller@novixa.dev` | عمر بامطرف | `/seller` |
+| `contractor` | مقاول صيانة | `contractor@novixa.dev` | ياسر بن بريك | `/contractor` |
+
+All accounts end in **`@novixa.dev`**. The earlier `@darhadhramaut.ye` and
+`@aqar-demo.dexal.net` addresses no longer exist in newly seeded databases.
+
+What each role can do: [`docs/product/02-USERS-AND-ROLES.md`](product/02-USERS-AND-ROLES.md).
+Guided demo script (Arabic): [`docs/product/05-DEMO-GUIDE-AR.md`](product/05-DEMO-GUIDE-AR.md).
+
+## Seeding
 
 ```bash
-php artisan db:seed --class=RolesSeeder
-php artisan db:seed --class=UserSeeder
+php artisan db:seed                       # everything, including these users
+php artisan db:seed --class=RolesSeeder   # roles must exist first …
+php artisan db:seed --class=UserSeeder    # … then the users
 ```
 
-Default password for **every** account below: `password`
-
-| Role | Email | Name | Notes |
-|---|---|---|---|
-| super_admin | admin@darhadhramaut.ye | Admin User | Full access, assigned all permissions |
-| staff | staff@darhadhramaut.ye | Staff User | view/create/update on most resources, no deletes |
-| agent | agent@darhadhramaut.ye | Agent User | Properties, appointments, bookings, leads |
-| buyer | buyer@darhadhramaut.ye | Buyer User | Browse properties, bookings, favorites, reviews |
-| seller | seller@darhadhramaut.ye | Seller User | Manage own property listings and documents |
-| landlord | landlord@darhadhramaut.ye | Landlord User | Properties, leases, tenants, rental applications |
-| tenant | tenant@darhadhramaut.ye | Tenant User | Lease, maintenance requests, payments |
-| contractor | contractor@darhadhramaut.ye | Contractor User | Maintenance requests, documents |
-
-## Notes
-
-- All users are attached to the first `Team` record (`Team::first()`), if one exists.
-- Roles/permissions come from `database/seeders/RolesSeeder.php` — run it before
-  `UserSeeder` so roles exist to assign.
-- `UserSeeder` uses `firstOrCreate`, so re-running it is safe and won't duplicate users.
-- Do not run this seeder in production; it will throw a `RuntimeException`.
+- Every account joins the first `Team` and has it set as its current team.
+- `UserSeeder` uses `firstOrCreate`, so re-running it never duplicates users.
+- Changing an address or the domain: edit `app/Support/DemoAccounts.php` only.
+  Seeders, `php artisan demo:audit` and the tests all read from it.
+- On the live demos, bump `DEMO_SEED_VERSION` in `deploy/<site>/app.env` to
+  rebuild the demo database from the seeders on the next deploy (zero
+  downtime; see `deploy/aqar-demo/README.md`).
+- `php artisan demo:audit` logs in as all eight accounts over HTTP and checks
+  that each reaches its panel.

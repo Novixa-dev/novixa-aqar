@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Support\DemoAccounts;
 use App\Models\Booking;
 use App\Models\Contact;
 use App\Models\Lease;
@@ -32,11 +33,11 @@ class DemoWorkflowSeeder extends Seeder
         }
 
         $teamId = 1;
-        $landlord = User::where('email', 'landlord@darhadhramaut.ye')->first();
-        $agent = User::where('email', 'agent@darhadhramaut.ye')->first();
-        $staff = User::where('email', 'staff@darhadhramaut.ye')->first();
-        $tenantUser = User::where('email', 'tenant@darhadhramaut.ye')->first();
-        $buyerUser = User::where('email', 'buyer@darhadhramaut.ye')->first();
+        $landlord = User::where('email', DemoAccounts::email('landlord'))->first();
+        $agent = User::where('email', DemoAccounts::email('agent'))->first();
+        $staff = User::where('email', DemoAccounts::email('staff'))->first();
+        $tenantUser = User::where('email', DemoAccounts::email('tenant'))->first();
+        $buyerUser = User::where('email', DemoAccounts::email('buyer'))->first();
 
         // Give the landlord direct ownership of several rentals so their
         // panel shows inventory and ownership-scoped resources have rows.
@@ -49,7 +50,7 @@ class DemoWorkflowSeeder extends Seeder
 
         // Give the seller persona a portfolio of sale listings so their
         // dashboard and ownership-scoped resources are not empty in the demo.
-        $seller = User::where('email', 'seller@darhadhramaut.ye')->first();
+        $seller = User::where('email', DemoAccounts::email('seller'))->first();
         if ($seller) {
             Property::where('status', Property::STATUS_FOR_SALE)
                 ->orderBy('id')
@@ -163,13 +164,13 @@ class DemoWorkflowSeeder extends Seeder
                     'status' => 'active',
                     'payment_terms' => 'net_30',
                     'team_id' => $teamId,
-                    'added_by' => User::where('email', 'admin@darhadhramaut.ye')->value('id') ?? 1,
+                    'added_by' => User::where('email', DemoAccounts::email('super_admin'))->value('id') ?? 1,
                 ]
             );
         }
 
         // Link the seeded contractor persona to the first vendor company.
-        $contractorUserId = User::where('email', 'contractor@darhadhramaut.ye')->first();
+        $contractorUserId = User::where('email', DemoAccounts::email('contractor'))->first();
 
         // The contractor panel scopes work orders by the contractors-table
         // record carrying the persona's email.
@@ -207,8 +208,7 @@ class DemoWorkflowSeeder extends Seeder
         // --- Leases (tenant_id -> users.id) ---
         $leaseUsers = array_values(array_filter([
             $tenantUser,
-            User::where('email', 'appuser@darhadhramaut.ye')->first(),
-            User::where('email', 'buyer@darhadhramaut.ye')->first(),
+            User::where('email', DemoAccounts::email('buyer'))->first(),
         ]));
         $leaseRows = [];
         foreach ($leaseUsers as $i => $u) {

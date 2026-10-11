@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Support\DemoAccounts;
 use App\Models\Booking;
 use App\Models\ChatConversation;
 use App\Models\ChatMessage;
@@ -42,16 +43,15 @@ class DemoDataCompletionSeeder extends Seeder
 
         $teamId = 1;
 
-        $admin = User::where('email', 'admin@darhadhramaut.ye')->first();
-        $staff = User::where('email', 'staff@darhadhramaut.ye')->first();
-        $buyer = User::where('email', 'buyer@darhadhramaut.ye')->first();
-        $seller = User::where('email', 'seller@darhadhramaut.ye')->first();
-        $landlord = User::where('email', 'landlord@darhadhramaut.ye')->first();
-        $tenant = User::where('email', 'tenant@darhadhramaut.ye')->first();
-        $appUser = User::where('email', 'appuser@darhadhramaut.ye')->first();
+        $admin = User::where('email', DemoAccounts::email('super_admin'))->first();
+        $staff = User::where('email', DemoAccounts::email('staff'))->first();
+        $buyer = User::where('email', DemoAccounts::email('buyer'))->first();
+        $seller = User::where('email', DemoAccounts::email('seller'))->first();
+        $landlord = User::where('email', DemoAccounts::email('landlord'))->first();
+        $tenant = User::where('email', DemoAccounts::email('tenant'))->first();
 
         $this->seedPropertyFeatures($teamId);
-        $this->seedReviews($buyer, $tenant, $appUser, $landlord, $seller);
+        $this->seedReviews($buyer, $tenant, $landlord, $seller);
         $this->seedFavorites($teamId, $buyer, $tenant);
         $this->seedKeyLocations($teamId);
         $this->seedPropertyTemplates();
@@ -103,7 +103,7 @@ class DemoDataCompletionSeeder extends Seeder
     }
 
     /** Property + neighborhood reviews, tied to users who plausibly interacted (booked/leased). */
-    private function seedReviews(?User $buyer, ?User $tenant, ?User $appUser, ?User $landlord, ?User $seller): void
+    private function seedReviews(?User $buyer, ?User $tenant, ?User $landlord, ?User $seller): void
     {
         $bookedPropertyIds = $buyer
             ? Booking::where('user_id', $buyer->id)->pluck('property_id')->unique()->values()
@@ -138,12 +138,8 @@ class DemoDataCompletionSeeder extends Seeder
         }
 
         // A couple of generic reviews on properties not already reviewed
-        // above, for broader coverage. `appuser@darhadhramaut.ye` (the
-        // roleless self-registered persona referenced elsewhere in
-        // DemoWorkflowSeeder) does not actually exist in UserSeeder's
-        // output -- verified via a fresh seed, zero such row -- so this
-        // uses real, always-present personas instead of silently no-oping.
-        $genericReviewer = $buyer ?? $appUser;
+        // above, for broader coverage, from always-present personas.
+        $genericReviewer = $buyer;
         if ($genericReviewer) {
             $genericTargets = Property::whereDoesntHave('reviews')->orderBy('id')->take(2)->get();
             $genericCopy = [
@@ -165,7 +161,7 @@ class DemoDataCompletionSeeder extends Seeder
 
         // One genuinely pending review, so the moderation queue behind
         // "approved => true" filtering isn't permanently empty either.
-        $pendingReviewer = $tenant ?? $appUser;
+        $pendingReviewer = $tenant;
         $pendingTarget = Property::whereDoesntHave('reviews')->orderBy('id')->first();
         if ($pendingReviewer && $pendingTarget) {
             Review::firstOrCreate([
