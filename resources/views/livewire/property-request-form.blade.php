@@ -58,7 +58,7 @@
                     <select id="property_type" wire:model="property_type" 
                         class="w-full p-3 text-sm rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white">
                         <option value="">اختر نوع العقار</option>
-                        <option value="apartment">شقة سكينة</option>
+                        <option value="apartment">شقة سكنية</option>
                         <option value="villa">فيلا</option>
                         <option value="land">أرض سكنية / تجارية</option>
                         <option value="commercial">محل تجاري / مكتب</option>
