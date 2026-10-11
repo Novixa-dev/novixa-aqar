@@ -28,10 +28,11 @@ class OnTheMarketSyncStatus extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject('OnTheMarket Sync Status')
-                    ->line('The OnTheMarket sync has completed.')
-                    ->line('Status: ' . $this->status)
-                    ->line('Message: ' . $this->message);
+            ->subject(__('OnTheMarket sync: :status', ['status' => $this->status]))
+            ->line(__('The OnTheMarket sync has completed.'))
+            ->line(__('Status: :status', ['status' => $this->status]))
+            ->line(__('Details: :message', ['message' => $this->message]))
+            ->salutation(__('Kind regards,')."\n".app(\App\Support\Brand::class)->name());
     }
 
     public function toArray($notifiable)

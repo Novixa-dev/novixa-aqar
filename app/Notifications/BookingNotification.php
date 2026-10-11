@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Support\StatusLabels;
 use App\Models\Booking;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,11 +29,24 @@ class BookingNotification extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->subject("Booking {$this->action}")
-                    ->line("Your booking for {$this->booking->property->title} has been {$this->action}.")
-                    ->line("Date: {$this->booking->date->format('F j, Y')}")
-                    ->line("Time: {$this->booking->time->format('g:i A')}");
+        $property = $this->booking->property->title ?? '';
+        $status = StatusLabels::label('booking', $this->action);
+
+        $message = (new MailMessage)
+            ->subject(__('Viewing booking: :status', ['status' => $status]))
+            ->greeting(__('Hello :name,', ['name' => $notifiable->name ?? '']));
+
+        $message = match ($this->action) {
+            'reminder' => $message->line(__('This is a reminder of your viewing of :property.', ['property' => $property])),
+            'feedback_request' => $message->line(__('Thank you for viewing :property. We would value your feedback.', ['property' => $property])),
+            default => $message->line(__('Your viewing booking for :property is now: :status.', ['property' => $property, 'status' => $status])),
+        };
+
+        return $message
+            ->line(__('Date: :date', ['date' => $this->booking->date->translatedFormat('j F Y')]))
+            ->line(__('Time: :time', ['time' => $this->booking->time->translatedFormat('g:i A')]))
+            ->action(__('View property'), url('/properties/'.$this->booking->property_id))
+            ->salutation(__('Kind regards,')."\n".app(\App\Support\Brand::class)->name());
     }
 
     public function toArray($notifiable)
