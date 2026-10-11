@@ -40,4 +40,13 @@ class ArabicTranslationsTest extends TestCase
         // An explicit label is left exactly as written.
         $this->assertSame('عنوان مخصص', (string) \Filament\Forms\Components\TextInput::make('x')->label('عنوان مخصص')->getLabel());
     }
+
+    public function test_livewire_field_names_read_naturally_in_validation_messages(): void
+    {
+        $errors = validator([], ['selectedDate' => 'required', 'userName' => 'required'])->errors();
+
+        $this->assertStringContainsString('التاريخ', $errors->first('selectedDate'));
+        $this->assertStringContainsString('الاسم', $errors->first('userName'));
+        $this->assertStringNotContainsString('selected', $errors->first('selectedDate'));
+    }
 }
