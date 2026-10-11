@@ -16,7 +16,7 @@
         "laravel-vite-plugin": "3.2",
         "postcss": "^8.5.29",
         "postcss-nesting": "^13.0.0",
-        "sass-embedded": "^1.103.1",
+        "sass-embedded": "^1.105.1",
         "tailwindcss": "^4.1.17",
         "vite": "^8.3.3"
     },
