@@ -63,6 +63,15 @@ class PropertyDetail extends Component
     public function mount($propertyId)
     {
         $this->property = Property::with(['neighborhood', 'features', 'team', 'category', 'reviews.user', 'histories'])->findOrFail($propertyId);
+
+        // A listing still in (or rejected by) moderation is only visible to
+        // its owner and the office; everyone else gets a plain 404.
+        $user = auth()->user();
+        abort_unless(
+            $this->property->isPubliclyVisible()
+                || ($user && ($user->id === $this->property->user_id || $user->hasAnyRole(['super_admin', 'admin', 'staff', 'agent']))),
+            404
+        );
         $this->neighborhood = $this->property->neighborhood;
         $this->team = $this->property->team;
         $this->isLettingsProperty = $this->property->category && $this->property->category->name === 'lettings';

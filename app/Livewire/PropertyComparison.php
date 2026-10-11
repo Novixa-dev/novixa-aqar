@@ -21,7 +21,7 @@ class PropertyComparison extends Component
 
     public function loadProperties()
     {
-        $this->properties = Property::whereIn('id', $this->propertyIds)->get();
+        $this->properties = Property::publiclyVisible()->whereIn('id', $this->propertyIds)->get();
     }
 
     public function addProperty($propertyId)

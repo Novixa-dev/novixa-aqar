@@ -99,7 +99,7 @@ class PropertyList extends Component
     public function getPropertiesProperty()
     {
         try {
-            $query = Property::query();
+            $query = Property::query()->publiclyVisible();
 
             if (!empty($this->search)) {
                 $query->where(function ($q) {
@@ -150,7 +150,7 @@ class PropertyList extends Component
 
             return $query->paginate(12);
         } catch (Exception $e) {
-            return Property::latest()->paginate(12);
+            return Property::publiclyVisible()->latest()->paginate(12);
         }
     }
 

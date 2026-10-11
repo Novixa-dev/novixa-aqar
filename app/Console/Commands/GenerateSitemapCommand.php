@@ -57,7 +57,7 @@ class GenerateSitemapCommand extends Command
             // for 'published'/'active'/'available', which matched neither
             // convention, so the sitemap has never actually included a
             // single property regardless of which one a given record uses.
-            Property::whereIn('status', ['For Sale', 'For Rent', 'for_sale', 'for_rent'])
+            Property::publiclyVisible()->whereIn('status', ['For Sale', 'For Rent', 'for_sale', 'for_rent'])
                 ->get()
                 ->each(function (Property $property) use ($sitemap) {
                     $sitemap->add(
