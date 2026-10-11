@@ -27,6 +27,10 @@ env:
   IMAGE: novixa-aqar
   DEPLOY_HOST: 161.97.75.64
   DEPLOY_USER: aqar
+  # The server's SSH host key. Public by nature (every SSH client sees it),
+  # so it is pinned here rather than kept as a secret; StrictHostKeyChecking
+  # makes the deploy refuse any server that does not present exactly this.
+  DEPLOY_HOST_KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPlYRXIwubAfrs8ZNnuWAh1qSkbHJvmedqjHap1Ox18+
   SITE: aqar-demo2
   SITE_URL: https://aqar-demo2.novixa.dev
 
@@ -79,35 +83,26 @@ jobs:
     steps:
       # Secrets first: a misconfigured secret fails in seconds with a clear
       # message instead of after a 10-minute build.
-      - name: Check deploy secrets
+      - name: Check deploy secret
         env:
           KEY: ${{ secrets.AQAR_DEMO_SSH_KEY }}
-          KNOWN: ${{ secrets.AQAR_DEMO_KNOWN_HOSTS }}
         run: |
-          fail=0
           if [ -z "$KEY" ]; then
-            echo "::error::Secret AQAR_DEMO_SSH_KEY is missing."; fail=1
+            echo "::error::Secret AQAR_DEMO_SSH_KEY is missing."; exit 1
           elif ! printf '%s\n' "$KEY" | grep -q -- '-----BEGIN OPENSSH PRIVATE KEY-----'; then
-            echo "::error::AQAR_DEMO_SSH_KEY must be the whole private key file, from -----BEGIN OPENSSH PRIVATE KEY----- to -----END OPENSSH PRIVATE KEY-----."; fail=1
+            echo "::error::AQAR_DEMO_SSH_KEY must be the whole private key file, from -----BEGIN OPENSSH PRIVATE KEY----- to -----END OPENSSH PRIVATE KEY-----."; exit 1
           fi
-          if [ -z "$KNOWN" ]; then
-            echo "::error::Secret AQAR_DEMO_KNOWN_HOSTS is missing."; fail=1
-          elif ! printf '%s\n' "$KNOWN" | grep -q "^${DEPLOY_HOST} ssh-ed25519 "; then
-            echo "::error::AQAR_DEMO_KNOWN_HOSTS must be the line starting with '${DEPLOY_HOST} ssh-ed25519 ' (see deploy/aqar-demo/README.md)."; fail=1
-          fi
-          exit $fail
 
       - name: Configure SSH
         env:
           KEY: ${{ secrets.AQAR_DEMO_SSH_KEY }}
-          KNOWN: ${{ secrets.AQAR_DEMO_KNOWN_HOSTS }}
         run: |
           install -d -m 700 ~/.ssh
           # tr: a key pasted from Windows carries CRLF line endings, which
           # OpenSSH rejects as "invalid format".
           printf '%s\n' "$KEY" | tr -d '\r' > ~/.ssh/aqar_demo
           chmod 600 ~/.ssh/aqar_demo
-          printf '%s\n' "$KNOWN" | tr -d '\r' > ~/.ssh/known_hosts
+          printf '%s %s\n' "$DEPLOY_HOST" "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
           cat > ~/.ssh/config <<EOF
           Host aqar-demo
             HostName ${DEPLOY_HOST}

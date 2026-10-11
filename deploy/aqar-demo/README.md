@@ -89,12 +89,16 @@ the demo logins to `@novixa.dev`). Visitors' changes on the demo are reset.
    and persisted in mailcow's `docker-compose.override.yml`), and a copy of
    the `*.novixa.dev` Cloudflare Origin certificate for this site.
 
-2. **GitHub → Settings → Secrets and variables → Actions**:
+2. **GitHub → Settings → Secrets and variables → Actions**: one secret.
 
    | Secret | Value |
    |---|---|
-   | `AQAR_DEMO_SSH_KEY` | the CI private key (whole file, including `BEGIN`/`END`) |
-   | `AQAR_DEMO_KNOWN_HOSTS` | `161.97.75.64 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPlYRXIwubAfrs8ZNnuWAh1qSkbHJvmedqjHap1Ox18+` |
+   | `AQAR_DEMO_SSH_KEY` | the CI private key — the **whole file**, from `-----BEGIN OPENSSH PRIVATE KEY-----` to `-----END OPENSSH PRIVATE KEY-----` |
+
+   The server's host key is public, so it is pinned in the workflow itself
+   (`DEPLOY_HOST_KEY`); the deploy refuses any server that presents a
+   different one. If the server is ever rebuilt, update that line from
+   `ssh-keyscan -t ed25519 161.97.75.64`.
 
 3. **Cloudflare**: `aqar-demo` A record → `161.97.75.64`, proxied (already
    done). SSL/TLS mode **Full (strict)** works with the origin certificate.
