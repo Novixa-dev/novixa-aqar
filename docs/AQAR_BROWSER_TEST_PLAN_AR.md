@@ -1,7 +1,7 @@
 # خطة الفحص النهائي عبر المتصفح — Novixa Aqar
 
 > **الغرض:** فحص الديمو بالكامل قبل عرضه على أي جهة خارجية.
-> **الرابط:** https://web-production-68b34.up.railway.app
+> **الرابط:** https://aqar-demo.novixa.dev
 > **كلمة المرور لكل الحسابات التجريبية:** `password`
 > **الوقت المتوقع:** ‎90–120 دقيقة للفحص الكامل · ‎10 دقائق لفحص الدخان فقط.
 > **المستندات المرافقة:** `docs/AQAR_EXTERNAL_SERVICES_PLAN_AR.md` ·
@@ -49,7 +49,7 @@
 - [ ] `/` تفتح بحالة 200 وتعرض محتوى عربيًا.
 - [ ] `/up` تُرجع استجابة سليمة (نقطة الفحص الصحي).
 - [ ] `/properties` تعرض قائمة عقارات فيها **صور فعلية** وليست مربعات فارغة.
-- [ ] `/login` تفتح ويمكن الدخول بحساب `admin@darhadhramaut.ye`.
+- [ ] `/login` تفتح ويمكن الدخول بحساب `admin@novixa.dev`.
 - [ ] لوحة `/admin` تفتح بعد الدخول بلا خطأ.
 - [ ] تبويب Console خالٍ من أخطاء حمراء في هذه الصفحات الخمس.
 
@@ -176,14 +176,14 @@
 
 | # | الدور | البريد | اللوحة | النتيجة |
 |---|---|---|---|---|
-| 1 | مدير عام | `admin@darhadhramaut.ye` | `/admin` | [ ] |
-| 2 | موظف | `staff@darhadhramaut.ye` | `/staff` | [ ] |
-| 3 | وكيل | `agent@darhadhramaut.ye` | `/agent` | [ ] |
-| 4 | مشترٍ | `buyer@darhadhramaut.ye` | `/buyer` | [ ] |
-| 5 | بائع | `seller@darhadhramaut.ye` | `/seller` | [ ] |
-| 6 | مالك عقار | `landlord@darhadhramaut.ye` | `/landlord` | [ ] |
-| 7 | مستأجر | `tenant@darhadhramaut.ye` | `/tenant` | [ ] |
-| 8 | مقاول | `contractor@darhadhramaut.ye` | `/contractor` | [ ] |
+| 1 | مدير عام | `admin@novixa.dev` | `/admin` | [ ] |
+| 2 | موظف | `staff@novixa.dev` | `/staff` | [ ] |
+| 3 | وكيل | `agent@novixa.dev` | `/agent` | [ ] |
+| 4 | مشترٍ | `buyer@novixa.dev` | `/buyer` | [ ] |
+| 5 | بائع | `seller@novixa.dev` | `/seller` | [ ] |
+| 6 | مالك عقار | `landlord@novixa.dev` | `/landlord` | [ ] |
+| 7 | مستأجر | `tenant@novixa.dev` | `/tenant` | [ ] |
+| 8 | مقاول | `contractor@novixa.dev` | `/contractor` | [ ] |
 | 9 | لوحة التطبيق | أي حساب | `/app` | [ ] |
 
 ### 6.1 لكل شخصية — الفحص الإلزامي
@@ -272,8 +272,10 @@
 - [ ] لا تظهر رسالة خطأ للمستخدم بعد الإرسال.
 
 > **قيد معروف:** قبل توثيق النطاق، لا يستطيع Resend الإرسال إلا إلى بريد
-> مالك الحساب. إشعارات الحسابات التجريبية (`@darhadhramaut.ye`) لن تصل
-> لأنها عناوين غير حقيقية أصلًا. التفاصيل في `docs/AQAR_KEYS_AND_SERVICES_AR.md`.
+> مالك الحساب. إشعارات الحسابات التجريبية (`@novixa.dev`) لن تصل
+> لأنه لا توجد لها صناديق بريد فعلية، وعلى https://aqar-demo.novixa.dev يُكتب
+> البريد الصادر في السجل (`MAIL_MAILER=log`) بدل إرساله. التفاصيل في
+> `docs/AQAR_KEYS_AND_SERVICES_AR.md`.
 
 ### 8.3 الذكاء الاصطناعي
 
