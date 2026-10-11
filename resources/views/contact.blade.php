@@ -62,7 +62,7 @@
             </a>
 
             <!-- Email Channel -->
-            <a href="mailto:info@darhadhramaut.ye"
+            <a href="mailto:info@novixa.dev"
                class="bg-white dark:bg-[#1C1816] rounded-2xl p-5 shadow-lg border border-stone-200/80 dark:border-stone-800 hover:border-[#8C7869] transition-all flex items-center gap-4 group hover:-translate-y-0.5">
                 <div class="w-12 h-12 rounded-xl bg-[#8C7869]/10 text-[#8C7869] flex items-center justify-center shrink-0 group-hover:bg-[#8C7869] group-hover:text-white transition-colors">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
@@ -71,7 +71,7 @@
                 </div>
                 <div class="overflow-hidden">
                     <span class="text-xs text-stone-400 block font-bold uppercase tracking-wider">{{ app()->getLocale() === 'ar' ? 'البريد الإلكتروني' : 'Official Email' }}</span>
-                    <strong class="text-sm font-bold text-stone-900 dark:text-white truncate block">info@darhadhramaut.ye</strong>
+                    <strong class="text-sm font-bold text-stone-900 dark:text-white truncate block">info@novixa.dev</strong>
                 </div>
             </a>
         </div>
@@ -126,14 +126,14 @@
                             </a>
 
                             <!-- Email Row -->
-                            <a href="mailto:info@darhadhramaut.ye"
+                            <a href="mailto:info@novixa.dev"
                                class="flex items-center gap-3 p-4 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs sm:text-sm border border-white/15 transition-all">
                                 <span class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white shrink-0">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                                     </svg>
                                 </span>
-                                <span>info@darhadhramaut.ye</span>
+                                <span>info@novixa.dev</span>
                             </a>
 
                             <!-- Working Hours Row -->

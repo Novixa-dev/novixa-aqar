@@ -193,5 +193,5 @@ return [
         'system' => env('ACCOUNTING_SYSTEM'),
     ],
 
-    'contact_inbox' => env('CONTACT_INBOX_EMAIL', env('MAIL_FROM_ADDRESS', 'info@darhadhramaut.ye')),
+    'contact_inbox' => env('CONTACT_INBOX_EMAIL', env('MAIL_FROM_ADDRESS', 'info@novixa.dev')),
 ];

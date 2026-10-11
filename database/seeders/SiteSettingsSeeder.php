@@ -12,7 +12,7 @@ class SiteSettingsSeeder extends Seeder
         $settings = app(GeneralSettings::class);
 
         $settings->site_name = 'Dar Hadhramaut Real Estate | دار حضرموت العقارية';
-        $settings->site_email = 'info@darhadhramaut.ye';
+        $settings->site_email = 'info@novixa.dev';
         $settings->site_phone = '+967 776 248 526';
         $settings->site_address = 'Al-Mukalla, Hadhramaut, Yemen';
         $settings->site_country = 'Yemen';

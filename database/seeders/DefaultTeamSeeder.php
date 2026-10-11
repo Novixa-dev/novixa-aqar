@@ -29,7 +29,7 @@ class DefaultTeamSeeder extends Seeder
                 'address' => 'شارع الملكة أروى، حي فوه، المكلا، حضرموت، اليمن',
                 'phone_number' => '+967 776 248 526',
                 'phone' => '+967 776 248 526',
-                'email' => 'info@darhadhramaut.ye',
+                'email' => 'info@novixa.dev',
             ]
         );
 
@@ -41,7 +41,7 @@ class DefaultTeamSeeder extends Seeder
             ['team_id' => $team->id],
             [
                 'agency_name' => 'Dar Hadhramaut Real Estate | دار حضرموت العقارية',
-                'email' => 'info@darhadhramaut.ye',
+                'email' => 'info@novixa.dev',
                 'phone' => '+967 776 248 526',
                 'address' => [
                     'line_1' => 'شارع الملكة أروى، حي فوه',

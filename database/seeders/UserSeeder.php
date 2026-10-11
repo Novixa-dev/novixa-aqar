@@ -5,10 +5,10 @@ namespace Database\Seeders;
 use App\Models\Role;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\DemoAccounts;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -24,57 +24,38 @@ class UserSeeder extends Seeder
             );
         }
 
-        $adminPassword = 'password';
-        $adminUser = User::firstOrCreate(
-            ['email' => 'admin@darhadhramaut.ye'],
-            [
-                'name' => 'Admin User',
-                'password' => Hash::make($adminPassword),
-                'email_verified_at' => now(),
-            ]
-        );
-
         $team = Team::first();
-        if ($team) {
-            $adminUser->teams()->syncWithoutDetaching([$team->id]);
-            // switchTeam() (not a raw current_team_id assignment) also
-            // verifies membership - without this, current_team_id stays null
-            // and every team-scoped feature (V1 API's TenantCrudController,
-            // any ->current_team_id lookup) throws "select an organisation"
-            // for every seeded demo account. Previously unset for all 8 roles.
-            if (is_null($adminUser->current_team_id)) {
-                $adminUser->switchTeam($team);
-            }
-        }
 
-        $role = Role::where('name', 'super_admin')->first();
-        if ($role) {
-            $adminUser->assignRole($role);
-        }
-
-        // Create standard test users for other roles
-        $roles = ['staff', 'agent', 'buyer', 'seller', 'landlord', 'tenant', 'contractor'];
-        foreach ($roles as $roleName) {
+        // One persona per role, all defined in App\Support\DemoAccounts
+        // (emails @novixa.dev, shared demo password).
+        foreach (DemoAccounts::all() as $roleName => $account) {
             $user = User::firstOrCreate(
-                ['email' => "{$roleName}@darhadhramaut.ye"],
+                ['email' => $account['email']],
                 [
-                    'name' => ucfirst($roleName) . ' User',
-                    'password' => Hash::make('password'),
+                    'name' => $account['name'],
+                    'password' => Hash::make(DemoAccounts::PASSWORD),
                     'email_verified_at' => now(),
                 ]
             );
+
             if ($team) {
                 $user->teams()->syncWithoutDetaching([$team->id]);
+                // switchTeam() (not a raw current_team_id assignment) also
+                // verifies membership - without this, current_team_id stays
+                // null and every team-scoped feature (V1 API's
+                // TenantCrudController, any ->current_team_id lookup) throws
+                // "select an organisation" for every seeded demo account.
                 if (is_null($user->current_team_id)) {
                     $user->switchTeam($team);
                 }
             }
-            $r = Role::where('name', $roleName)->first();
-            if ($r) {
-                $user->assignRole($r);
+
+            $role = Role::where('name', $roleName)->first();
+            if ($role) {
+                $user->assignRole($role);
             }
         }
 
-        echo "Seeded users successfully. Default password for all users: password\n";
+        echo "Seeded demo users (@".DemoAccounts::DOMAIN."). Default password for all users: ".DemoAccounts::PASSWORD."\n";
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Support\DemoAccounts;
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -50,17 +51,6 @@ class DemoAudit extends Command
         '/booking-calendar', '/login', '/register', '/sitemap.xml', '/up',
     ];
 
-    /** email => [panel path, label]. Password is the seeded demo one. */
-    private const PERSONAS = [
-        'admin@darhadhramaut.ye' => ['/admin', 'super admin'],
-        'staff@darhadhramaut.ye' => ['/staff', 'staff'],
-        'agent@darhadhramaut.ye' => ['/agent', 'agent'],
-        'buyer@darhadhramaut.ye' => ['/buyer', 'buyer'],
-        'seller@darhadhramaut.ye' => ['/seller', 'seller'],
-        'landlord@darhadhramaut.ye' => ['/landlord', 'landlord'],
-        'tenant@darhadhramaut.ye' => ['/tenant', 'tenant'],
-        'contractor@darhadhramaut.ye' => ['/contractor', 'contractor'],
-    ];
 
     public function handle(): int
     {
@@ -319,7 +309,7 @@ class DemoAudit extends Command
     {
         $this->out('--- PERSONAS ---');
 
-        foreach (self::PERSONAS as $email => [$panel, $label]) {
+        foreach (DemoAccounts::all() as $role => ['email' => $email, 'panel' => $panel, 'label_en' => $label]) {
             $jar = new CookieJar;
 
             $this->check("login {$label}", function () use ($email, $jar) {
@@ -335,7 +325,7 @@ class DemoAudit extends Command
                     ->post($this->base.'/login', [
                         '_token' => $token,
                         'email' => $email,
-                        'password' => 'password',
+                        'password' => DemoAccounts::PASSWORD,
                     ]);
 
                 // A successful Fortify login redirects; a rejected one comes
@@ -415,8 +405,8 @@ class DemoAudit extends Command
                 ->asForm()
                 ->post($this->base.'/login', [
                     '_token' => $token,
-                    'email' => 'tenant@darhadhramaut.ye',
-                    'password' => 'password',
+                    'email' => DemoAccounts::email('tenant'),
+                    'password' => DemoAccounts::PASSWORD,
                 ]);
 
             $this->check('tenant is denied /admin', function () use ($jar) {
