@@ -22,6 +22,7 @@
 #   4. point nginx at the new release (nginx -t, graceful reload), verify
 #      end to end; any failure restores the previous site file
 #   5. after a grace period for in-flight requests, remove the old release
+#   6. replace the scheduler container (exactly one per site)
 #
 # Schema is not rolled back automatically: migrate:rollback can destroy data.
 set -euo pipefail
@@ -218,6 +219,24 @@ if [ -n "$OLD_CTRS" ]; then
   log "removing previous release(s)"
   docker rm -f $OLD_CTRS >/dev/null
 fi
+
+# ------------------------------------------------------------- 6. scheduler
+# Laravel's scheduler (lease reminders, property alerts, scheduled email
+# campaigns, sitemap refresh, portal syncs) runs in its own container from
+# the same image (CONTAINER_MODE=scheduler). Exactly one per site: the old
+# one is stopped before the new one starts, so no task ever runs twice.
+SCHED_LABEL="novixa.$SITE.role=scheduler"
+OLD_SCHED="$(docker ps -aq --filter "label=$SCHED_LABEL")"
+if [ -n "$OLD_SCHED" ]; then docker rm -f $OLD_SCHED >/dev/null; fi
+log "starting scheduler"
+SCHED="$(docker create --name "$SITE-scheduler-$(date +%Y%m%d%H%M%S)" --label "$SCHED_LABEL" \
+  --label "novixa.$SITE.image=$IMAGE" --user 1000:1000 --restart unless-stopped --memory 512m \
+  --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 \
+  "${run_args[@]}" -e CONTAINER_MODE=scheduler "$IMAGE")"
+# The internal network has no route out; the edge network gives the
+# scheduler outbound access (mail, APIs). nginx never routes to it.
+docker network connect "$EDGE" "$SCHED"
+docker start "$SCHED" >/dev/null && echo "    running"
 
 echo "$IMAGE" > "$APP_DIR/current-image"
 
