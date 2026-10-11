@@ -19,9 +19,9 @@
 #   2. migrate (one-off container) — first deploy also seeds the demo data;
 #      a changed DEMO_SEED_VERSION seeds a fresh database beside the live one
 #   3. start the new release next to the old one, wait until it answers 200
-#   4. install nginx site (nginx -t first; previous file restored on failure)
-#   5. verify end-to-end through mailcow's nginx with the new release attached
-#   6. drain: detach the old release from nginx, wait out DNS TTL, remove it
+#   4. point nginx at the new release (nginx -t, graceful reload), verify
+#      end to end; any failure restores the previous site file
+#   5. after a grace period for in-flight requests, remove the old release
 #
 # Schema is not rolled back automatically: migrate:rollback can destroy data.
 set -euo pipefail
@@ -32,7 +32,6 @@ SITE="$(basename "$APP_DIR")"
 HOST="$SITE.novixa.dev"
 EDGE=aqar-edge                       # shared with mailcow's nginx
 INTERNAL="$SITE-internal"
-ALIAS="$SITE-app"
 LABEL="novixa.$SITE.role=app"
 MAILCOW_NGINX_DIR=/opt/mailcow-dockerized/data/conf/nginx
 KEEP_IMAGES=3
@@ -161,41 +160,39 @@ for path in /admin/login /app/login /landlord/login /tenant/login; do
   echo "    $path -> $c"
 done
 
-# --------------------------------------------------------------- 4. nginx site
-log "nginx site"
-# nginx.conf is a template shared by every site: __SITE__ → this site.
-SITE_CONF="$MAILCOW_NGINX_DIR/$SITE.conf"
-sed "s/__SITE__/$SITE/g" nginx.conf > "$APP_DIR/.nginx.conf.rendered"
-if ! cmp -s "$APP_DIR/.nginx.conf.rendered" "$SITE_CONF"; then
-  cp "$SITE_CONF" "$APP_DIR/.nginx.conf.prev"
-  cat "$APP_DIR/.nginx.conf.rendered" > "$SITE_CONF"   # keep ownership/mode set by server-setup.sh
-  if ! docker exec "$NGINX_CTR" nginx -t >/dev/null 2>&1; then
-    cat "$APP_DIR/.nginx.conf.prev" > "$SITE_CONF"
-    docker exec "$NGINX_CTR" nginx -t 2>&1 | tail -5 || true
-    discard_new
-    die "new nginx site failed nginx -t — previous file restored, live release untouched"
-  fi
-  docker exec "$NGINX_CTR" nginx -s reload
-  echo "    installed and reloaded"
-else
-  echo "    unchanged"
-fi
-
-# ------------------------------------------ 5. attach new release + verify
+# ------------------------------------------------- 4. switch traffic (nginx)
+# The switch is an nginx config change + graceful reload, never a network
+# detach. nginx's site points at ONE release by container name; reloading
+# starts fresh workers that resolve the new name, while the old workers
+# finish their in-flight requests against the old release. (Detaching the
+# old release instead left nginx holding its cached address for up to the
+# resolver TTL, and a request sent there in that window timed out: one 504
+# observed in a live rehearsal.)
 log "attaching $NEW to $EDGE"
-docker network connect --alias "$ALIAS" "$EDGE" "$NEW"
+docker network connect "$EDGE" "$NEW"
 
+SITE_CONF="$MAILCOW_NGINX_DIR/$SITE.conf"
+render_site() { # render_site <upstream container> — nginx.conf template → stdout
+  sed -e "s/__SITE__/$SITE/g" -e "s/__UPSTREAM__/$1/g" nginx.conf
+}
+nginx_switch() { # nginx_switch <file> — install, test, reload; non-zero on failure
+  cat "$1" > "$SITE_CONF"   # keep ownership/mode set by server-setup.sh
+  docker exec "$NGINX_CTR" nginx -t >/dev/null 2>&1 && docker exec "$NGINX_CTR" nginx -s reload >/dev/null 2>&1
+}
 edge_probe() { # through mailcow's nginx, exactly as Cloudflare reaches it
   curl -sk -o /dev/null -w '%{http_code}' --max-time 20 \
     --resolve "$HOST:443:127.0.0.1" "https://$HOST$1" 2>/dev/null || echo 000
 }
 
-# Detach the old releases first so every request now goes to $NEW, then wait
-# out nginx's 5s resolver TTL before judging it.
-for c in $OLD_CTRS; do
-  docker network disconnect "$EDGE" "$c" >/dev/null 2>&1 || true
-done
-sleep 7
+log "switching nginx to $NEW"
+cp "$SITE_CONF" "$APP_DIR/.nginx.conf.prev"
+render_site "$NEW" > "$APP_DIR/.nginx.conf.rendered"
+if ! nginx_switch "$APP_DIR/.nginx.conf.rendered"; then
+  cat "$APP_DIR/.nginx.conf.prev" > "$SITE_CONF"
+  docker exec "$NGINX_CTR" nginx -t 2>&1 | tail -5 || true
+  discard_new
+  die "new nginx site failed nginx -t — previous file restored, live release untouched"
+fi
 
 code=000
 for _ in 1 2 3 4 5; do
@@ -206,15 +203,17 @@ done
 
 if [ "$code" != 200 ]; then
   warn "through nginx the site returned $code — rolling back"
-  for c in $OLD_CTRS; do
-    docker network connect --alias "$ALIAS" "$EDGE" "$c" >/dev/null 2>&1 || true
-  done
+  nginx_switch "$APP_DIR/.nginx.conf.prev" || warn "could not restore the previous nginx site"
   discard_new
   die "deploy rolled back; previous release is serving again"
 fi
 echo "    https://$HOST/ -> 200 via nginx"
 
-# --------------------------------------------------------------- 6. retire old
+# Old nginx workers may still be finishing requests against the previous
+# release; give them time before removing it.
+if [ -n "$OLD_CTRS" ]; then sleep 15; fi
+
+# --------------------------------------------------------------- 5. retire old
 if [ -n "$OLD_CTRS" ]; then
   log "removing previous release(s)"
   docker rm -f $OLD_CTRS >/dev/null
