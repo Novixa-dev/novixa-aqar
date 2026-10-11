@@ -54,11 +54,15 @@ Cloudflare (proxied) ─▶ mailcow nginx :443 ── aqar-edge network ─▶ a
 
 `deploy.sh` order: migrate (one-off container) → first deploy seeds →
 start the new release **beside** the old one → wait for 200 on `/` and the
-panel login pages → install nginx site (`nginx -t` first, restored on
-failure) → switch traffic → verify through nginx → remove the old release.
-Any failure before the switch leaves the old release serving; a failure
-after it re-attaches the old release. Schema is never rolled back
-automatically.
+panel login pages → point nginx at the new release (`nginx -t`, graceful
+reload) → verify through nginx → after a 15 s grace period remove the old
+release → replace the **scheduler** container. Any failure before the
+switch leaves the old release serving; a failed check after it restores the
+previous nginx site. Schema is never rolled back automatically.
+
+Each site runs three containers: `<site>-app-<ts>` (Octane, web),
+`<site>-scheduler-<ts>` (Laravel scheduler: reminders, alerts, campaigns,
+sitemap, portal syncs — exactly one per site) and `<site>-db` (MySQL).
 
 ## Resetting the demo data (zero downtime)
 
