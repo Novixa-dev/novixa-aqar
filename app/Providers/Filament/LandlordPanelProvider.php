@@ -45,7 +45,7 @@ class LandlordPanelProvider extends PanelProvider
         $panel
             ->id('landlord')
             ->path('landlord')
-            ->brandName('نوفيكسا عقار | Novixa Aqar')
+            ->brandName(fn (): string => app(\App\Support\Brand::class)->name())
             ->login([AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/landlord')

@@ -35,11 +35,13 @@ RUN composer install \
 ###########################################
 FROM php:${PHP_VERSION}-cli-alpine
 
-LABEL maintainer="SMortexa <seyed.me720@gmail.com>"
-LABEL org.opencontainers.image.title="Laravel Octane Dockerfile"
-LABEL org.opencontainers.image.description="Production-ready Dockerfile for Laravel Octane"
-LABEL org.opencontainers.image.source=https://github.com/exaco/laravel-octane-dockerfile
-LABEL org.opencontainers.image.licenses=MIT
+# Adapted from exaco/laravel-octane-dockerfile (MIT licence).
+LABEL maintainer="Novixa <info@novixa.dev>"
+LABEL org.opencontainers.image.title="Novixa Aqar"
+LABEL org.opencontainers.image.description="Novixa Aqar real-estate platform (Laravel Octane / RoadRunner)"
+LABEL org.opencontainers.image.vendor="Novixa"
+LABEL org.opencontainers.image.url="https://novixa.dev"
+LABEL org.opencontainers.image.source=https://github.com/Novixa-dev/novixa-aqar
 
 ARG WWWUSER=1000
 ARG WWWGROUP=1000

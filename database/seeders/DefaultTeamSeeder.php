@@ -17,7 +17,7 @@ class DefaultTeamSeeder extends Seeder
         $team = Team::firstOrCreate(
             ['id' => 1],
             [
-                'name' => 'Dar Hadhramaut Real Estate | دار حضرموت العقارية',
+                'name' => app(\App\Support\Brand::class)->bilingualName(),
                 'personal_team' => false,
                 'user_id' => 1,
             ]
@@ -28,8 +28,8 @@ class DefaultTeamSeeder extends Seeder
             [
                 'address' => 'شارع الملكة أروى، حي فوه، المكلا، حضرموت، اليمن',
                 'phone_number' => '+967 776 248 526',
-                'phone' => '+967 776 248 526',
-                'email' => 'info@novixa.dev',
+                'phone' => config('branding.phone'),
+                'email' => config('branding.email'),
             ]
         );
 
@@ -40,9 +40,9 @@ class DefaultTeamSeeder extends Seeder
         OrganisationProfile::firstOrCreate(
             ['team_id' => $team->id],
             [
-                'agency_name' => 'Dar Hadhramaut Real Estate | دار حضرموت العقارية',
-                'email' => 'info@novixa.dev',
-                'phone' => '+967 776 248 526',
+                'agency_name' => app(\App\Support\Brand::class)->bilingualName(),
+                'email' => config('branding.email'),
+                'phone' => config('branding.phone'),
                 'address' => [
                     'line_1' => 'شارع الملكة أروى، حي فوه',
                     'city' => 'المكلا',

@@ -37,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('Novixa Aqar | لوحة التحكم الإدارية')
+            ->brandName(fn (): string => app(\App\Support\Brand::class)->name().' | '.(app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Admin'))
             ->darkMode(true)
             ->sidebarCollapsibleOnDesktop()
             ->login([AuthenticatedSessionController::class, 'create'])

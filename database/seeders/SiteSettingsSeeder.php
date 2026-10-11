@@ -11,10 +11,10 @@ class SiteSettingsSeeder extends Seeder
     {
         $settings = app(GeneralSettings::class);
 
-        $settings->site_name = 'Dar Hadhramaut Real Estate | دار حضرموت العقارية';
-        $settings->site_email = 'info@novixa.dev';
-        $settings->site_phone = '+967 776 248 526';
-        $settings->site_address = 'Al-Mukalla, Hadhramaut, Yemen';
+        $settings->site_name = app(\App\Support\Brand::class)->bilingualName();
+        $settings->site_email = config('branding.email');
+        $settings->site_phone = config('branding.phone');
+        $settings->site_address = config('branding.address.en');
         $settings->site_country = 'Yemen';
         $settings->site_currency = 'ر.ي';
         $settings->site_default_language = 'ar';
@@ -22,7 +22,7 @@ class SiteSettingsSeeder extends Seeder
         $settings->twitter_url = null;
         $settings->github_url = null;
         $settings->youtube_url = null;
-        $settings->footer_copyright = '© ' . date('Y') . ' Dar Hadhramaut Real Estate. All rights reserved. Developed by Novixa.';
+        $settings->footer_copyright = '© '.date('Y').' '.config('branding.name.en').'. All rights reserved. Developed by '.config('branding.company.name').'.';
 
         $settings->save();
     }

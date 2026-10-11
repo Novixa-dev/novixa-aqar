@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', app()->getLocale() === 'ar' ? 'اتصل بنا | دار حضرموت العقارية' : 'Contact Us | Dar Hadhramaut Real Estate')
+@section('title', app()->getLocale() === 'ar' ? 'اتصل بنا | '.$brand->name('ar') : 'Contact Us | '.$brand->name('en'))
 
 @section('content')
 <div class="container mx-auto px-4 lg:px-8 py-12">
@@ -10,7 +10,7 @@
             {{ __('Contact Us') }}
         </span>
         <h1 class="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-4">
-            {{ app()->getLocale() === 'ar' ? 'تواصل مع دار حضرموت العقارية' : 'Contact Dar Hadhramaut Real Estate' }}
+            {{ app()->getLocale() === 'ar' ? 'تواصل مع '.$brand->name('ar') : 'Contact '.$brand->name('en') }}
         </h1>
         <p class="text-base sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed font-light">
             {{ app()->getLocale() === 'ar' ? 'مستشارونا العقاريون في خدمتكم على مدار الساعة للإجابة عن استفسارات البيع، الشراء، التثمين، وتوثيق العقود.' : 'Our dedicated real estate advisors are available 24/7 to assist with property acquisitions, sales, valuations, and contract documentation.' }}
@@ -28,20 +28,20 @@
                 </p>
 
                 <div class="space-y-4">
-                    <a href="https://wa.me/967776248526?text={{ urlencode(app()->getLocale() === 'ar' ? 'مرحباً، أود الاستفسار عن عروض وخدمات دار حضرموت العقارية' : 'Hello, I would like to inquire about Dar Hadhramaut Real Estate listings.') }}"
+                    <a href="https://wa.me/{{ $brand->phoneDigits() }}?text={{ urlencode(app()->getLocale() === 'ar' ? 'مرحباً، أود الاستفسار عن عروض وخدمات '.$brand->name('ar') : 'Hello, I would like to inquire about '.$brand->name('en').' listings.') }}"
                        target="_blank"
                        rel="noopener noreferrer"
                        class="flex items-center gap-3 p-3.5 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold text-xs transition-all shadow-md">
                         <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
                             <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z"/>
                         </svg>
-                        <span>{{ app()->getLocale() === 'ar' ? 'محادثة فورية عبر الواتساب (776 248 526 967+)' : 'Live WhatsApp Support (+967 776 248 526)' }}</span>
+                        <span>{{ app()->getLocale() === 'ar' ? 'محادثة فورية عبر الواتساب' : 'Live WhatsApp Support' }}</span>
                     </a>
 
-                    <a href="tel:+967776248526"
+                    <a href="tel:+{{ $brand->phoneDigits() }}"
                        class="flex items-center gap-3 p-3.5 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-semibold text-xs transition-all border border-white/20">
                         <span class="text-base"><svg class="w-5 h-5 inline-block" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg></span>
-                        <span>{{ app()->getLocale() === 'ar' ? 'الهاتف الموحد: 776 248 526 967+' : 'Phone: +967 776 248 526' }}</span>
+                        <span>{{ app()->getLocale() === 'ar' ? 'الهاتف الموحد:' : 'Phone:' }} <span dir="ltr">{{ $brand->phone() }}</span></span>
                     </a>
 
                     <div class="flex items-center gap-3 p-3.5 bg-white/10 rounded-2xl text-white text-xs border border-white/20">
@@ -66,7 +66,7 @@
                     <span class="text-blue-600 font-bold"><svg class="w-4 h-4 inline-block" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg></span>
                     <div>
                         <strong class="text-gray-900 dark:text-white block mb-0.5">{{ app()->getLocale() === 'ar' ? 'المكلا (المقر الرئيسي):' : 'Mukalla (HQ):' }}</strong>
-                        <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'شارع الستين - برج حضرموت التجاري، الدور الرابع.' : '60th Street - Hadhramaut Commercial Tower, 4th Floor.' }}</span>
+                        <span class="text-gray-500 dark:text-gray-400">{{ $brand->address() }}</span>
                     </div>
                 </div>
 

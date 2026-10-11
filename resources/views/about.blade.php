@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', app()->getLocale() === 'ar' ? 'من نحن | دار حضرموت العقارية' : 'About Us | Dar Hadhramaut Real Estate')
+@section('title', app()->getLocale() === 'ar' ? 'من نحن | '.$brand->name('ar') : 'About Us | '.$brand->name('en'))
 
 @section('content')
 <div class="container mx-auto px-4 lg:px-8 py-12">
@@ -10,7 +10,7 @@
             {{ __('About Us') }}
         </span>
         <h1 class="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-4">
-            {{ app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut Real Estate' }}
+            {{ $brand->name() }}
         </h1>
         <p class="text-base sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed font-light">
             {{ app()->getLocale() === 'ar' ? 'بوابتكم الأولى للتملك والاستثمار العقاري في الجمهورية اليمنية. نقدم حلولاً متكاملة للشراء، البيع، الإيجار، وتوثيق البصائر بأعلى معايير الأمان والشفافية.' : 'Your premier gateway for property ownership and investment in Yemen. We deliver end-to-end solutions for buying, selling, leasing, and verified deed documentation with absolute trust.' }}
@@ -25,7 +25,7 @@
                     {{ app()->getLocale() === 'ar' ? 'رؤيتنا ورسالتنا العقارية' : 'Our Vision & Real Estate Mission' }}
                 </h2>
                 <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-                    {{ app()->getLocale() === 'ar' ? 'تأسست دار حضرموت العقارية لتكون الشريك الموثوق للأفراد، المستثمرين، والمطورين العقاريين في مختلف المحافظات اليمنية (المكلا، صنعاء، عدن، مأرب، تعز). ندمج بين الخبرة الميدانية العريقة وأحدث التقنيات الرقمية كالجولات الافتراضية والنماذج ثلاثية الأبعاد.' : 'Dar Hadhramaut Real Estate was founded to be the trusted partner for homeowners, investors, and property developers across Yemen (Mukalla, Sana\'a, Aden, Marib, Taiz). We combine profound local market expertise with modern real estate technology, virtual tours, and 3D property models.' }}
+                    {{ app()->getLocale() === 'ar' ? 'تأسست '.$brand->name('ar').' لتكون الشريك الموثوق للأفراد، المستثمرين، والمطورين العقاريين في مختلف المحافظات اليمنية (المكلا، صنعاء، عدن، مأرب، تعز). ندمج بين الخبرة الميدانية العريقة وأحدث التقنيات الرقمية كالجولات الافتراضية والنماذج ثلاثية الأبعاد.' : $brand->name('en').' was founded to be the trusted partner for homeowners, investors, and property developers across Yemen (Mukalla, Sana\'a, Aden, Marib, Taiz). We combine profound local market expertise with modern real estate technology, virtual tours, and 3D property models.' }}
                 </p>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-2xl text-center">
@@ -90,9 +90,9 @@
                 <div class="text-blue-500 mb-3"><svg class="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" /></svg></div>
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ app()->getLocale() === 'ar' ? 'الفرع الرئيسي - المكلا (حضرموت)' : 'Headquarters - Mukalla (Hadhramout)' }}</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3">
-                    {{ app()->getLocale() === 'ar' ? 'شارع الستين - برج حضرموت التجاري، الدور الرابع. يغطي أحياء فوه، الديس، الشرج، والمخططات الساحلية.' : '60th Street - Hadhramaut Commercial Tower, 4th Floor. Covering Fuwah, Al-Dees, and coastal developments.' }}
+                    {{ $brand->address() }}
                 </p>
-                <div class="text-xs font-mono text-blue-600 dark:text-blue-400 font-bold"><svg class="w-3.5 h-3.5 inline-block" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg> +967 776 248 526</div>
+                <div class="text-xs font-mono text-blue-600 dark:text-blue-400 font-bold"><svg class="w-3.5 h-3.5 inline-block" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg> <span dir="ltr">{{ $brand->phone() }}</span></div>
             </div>
 
             <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xs">

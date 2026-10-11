@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', app()->getLocale() === 'ar' ? 'دار حضرموت العقارية | عقارات في اليمن' : 'Dar Hadhramaut Real Estate | Properties in Yemen')
+@section('title', app()->getLocale() === 'ar' ? $brand->name('ar').' | عقارات في اليمن' : $brand->name('en').' | Properties in Yemen')
 
 @section('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -19,7 +19,7 @@
                 {{ __('Find Your Dream Property in Yemen & Beyond') }}
             </h1>
             <p class="text-base sm:text-lg text-blue-100/90 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-                {{ __('Explore wide range of residential and commercial properties with Dar Hadhramaut Real Estate.') }}
+                {{ __('Explore a wide range of residential and commercial properties with :brand.', ['brand' => $brand->name()]) }}
             </p>
 
             <!-- Search Form Card -->
@@ -188,7 +188,7 @@
     <!-- Why Choose Us Features Grid -->
     <section class="mb-12 py-12 bg-gray-50 dark:bg-gray-800/40 rounded-3xl p-8 lg:p-12 border border-gray-100 dark:border-gray-800">
         <div class="text-center max-w-2xl mx-auto mb-12">
-            <h2 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-3">{{ __('Why Choose Dar Hadhramaut?') }}</h2>
+            <h2 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-3">{{ __('Why Choose :brand?', ['brand' => $brand->name()]) }}</h2>
             <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ __('We provide comprehensive real estate management and marketing solutions') }}</p>
         </div>
 

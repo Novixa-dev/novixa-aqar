@@ -45,7 +45,7 @@ class ContractorPanelProvider extends PanelProvider
         $panel
             ->id('contractor')
             ->path('contractor')
-            ->brandName('نوفيكسا عقار | Novixa Aqar')
+            ->brandName(fn (): string => app(\App\Support\Brand::class)->name())
             ->login([AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/contractor')

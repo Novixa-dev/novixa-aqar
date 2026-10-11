@@ -25,6 +25,7 @@ class AdminDashboardTest extends TestCase
 
         // Check that page is not blank
         $this->assertNotEmpty($content);
-        $this->assertStringContainsString('Novixa Aqar', $content);
+        // The panel brand follows the active locale (App\Support\Brand).
+        $this->assertStringContainsString(config('branding.name.'.app()->getLocale()), $content);
     }
 }
