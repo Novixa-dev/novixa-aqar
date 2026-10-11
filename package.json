@@ -13,7 +13,7 @@
         "@tailwindcss/typography": "^0.5.14",
         "@tailwindcss/vite": "^4.3.3",
         "autoprefixer": "^10.4.17",
-        "laravel-vite-plugin": "3.1",
+        "laravel-vite-plugin": "3.2",
         "postcss": "^8.5.29",
         "postcss-nesting": "^13.0.0",
         "sass-embedded": "^1.103.1",
