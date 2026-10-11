@@ -31,6 +31,15 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [\Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'store'])->middleware('throttle:login')->name('login.store');
     Route::get('/register', [\Laravel\Fortify\Http\Controllers\RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [\Laravel\Fortify\Http\Controllers\RegisteredUserController::class, 'store'])->middleware('throttle:register')->name('register.store');
+
+    // Password reset. Fortify's own routes are switched off (the Filament
+    // panels register their own auth), so like login/register above these
+    // are declared here; without them the public login had no way to
+    // recover a forgotten password.
+    Route::get('/forgot-password', [\Laravel\Fortify\Http\Controllers\PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [\Laravel\Fortify\Http\Controllers\PasswordResetLinkController::class, 'store'])->middleware('throttle:6,1')->name('password.email');
+    Route::get('/reset-password/{token}', [\Laravel\Fortify\Http\Controllers\NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/reset-password', [\Laravel\Fortify\Http\Controllers\NewPasswordController::class, 'store'])->middleware('throttle:6,1')->name('password.update');
 });
 Route::post('/logout', [\Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
