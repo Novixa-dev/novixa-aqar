@@ -1,20 +1,6 @@
 <div>
 @push('meta')
-    <link rel="canonical" href="{{ url()->current() }}">
-    
-    <!-- OpenGraph Tags -->
-    <meta property="og:title" content="{{ $property->title }}">
-    <meta property="og:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 200) }}">
-    <meta property="og:image" content="{{ $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png') }}">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:type" content="article">
-
-    <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ $property->title }}">
-    <meta name="twitter:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 200) }}">
-    <meta name="twitter:image" content="{{ $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png') }}">
-
+    {{-- title, description, Open Graph and Twitter tags come from the layout (see PropertyDetail::render). --}}
     <!-- Schema.org JSON-LD Structured Data -->
     @php
         $jsonLd = json_encode([

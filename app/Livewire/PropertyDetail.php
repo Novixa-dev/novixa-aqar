@@ -133,8 +133,12 @@ class PropertyDetail extends Component
     {
         return view('livewire.property-detail')
             ->layout('layouts.app', [
-                'title' => $this->property->title,
+                'title' => $this->property->title.' | '.app(\App\Support\Brand::class)->name(),
                 'metaDescription' => \Illuminate\Support\Str::limit(strip_tags($this->property->description), 160),
+                // The listing's own photo when it has one, so a shared link
+                // previews the property rather than the site's default card.
+                'ogImage' => $this->property->getFirstMediaUrl('images') ?: null,
+                'ogType' => 'article',
             ]);
     }
 

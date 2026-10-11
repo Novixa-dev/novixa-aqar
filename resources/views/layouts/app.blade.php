@@ -5,21 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', $title ?? (app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut Real Estate'))</title>
-    <meta name="description" content="{{ $metaDescription ?? (app()->getLocale() === 'ar' ? 'دار حضرموت العقارية - بوابتك الأولى للتملك والاستثمار العقاري في اليمن (حضرموت، صنعاء، عدن). وساطة عقارية، إدارة أملاك، وتثمين عادل.' : 'Dar Hadhramaut Real Estate - Your premier gateway for real estate investment and ownership in Yemen. Property brokerage, management, and fair valuation.') }}">
+    @php
+        $pageTitle = trim($__env->yieldContent('title')) ?: ($title ?? $brand->title());
+        $pageDescription = trim($__env->yieldContent('meta_description')) ?: ($metaDescription ?? $brand->description());
+        $pageImage = trim($__env->yieldContent('og_image')) ?: (($ogImage ?? null) ?: $brand->ogImage());
+        $isAr = app()->getLocale() === 'ar';
+    @endphp
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ \Illuminate\Support\Str::limit(strip_tags($pageDescription), 300) }}">
     <link rel="canonical" href="{{ url()->current() }}">
+    @unless ($brand->indexable())
+        {{-- Demo / staging: keep sample data out of search results. --}}
+        <meta name="robots" content="noindex, nofollow">
+    @endunless
     <link rel="icon" href="{{ asset('images/logo.svg') }}" type="image/svg+xml">
     <link rel="alternate icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.svg') }}">
     <meta name="theme-color" content="#2563eb">
-    <meta property="og:site_name" content="Dar Hadhramaut Real Estate | دار حضرموت العقارية">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="@yield('title', $title ?? (app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut Real Estate'))">
-    <meta property="og:description" content="{{ app()->getLocale() === 'ar' ? 'دار حضرموت العقارية - بوابتك الأولى للتملك والاستثمار العقاري في اليمن (حضرموت، صنعاء، عدن). وساطة عقارية، إدارة أملاك، وتثمين عادل.' : 'Dar Hadhramaut Real Estate - Your premier gateway for real estate investment and ownership in Yemen. Property brokerage, management, and fair valuation.' }}">
+    <meta name="author" content="{{ $brand->company() }}">
+    <meta property="og:site_name" content="{{ $brand->name() }}">
+    <meta property="og:type" content="{{ trim($__env->yieldContent('og_type')) ?: ($ogType ?? 'website') }}">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($pageDescription), 300) }}">
     <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ $pageImage }}">
+    <meta property="og:image:alt" content="{{ $pageTitle }}">
+    <meta property="og:locale" content="{{ $isAr ? 'ar_YE' : 'en_US' }}">
+    <meta property="og:locale:alternate" content="{{ $isAr ? 'en_US' : 'ar_YE' }}">
     <meta name="twitter:card" content="summary_large_image">
-
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($pageDescription), 200) }}">
+    <meta name="twitter:image" content="{{ $pageImage }}">
     <meta name="google" content="notranslate">
-    <meta name="robots" content="notranslate">
     @stack('meta')
 
     @if(config('googletagmanager.id'))

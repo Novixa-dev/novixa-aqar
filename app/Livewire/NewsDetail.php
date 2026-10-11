@@ -30,6 +30,10 @@ class NewsDetail extends Component
     {
         return view('livewire.news-detail', [
             'relatedNews' => $this->relatedNews,
-        ])->layout('layouts.app', ['title' => $this->news->title]);
+        ])->layout('layouts.app', [
+            'title' => $this->news->title.' | '.app(\App\Support\Brand::class)->name(),
+            'metaDescription' => \Illuminate\Support\Str::limit(strip_tags($this->news->excerpt ?: $this->news->content), 160),
+            'ogType' => 'article',
+        ]);
     }
 }
