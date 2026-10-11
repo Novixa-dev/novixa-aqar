@@ -64,9 +64,9 @@ class DocumentTemplateResource extends Resource
             ]);
     }
 
-    public static function getNavigationGroup(): string
+    public static function getNavigationGroup(): string | \UnitEnum | null
     {
-        return __('Administration');
+        return \App\Filament\Support\NavigationGroup::Administration;
     }
 
     public static function getPages(): array

@@ -44,7 +44,7 @@
                 <div class="flex gap-3">
                     <button wire:click="calculateTax" 
                             class="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition">
-                        Calculate Estimated Taxes
+                        {{ __('Calculate estimated fees') }}
                     </button>
                 </div>
             </div>
@@ -53,10 +53,10 @@
                 <!-- Results Header -->
                 <div class="bg-primary-50 dark:bg-primary-900 p-4 rounded-lg">
                     <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                        Tax Estimation Results
+                        {{ __('Estimated fees') }}
                     </h4>
                     <p class="text-sm text-gray-600 dark:text-gray-300">
-                        Country: <strong>{{ $estimatedTax['country'] }}</strong>
+                        {{ __('Country:') }} <strong>{{ __($estimatedTax['country']) }}</strong>
                     </p>
                 </div>
 
@@ -66,10 +66,10 @@
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th scope="col" class="px-4 py-3 text-start text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Item
+                                    {{ __('Item') }}
                                 </th>
                                 <th scope="col" class="px-4 py-3 text-end text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Amount
+                                    {{ __('Amount') }}
                                 </th>
                             </tr>
                         </thead>
@@ -77,7 +77,7 @@
                             @foreach($estimatedTax['breakdown'] as $label => $amount)
                                 <tr class="{{ $label === 'Total Cost' || str_contains($label, 'Total') ? 'font-semibold bg-gray-50 dark:bg-gray-700' : '' }}">
                                     <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-                                        {{ $label }}
+                                        {{ __($label) }}
                                     </td>
                                     <td class="px-4 py-3 text-sm text-end text-gray-900 dark:text-gray-100">
                                         {{ app(\App\Services\CurrencyService::class)->format($amount, $property->currency) }}
@@ -126,7 +126,7 @@
                 <div class="flex gap-3 mt-4">
                     <button wire:click="resetCalculation" 
                             class="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition">
-                        Calculate Again
+                        {{ __('Calculate again') }}
                     </button>
                 </div>
             </div>

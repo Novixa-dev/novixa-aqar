@@ -16,9 +16,9 @@ class ManageGeneralSettings extends SettingsPage
 
     protected static string $settings = GeneralSettings::class;
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string | \UnitEnum | null
     {
-        return app()->getLocale() === 'ar' ? 'الإعدادات' : 'Settings';
+        return \App\Filament\Support\NavigationGroup::Settings;
     }
 
     public function getTitle(): string

@@ -58,6 +58,7 @@ class PropertyCategoryResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->formatStateUsing(\App\Support\StatusLabels::for('category'))
                     ->searchable(),
                 TextColumn::make('slug')
                     ->searchable(),

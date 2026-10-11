@@ -30,7 +30,7 @@ class ChatConversationResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Support';
+    protected static string | \UnitEnum | null $navigationGroup = \App\Filament\Support\NavigationGroup::Support;
 
     public static function getNavigationLabel(): string
     {

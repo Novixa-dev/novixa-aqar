@@ -107,4 +107,9 @@ return [
         'meeting' => 'Meeting',
         'note' => 'Note',
     ],
+    'category' => [
+        'sales' => 'Sales',
+        'lettings' => 'Rentals',
+        'hmo' => 'Shared housing (HMO)',
+    ],
 ];
