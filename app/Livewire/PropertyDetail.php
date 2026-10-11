@@ -137,7 +137,9 @@ class PropertyDetail extends Component
                 'metaDescription' => \Illuminate\Support\Str::limit(strip_tags($this->property->description), 160),
                 // The listing's own photo when it has one, so a shared link
                 // previews the property rather than the site's default card.
-                'ogImage' => $this->property->getFirstMediaUrl('images') ?: null,
+                // url(): media URLs here are site-relative (/storage/...),
+                // and og:image must be absolute.
+                'ogImage' => ($image = $this->property->getFirstMediaUrl('images')) ? url($image) : null,
                 'ogType' => 'article',
             ]);
     }

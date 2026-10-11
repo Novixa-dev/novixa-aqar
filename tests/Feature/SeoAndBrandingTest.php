@@ -44,6 +44,8 @@ class SeoAndBrandingTest extends TestCase
         }
 
         $this->assertStringContainsString('<meta name="robots" content="noindex, nofollow">', $html);
+        // Social platforms only accept absolute image URLs.
+        $this->assertMatchesRegularExpression('#<meta property="og:image" content="https?://[^"]+/images/og-default\.jpg">#', $html);
         $this->assertStringContainsString(config('branding.name.ar'), $html);
         $this->assertStringNotContainsString('دار حضرموت', $html);
         $this->assertStringNotContainsString('Dar Hadhramaut', $html);

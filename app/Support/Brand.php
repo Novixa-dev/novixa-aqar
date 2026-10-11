@@ -70,7 +70,10 @@ class Brand
     {
         $image = (string) config('branding.og_image');
 
-        return str_starts_with($image, 'http') ? $image : asset($image);
+        // url(), not asset(): this app sets asset_url to "/", so asset()
+        // returns a relative path, and social platforms ignore og:image
+        // unless it is absolute.
+        return str_starts_with($image, 'http') ? $image : url($image);
     }
 
     public function indexable(): bool
