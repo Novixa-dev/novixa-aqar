@@ -44,6 +44,21 @@ deploy/aqar-demo/                      VPS deploy kit (Docker, nginx, scripts)
 - **Moderation.** User-submitted properties and reviews are held for staff
   approval.
 
+## Branding, SEO and email
+
+- **One brand source:** `config/branding.php` (names, tagline, description,
+  address, email, phone, share image), exposed to every view as `$brand`.
+  Each deployment sets its brand through `BRAND_*` env values; aqar-demo is
+  Novixa Aqar, aqar-demo2 the RUSU client theme.
+- **SEO:** one complete Open Graph / Twitter set per page with an absolute
+  share image (property pages use the listing's photo), per-page
+  descriptions, `og:locale`. Non-production deployments are `noindex` and
+  `robots.txt` disallows everything (`SEO_INDEXABLE` to change).
+- **Email:** every notification is translated, rendered right-to-left in
+  Arabic, branded, and links to real panel pages.
+- **Moderation:** only approved listings are public; pending/rejected ones
+  404 for everyone but their owner and the office.
+
 ## Quality
 
 - 600+ automated tests (unit + feature), run on every push in CI.
