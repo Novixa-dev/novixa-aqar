@@ -26,18 +26,17 @@ class AppointmentReminder extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
-        $typeName = $this->appointment->appointmentType->name ?? 'Appointment';
-        $date = $this->appointment->appointment_date->format('F j, Y');
-        $time = $this->appointment->appointment_date->format('g:i A');
+        $type = $this->appointment->appointmentType->name ?? __('Appointment');
+        $when = $this->appointment->appointment_date;
 
         return (new MailMessage)
-            ->subject("{$typeName} Appointment Reminder")
-            ->greeting("Hello {$this->appointment->name}!")
-            ->line("This is a reminder for your upcoming {$typeName} appointment.")
-            ->line("Date: {$date}")
-            ->line("Time: {$time}")
-            ->line('Please contact us if you need to reschedule.')
-            ->salutation('Kind regards, The Real Estate Team');
+            ->subject(__(':type appointment reminder', ['type' => $type]))
+            ->greeting(__('Hello :name,', ['name' => $this->appointment->name]))
+            ->line(__('This is a reminder of your upcoming :type appointment.', ['type' => $type]))
+            ->line(__('Date: :date', ['date' => $when->translatedFormat('j F Y')]))
+            ->line(__('Time: :time', ['time' => $when->translatedFormat('g:i A')]))
+            ->line(__('Please contact us if you need to reschedule.'))
+            ->salutation(__('Kind regards,')."\n".app(\App\Support\Brand::class)->name());
     }
 
     public function toArray($notifiable)

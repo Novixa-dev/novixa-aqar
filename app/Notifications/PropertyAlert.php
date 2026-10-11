@@ -29,19 +29,19 @@ class PropertyAlert extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         $message = (new MailMessage)
-            ->subject($this->isPersonalized ? 'Personalized Property Recommendations' : 'New Property Alert')
-            ->line($this->isPersonalized ? 'Here are some properties we think you might like:' : 'New properties matching your criteria have been listed:');
+            ->subject($this->isPersonalized ? __('Properties picked for you') : __('New properties matching your search'))
+            ->greeting(__('Hello :name,', ['name' => $notifiable->name ?? '']))
+            ->line($this->isPersonalized
+                ? __('Here are some properties we think you will like:')
+                : __('New properties matching your criteria have been listed:'));
 
         foreach ($this->properties as $property) {
-            $message->line('Title: ' . $property->title)
-                    ->line('Price: ' . $property->formatted_price)
-                    ->line('Location: ' . $property->location)
-                    ->line('---');
+            $message->line('**'.$property->title.'** — '.$property->formatted_price.($property->location ? ' — '.$property->location : ''));
         }
 
-        $message->action('View All Properties', url('/properties'));
-
-        return $message;
+        return $message
+            ->action(__('Browse properties'), url('/properties'))
+            ->salutation(__('Kind regards,')."\n".app(\App\Support\Brand::class)->name());
     }
 
     public function toArray($notifiable)

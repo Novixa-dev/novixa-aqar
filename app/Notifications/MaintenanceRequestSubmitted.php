@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Support\StatusLabels;
 use App\Models\MaintenanceRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,11 +28,13 @@ class MaintenanceRequestSubmitted extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('Your maintenance request has been submitted successfully.')
-            ->line('Title: ' . $this->maintenanceRequest->title)
-            ->line('Status: ' . $this->maintenanceRequest->status)
-            ->action('View Request', url('/maintenance-requests/' . $this->maintenanceRequest->id))
-            ->line('Thank you for using our application!');
+            ->subject(__('Maintenance request received'))
+            ->greeting(__('Hello :name,', ['name' => $notifiable->name ?? '']))
+            ->line(__('Your maintenance request has been submitted successfully.'))
+            ->line(__('Title: :title', ['title' => $this->maintenanceRequest->title]))
+            ->line(__('Status: :status', ['status' => StatusLabels::label('maintenance', $this->maintenanceRequest->status)]))
+            ->action(__('View request'), url('/tenant/maintenance-requests/'.$this->maintenanceRequest->id.'/edit'))
+            ->salutation(__('Kind regards,')."\n".app(\App\Support\Brand::class)->name());
     }
 
     public function toArray($notifiable)

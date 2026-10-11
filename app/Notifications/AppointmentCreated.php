@@ -26,18 +26,17 @@ class AppointmentCreated extends Notification implements ShouldQueue
 
     public function toMail($notifiable)
     {
-        $typeName = $this->appointment->appointmentType->name ?? 'Appointment';
-        $date = $this->appointment->appointment_date->format('F j, Y');
-        $time = $this->appointment->appointment_date->format('g:i A');
+        $type = $this->appointment->appointmentType->name ?? __('Appointment');
+        $when = $this->appointment->appointment_date;
 
         return (new MailMessage)
-            ->subject("{$typeName} Appointment Confirmed")
-            ->greeting("Hello {$this->appointment->name}!")
-            ->line("Your {$typeName} appointment has been received and is being processed.")
-            ->line("Date: {$date}")
-            ->line("Time: {$time}")
-            ->line('Our team will be in touch shortly to confirm the details.')
-            ->salutation('Kind regards, The Real Estate Team');
+            ->subject(__(':type appointment confirmed', ['type' => $type]))
+            ->greeting(__('Hello :name,', ['name' => $this->appointment->name]))
+            ->line(__('Your :type appointment has been received and is being processed.', ['type' => $type]))
+            ->line(__('Date: :date', ['date' => $when->translatedFormat('j F Y')]))
+            ->line(__('Time: :time', ['time' => $when->translatedFormat('g:i A')]))
+            ->line(__('Our team will be in touch shortly to confirm the details.'))
+            ->salutation(__('Kind regards,')."\n".app(\App\Support\Brand::class)->name());
     }
 
     public function toArray($notifiable)

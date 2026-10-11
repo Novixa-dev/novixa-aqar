@@ -27,10 +27,15 @@ class LeaseRenewalReminder extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Lease Renewal Reminder')
-            ->line('Your lease for ' . $this->lease->property->address . ' is up for renewal.')
-            ->action('View Lease Details', url('/tenant/leases/' . $this->lease->id))
-            ->line('Please contact us to discuss renewal options.');
+            ->subject(__('Lease renewal reminder'))
+            ->greeting(__('Hello :name,', ['name' => $notifiable->name ?? '']))
+            ->line(__('Your lease for :address is up for renewal on :date.', [
+                'address' => $this->lease->property->address ?? $this->lease->property->title ?? '',
+                'date' => $this->lease->end_date?->translatedFormat('j F Y') ?? '',
+            ]))
+            ->action(__('View lease'), url('/tenant/leases/'.$this->lease->id))
+            ->line(__('Please contact us to discuss renewal options.'))
+            ->salutation(__('Kind regards,')."\n".app(\App\Support\Brand::class)->name());
     }
 
     public function toArray($notifiable)

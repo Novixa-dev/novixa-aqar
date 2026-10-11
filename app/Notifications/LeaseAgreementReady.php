@@ -26,9 +26,13 @@ class LeaseAgreementReady extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('Your lease agreement is ready for signing.')
-                    ->action('View Lease Agreement', url('/lease-agreements/' . $this->leaseAgreementId))
-                    ->line('Thank you for using our application!');
+            ->subject(__('Your lease agreement is ready'))
+            ->greeting(__('Hello :name,', ['name' => $notifiable->name ?? '']))
+            ->line(__('Your lease agreement is ready for signing.'))
+            // There is no per-agreement page for tenants; their lease list
+            // in the tenant panel shows it.
+            ->action(__('View my leases'), url('/tenant/leases'))
+            ->salutation(__('Kind regards,')."\n".app(\App\Support\Brand::class)->name());
     }
 
     public function toArray($notifiable)

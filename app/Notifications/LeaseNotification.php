@@ -28,21 +28,22 @@ class LeaseNotification extends Notification
 
     public function toMail($notifiable)
     {
-        $message = (new MailMessage)->subject('Lease Notification');
+        $url = url('/tenant/leases/'.$this->lease->id);
+        $message = (new MailMessage)->greeting(__('Hello :name,', ['name' => $notifiable->name ?? '']));
 
-        switch ($this->type) {
-            case 'renewal':
-                $message->line('Your lease is up for renewal.')
-                        ->action('View Lease', url('/leases/' . $this->lease->id))
-                        ->line('Please contact us to discuss renewal options.');
-                break;
-            case 'termination':
-                $message->line('Your lease has been terminated.')
-                        ->action('View Lease', url('/leases/' . $this->lease->id))
-                        ->line('Please ensure all move-out procedures are followed.');
-                break;
-        }
-
-        return $message;
+        return match ($this->type) {
+            'termination' => $message
+                ->subject(__('Your lease has ended'))
+                ->line(__('Your lease has been terminated.'))
+                ->action(__('View lease'), $url)
+                ->line(__('Please make sure all move-out steps are completed.'))
+                ->salutation(__('Kind regards,')."\n".app(\App\Support\Brand::class)->name()),
+            default => $message
+                ->subject(__('Your lease is due for renewal'))
+                ->line(__('Your lease is up for renewal.'))
+                ->action(__('View lease'), $url)
+                ->line(__('Please contact us to discuss renewal options.'))
+                ->salutation(__('Kind regards,')."\n".app(\App\Support\Brand::class)->name()),
+        };
     }
 }
