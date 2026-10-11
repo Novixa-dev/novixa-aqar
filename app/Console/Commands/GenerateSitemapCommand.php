@@ -86,38 +86,22 @@ class GenerateSitemapCommand extends Command
             // If DB unavailable or News has no published scope, skip
         }
 
-        $sitemap->writeToFile(public_path('sitemap.xml'));
-        $this->syncRobotsTxtSitemapDirective();
+        // storage/, not public/: the storage volume is shared by every
+        // container of a deployment (web, scheduler), while public/ is baked
+        // into each image - a scheduler regenerating public/sitemap.xml would
+        // only ever update its own copy. Served by the /sitemap.xml route.
+        $path = self::path();
+        if (! is_dir(dirname($path))) {
+            mkdir(dirname($path), 0775, true);
+        }
+        $sitemap->writeToFile($path);
 
-        $this->info('Sitemap generated successfully at public/sitemap.xml');
+        $this->info('Sitemap generated at '.self::path());
         return Command::SUCCESS;
     }
 
-    /**
-     * robots.txt is a plain static file (not a Laravel route - a real
-     * webserver serves it directly and never reaches the router), so it
-     * can't read config('app.url') at request time the way sitemap.xml's
-     * own route does. Rewriting its Sitemap: line here, using this
-     * artisan run's live APP_URL, means it stays correct through the same
-     * "fix APP_URL, then regenerate the sitemap" deployment step this
-     * project's docs already call for - no separate step to forget.
-     */
-    protected function syncRobotsTxtSitemapDirective(): void
+    public static function path(): string
     {
-        $path = public_path('robots.txt');
-
-        if (! file_exists($path)) {
-            return;
-        }
-
-        $lines = array_values(array_filter(
-            explode("\n", rtrim(file_get_contents($path))),
-            fn (string $line) => trim($line) !== '' && ! str_starts_with(trim($line), 'Sitemap:')
-        ));
-
-        $lines[] = '';
-        $lines[] = 'Sitemap: ' . url('/sitemap.xml');
-
-        file_put_contents($path, implode("\n", $lines) . "\n");
+        return storage_path('app/sitemap.xml');
     }
 }

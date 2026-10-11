@@ -43,14 +43,33 @@ Route::get('/lang/{locale}', function ($locale) {
 })->name('lang.switch');
 
 Route::get('/sitemap.xml', function () {
-    $sitemapPath = public_path('sitemap.xml');
-    if (!file_exists($sitemapPath)) {
+    // Regenerated daily by the scheduler; built on first request if absent.
+    $sitemapPath = \App\Console\Commands\GenerateSitemapCommand::path();
+    if (! file_exists($sitemapPath)) {
         \Illuminate\Support\Facades\Artisan::call('sitemap:generate');
     }
-    return response()->file($sitemapPath, [
-        'Content-Type' => 'text/xml',
-    ]);
-});
+
+    return response()->file($sitemapPath, ['Content-Type' => 'application/xml']);
+})->name('sitemap');
+
+// A route rather than public/robots.txt so it follows the deployment: a
+// non-indexable one (demo, staging - see config/branding.php) tells crawlers
+// to stay out entirely, and the Sitemap line always carries the real host.
+Route::get('/robots.txt', function () {
+    $lines = ['User-agent: *'];
+
+    if (! app(\App\Support\Brand::class)->indexable()) {
+        $lines[] = 'Disallow: /';
+    } else {
+        foreach (['/admin', '/app', '/agent', '/buyer', '/contractor', '/landlord', '/seller', '/staff', '/tenant', '/api', '/livewire'] as $path) {
+            $lines[] = "Disallow: {$path}";
+        }
+        $lines[] = '';
+        $lines[] = 'Sitemap: '.url('/sitemap.xml');
+    }
+
+    return response(implode("\n", $lines)."\n", 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+})->name('robots');
 
 Route::post('/bookings', [BookingController::class, 'store'])->middleware('throttle:10,1');
 Route::middleware('auth')->group(function () {

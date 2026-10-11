@@ -53,3 +53,6 @@ coverage.xml
 *.orig
 /scratch/
 aqar
+
+# Served by routes (routes/web.php); a static copy here would shadow them.
+/public/robots.txt
