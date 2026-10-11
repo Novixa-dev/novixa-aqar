@@ -78,6 +78,56 @@ class ChatbotService
     /**
      * Generate response based on intent.
      */
+    /**
+     * Real listings for a property question, narrowed by what the message
+     * says (rent / buy, type, city) and relaxed step by step when nothing
+     * matches, so the visitor always gets something useful.
+     *
+     * This used to query status = 'available', a value listings never
+     * carry (they are for_sale / for_rent), so it always answered that the
+     * listings were "being updated" - on a site full of properties.
+     */
+    private function propertySearchResponse(string $message, bool $ar): string
+    {
+        $status = match (true) {
+            (bool) preg_match('/(إيجار|ايجار|للإيجار|للايجار|استئجار|أستأجر|\brent\b|\blet\b)/iu', $message) => Property::STATUS_FOR_RENT,
+            (bool) preg_match('/(شراء|أشتري|اشتري|للبيع|تمليك|\bbuy\b|\bsale\b|\bpurchase\b)/iu', $message) => Property::STATUS_FOR_SALE,
+            default => null,
+        };
+        $types = ['Apartment' => '/(شقة|شقق|apartment|flat)/iu', 'Villa' => '/(فيلا|فلل|فلة|villa)/iu', 'Land' => '/(أرض|ارض|أراضي|land|plot)/iu', 'Commercial' => '/(محل|مكتب|تجاري|commercial|shop|office)/iu', 'Building' => '/(عمارة|مبنى|building)/iu'];
+        $type = collect($types)->search(fn ($pattern) => (bool) preg_match($pattern, $message)) ?: null;
+        $cities = ['المكلا' => '/(المكلا|مكلا|mukalla)/iu', 'صنعاء' => '/(صنعاء|sanaa|sana\'a)/iu', 'عدن' => '/(عدن|aden)/iu', 'سيئون' => '/(سيئون|seiyun)/iu'];
+        $city = collect($cities)->search(fn ($pattern) => (bool) preg_match($pattern, $message)) ?: null;
+
+        $search = function (bool $withCity, bool $withType) use ($status, $type, $city) {
+            return Property::active()
+                ->when($status, fn ($q) => $q->where('status', $status))
+                ->when($withType && $type, fn ($q) => $q->where('property_type', $type))
+                ->when($withCity && $city, fn ($q) => $q->where('location', 'like', "%{$city}%"))
+                ->latest()->take(3)->get();
+        };
+        $properties = $search(true, true);
+        $relaxed = false;
+        if ($properties->isEmpty() && $city) { $properties = $search(false, true); $relaxed = true; }
+        if ($properties->isEmpty() && $type) { $properties = $search(false, false); $relaxed = true; }
+
+        $browse = url('/properties').($status ? '?status='.$status : '');
+        if ($properties->isEmpty()) {
+            return $ar
+                ? "لم أجد عقارات مطابقة حالياً. تصفح جميع العقارات المتاحة هنا:\n{$browse}\n\nأو اطلب التحدث مع موظف وسنبحث لك."
+                : "I couldn't find a match right now. Browse everything available here:\n{$browse}\n\nOr ask to talk to an agent and we'll search for you.";
+        }
+
+        $intro = $relaxed
+            ? ($ar ? 'لم أجد تطابقاً تاماً، وهذه أقرب الخيارات المتاحة:' : 'No exact match, but these are the closest available:')
+            : ($ar ? 'وجدت لك هذه العقارات المتاحة:' : 'Here are some available properties for you:');
+        $lines = $properties->map(fn (Property $p) => '• '.$p->title.' — '.app(\App\Services\CurrencyService::class)->format($p->price, $p->currency)
+            .($p->location ? ' — '.$p->location : '')."\n  ".url('/properties/'.$p->id));
+
+        return $intro."\n\n".$lines->implode("\n")."\n\n"
+            .($ar ? "عرض المزيد: {$browse}" : "See more: {$browse}");
+    }
+
     private function generateResponse(string $intent, string $message): string
     {
         $ar = app()->getLocale() === 'ar';
@@ -89,24 +139,7 @@ class ChatbotService
                     : "Hello! Welcome to our real estate platform. I'm here to help you find your perfect property. How can I assist you today?";
 
             case 'property_search':
-                $properties = Property::where('status', 'available')->take(3)->get();
-                if ($properties->isEmpty()) {
-                    return $ar
-                        ? 'يسعدني مساعدتك في إيجاد عقار! نقوم حالياً بتحديث قوائمنا. يرجى المحاولة لاحقاً أو التواصل مع فريقنا لمعرفة أحدث العقارات المتاحة.'
-                        : "I'd be happy to help you find properties! Currently, we're updating our listings. Please check back soon or contact our team for the latest available properties.";
-                }
-
-                $response = $ar
-                    ? "يسعدني مساعدتك في إيجاد عقار! إليك بعض أحدث قوائمنا:\n\n"
-                    : "I can help you find properties! Here are some of our latest listings:\n\n";
-                foreach ($properties as $property) {
-                    $response .= "• {$property->title} - ".app(\App\Services\CurrencyService::class)->format($property->price, $property->currency)."\n";
-                }
-                $response .= $ar
-                    ? "\nهل تود معرفة المزيد عن أي منها، أم تريد مني مساعدتك بمتطلبات محددة؟"
-                    : "\nWould you like to know more about any of these, or shall I help you with specific requirements?";
-
-                return $response;
+                return $this->propertySearchResponse($message, $ar);
 
             case 'price_inquiry':
                 return $ar
