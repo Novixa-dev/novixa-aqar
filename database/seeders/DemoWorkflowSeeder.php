@@ -121,7 +121,7 @@ class DemoWorkflowSeeder extends Seeder
             [
                 'company_name' => 'شركة البناء الحديث للمقاولات',
                 'contact_person' => 'م. سالم باعباد',
-                'email' => 'info@albina-alhadith.ye',
+                'email' => 'albina.alhadith@novixa.dev',
                 'phone' => '+967 5 382 4471',
                 'city' => 'المكلا',
                 'vendor_type' => 'contractor',
@@ -133,7 +133,7 @@ class DemoWorkflowSeeder extends Seeder
             [
                 'company_name' => 'مؤسسة الخليج لصيانة العقارات',
                 'contact_person' => 'أ. فهد البحر',
-                'email' => 'support@gulf-maint.ye',
+                'email' => 'gulf.maintenance@novixa.dev',
                 'phone' => '+967 5 341 9082',
                 'city' => 'المكلا',
                 'vendor_type' => 'maintenance',
@@ -145,7 +145,7 @@ class DemoWorkflowSeeder extends Seeder
             [
                 'company_name' => 'ورشة اليمن للتبريد والتكييف',
                 'contact_person' => 'م. أنيس الصنعاني',
-                'email' => 'cool@yemen-ac.ye',
+                'email' => 'yemen.ac@novixa.dev',
                 'phone' => '+967 1 244 5560',
                 'city' => 'صنعاء',
                 'vendor_type' => 'hvac',
@@ -189,13 +189,13 @@ class DemoWorkflowSeeder extends Seeder
 
         // --- Tenants ---
         $tenantSeeds = [
-            ['name' => 'أحمد صالح باوزير', 'email' => 'ahmed.bawazir@example.ye', 'phone' => '+967 771 234 567', 'user_id' => $tenantUser?->id],
-            ['name' => 'منى عبدالله بكري', 'email' => 'mona.bakri@example.ye', 'phone' => '+967 773 555 142', 'user_id' => null],
-            ['name' => 'خالد عمر السقاف', 'email' => 'khaled.saqqaf@example.ye', 'phone' => '+967 775 808 930', 'user_id' => null],
-            ['name' => 'فاطمة ناصر العمودي', 'email' => 'fatima.amoudi@example.ye', 'phone' => '+967 770 442 918', 'user_id' => null],
-            ['name' => 'ياسر محمد باعشن', 'email' => 'yasser.bashan@example.ye', 'phone' => '+967 772 663 501', 'user_id' => null],
-            ['name' => 'هدى سالم الكثيري', 'email' => 'huda.kathiri@example.ye', 'phone' => '+967 774 219 837', 'user_id' => null],
-            ['name' => 'عمر عبدالرحمن باجرش', 'email' => 'omar.bajarash@example.ye', 'phone' => '+967 776 550 274', 'user_id' => null],
+            ['name' => 'أحمد صالح باوزير', 'email' => 'ahmed.bawazir@novixa.dev', 'phone' => '+967 771 234 567', 'user_id' => $tenantUser?->id],
+            ['name' => 'منى عبدالله بكري', 'email' => 'mona.bakri@novixa.dev', 'phone' => '+967 773 555 142', 'user_id' => null],
+            ['name' => 'خالد عمر السقاف', 'email' => 'khaled.saqqaf@novixa.dev', 'phone' => '+967 775 808 930', 'user_id' => null],
+            ['name' => 'فاطمة ناصر العمودي', 'email' => 'fatima.amoudi@novixa.dev', 'phone' => '+967 770 442 918', 'user_id' => null],
+            ['name' => 'ياسر محمد باعشن', 'email' => 'yasser.bashan@novixa.dev', 'phone' => '+967 772 663 501', 'user_id' => null],
+            ['name' => 'هدى سالم الكثيري', 'email' => 'huda.kathiri@novixa.dev', 'phone' => '+967 774 219 837', 'user_id' => null],
+            ['name' => 'عمر عبدالرحمن باجرش', 'email' => 'omar.bajarash@novixa.dev', 'phone' => '+967 776 550 274', 'user_id' => null],
         ];
         $tenants = [];
         foreach ($tenantSeeds as $t) {
@@ -325,12 +325,12 @@ class DemoWorkflowSeeder extends Seeder
 
         // --- Contacts + rental applications (applicant_id -> contacts.id) ---
         $applicantSeeds = [
-            ['first_name' => 'وليد', 'last_name' => 'بن بريك', 'email' => 'walid.benbrik@example.ye', 'phones' => ['+967 777 100 200']],
-            ['first_name' => 'سماح', 'last_name' => 'الحضرمي', 'email' => 'samah.alhadhrami@example.ye', 'phones' => ['+967 778 300 400']],
-            ['first_name' => 'طارق', 'last_name' => 'العطاس', 'email' => 'tareq.alattas@example.ye', 'phones' => ['+967 779 500 600']],
-            ['first_name' => 'ريم', 'last_name' => 'باحميد', 'email' => 'reem.bahamid@example.ye', 'phones' => ['+967 771 900 810']],
-            ['first_name' => 'فيصل', 'last_name' => 'الجابري', 'email' => 'faisal.jaberi@example.ye', 'phones' => ['+967 773 220 660']],
-            ['first_name' => 'نجلاء', 'last_name' => 'باوزير', 'email' => 'najla.bawazir@example.ye', 'phones' => ['+967 775 440 330']],
+            ['first_name' => 'وليد', 'last_name' => 'بن بريك', 'email' => 'walid.benbrik@novixa.dev', 'phones' => ['+967 777 100 200']],
+            ['first_name' => 'سماح', 'last_name' => 'الحضرمي', 'email' => 'samah.alhadhrami@novixa.dev', 'phones' => ['+967 778 300 400']],
+            ['first_name' => 'طارق', 'last_name' => 'العطاس', 'email' => 'tareq.alattas@novixa.dev', 'phones' => ['+967 779 500 600']],
+            ['first_name' => 'ريم', 'last_name' => 'باحميد', 'email' => 'reem.bahamid@novixa.dev', 'phones' => ['+967 771 900 810']],
+            ['first_name' => 'فيصل', 'last_name' => 'الجابري', 'email' => 'faisal.jaberi@novixa.dev', 'phones' => ['+967 773 220 660']],
+            ['first_name' => 'نجلاء', 'last_name' => 'باوزير', 'email' => 'najla.bawazir@novixa.dev', 'phones' => ['+967 775 440 330']],
         ];
         $applicants = [];
         foreach ($applicantSeeds as $c) {

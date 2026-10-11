@@ -428,10 +428,10 @@ class DemoDataCompletionSeeder extends Seeder
     private function seedContactMessages(): void
     {
         $messages = [
-            ['name' => 'سلطان عبدالله', 'email' => 'sultan.abdullah@example.ye', 'phone' => '+967 770 112 233', 'interest' => 'buying', 'message' => 'أرغب بمعرفة تفاصيل أكثر عن العقارات السكنية المتوفرة حالياً في حي السلام.', 'is_read' => true],
-            ['name' => 'إيمان الحبشي', 'email' => 'eman.habashi@example.ye', 'phone' => '+967 772 445 667', 'interest' => 'renting', 'message' => 'هل يوجد شقق مفروشة للإيجار الشهري بالقرب من جامعة حضرموت؟', 'is_read' => true],
-            ['name' => 'مراد سالم', 'email' => 'murad.salem@example.ye', 'phone' => '+967 774 889 001', 'interest' => 'selling', 'message' => 'أملك أرضاً سكنية وأرغب بعرضها للبيع من خلالكم، كيف يمكنني البدء؟', 'is_read' => false],
-            ['name' => 'أروى ثابت', 'email' => 'arwa.thabet@example.ye', 'phone' => '+967 776 220 998', 'interest' => 'other', 'message' => 'هل تقدمون خدمات تقييم عقاري مستقل؟', 'is_read' => false],
+            ['name' => 'سلطان عبدالله', 'email' => 'sultan.abdullah@novixa.dev', 'phone' => '+967 770 112 233', 'interest' => 'buying', 'message' => 'أرغب بمعرفة تفاصيل أكثر عن العقارات السكنية المتوفرة حالياً في حي السلام.', 'is_read' => true],
+            ['name' => 'إيمان الحبشي', 'email' => 'eman.habashi@novixa.dev', 'phone' => '+967 772 445 667', 'interest' => 'renting', 'message' => 'هل يوجد شقق مفروشة للإيجار الشهري بالقرب من جامعة حضرموت؟', 'is_read' => true],
+            ['name' => 'مراد سالم', 'email' => 'murad.salem@novixa.dev', 'phone' => '+967 774 889 001', 'interest' => 'selling', 'message' => 'أملك أرضاً سكنية وأرغب بعرضها للبيع من خلالكم، كيف يمكنني البدء؟', 'is_read' => false],
+            ['name' => 'أروى ثابت', 'email' => 'arwa.thabet@novixa.dev', 'phone' => '+967 776 220 998', 'interest' => 'other', 'message' => 'هل تقدمون خدمات تقييم عقاري مستقل؟', 'is_read' => false],
         ];
 
         foreach ($messages as $m) {
