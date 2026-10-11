@@ -68,7 +68,7 @@
 
         <div class="pt-8 border-t border-[#332A26] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8C7A6B] gap-4">
             <div>
-                &copy; {{ date('Y') }} <strong>{{ app()->getLocale() === 'ar' ? 'رسو العقارية - RUSU REAL ESTATE' : 'RUSU Real Estate' }}</strong>. {{ __('All rights reserved.') }}
+                &copy; {{ date('Y') }} <strong>{{ $brand->name() }}</strong>. {{ __('All rights reserved.') }}
             </div>
             <div class="flex items-center gap-4">
                 <span>{{ app()->getLocale() === 'ar' ? 'تصميم وتطوير فاخر' : 'Luxury Real Estate Platform' }}</span>

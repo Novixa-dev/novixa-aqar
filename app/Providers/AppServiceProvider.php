@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Support\Brand;
+use Illuminate\Support\Facades\View;
 use App\Models\Property;
 use App\Modules\ModuleManager;
 use App\Modules\ModuleServiceProvider;
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(Brand::class);
         // Register the module manager as a singleton
         $this->app->singleton(ModuleManager::class, function ($app) {
             return new ModuleManager();
@@ -37,6 +40,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Public brand (config/branding.php) for every view: {{ $brand->name() }}.
+        // Stateless - it reads the locale per call - so sharing one instance is
+        // safe under Octane.
+        View::share('brand', $this->app->make(Brand::class));
+
         // Register Property observer for automatic history tracking
         Property::observe(PropertyObserver::class);
 

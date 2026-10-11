@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', app()->getLocale() === 'ar' ? 'من نحن | دار حضرموت العقارية' : 'About Us | Dar Hadhramaut Real Estate')
+@section('title', app()->getLocale() === 'ar' ? 'من نحن | '.$brand->name('ar') : 'About Us | '.$brand->name('en'))
 
 @section('content')
 <div class="relative w-full overflow-hidden">
@@ -18,7 +18,7 @@
         <div class="relative z-10 container mx-auto px-4 lg:px-8 text-center max-w-4xl">
             <!-- Main Headline -->
             <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight mb-6">
-                {{ app()->getLocale() === 'ar' ? 'دار حضرموت العقارية' : 'Dar Hadhramaut Real Estate' }}
+                {{ $brand->name() }}
             </h1>
 
             <!-- Subtitle Paragraph -->
@@ -104,7 +104,7 @@
                     </h2>
 
                     <p class="text-stone-600 dark:text-stone-300 text-base sm:text-lg leading-relaxed mb-8 font-light">
-                        {{ app()->getLocale() === 'ar' ? 'تأسست دار حضرموت العقارية لتكون الشريك الموثوق للأفراد، المستثمرين، والمطورين العقاريين في مختلف المحافظات اليمنية (المكلا، صنعاء، عدن، مأرب، تعز). ندمج بين الخبرة الميدانية العريقة وأحدث التقنيات الرقمية كالجولات الافتراضية والنماذج ثلاثية الأبعاد.' : 'Dar Hadhramaut Real Estate was founded to be the trusted partner for homeowners, investors, and property developers across Yemen (Mukalla, Sana\'a, Aden, Marib, Taiz). We combine profound local market expertise with modern real estate technology, virtual tours, and 3D property models.' }}
+                        {{ app()->getLocale() === 'ar' ? 'تأسست '.$brand->name('ar').' لتكون الشريك الموثوق للأفراد، المستثمرين، والمطورين العقاريين في مختلف المحافظات اليمنية (المكلا، صنعاء، عدن، مأرب، تعز). ندمج بين الخبرة الميدانية العريقة وأحدث التقنيات الرقمية كالجولات الافتراضية والنماذج ثلاثية الأبعاد.' : $brand->name('en').' was founded to be the trusted partner for homeowners, investors, and property developers across Yemen (Mukalla, Sana\'a, Aden, Marib, Taiz). We combine profound local market expertise with modern real estate technology, virtual tours, and 3D property models.' }}
                     </p>
 
                     <!-- City Tags -->
@@ -146,7 +146,7 @@
                 <div class="lg:col-span-5 relative">
                     <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-stone-200 dark:border-stone-700 aspect-[4/5]">
                         <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=80" 
-                             alt="Dar Hadhramaut Architecture" 
+                             alt="{{ $brand->name() }}" 
                              class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#1C1816] via-transparent to-transparent opacity-80"></div>
                         
@@ -278,17 +278,17 @@
                             {{ app()->getLocale() === 'ar' ? 'الفرع الرئيسي - المكلا (حضرموت)' : 'Headquarters - Mukalla (Hadhramout)' }}
                         </h3>
                         <p class="text-xs sm:text-sm text-stone-600 dark:text-stone-400 leading-relaxed mb-6 font-light">
-                            {{ app()->getLocale() === 'ar' ? 'شارع الستين - برج حضرموت التجاري، الدور الرابع. يغطي أحياء فوه، الديس، الشرج، والمخططات الساحلية.' : '60th Street - Hadhramaut Commercial Tower, 4th Floor. Covering Fuwah, Al-Dees, and coastal developments.' }}
+                            {{ $brand->address() }}
                         </p>
                     </div>
 
                     <div class="pt-4 border-t border-stone-100 dark:border-stone-800">
-                        <a href="tel:+967776248526" 
+                        <a href="tel:+{{ $brand->phoneDigits() }}" 
                            class="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#8C7869] hover:text-[#7A6759] transition-colors">
                             <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                             </svg>
-                            <span>+967 776 248 526</span>
+                            <span dir="ltr">{{ $brand->phone() }}</span>
                         </a>
                     </div>
                 </div>

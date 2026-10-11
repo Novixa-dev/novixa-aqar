@@ -45,7 +45,7 @@ class SellerPanelProvider extends PanelProvider
         $panel
             ->id('seller')
             ->path('seller')
-            ->brandName('نوفيكسا عقار | Novixa Aqar')
+            ->brandName(fn (): string => app(\App\Support\Brand::class)->name())
             ->login([AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/seller')

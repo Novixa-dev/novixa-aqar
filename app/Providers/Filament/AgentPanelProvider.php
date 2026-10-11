@@ -36,7 +36,7 @@ class AgentPanelProvider extends PanelProvider
         $panel
             ->id('agent')
             ->path('agent')
-            ->brandName('نوفيكسا عقار | Novixa Aqar')
+            ->brandName(fn (): string => app(\App\Support\Brand::class)->name())
             ->login([\Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/agent')
