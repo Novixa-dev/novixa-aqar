@@ -46,8 +46,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'payments/webhook',
         ]);
 
+        // RoleBasedRedirect is deliberately NOT global. Appended here it ran
+        // before the session started, so it never saw a signed-in user in
+        // production (dead code) - while under any ordering where it did, it
+        // would bounce every signed-in buyer, tenant or staff member off the
+        // public site to their panel, making booking, wishlist and reviews
+        // unusable. Post-login routing is LoginResponse's job; the alias
+        // below remains for any route that wants it explicitly.
         $middleware->append([
-            \App\Http\Middleware\RoleBasedRedirect::class,
             \App\Http\Middleware\SecurityHeaders::class,
         ]);
 
