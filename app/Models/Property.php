@@ -161,6 +161,21 @@ class Property extends Model implements HasMedia
         return $query->where('moderation_status', 'pending');
     }
 
+    /**
+     * What the public website may show: approved listings, plus rows that
+     * predate moderation (NULL). Pending and rejected listings stay in the
+     * staff moderation queue - they used to appear on /properties anyway.
+     */
+    public function scopePubliclyVisible(Builder $query): Builder
+    {
+        return $query->where(fn (Builder $q) => $q->where('moderation_status', 'approved')->orWhereNull('moderation_status'));
+    }
+
+    public function isPubliclyVisible(): bool
+    {
+        return in_array($this->moderation_status, ['approved', null], true);
+    }
+
     public function scopeApproved(Builder $query): Builder
     {
         return $query->where('moderation_status', 'approved');

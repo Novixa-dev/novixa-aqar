@@ -77,7 +77,7 @@ class AdvancedPropertySearch extends Component
 
     public function getPropertiesProperty()
     {
-        $query = Property::search($this->search)
+        $query = Property::publiclyVisible()->search($this->search)
             ->priceRange($this->minPrice, $this->maxPrice)
             ->bedrooms($this->minBedrooms, $this->maxBedrooms)
             ->bathrooms($this->minBathrooms, $this->maxBathrooms)

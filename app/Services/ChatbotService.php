@@ -100,7 +100,7 @@ class ChatbotService
         $city = collect($cities)->search(fn ($pattern) => (bool) preg_match($pattern, $message)) ?: null;
 
         $search = function (bool $withCity, bool $withType) use ($status, $type, $city) {
-            return Property::active()
+            return Property::active()->publiclyVisible()
                 ->when($status, fn ($q) => $q->where('status', $status))
                 ->when($withType && $type, fn ($q) => $q->where('property_type', $type))
                 ->when($withCity && $city, fn ($q) => $q->where('location', 'like', "%{$city}%"))
