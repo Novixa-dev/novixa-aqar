@@ -81,26 +81,42 @@ jobs:
       url: https://aqar-demo.novixa.dev
     steps:
       # Secrets first: a misconfigured secret fails in seconds with a clear
-      # message instead of after a 10-minute build.
+      # message instead of after a 10-minute build. Both demo workflows share
+      # these repository secrets; the sites stay apart through SITE, the
+      # concurrency group and the branch that triggers each workflow.
       - name: Check deploy secret
         env:
           KEY: ${{ secrets.AQAR_DEMO_SSH_KEY }}
         run: |
           if [ -z "$KEY" ]; then
             echo "::error::Secret AQAR_DEMO_SSH_KEY is missing."; exit 1
-          elif ! printf '%s\n' "$KEY" | grep -q -- '-----BEGIN OPENSSH PRIVATE KEY-----'; then
-            echo "::error::AQAR_DEMO_SSH_KEY must be the whole private key file, from -----BEGIN OPENSSH PRIVATE KEY----- to -----END OPENSSH PRIVATE KEY-----."; exit 1
+          elif ! printf '%s\n' "$KEY" | grep -Eq -- '-----BEGIN ([A-Z]+ )?PRIVATE KEY-----'; then
+            echo "::error::AQAR_DEMO_SSH_KEY must be the whole private key file, from its -----BEGIN ... PRIVATE KEY----- line to its -----END ... PRIVATE KEY----- line (not the .pub file)."; exit 1
           fi
 
       - name: Configure SSH
         env:
           KEY: ${{ secrets.AQAR_DEMO_SSH_KEY }}
+          # Optional: only needed when the key is passphrase-protected.
+          KEY_PASSWORD: ${{ secrets.AQAR_DEMO_SSH_KEY_PASSWORD }}
         run: |
           install -d -m 700 ~/.ssh
           # tr: a key pasted from Windows carries CRLF line endings, which
           # OpenSSH rejects as "invalid format".
           printf '%s\n' "$KEY" | tr -d '\r' > ~/.ssh/aqar_demo
           chmod 600 ~/.ssh/aqar_demo
+          # A passphrase-protected key is unlocked once on this throwaway
+          # runner, so the later ssh/scp calls never wait for a prompt.
+          if ! ssh-keygen -y -P '' -f ~/.ssh/aqar_demo >/dev/null 2>&1; then
+            if [ -z "$KEY_PASSWORD" ]; then
+              echo "::error::AQAR_DEMO_SSH_KEY is passphrase-protected (or malformed) and AQAR_DEMO_SSH_KEY_PASSWORD is empty."; exit 1
+            fi
+            ssh-keygen -p -q -P "$KEY_PASSWORD" -N '' -f ~/.ssh/aqar_demo >/dev/null 2>&1 \
+              || { echo "::error::AQAR_DEMO_SSH_KEY_PASSWORD does not unlock AQAR_DEMO_SSH_KEY (or the key is malformed)."; exit 1; }
+          fi
+          # The public fingerprint only, to compare with the server's
+          # ~aqar/.ssh/authorized_keys when the server refuses the key.
+          echo "Deploy key: $(ssh-keygen -lf ~/.ssh/aqar_demo)"
           printf '%s %s\n' "$DEPLOY_HOST" "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
           cat > ~/.ssh/config <<EOF
           Host aqar-demo
@@ -108,10 +124,14 @@ jobs:
             User ${DEPLOY_USER}
             IdentityFile ~/.ssh/aqar_demo
             IdentitiesOnly yes
+            BatchMode yes
             StrictHostKeyChecking yes
             ServerAliveInterval 15
           EOF
-          ssh aqar-demo true && echo "SSH to ${DEPLOY_USER}@${DEPLOY_HOST} OK"
+          if ! ssh aqar-demo true; then
+            echo "::error::The server refused this key. Its public key must be in ~${DEPLOY_USER}/.ssh/authorized_keys on ${DEPLOY_HOST}."; exit 1
+          fi
+          echo "SSH to ${DEPLOY_USER}@${DEPLOY_HOST} OK"
 
       - uses: actions/checkout@v7
 

@@ -93,11 +93,19 @@ the demo logins to `@novixa.dev`). Visitors' changes on the demo are reset.
    and persisted in mailcow's `docker-compose.override.yml`), and a copy of
    the `*.novixa.dev` Cloudflare Origin certificate for this site.
 
-2. **GitHub → Settings → Secrets and variables → Actions**: one secret.
+2. **GitHub → Settings → Secrets and variables → Actions**: repository
+   secrets, shared by both workflows (`main` → aqar-demo, `ui-improves` →
+   aqar-demo2). The sites never collide: each workflow is triggered only by
+   its own branch, has its own concurrency group and build cache, and
+   deploys only to `/opt/$SITE`.
 
    | Secret | Value |
    |---|---|
-   | `AQAR_DEMO_SSH_KEY` | the CI private key — the **whole file**, from `-----BEGIN OPENSSH PRIVATE KEY-----` to `-----END OPENSSH PRIVATE KEY-----` |
+   | `AQAR_DEMO_SSH_KEY` | the CI private key — the **whole file**, from its `-----BEGIN … PRIVATE KEY-----` line to its `-----END … PRIVATE KEY-----` line |
+   | `AQAR_DEMO_SSH_KEY_PASSWORD` | optional — the key's passphrase, if it has one |
+
+   The key's public half must be in `~aqar/.ssh/authorized_keys` on the
+   server. The deploy log prints the key's fingerprint to compare.
 
    The server's host key is public, so it is pinned in the workflow itself
    (`DEPLOY_HOST_KEY`); the deploy refuses any server that presents a
