@@ -2,6 +2,7 @@
 
 namespace App\Actions\Jetstream;
 
+use App\Services\TeamManagementService;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
