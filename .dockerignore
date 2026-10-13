@@ -21,3 +21,6 @@ coverage.xml
 .phpunit.cache
 .idea
 .vscode
+
+# Marketing/content system (videos, scripts, studio) — not part of the app image.
+content

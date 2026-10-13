@@ -1,0 +1,26 @@
+{
+  "name": "aqar-video-studio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Novixa Aqar marketing video studio (Remotion)",
+  "scripts": {
+    "studio": "remotion studio",
+    "render:all": "node render-all.mjs"
+  },
+  "dependencies": {
+    "@fontsource/cairo": "^5.3.0",
+    "@fontsource/poppins": "^5.3.0",
+    "@fontsource/tajawal": "^5.3.0",
+    "@remotion/bundler": "^4.0.535",
+    "@remotion/cli": "^4.0.535",
+    "@remotion/renderer": "^4.0.535",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "playwright": "^1.56.1",
+    "typescript": "^5.9.3"
+  }
+}
