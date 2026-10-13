@@ -35,7 +35,6 @@ class PanelSwitcher
      */
     public static function menuItems(string $currentId): array
     {
-        $isArabic = app()->getLocale() === 'ar';
         $items = [];
 
         foreach (self::PANELS as $id => $meta) {
@@ -43,10 +42,13 @@ class PanelSwitcher
                 continue;
             }
 
+            // Closures, not values: this runs once per Octane worker, so an
+            // eager locale/URL would be frozen at whatever the worker booted
+            // with (see languageMenuItem() below).
             $items[] = MenuItem::make()
-                ->label($isArabic ? 'الانتقال إلى: ' . $meta['label_ar'] : 'Switch to: ' . $meta['label'])
+                ->label(fn () => app()->getLocale() === 'ar' ? 'الانتقال إلى: ' . $meta['label_ar'] : 'Switch to: ' . $meta['label'])
                 ->icon('heroicon-o-arrow-right-start-on-rectangle')
-                ->url(url('/' . $meta['path']))
+                ->url(fn () => url('/' . $meta['path']))
                 ->visible(fn () => auth()->user()?->canAccessPanelById($id) ?? false);
         }
 

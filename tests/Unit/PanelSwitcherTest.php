@@ -74,6 +74,19 @@ class PanelSwitcherTest extends TestCase
         $this->assertStringContainsString('/app', (string) $visible[0]->getUrl());
     }
 
+    public function test_labels_follow_the_locale_at_render_time_not_at_registration(): void
+    {
+        // Under Octane, panel() — and so menuItems() — runs once per worker.
+        app()->setLocale('ar');
+        $items = PanelSwitcher::menuItems('admin');
+
+        app()->setLocale('en');
+        $this->assertSame('Switch to: Staff', $items[0]->getLabel());
+
+        app()->setLocale('ar');
+        $this->assertSame('الانتقال إلى: الموظفون', $items[0]->getLabel());
+    }
+
     public function test_guests_see_nothing(): void
     {
         auth()->logout();
