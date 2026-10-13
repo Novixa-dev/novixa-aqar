@@ -10,7 +10,7 @@ class PropertySyncException extends Exception
     protected $propertyId;
     protected $service;
 
-    public function __construct($message, $propertyId, $service, $code = 0, Exception $previous = null)
+    public function __construct($message, $propertyId, $service, $code = 0, ?Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->propertyId = $propertyId;

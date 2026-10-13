@@ -17,7 +17,7 @@ class ComplianceService
         ]));
     }
 
-    public function getOverdueItems(int $teamId = null): Collection
+    public function getOverdueItems(?int $teamId = null): Collection
     {
         $query = ComplianceItem::overdue();
 
@@ -28,7 +28,7 @@ class ComplianceService
         return $query->with(['property', 'assignedTo'])->get();
     }
 
-    public function getItemsDueSoon(int $days = 30, int $teamId = null): Collection
+    public function getItemsDueSoon(int $days = 30, ?int $teamId = null): Collection
     {
         $query = ComplianceItem::dueSoon();
 
@@ -39,7 +39,7 @@ class ComplianceService
         return $query->with(['property', 'assignedTo'])->get();
     }
 
-    public function getComplianceReport(int $teamId = null): array
+    public function getComplianceReport(?int $teamId = null): array
     {
         $query = ComplianceItem::query();
 
@@ -188,7 +188,7 @@ class ComplianceService
         return $item->complianceDocuments()->create($documentData);
     }
 
-    public function getExpiringCertificates(int $days = 30, int $teamId = null): Collection
+    public function getExpiringCertificates(int $days = 30, ?int $teamId = null): Collection
     {
         $query = ComplianceItem::whereNotNull('certificate_expiry')
             ->where('certificate_expiry', '<=', now()->addDays($days))
@@ -252,7 +252,7 @@ class ComplianceService
         ];
     }
 
-    private function getComplianceTrends(int $teamId = null): array
+    private function getComplianceTrends(?int $teamId = null): array
     {
         $query = ComplianceItem::query();
 
