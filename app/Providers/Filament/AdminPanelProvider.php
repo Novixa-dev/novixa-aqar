@@ -38,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName(fn (): string => app(\App\Support\Brand::class)->name().' | '.(app()->getLocale() === 'ar' ? 'لوحة التحكم' : 'Admin'))
+            ->favicon(fn (): string => asset('images/logo.svg'))
             ->darkMode(true)
             ->sidebarCollapsibleOnDesktop()
             ->login([AuthenticatedSessionController::class, 'create'])

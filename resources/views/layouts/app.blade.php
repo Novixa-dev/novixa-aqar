@@ -20,7 +20,7 @@
     @endunless
     <link rel="icon" href="{{ asset('images/logo.svg') }}" type="image/svg+xml">
     <link rel="alternate icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo.svg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <meta name="theme-color" content="#1C1816">
     <meta name="author" content="{{ $brand->company() }}">
     <meta property="og:site_name" content="{{ $brand->name() }}">

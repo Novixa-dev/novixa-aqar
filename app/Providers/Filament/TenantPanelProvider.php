@@ -46,6 +46,7 @@ class TenantPanelProvider extends PanelProvider
             ->id('tenant')
             ->path('tenant')
             ->brandName(fn (): string => app(\App\Support\Brand::class)->name())
+            ->favicon(fn (): string => asset('images/logo.svg'))
             ->login([AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/tenant')

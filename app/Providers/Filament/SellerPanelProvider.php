@@ -46,6 +46,7 @@ class SellerPanelProvider extends PanelProvider
             ->id('seller')
             ->path('seller')
             ->brandName(fn (): string => app(\App\Support\Brand::class)->name())
+            ->favicon(fn (): string => asset('images/logo.svg'))
             ->login([AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/seller')

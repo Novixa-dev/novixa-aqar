@@ -37,6 +37,7 @@ class AgentPanelProvider extends PanelProvider
             ->id('agent')
             ->path('agent')
             ->brandName(fn (): string => app(\App\Support\Brand::class)->name())
+            ->favicon(fn (): string => asset('images/logo.svg'))
             ->login([\Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/agent')
