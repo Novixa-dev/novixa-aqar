@@ -3,7 +3,7 @@
         {{ $this->form }}
 
         <x-filament::button type="submit" class="mt-4">
-            Save
+            {{ __('filament-panels::resources/pages/edit-record.form.actions.save.label') }}
         </x-filament::button>
     </form>
 </x-filament::page>
