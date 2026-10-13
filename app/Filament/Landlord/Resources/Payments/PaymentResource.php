@@ -5,6 +5,7 @@ namespace App\Filament\Landlord\Resources\Payments;
 use App\Filament\Landlord\Resources\Payments\Pages;
 use App\Models\Payment;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -35,11 +36,19 @@ class PaymentResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('tenant.name')
+            // A form only hydrates the record's own attributes, so a dotted
+            // 'tenant.name' field rendered empty; read the relation directly.
+            TextInput::make('tenant_name')
                 ->label(app()->getLocale() === 'ar' ? 'المستأجر' : 'Tenant')
+                ->afterStateHydrated(fn (TextInput $component, ?Payment $record) => $component->state($record?->tenant?->name))
+                ->dehydrated(false)
                 ->disabled(),
-            TextInput::make('amount')->disabled(),
-            TextInput::make('status')->disabled(),
+            TextInput::make('amount')
+                ->label(app()->getLocale() === 'ar' ? 'المبلغ' : 'Amount')
+                ->disabled(),
+            TextInput::make('status')
+                ->label(__('filament.fields.status'))
+                ->disabled(),
         ]);
     }
 

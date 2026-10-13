@@ -7,6 +7,7 @@ use App\Models\ChatMessage;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 use Filament\Infolists\Components;
+use Filament\Schemas\Components\Section;
 
 class ViewChatConversation extends ViewRecord
 {
@@ -15,8 +16,8 @@ class ViewChatConversation extends ViewRecord
     public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->schema([
-                Components\Section::make('Conversation Info')
+            ->components([
+                Section::make(app()->getLocale() === 'ar' ? 'بيانات المحادثة' : 'Conversation info')
                     ->schema([
                         Components\TextEntry::make('session_id')
                             ->label(__('filament.fields.session_id')),
@@ -27,21 +28,21 @@ class ViewChatConversation extends ViewRecord
                             ->color(fn (string $state): string => match ($state) {
                                 'active' => 'success',
                                 'escalated' => 'warning',
-                                'closed' => 'gray',
+                                default => 'gray',
                             }),
                         Components\TextEntry::make('assignedAgent.name')
                             ->label(__('filament.fields.assigned_agent'))
-                            ->default('Not assigned'),
+                            ->default(app()->getLocale() === 'ar' ? 'غير مُسنَدة' : 'Not assigned'),
                         Components\TextEntry::make('created_at')
                             ->label(__('filament.fields.started_at'))
                             ->dateTime(),
                         Components\TextEntry::make('escalated_at')
                             ->label(__('filament.fields.escalated_at'))
                             ->dateTime()
-                            ->default('—'),
+                            ->placeholder('—'),
                     ])
                     ->columns(2),
-                Components\Section::make('Messages')
+                Section::make(app()->getLocale() === 'ar' ? 'الرسائل' : 'Messages')
                     ->schema([
                         Components\RepeatableEntry::make('messages')
                             ->schema([
