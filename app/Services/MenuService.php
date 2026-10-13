@@ -8,9 +8,15 @@ use Spatie\Menu\Laravel\Link;
 
 class MenuService
 {
+    /** @var \Illuminate\Support\Collection<int|string, \Illuminate\Support\Collection<int, Menu>> */
+    private $byParent;
+
     public function buildMenu()
     {
-        $menuItems = Menu::whereNull('parent_id')->orderBy('order')->get();
+        // The whole tree in one query; lazy-loading `children` per item cost
+        // one query for every menu entry (and the navbar builds this twice).
+        $this->byParent = Menu::orderBy('order')->get()->groupBy(fn (Menu $item) => $item->parent_id ?? 'root');
+        $menuItems = $this->byParent->get('root', collect());
 
         $menu = SpatieMenu::new()
             ->addClass('flex flex-col lg:flex-row lg:items-center gap-1 lg:gap-6')
@@ -28,12 +34,14 @@ class MenuService
         return $items->map(function ($item) {
             $displayName = __($item->name);
 
-            if ($item->children && $item->children->count() > 0) {
+            $children = $this->byParent->get($item->id, collect());
+
+            if ($children->isNotEmpty()) {
                 $submenu = SpatieMenu::new()
                     ->addClass('absolute start-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl py-2 border border-gray-100 dark:border-gray-700 z-50')
                     ->addItemClass('block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 transition-colors');
 
-                $this->createMenuItems($item->children)->each(function ($subItem) use ($submenu) {
+                $this->createMenuItems($children)->each(function ($subItem) use ($submenu) {
                     $submenu->add($subItem);
                 });
 
