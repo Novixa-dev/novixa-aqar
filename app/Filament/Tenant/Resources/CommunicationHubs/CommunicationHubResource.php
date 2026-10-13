@@ -44,6 +44,7 @@ class CommunicationHubResource extends Resource
         return $schema
             ->components([
                 Select::make('recipient_id')
+                    ->label(__('filament.fields.to'))
                     ->relationship('recipient', 'name')
                     ->required(),
                 Textarea::make('content')

@@ -70,6 +70,7 @@ class UserForm
                                     ->schema([
                                         Select::make('roles')
                                             ->relationship('roles', 'name')
+                                            ->getOptionLabelFromRecordUsing(fn ($record): string => \App\Support\StatusLabels::label('role', $record->name))
                                             ->multiple()
                                             ->preload()
                                             ->searchable()

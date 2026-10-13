@@ -112,4 +112,22 @@ return [
         'lettings' => 'Rentals',
         'hmo' => 'Shared housing (HMO)',
     ],
+    'transaction' => [
+        'pending' => 'Pending',
+        'in_progress' => 'In progress',
+        'completed' => 'Completed',
+        'cancelled' => 'Cancelled',
+    ],
+    'role' => [
+        'super_admin' => 'Super admin',
+        'admin' => 'Admin',
+        'staff' => 'Staff',
+        'agent' => 'Agent',
+        'landlord' => 'Landlord',
+        'tenant' => 'Tenant',
+        'buyer' => 'Buyer',
+        'seller' => 'Seller',
+        'contractor' => 'Contractor',
+        'panel_user' => 'User',
+    ],
 ];

@@ -48,6 +48,7 @@ class TransactionResource extends Resource
         return $schema
             ->components([
                 Select::make('property_id')
+                    ->label(__('filament.fields.property'))
                     ->relationship('property', 'title')
                     ->required(),
                 // Transaction's belongsTo(User::class, 'buyer_id') method is
@@ -101,14 +102,18 @@ class TransactionResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('date')
-                    ->searchable()
+                    ->label(__('filament.fields.transaction_date'))
+                    ->date()
                     ->sortable(),
                 TextColumn::make('amount')
                     ->money(strtolower(config('currencies.default')))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->searchable()
+                    ->label(__('filament.fields.status'))
+                    ->badge()
+                    ->formatStateUsing(\App\Support\StatusLabels::for('transaction'))
+                    ->color(\App\Support\StatusLabels::color('transaction'))
                     ->sortable(),
                 TextColumn::make('commission_amount')
                     ->money(strtolower(config('currencies.default')))
