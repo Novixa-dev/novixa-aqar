@@ -51,6 +51,7 @@ class AppointmentResource extends Resource
                     ->relationship('user', 'name')
                     ->required(),
                 Select::make('property_id')
+                    ->label(__('filament.fields.property'))
                     ->relationship('property', 'title')
                     ->required(),
                 DatePicker::make('appointment_date')

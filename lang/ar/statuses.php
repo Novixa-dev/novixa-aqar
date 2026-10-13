@@ -112,4 +112,22 @@ return [
         'lettings' => 'إيجارات',
         'hmo' => 'سكن جماعي',
     ],
+    'transaction' => [
+        'pending' => 'قيد الانتظار',
+        'in_progress' => 'قيد التنفيذ',
+        'completed' => 'مكتملة',
+        'cancelled' => 'ملغاة',
+    ],
+    'role' => [
+        'super_admin' => 'مدير عام',
+        'admin' => 'مدير',
+        'staff' => 'موظف',
+        'agent' => 'وكيل',
+        'landlord' => 'مالك',
+        'tenant' => 'مستأجر',
+        'buyer' => 'مشترٍ',
+        'seller' => 'بائع',
+        'contractor' => 'مقاول',
+        'panel_user' => 'مستخدم',
+    ],
 ];

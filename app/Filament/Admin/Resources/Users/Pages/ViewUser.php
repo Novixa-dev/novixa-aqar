@@ -67,7 +67,7 @@ class ViewUser extends ViewRecord
                             ->label(__('filament.fields.assigned_roles'))
                             ->badge()
                             ->color('success')
-                            ->formatStateUsing(fn ($state) => ucfirst($state))
+                            ->formatStateUsing(\App\Support\StatusLabels::for('role'))
                             ->placeholder(__('No roles assigned'))
                             ->columnSpanFull(),
                         

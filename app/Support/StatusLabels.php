@@ -42,6 +42,7 @@ class StatusLabels
                 'priority' => ['low' => 'gray', 'normal' => 'info', 'high' => 'warning', 'urgent' => 'danger'],
                 'lead' => ['new' => 'info', 'contacted' => 'warning', 'qualified' => 'success', 'converted' => 'success', 'lost' => 'danger'],
                 'campaign' => ['draft' => 'gray', 'scheduled' => 'info', 'sent' => 'success', 'failed' => 'danger'],
+                'transaction' => ['completed' => 'success', 'in_progress' => 'info', 'pending' => 'warning', 'cancelled' => 'danger'],
                 default => [],
             };
 

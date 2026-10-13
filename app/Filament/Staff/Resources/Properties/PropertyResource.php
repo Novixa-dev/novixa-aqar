@@ -194,6 +194,7 @@ class PropertyResource extends Resource
                     ->required(),
                 Select::make('property_category_id')
                     ->relationship('category', 'name')
+                    ->getOptionLabelFromRecordUsing(fn ($record): string => \App\Support\StatusLabels::label('category', $record->name))
                     ->required()
                     ->label(__('filament.fields.property_category')),
                 Select::make('energy_rating')

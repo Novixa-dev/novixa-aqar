@@ -34,6 +34,7 @@ class UsersTable
                 TextColumn::make('roles.name')
                     ->label(__('filament.fields.roles'))
                     ->badge()
+                    ->formatStateUsing(\App\Support\StatusLabels::for('role'))
                     ->color('success')
                     ->searchable()
                     ->sortable()
@@ -74,6 +75,7 @@ class UsersTable
             ->filters([
                 SelectFilter::make('roles')
                     ->relationship('roles', 'name')
+                    ->getOptionLabelFromRecordUsing(fn ($record): string => \App\Support\StatusLabels::label('role', $record->name))
                     ->multiple()
                     ->preload()
                     ->searchable()
