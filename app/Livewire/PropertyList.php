@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Activity;
 use Log;
 use Exception;
 use Livewire\Component;
