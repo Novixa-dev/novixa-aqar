@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Property;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -16,7 +15,7 @@ class HomeController extends Controller
             ->whereNotNull('longitude')
             ->where('latitude', '!=', 0)
             ->where('longitude', '!=', 0)
-            ->get()
+            ->get(['id', 'title', 'price', 'latitude', 'longitude', 'bedrooms', 'bathrooms', 'area_sqft'])
             ->map(function ($property) {
                 return [
                     'id' => $property->id,
@@ -29,8 +28,6 @@ class HomeController extends Controller
                     'area_sqft' => $property->area_sqft,
                 ];
             });
-
-        Log::info('Map properties count: ' . $mapProperties->count());
 
         return view('home', [
             'featuredProperties' => $featuredProperties,
