@@ -14,9 +14,9 @@ class ViewAgentPerformance extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
-                Section::make('Performance Metrics')
+        return $schema
+            ->components([
+                Section::make(app()->getLocale() === 'ar' ? 'مؤشرات الأداء' : 'Performance metrics')
                     ->schema([
                         TextEntry::make('listings_count')
                             ->label(__('filament.fields.total_listings')),
@@ -27,7 +27,7 @@ class ViewAgentPerformance extends ViewRecord
                         TextEntry::make('average_rating')
                             ->label(__('filament.fields.average_rating')),
                     ]),
-                Section::make('Recent Reviews')
+                Section::make(app()->getLocale() === 'ar' ? 'أحدث التقييمات' : 'Recent reviews')
                     ->schema([
                         TextEntry::make('reviews.comment')
                             ->label(__('filament.fields.review'))
