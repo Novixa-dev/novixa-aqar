@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\DocumentTemplate;
 use App\Models\Transaction;
 use App\Models\Document;
 use App\Services\DigitalSignatureService;
@@ -28,22 +29,38 @@ class TransactionService
         return $transaction;
     }
 
-    public function generateContractualDocument(Transaction $transaction)
+    public static function saleAgreementTemplate(): ?DocumentTemplate
     {
-        $documentTemplate = DocumentTemplate::where('type', 'sale_agreement')->first();
+        return DocumentTemplate::where('type', 'sale_agreement')->first();
+    }
+
+    /**
+     * Render the sale agreement for a transaction and file it as a document
+     * linked to that transaction. Null when no sale-agreement template exists.
+     */
+    public function generateContractualDocument(Transaction $transaction): ?Document
+    {
+        $documentTemplate = static::saleAgreementTemplate();
+
+        if (! $documentTemplate) {
+            return null;
+        }
+
         $content = $documentTemplate->renderContent([
-            'buyer' => $transaction->buyer->name,
-            'seller' => $transaction->seller->name,
-            'property' => $transaction->property->title,
+            'buyer' => $transaction->user?->name,
+            'seller' => $transaction->seller?->name,
+            'property' => $transaction->property?->title,
             'amount' => $transaction->amount,
-            'date' => $transaction->date->format('Y-m-d'),
+            'date' => $transaction->date?->format('Y-m-d'),
         ]);
 
-        $document = new Document([
-            'title' => 'Sale Agreement - ' . $transaction->property->title,
+        // content is not mass-assignable on Document (uploads set file_path).
+        $document = (new Document)->forceFill([
+            'title' => 'Sale Agreement - '.($transaction->property?->title ?? '#'.$transaction->id),
             'content' => $content,
-            'transaction_id' => $transaction->id,
+            'team_id' => $transaction->property?->team_id,
         ]);
+        $document->documentable()->associate($transaction);
         $document->save();
 
         return $document;
