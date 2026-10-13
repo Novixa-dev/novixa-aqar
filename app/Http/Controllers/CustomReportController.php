@@ -6,7 +6,6 @@ use App\Livewire\CustomReportForm;
 use App\Services\DocumentGenerationService;
 use App\Services\MarketAnalysisService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
 
 class CustomReportController extends Controller
 {
@@ -40,28 +39,6 @@ class CustomReportController extends Controller
 
         // Return the report data as JSON
         return response()->json($reportData);
-    }
-
-    public function exportReportToPdf(Request $request)
-    {
-        $reportData = $this->generateReportData($request->all());
-        $pdfContent = $this->documentGenerationService->generatePdf('custom_report', $reportData);
-
-        return Response::make($pdfContent, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="custom_report.pdf"',
-        ]);
-    }
-
-    public function exportReportToExcel(Request $request)
-    {
-        $reportData = $this->generateReportData($request->all());
-        $excelContent = $this->documentGenerationService->generateExcel('custom_report', $reportData);
-
-        return Response::make($excelContent, 200, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="custom_report.xlsx"',
-        ]);
     }
 
     private function generateReportData($criteria)
