@@ -21,8 +21,19 @@ class UpdateTeamMemberRole extends \Laravel\Jetstream\Actions\UpdateTeamMemberRo
         private readonly AgencyRoleAuditService $roleAudits,
     ) {}
 
-    public function update(User $user, Team $team, int $teamMemberId, string $role): void
+    /**
+     * Parameters stay untyped to match Jetstream's parent signature: narrowing
+     * them made the class fatal to load ("must be compatible"), so changing a
+     * member's role crashed before any of this ran.
+     *
+     * @param  User  $user
+     * @param  Team  $team
+     * @param  int|string  $teamMemberId
+     */
+    public function update($user, $team, $teamMemberId, string $role): void
     {
+        $teamMemberId = (int) $teamMemberId;
+
         Validator::make(['role' => $role], [
             'role' => ['required', Rule::in(AgencyRole::assignable())],
         ])->validate();
