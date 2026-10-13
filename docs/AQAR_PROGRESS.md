@@ -799,3 +799,24 @@ Reviewed both live demos end to end (headless-browser crawl of ~770 page views: 
 - **CI:** host key pinned in the workflows; one secret remains (`AQAR_DEMO_SSH_KEY`, must be the whole key file). PR #40's conflicts resolved (its settings unique index now de-duplicates first — the live DB had 12 duplicate rows).
 
 Tests: main 632 / 0 failures, ui-improves 631 / 0 failures (32 skipped each). Both demos: `demo:audit` 52/52.
+
+---
+
+## 2026-10-13 — Second review pass: security updates, crash fixes, static analysis
+
+Sources: both demos' logs, `composer audit`/`npm audit`, PHPStan level 0 over `app/`, a headless crawl of both sites (384 views each, every persona, AR/EN, desktop/mobile), and an in-container profile of the home request.
+
+Fixed on `ui-improves` (16 commits, `2bc6e28..f40068f`), **deployed to aqar-demo2** (`sha-f40068f`, 46/46 probes 200 during the switch, `demo:audit` 52/52, Laravel 13.35):
+
+- **Security:** RoadRunner served `public/*.php` and `.htaccess` as plain-text source (empty `.rr.yaml`) — now 404. Dependency advisories closed: commonmark (high), Filament MFA, phpseclib, Laravel, flysystem.
+- **Crashes:** shared profile page (`notify()` removed in Filament 3) in 8 panels; staff agent-performance and chat-conversation views (also reached from `/admin/...`); landlord payment view; changing a team member's role (class was fatal to load); team creation (missing import); transaction "Generate document" (now hidden until a sale-agreement template exists).
+- **Performance:** aqar-demo's navbar ran 68 queries per page (menu N+1) — now 1 query per build.
+- **Octane:** deprecation logging fell back to the emergency logger; panel-switcher labels froze in the worker's boot locale.
+- **i18n:** transaction statuses, role badges/options, category options, `Property`/`Recipient` labels.
+- **Hygiene:** real favicon/touch icon; CSV exports (escape + BOM); dead code that referenced missing classes removed; non-functional custom-report PDF/Excel export removed.
+
+Tests: ui-improves 646 / 0 failures / 32 skipped (new: ProfilePage, MenuService, PanelSwitcher locale, UpdateTeamMemberRole, PanelPageRegressions).
+
+**Not yet on aqar-demo (`main`):** porting the 16 commits by cherry-pick needs the owner's go-ahead.
+
+**Open (found, not fixed yet):** the Market Analysis "resource" is bound to the `Property` model (create/view cannot work — needs rebuilding as a report page); create forms for images and maintenance requests reported failing by the owner; utility-payment form shows raw numbers under an English label; appointment types and other dropdowns in English; app exceptions are not recorded anywhere on the demos (worker stderr is dropped below RoadRunner's `warn` level) — logging must move to a file channel.
