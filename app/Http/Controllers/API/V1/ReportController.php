@@ -70,10 +70,10 @@ class ReportController extends Controller
 
         return response()->streamDownload(function () use ($data) {
             $output = fopen('php://output', 'w');
-            fputcsv($output, ['section', 'metric', 'value']);
+            fputcsv($output, ['section', 'metric', 'value'], escape: '');
             foreach ($data as $section => $values) {
                 foreach (is_array($values) ? $values : [$section => $values] as $metric => $value) {
-                    fputcsv($output, [is_array($values) ? $section : 'summary', $metric, $value]);
+                    fputcsv($output, [is_array($values) ? $section : 'summary', $metric, $value], escape: '');
                 }
             }
             fclose($output);

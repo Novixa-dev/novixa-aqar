@@ -27,7 +27,16 @@ class ListAgentPerformance extends ListRecords
 
                     return response()->streamDownload(function () use ($agents) {
                         $handle = fopen('php://output', 'w');
-                        fputcsv($handle, ['Name', 'Email', 'Listings', 'Properties Sold', 'Appointments', 'Avg. Rating']);
+                        // UTF-8 BOM: without it Excel opens Arabic names as mojibake.
+                        fwrite($handle, "\xEF\xBB\xBF");
+                        fputcsv($handle, [
+                            __('filament.fields.name'),
+                            __('filament.fields.email'),
+                            __('filament.fields.listings'),
+                            __('filament.fields.properties_sold'),
+                            __('filament.fields.appointments'),
+                            __('filament.fields.avg_rating'),
+                        ], escape: '');
                         foreach ($agents as $agent) {
                             fputcsv($handle, [
                                 $agent->name,
@@ -36,7 +45,7 @@ class ListAgentPerformance extends ListRecords
                                 $agent->properties_sold_count,
                                 $agent->appointments_count,
                                 $agent->reviews_avg_rating ? round($agent->reviews_avg_rating, 2) : '—',
-                            ]);
+                            ], escape: '');
                         }
                         fclose($handle);
                     }, 'agent-performance-'.now()->format('Y-m-d').'.csv');
