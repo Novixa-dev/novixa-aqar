@@ -145,11 +145,6 @@ class Team extends JetstreamTeam
         return $this->hasMany(Review::class);
     }
 
-    public function siteSettings(): HasMany
-    {
-        return $this->hasMany(SiteSettings::class);
-    }
-
     public function tenants(): HasMany
     {
         return $this->hasMany(Tenant::class);

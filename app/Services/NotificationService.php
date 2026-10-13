@@ -13,7 +13,6 @@ use App\Notifications\LeaseRenewalReminder;
 use App\Notifications\AppointmentCreated;
 use App\Notifications\AppointmentReminder;
 use App\Notifications\MaintenanceRequestSubmitted;
-use App\Notifications\MaintenanceRequestUpdated;
 use App\Notifications\WorkOrderCreated;
 use Illuminate\Notifications\Notification as BaseNotification;
 use Carbon\Carbon;
@@ -36,11 +35,6 @@ class NotificationService
     public function notifyAppointmentCreated(User $user, Appointment $appointment)
     {
         Notification::send($user, new AppointmentCreated($appointment));
-    }
-
-    public function notifyTenantRequestUpdated(User $tenant, MaintenanceRequest $request)
-    {
-        Notification::send($tenant, new MaintenanceRequestUpdated($request));
     }
 
     public function notifyTenantWorkOrderCreated(User $tenant, WorkOrder $workOrder)
