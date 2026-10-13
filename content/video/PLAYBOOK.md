@@ -20,13 +20,13 @@ checked line by line against `content/research/FEATURE_REALITY_CLASSIFICATION.md
 |---|---|---|---|---|
 | **AQ01 Hero** | `AQ01-Hero-9x16` · `-4x5` · `-16x9` | 36 s | Awareness — "what is Aqar" in one watch | Reels, TikTok, Shorts, FB feed (4:5), YouTube/website (16:9) |
 | **AQ01-EN Hero** | `AQ01EN-Hero-16x9` · `-1x1` | 36 s | Awareness — Gulf / English B2B | LinkedIn, X, YouTube |
-| **AQ02 Roles** | `AQ02-Roles-9x16` | 35 s | Consideration — "one system, 8 dashboards" | Reels, TikTok, FB, WhatsApp Status |
+| **AQ02 Roles** | `AQ02-Roles-9x16` | 34 s | Consideration — "one system, 8 dashboards" | Reels, TikTok, FB, WhatsApp Status |
 | **AQ03 Client journey** | `AQ03-ClientJourney-9x16` | 29 s | Consideration — what *your clients* will see | Reels, TikTok, FB |
-| **AQ04 Maintenance** | `AQ04-Maintenance-9x16` | 26 s | Consideration — property-management offices | Reels, FB, WhatsApp |
+| **AQ04 Maintenance** | `AQ04-Maintenance-9x16` | 25 s | Consideration — property-management offices | Reels, FB, WhatsApp |
 | **AQ05 Offer** | `AQ05-Offer-9x16` · `-4x5` | 18 s | Conversion — white-label, license from $500 | **Paid ads** (click-to-WhatsApp), Stories |
-| **AQ06 Insight** | `AQ06-Insight-9x16` | 26 s | Differentiator — investment analysis on every listing | Reels, TikTok, Shorts |
+| **AQ06 Insight** | `AQ06-Insight-9x16` | 23 s | Differentiator — investment analysis on every listing | Reels, TikTok, Shorts |
 | **AQ07 Marketers** | `AQ07-Marketers-9x16` | 13 s | Recruitment — 30% commission | FB groups, WhatsApp, Stories |
-| **AQ08 Explainer** | `AQ08-Explainer-16x9` | 67 s | Sales asset — send after first contact | YouTube, FB, website, WhatsApp to leads |
+| **AQ08 Explainer** | `AQ08-Explainer-16x9` | 62 s | Sales asset — send after first contact | YouTube, FB, website, WhatsApp to leads |
 | **AQ09 Try it** | `AQ09-TryIt-9x16` | 21 s | Proof — AR/EN, dark mode, chat, mobile admin | Reels, TikTok, Stories |
 | **NX01 Novixa** | `NX01-Novixa-9x16` · `-16x9` | 29 s | Company brand — who's behind Aqar | All Novixa channels, LinkedIn, pinned post |
 

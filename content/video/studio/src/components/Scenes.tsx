@@ -131,14 +131,15 @@ export const PhoneDemo: React.FC<{
   en?: boolean;
   step?: string; // e.g. "1"
 }> = ({shot, caption, sub, stops, zoom, taps = [], en, step}) => {
-  const {k, land, v, height} = useLayout();
-  const pw = land ? 470 * (height / 1080) : v ? 630 * k : 440 * k;
+  const {k, land: wide, v, tall, height} = useLayout();
+  const land = wide || !tall; // 1:1 also goes side-by-side
+  const pw = wide ? 470 * (height / 1080) : v ? 630 * k : tall ? 350 * k : 400 * k;
   const {sw, sh} = phoneScreen(pw);
   const enter = useSpring(4, 15);
   const text = (
-    <div style={{display: 'flex', flexDirection: 'column', alignItems: land ? (en ? 'flex-start' : 'flex-end') : 'center', gap: 18 * k, maxWidth: land ? 820 * k : 980 * k}}>
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: land ? (en ? 'flex-start' : 'flex-end') : 'center', gap: 18 * k, maxWidth: wide ? 820 * k : land ? 520 * k : 980 * k}}>
       {step ? <Chip label={step} size={34 * k} tone="brand" en={en} /> : null}
-      <Words text={caption} size={(land ? 74 : 66) * k} en={en} align={land ? 'start' : 'center'} maxWidth={land ? 800 * k : 980 * k} />
+      <Words text={caption} size={(wide ? 74 : land ? 54 : 66) * k} en={en} align={land ? 'start' : 'center'} maxWidth={wide ? 800 * k : land ? 520 * k : 980 * k} />
       {sub ? <Words text={sub} size={36 * k} weight={600} color={C.muted} delay={10} en={en} align={land ? 'start' : 'center'} maxWidth={land ? 760 * k : 900 * k} /> : null}
     </div>
   );
@@ -148,7 +149,7 @@ export const PhoneDemo: React.FC<{
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: land ? (en ? 'row' : 'row-reverse') : 'column',
-        gap: (land ? 120 : 34) * k,
+        gap: (wide ? 120 : land ? 50 : 34) * k,
         paddingBottom: land ? 0 : v ? 90 * k : 30 * k,
       }}
     >

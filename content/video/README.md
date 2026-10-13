@@ -67,11 +67,11 @@ Icons: Lucide-style paths (ISC).
 |---|---|---|
 | AQ01-Hero-9x16 / -4x5 / -16x9 | 1080×1920 / 1080×1350 / 1920×1080 | 36 s |
 | AQ01EN-Hero-16x9 / -1x1 | 1920×1080 / 1080×1080 | 36 s |
-| AQ02-Roles-9x16 | 1080×1920 | 35 s |
+| AQ02-Roles-9x16 | 1080×1920 | 34 s |
 | AQ03-ClientJourney-9x16 | 1080×1920 | 29 s |
 | AQ04-Maintenance-9x16 | 1080×1920 | 25 s |
 | AQ05-Offer-9x16 / -4x5 | 1080×1920 / 1080×1350 | 18 s |
-| AQ06-Insight-9x16 | 1080×1920 | 25 s |
+| AQ06-Insight-9x16 | 1080×1920 | 23 s |
 | AQ07-Marketers-9x16 | 1080×1920 | 13 s |
 | AQ08-Explainer-16x9 | 1920×1080 | 62 s |
 | AQ09-TryIt-9x16 | 1080×1920 | 21 s |
