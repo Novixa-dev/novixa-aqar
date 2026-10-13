@@ -161,6 +161,10 @@ COPY --chown=${USER}:${USER} .env.example ./.env
 # container boot just uses the binary already baked into the image.
 RUN mkdir -p /tmp/opcache-file-cache && php artisan octane:install --server=roadrunner --no-interaction
 
+# octane:install leaves an empty .rr.yaml, which lets RoadRunner serve
+# public/*.php as plain-text source; replace it with ours.
+COPY --chown=${USER}:${USER} .docker/octane/RoadRunner/.rr.prod.yaml ./.rr.yaml
+
 RUN chmod +x /usr/local/bin/start-container /usr/local/bin/healthcheck && \
     cat .docker/utilities.sh >> ~/.bashrc
 
