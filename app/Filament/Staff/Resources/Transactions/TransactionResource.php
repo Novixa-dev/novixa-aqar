@@ -25,6 +25,7 @@ use App\Filament\Staff\Resources\Transactions\Pages\EditTransaction;
 use App\Filament\Staff\Resources\Transactions\Pages\ListTransactions;
 use App\Filament\Staff\Resources\Transactions\Pages\CreateTransaction;
 use App\Services\TransactionService;
+use Filament\Notifications\Notification;
 
 class TransactionResource extends Resource
 {
@@ -121,9 +122,17 @@ class TransactionResource extends Resource
                 EditAction::make(),
                 Action::make('generateDocument')
                     ->label(__('filament.fields.generate_document'))
+                    // Only offered once a sale-agreement template exists.
+                    ->visible(fn (): bool => TransactionService::saleAgreementTemplate() !== null)
                     ->action(function (Transaction $record, TransactionService $transactionService) {
                         $document = $transactionService->generateContractualDocument($record);
-                        // You might want to add a notification or redirect here
+
+                        Notification::make()
+                            ->title($document
+                                ? (app()->getLocale() === 'ar' ? 'تم إنشاء عقد البيع.' : 'Sale agreement generated.')
+                                : (app()->getLocale() === 'ar' ? 'لا يوجد قالب لعقد البيع.' : 'No sale agreement template exists.'))
+                            ->{$document ? 'success' : 'warning'}()
+                            ->send();
                     }),
             ])
             ->toolbarActions([
