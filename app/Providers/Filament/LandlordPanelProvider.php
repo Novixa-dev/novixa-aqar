@@ -46,6 +46,7 @@ class LandlordPanelProvider extends PanelProvider
             ->id('landlord')
             ->path('landlord')
             ->brandName(fn (): string => app(\App\Support\Brand::class)->name())
+            ->favicon(fn (): string => asset('images/logo.svg'))
             ->login([AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/landlord')
