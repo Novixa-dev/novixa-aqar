@@ -52,6 +52,16 @@ return [
     */
 
     'channels' => [
+
+        // Declared up front rather than left to Laravel's lazy registration:
+        // under Octane that registration lands in the base app's config, not
+        // the request sandbox, so every PHP deprecation fell through to the
+        // emergency logger ("Log [deprecations] is not defined").
+        'deprecations' => [
+            'driver' => 'stack',
+            'channels' => [env('LOG_DEPRECATIONS_CHANNEL', 'null')],
+            'ignore_exceptions' => false,
+        ],
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],
