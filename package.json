@@ -22,7 +22,7 @@
     },
     "dependencies": {
         "@google/model-viewer": "^4.4.0",
-        "alpinejs": "^3.16.2",
+        "alpinejs": "^3.17.4",
         "flowbite": "^4.0.2",
         "leaflet": "^1.9.4",
         "preline": "^5.0",
