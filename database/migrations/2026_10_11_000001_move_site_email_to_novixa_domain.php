@@ -10,9 +10,8 @@ use Illuminate\Support\Facades\Schema;
  * to the Novixa domain — only while it is still that untouched default, so an
  * address an operator has already set is never overwritten.
  *
- * A plain update rather than Spatie's SettingsMigrator::update(): that upserts
- * on (group, name), which this schema has no unique index for — SQLite
- * rejects it and MySQL would insert a duplicate row instead of updating.
+ * A plain, guarded UPDATE: it touches exactly one existing row and is safe
+ * whether or not the (group, name) unique index from 2026_10_08 is present.
  */
 return new class extends Migration
 {

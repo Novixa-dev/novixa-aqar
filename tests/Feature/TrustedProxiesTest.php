@@ -2,16 +2,11 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Tests\TestCase;
 
 class TrustedProxiesTest extends TestCase
 {
-    // /properties queries the database; without a migrated schema it 500s
-    // on "no such table: properties", which has nothing to do with proxies.
-    use RefreshDatabase;
-
     /**
      * Railway terminates TLS at its edge and forwards over plain HTTP.
      *
@@ -24,7 +19,7 @@ class TrustedProxiesTest extends TestCase
      */
     public function test_a_forwarded_https_request_is_treated_as_secure(): void
     {
-        $request = Request::create('http://example.test/properties', 'GET');
+        $request = Request::create('http://example.test/up', 'GET');
         $request->headers->set('X-Forwarded-Proto', 'https');
         $request->headers->set('X-Forwarded-For', '203.0.113.10');
 
