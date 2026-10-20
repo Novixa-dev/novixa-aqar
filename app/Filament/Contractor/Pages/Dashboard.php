@@ -2,11 +2,11 @@
 
 namespace App\Filament\Contractor\Pages;
 
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard;
 use App\Models\Contractor;
 use App\Models\MaintenanceRequest;
 
-class Dashboard extends Page
+class Dashboard extends BaseDashboard
 {
     protected string $view = 'filament.contractor.dashboard';
 
