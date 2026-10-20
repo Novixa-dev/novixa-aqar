@@ -798,4 +798,16 @@ Reviewed both live demos end to end (headless-browser crawl of ~770 page views: 
 - **Ops:** the scheduler never ran on the demos (now a container per site); scheduler/worker modes were broken (wrong supervisor include path); health checks were http-only; release switch could drop a request (now graceful nginx reload, 0 failures in repeated probing).
 - **CI:** host key pinned in the workflows; one secret remains (`AQAR_DEMO_SSH_KEY`, must be the whole key file). PR #40's conflicts resolved (its settings unique index now de-duplicates first — the live DB had 12 duplicate rows).
 
+---
+
+## 2026-10-20 — Live verification of both demos; two small fixes; theme-store feasibility
+
+**Live-checked both demos directly** (not just code review): `aqar-demo.novixa.dev` and `aqar-demo2.novixa.dev` both return 200, correct `lang="ar" dir="rtl"`, identical and complete security headers (CSP/HSTS/X-Frame-Options/nosniff), and real YER-priced listings with a sane for-sale/for-rent mix on both. Confirmed by diffing `main` against `ui-improves` directly (not just commit-graph ancestry, which looked far more diverged than the actual content is) that every correctness/i18n/security fix landed on `main` since the branches split was **also applied independently to `ui-improves`** — the only real remaining difference between the two branches is the Blade view layer (design/branding), which is the intended, correct state for a branch meant to carry UI work only.
+
+**Fixed** (PR #63): `/properties` rendered the same static title with no meta description regardless of active filters, the one page `NewsDetail`'s dynamic-SEO pattern never reached; and the `theme-color` meta tag was hardcoded to Novixa Aqar's blue despite every other brand-visible string already being configurable via `config/branding.php`/`App\Support\Brand` — both fixed, following the existing conventions exactly.
+
+**New:** `docs/THEME_STORE_FEASIBILITY_AR.md` (a nopCommerce-style installable theme store — three tiers of effort/risk, phase 1 "brand kit" estimated at ~1 week since the `Brand`/`branding.php` foundation already exists, full theme marketplace deferred — accepting arbitrary uploaded Blade templates from untrusted users is a real remote-code-execution surface, not proportionate to this product's current stage) and `docs/AQAR_UI_COMPARISON_REPORT_AR.md` (live-site comparison with numbers, in Arabic, per the owner's request).
+
+**Not done this session:** could not run the PHP test suite locally (sandbox has PHP 8.3 only; this repo requires ≥8.4, and `composer install` could not reliably reach GitHub's API through the sandbox's network proxy) — relied on `php -l`, direct reading of the affected service/view code, and CI as the authoritative check.
+
 Tests: main 632 / 0 failures, ui-improves 631 / 0 failures (32 skipped each). Both demos: `demo:audit` 52/52.
