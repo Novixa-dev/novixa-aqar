@@ -205,6 +205,15 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         return $this->hasMany(Appointment::class);
     }
 
+    /**
+     * Appointments this user is the assigned agent for -- distinct from
+     * appointments() above, which is the customer side (Appointment.user_id).
+     */
+    public function agentAppointments()
+    {
+        return $this->hasMany(Appointment::class, 'agent_id');
+    }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);
