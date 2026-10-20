@@ -21,7 +21,7 @@
     <link rel="icon" href="{{ asset('images/logo.svg') }}" type="image/svg+xml">
     <link rel="alternate icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="{{ $brand->themeColor() }}">
     <meta name="author" content="{{ $brand->company() }}">
     <meta property="og:site_name" content="{{ $brand->name() }}">
     <meta property="og:type" content="{{ trim($__env->yieldContent('og_type')) ?: ($ogType ?? 'website') }}">
