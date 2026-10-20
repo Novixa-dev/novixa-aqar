@@ -125,15 +125,30 @@ class AIInvestmentAnalysisService
     private function getLocationFactor(string $location)
     {
         // Placeholder for location-based risk factor
-        // In a real implementation, this would be based on more comprehensive data
+        // In a real implementation, this would be based on more comprehensive data.
+        // `location` is a free-text address (e.g. "المكلا - فوه"), not a clean
+        // city value, so match by substring rather than exact equality -- and
+        // match against this product's actual market (Yemen), not the London/
+        // Manchester/Birmingham placeholders this never got updated from, which
+        // meant every single real property here silently fell through to the
+        // same default regardless of location.
         $locationFactors = [
-            'London' => 2,
-            'Manchester' => 3,
-            'Birmingham' => 4,
-            // Add more locations as needed
+            'صنعاء' => 3,
+            'عدن' => 3,
+            'المكلا' => 4,
+            'حضرموت' => 4,
+            'تعز' => 5,
+            'إب' => 5,
+            'الحديدة' => 6,
         ];
 
-        return $locationFactors[$location] ?? 5; // Default to medium risk if location not found
+        foreach ($locationFactors as $city => $factor) {
+            if (str_contains($location, $city)) {
+                return $factor;
+            }
+        }
+
+        return 5; // Default to medium risk if location not found
     }
     
     private function calculateCashFlowAnalysis(Property $property)
@@ -159,10 +174,10 @@ class AIInvestmentAnalysisService
             return [
                 'position' => 'average',
                 'price_vs_market' => 0,
-                'competitive_advantage' => 'Limited market data available',
+                'competitive_advantage' => __('Limited market data available'),
             ];
         }
-        
+
         $marketDataItem = $marketAnalysis['market_data']->where('property_type', $property->property_type)->first();
         
         if (!$marketDataItem || !isset($marketDataItem->avg_price) || $marketDataItem->avg_price <= 0) {
@@ -234,7 +249,7 @@ class AIInvestmentAnalysisService
             'market_position' => [
                 'position' => 'average',
                 'price_vs_market' => 0,
-                'competitive_advantage' => 'Limited market data available',
+                'competitive_advantage' => __('Limited market data available'),
             ],
         ];
     }
