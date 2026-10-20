@@ -81,6 +81,11 @@ class Brand
         return (bool) config('branding.indexable');
     }
 
+    public function themeColor(): string
+    {
+        return (string) config('branding.theme_color');
+    }
+
     private function localized(string $key, ?string $locale): string
     {
         $locale ??= app()->getLocale();

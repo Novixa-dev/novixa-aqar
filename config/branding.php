@@ -41,6 +41,9 @@ return [
     'email' => env('BRAND_EMAIL', 'info@novixa.dev'),
     'phone' => env('BRAND_PHONE', '+967 776 248 526'),
 
+    // Browser chrome / PWA theme color (the <meta name="theme-color"> tag).
+    'theme_color' => env('BRAND_THEME_COLOR', '#1C1816'),
+
     // Absolute URL or a path under public/. Used for og:image / twitter:image
     // when a page provides none (1200×630 recommended).
     'og_image' => env('BRAND_OG_IMAGE', 'images/og-default.jpg'),
