@@ -47,6 +47,24 @@
     color: #ffffff;
 }
 
+/* Respect the OS/browser-level "reduce motion" preference. Most animation
+   on this site comes from Tailwind's transition-*/duration-*/animate-*
+   utility classes applied directly in Blade (hover states, property-card
+   lift, modal/dropdown transitions, etc.) rather than from a handful of
+   named classes, so overriding every one of them individually in Blade
+   isn't practical -- this single rule catches all of them, plus the
+   transform-based hovers defined above, without touching any view file. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 /* Fix double arrow on custom select dropdowns */
 select.appearance-none,
 select[style*="background-image: none"] {
