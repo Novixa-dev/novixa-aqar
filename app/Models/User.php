@@ -47,6 +47,11 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         'email',
         'password',
         'agent_preferences',
+        'phone',
+        'address',
+        'company_name',
+        'tax_id',
+        'preferred_contact_method',
     ];
 
     /**
