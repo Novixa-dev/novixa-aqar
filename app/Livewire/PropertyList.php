@@ -249,13 +249,49 @@ class PropertyList extends Component
         $this->propertyFeatureService = $propertyFeatureService;
     }
     
+    protected function seoTitleAndDescription(): array
+    {
+        $isArabic = app()->getLocale() === 'ar';
+
+        $statusLabel = match ($this->status) {
+            'for_sale' => $isArabic ? 'للبيع' : 'for sale',
+            'for_rent' => $isArabic ? 'للإيجار' : 'for rent',
+            default => null,
+        };
+
+        $parts = [];
+        $parts[] = $statusLabel
+            ? ($isArabic ? "عقارات {$statusLabel}" : "Properties {$statusLabel}")
+            : ($isArabic ? 'العقارات المتاحة' : 'Available Properties');
+
+        if ($this->country !== '') {
+            $parts[] = $isArabic ? "في {$this->country}" : "in {$this->country}";
+        }
+
+        if ($this->search !== '') {
+            $parts[] = $isArabic ? "— بحث: \"{$this->search}\"" : "— search: \"{$this->search}\"";
+        }
+
+        $brand = app(\App\Support\Brand::class);
+        $title = implode(' ', $parts).' | '.$brand->name();
+
+        $description = $isArabic
+            ? 'تصفح '.implode(' ', $parts).' على '.$brand->name().' — بحث متقدم، صور حقيقية، وتواصل مباشر مع المعلن.'
+            : 'Browse '.implode(' ', $parts).' on '.$brand->name().' — advanced search, real photos, and direct contact with the lister.';
+
+        return [$title, \Illuminate\Support\Str::limit($description, 160)];
+    }
+
     public function render()
     {
+        [$title, $description] = $this->seoTitleAndDescription();
+
         return view('livewire.property-list', [
             'properties' => $this->getPropertiesProperty(),
             'amenities' => $this->propertyFeatureService->getFeatures(),
         ])->layout('layouts.app', [
-            'title' => app()->getLocale() === 'ar' ? 'العقارات المتاحة' : 'Available Properties',
+            'title' => $title,
+            'metaDescription' => $description,
         ]);
     }
     
