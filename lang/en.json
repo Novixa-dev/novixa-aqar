@@ -144,6 +144,8 @@
     "The selected time slot is no longer available. Please choose another time.": "The selected time slot is no longer available. Please choose another time.",
     "An unexpected error occurred.": "An unexpected error occurred.",
     "Please try again or contact support if the problem persists.": "Please try again or contact support if the problem persists.",
+    "You have submitted too many properties recently. Please try again later.": "You have submitted too many properties recently. Please try again later.",
+    "You have submitted too many requests recently. Please try again later.": "You have submitted too many requests recently. Please try again later.",
     "Enter full name": "Enter full name",
     "Enter password": "Enter password",
     "Leave blank to keep current password (when editing)": "Leave blank to keep current password (when editing)",
