@@ -226,10 +226,10 @@
                             {{ app()->getLocale() === 'ar' ? 'الرياض، حي النرجس' : 'Riyadh, Al Nargis' }}
                         </p>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 line-clamp-2 leading-relaxed">
-                            {{ app()->getLocale() === 'ar' ? 'مجمع غرف سكنية مجهزة بتكييف وخدمات مشتركة وانترنت مجاني بالقرب من كليات جامعة حضرموت.' : 'Furnished rooms complex equipped with AC, shared facilities, and free internet near Hadhramout University.' }}
+                            {{ app()->getLocale() === 'ar' ? 'فيلا مستقلة بتصميم عصري راقٍ، حديقة خاصة ومواقف سيارات مغطاة، في موقع متميز بحي النرجس قريب من الخدمات الرئيسية.' : 'A standalone villa with elegant modern design, a private garden, and covered parking, in a prime Al Nargis location near key amenities.' }}
                         </p>
                     </div>
-                    
+
                     <div>
                         <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300 mb-4">
                             <div>
@@ -246,7 +246,7 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-[#8C7869]/25">
+                        <a href="{{ route('property.list') }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-[#8C7869]/25">
                             <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
                             <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
                         </a>
@@ -288,10 +288,10 @@
                             {{ app()->getLocale() === 'ar' ? 'الرياض، حي الياسمين' : 'Riyadh, Al Yasmin' }}
                         </p>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 line-clamp-2 leading-relaxed">
-                            {{ app()->getLocale() === 'ar' ? 'مجمع غرف سكنية مجهزة بتكييف وخدمات مشتركة وانترنت مجاني بالقرب من كليات جامعة حضرموت.' : 'Furnished rooms complex equipped with AC, shared facilities, and free internet near Hadhramout University.' }}
+                            {{ app()->getLocale() === 'ar' ? 'تاون هاوس عائلي بتصميم عصري من 3 طوابق ومدخل خاص، ضمن مجمع سكني مسوّر بحي الياسمين قريب من المدارس والمرافق.' : 'A modern 3-floor family townhouse with a private entrance, within a gated community in Al Yasmin near schools and amenities.' }}
                         </p>
                     </div>
-                    
+
                     <div>
                         <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300 mb-4">
                             <div>
@@ -308,7 +308,7 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-[#8C7869]/25">
+                        <a href="{{ route('property.list') }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-[#8C7869]/25">
                             <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
                             <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
                         </a>
@@ -347,10 +347,10 @@
                             {{ app()->getLocale() === 'ar' ? 'الرياض، حي الملقا' : 'Riyadh, Al Malqa' }}
                         </p>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 line-clamp-2 leading-relaxed">
-                            {{ app()->getLocale() === 'ar' ? 'مجمع غرف سكنية مجهزة بتكييف وخدمات مشتركة وانترنت مجاني بالقرب من كليات جامعة حضرموت.' : 'Furnished rooms complex equipped with AC, shared facilities, and free internet near Hadhramout University.' }}
+                            {{ app()->getLocale() === 'ar' ? 'مجمع سكني متكامل الخدمات بحي الملقا، يضم وحدات متنوعة المساحات مع مرافق مشتركة ومساحات خضراء واسعة.' : 'A fully-serviced residential complex in Al Malqa, featuring units of varying sizes with shared facilities and spacious green areas.' }}
                         </p>
                     </div>
-                    
+
                     <div>
                         <div class="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-3 gap-2 text-center text-xs text-stone-700 dark:text-stone-300 mb-4">
                             <div>
@@ -367,7 +367,7 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('property.detail', 28) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-[#8C7869]/25">
+                        <a href="{{ route('property.list') }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#8C7869] hover:bg-[#7A6759] text-white font-bold rounded-xl text-xs transition-all duration-200 shadow-md hover:shadow-[#8C7869]/25">
                             <span>{{ app()->getLocale() === 'ar' ? 'عرض التفاصيل والحجز' : 'View Details & Book' }}</span>
                             <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
                         </a>
