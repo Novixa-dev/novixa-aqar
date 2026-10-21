@@ -98,6 +98,11 @@ class Booking extends Model
             $this->status = 'cancelled';
             $this->save();
             event(new BookingCancelled($this));
+            // BookingCancelled/BookingRescheduled have no registered
+            // listener anywhere in the app -- without this, cancelling or
+            // rescheduling a viewing notified nobody at all, unlike
+            // PropertyBooking's own 'confirmed' notify() call.
+            $this->user?->notify(new \App\Notifications\BookingNotification($this, 'cancelled'));
             return true;
         }
         return false;
@@ -110,6 +115,7 @@ class Booking extends Model
             $this->time = $newTime;
             $this->save();
             event(new BookingRescheduled($this));
+            $this->user?->notify(new \App\Notifications\BookingNotification($this, 'rescheduled'));
             return true;
         }
         return false;

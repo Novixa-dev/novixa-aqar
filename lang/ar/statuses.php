@@ -34,6 +34,7 @@ return [
         'confirmed' => 'مؤكد',
         'completed' => 'مكتمل',
         'cancelled' => 'ملغى',
+        'rescheduled' => 'أعيدت جدولته',
     ],
     'maintenance' => [
         'pending' => 'قيد الانتظار',
