@@ -286,6 +286,11 @@ class Property extends Model implements HasMedia
         return $this->hasMany(Appointment::class, 'property_id');
     }
 
+    public function leases()
+    {
+        return $this->hasMany(Lease::class, 'property_id');
+    }
+
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
