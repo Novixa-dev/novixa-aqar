@@ -23,7 +23,7 @@ class MarketAnalysisChart extends Component
     public function updateChartData()
     {
         $marketAnalysisService = app(MarketAnalysisService::class);
-        $trends = $marketAnalysisService->getMarketTrends($this->startDate, $this->endDate, $this->propertyIds);
+        $trends = $marketAnalysisService->getMarketTrends($this->startDate, $this->endDate, auth()->user()->current_team_id, $this->propertyIds);
 
         // $this->chartData = [
         //     'labels' => $trends->pluck('month')->unique()->values()->toArray(),

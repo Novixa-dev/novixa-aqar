@@ -24,7 +24,7 @@ class AIInvestmentAnalysisService
     public function analyzeInvestment(Property $property)
     {
         try {
-            $marketAnalysis = $this->marketAnalysisService->generateMarketAnalysis(now()->subYear(), now());
+            $marketAnalysis = $this->marketAnalysisService->generateMarketAnalysis(now()->subYear(), now(), $property->team_id);
             $valuation = $this->propertyValuationService->calculateValuation($property);
             
             // Only get recommendations if property has a user
