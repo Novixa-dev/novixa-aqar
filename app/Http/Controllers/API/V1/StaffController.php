@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Enums\AgencyRole;
-use App\Models\Branch;
-use App\Models\Department;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\AgencyPermissionService;
@@ -42,6 +40,7 @@ class StaffController
             })
             ->when($request->filled('branch_id'), fn ($query) => $query->where('team_user.branch_id', $request->integer('branch_id')))
             ->when($request->filled('department_id'), fn ($query) => $query->where('team_user.department_id', $request->integer('department_id')))
+            ->with(['membership.branch:id,name', 'membership.department:id,name'])
             ->orderBy('users.name');
 
         return response()->json(
@@ -174,6 +173,7 @@ class StaffController
     private function member(Team $team, int $staff): User
     {
         return $team->users()
+            ->with(['membership.branch:id,name', 'membership.department:id,name'])
             ->findOrFail($staff);
     }
 
@@ -186,13 +186,9 @@ class StaffController
             'profile_photo_url' => $user->profile_photo_url,
             'role' => $user->membership->role,
             'branch_id' => $user->membership->branch_id,
-            'branch' => $user->membership->branch_id
-                ? Branch::query()->select(['id', 'name'])->find($user->membership->branch_id)
-                : null,
+            'branch' => $user->membership->branch,
             'department_id' => $user->membership->department_id,
-            'department' => $user->membership->department_id
-                ? Department::query()->select(['id', 'name'])->find($user->membership->department_id)
-                : null,
+            'department' => $user->membership->department,
             'job_title' => $user->membership->job_title,
             'phone' => $user->membership->phone,
             'bio' => $user->membership->bio,
