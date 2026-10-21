@@ -123,6 +123,29 @@ class Property extends Model implements HasMedia
         'jupix_id',
     ];
 
+    /**
+     * Fields that must never reach the unauthenticated public API
+     * (PublicWebsiteController::properties()/property() apply this via
+     * ->makeHidden() rather than a model-wide $hidden, since the
+     * authenticated staff API (PropertyController) legitimately reads/
+     * writes internal_notes in its own JSON responses).
+     */
+    public const PUBLIC_API_HIDDEN = [
+        'internal_notes',
+        'moderation_notes',
+        'moderation_status',
+        'moderated_at',
+        'insurance_policy_id',
+        'insurance_coverage_amount',
+        'insurance_premium',
+        'insurance_expiry_date',
+        'jupix_id',
+        'rightmove_id',
+        'zoopla_id',
+        'onthemarket_id',
+        'last_synced_at',
+    ];
+
     protected $casts = [
         'last_synced_at' => 'datetime',
         'list_date' => 'date',
