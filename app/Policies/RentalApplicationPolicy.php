@@ -40,7 +40,7 @@ class RentalApplicationPolicy
 
     public function delete(AuthUser $authUser, RentalApplication $rentalApplication): bool
     {
-        return $authUser->can('delete_rental_application');
+        return $authUser->can('delete_rental_application') && $this->canAccessApplication($authUser, $rentalApplication);
     }
 
     public function restore(AuthUser $authUser, RentalApplication $rentalApplication): bool
