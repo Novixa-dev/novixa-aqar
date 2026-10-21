@@ -90,7 +90,7 @@ class AIInvestmentAnalysisService
     {
         // Simplified risk score calculation
         $marketVolatility = $this->calculateMarketVolatility($marketAnalysis);
-        $propertyAge = now()->year - $property->year_built;
+        $propertyAge = $property->year_built ? now()->year - $property->year_built : 0;
         $locationFactor = $this->getLocationFactor($property->location);
 
         $riskScore = ($marketVolatility * 0.4) + ($propertyAge * 0.3) + ($locationFactor * 0.3);
