@@ -87,7 +87,9 @@ class Booking extends Model
 
     private function getDefaultStaffId()
     {
-        return User::where('role', 'staff')->first()->id ?? null;
+        // Spatie Permission stores roles via model_has_roles, not a `role`
+        // column on users -- the column this used to query doesn't exist.
+        return User::role('staff')->first()?->id;
     }
 
     public function cancel()
