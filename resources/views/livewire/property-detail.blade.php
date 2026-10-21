@@ -6,7 +6,7 @@
         $jsonLd = json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'RealEstateListing',
-            'name' => $property->title,
+            'name' => strip_tags($property->title),
             'description' => \Illuminate\Support\Str::limit(strip_tags($property->description), 250),
             'url' => url()->current(),
             'image' => $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png'),
@@ -16,7 +16,12 @@
                 'priceCurrency' => 'YER',
                 'availability' => 'https://schema.org/InStock',
             ],
-        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            // JSON_HEX_TAG escapes < and > as </> so a submitted
+            // title/description can never break out of this <script> tag
+            // (a prior version used JSON_UNESCAPED_SLASHES, which left
+            // "</script>" unescaped -- a stored-XSS path reachable through
+            // the public, unauthenticated property-submission form).
+        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
     @endphp
     <script type="application/ld+json">{!! $jsonLd !!}</script>
 @endpush
