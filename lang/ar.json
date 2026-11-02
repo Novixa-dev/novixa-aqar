@@ -479,5 +479,8 @@
     "Reset Password Notification": "إعادة تعيين كلمة المرور",
     "You are receiving this email because we received a password reset request for your account.": "تصلك هذه الرسالة لأننا تلقّينا طلباً لإعادة تعيين كلمة مرور حسابك.",
     "This password reset link will expire in :count minutes.": "تنتهي صلاحية رابط إعادة التعيين خلال :count دقيقة.",
-    "If you did not request a password reset, no further action is required.": "إذا لم تطلب إعادة تعيين كلمة المرور فلا يلزمك أي إجراء."
+    "If you did not request a password reset, no further action is required.": "إذا لم تطلب إعادة تعيين كلمة المرور فلا يلزمك أي إجراء.",
+    "Sign in with a demo account": "الدخول بحساب تجريبي",
+    "Choose a role to explore its dashboard. All data is fictional.": "اختر دوراً لاستعراض لوحته. جميع البيانات تجريبية وخيالية.",
+    "Demo accounts cannot change their email or password.": "لا يمكن تغيير البريد أو كلمة المرور لحسابات العرض التجريبي."
 }

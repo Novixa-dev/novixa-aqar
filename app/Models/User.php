@@ -37,6 +37,33 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
     // use SetsProfilePhotoFromUrl;
     use TwoFactorAuthenticatable;
 
+    protected static function booted(): void
+    {
+        // On the public demo every visitor shares the seeded personas, so a
+        // changed password or email on one of them locks everyone else out
+        // until the next reseed.
+        static::updating(function (User $user): void {
+            if (! config('demo.quick_login') || ! $user->isDemoAccount()) {
+                return;
+            }
+
+            if ($user->isDirty('password') || $user->isDirty('email')) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'email' => __('Demo accounts cannot change their email or password.'),
+                ]);
+            }
+        });
+    }
+
+    public function isDemoAccount(): bool
+    {
+        return in_array(
+            $this->getOriginal('email') ?? $this->email,
+            array_column(\App\Support\DemoAccounts::all(), 'email'),
+            true,
+        );
+    }
+
     /**
      * The attributes that are mass assignable.
      *
