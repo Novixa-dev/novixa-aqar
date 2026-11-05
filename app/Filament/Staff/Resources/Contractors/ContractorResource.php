@@ -5,7 +5,6 @@ namespace App\Filament\Staff\Resources\Contractors;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
@@ -63,17 +62,6 @@ public static function form(Schema $schema): Schema
                 Textarea::make('address')
                     ->rows(5)
                     ->label(__('filament.fields.address')),
-                Select::make('role')
-                    ->options(fn () => app()->getLocale() === 'ar' ? [
-                        'contractor' => 'مقاول',
-                        'landlord' => 'مالك عقار',
-                    ] : [
-                        'contractor' => 'Contractor',
-                        'landlord' => 'Landlord',
-                    ])
-                    ->default('contractor')
-                    ->required()
-                    ->label(__('filament.fields.role')),
             ]);
     }
 

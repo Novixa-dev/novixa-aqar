@@ -29,7 +29,8 @@
                 <div class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></div>
                 <h3 class="font-bold text-sm">{{ __('Customer Support') }}</h3>
             </div>
-            <button @click="toggleChat()" class="text-white/80 hover:text-white transition-colors">
+            <button @click="toggleChat()" class="text-white/80 hover:text-white transition-colors"
+                aria-label="{{ app()->getLocale() === 'ar' ? 'إغلاق المحادثة' : 'Close chat' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>

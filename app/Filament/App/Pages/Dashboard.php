@@ -2,12 +2,12 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard;
 use App\Models\Property;
 use App\Models\Booking;
 use App\Models\Transaction;
 
-class Dashboard extends Page
+class Dashboard extends BaseDashboard
 {
     protected string $view = 'filament.pages.dashboard';
 

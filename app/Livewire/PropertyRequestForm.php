@@ -6,6 +6,7 @@ use App\Models\Buyer;
 use App\Models\Neighborhood;
 use App\Models\Team;
 use App\Services\PropertyMatchingService;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
 class PropertyRequestForm extends Component
@@ -36,6 +37,16 @@ class PropertyRequestForm extends Component
 
     public function submit()
     {
+        // Public, unauthenticated page -- see the identical guard and
+        // comment in PropertySubmissionForm::submit().
+        $throttleKey = 'property-request:'.request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $this->addError('name', __('You have submitted too many requests recently. Please try again later.'));
+
+            return;
+        }
+        RateLimiter::hit($throttleKey, 600); // 3 per 10 minutes per IP
+
         $this->validate();
 
         $teamId = auth()->user()?->currentTeam?->id ?? Team::first()?->id;

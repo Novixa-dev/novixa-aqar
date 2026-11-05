@@ -17,7 +17,7 @@
             <select wire:model="selectedMaintenanceRequest" id="selectedMaintenanceRequest" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 <option value="">Select a maintenance request</option>
                 @foreach($maintenanceRequests as $request)
-                    <option value="{{ $request->id }}">{{ $request->property->address }} - {{ $request->description }}</option>
+                    <option value="{{ $request->id }}">{{ $request->property->location }} - {{ $request->description }}</option>
                 @endforeach
             </select>
         </div>
@@ -30,7 +30,7 @@
             <select wire:model="selectedProperty" id="selectedProperty" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 <option value="">Select a property</option>
                 @foreach($properties as $property)
-                    <option value="{{ $property->id }}">{{ $property->address }}</option>
+                    <option value="{{ $property->id }}">{{ $property->location }}</option>
                 @endforeach
             </select>
         </div>

@@ -23,8 +23,8 @@
 <div id="hero-viewport-section" class="relative w-full bg-[#1C1816] text-white overflow-hidden flex flex-col justify-center items-center py-6 sm:py-8">
     <!-- Hero Background Image (Luxury Modern Villa with Pool matching mockup) -->
     <div class="absolute inset-0 z-0">
-        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80" 
-             alt="RUSU Real Estate Luxury Villa" 
+        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80"
+             alt="RUSU Real Estate Luxury Villa"
              class="w-full h-full object-cover object-center">
         <!-- Dark Overlay Gradient -->
         <div class="absolute inset-0 bg-gradient-to-b from-[#1C1816]/75 via-[#1C1816]/50 to-[#1C1816]/95"></div>

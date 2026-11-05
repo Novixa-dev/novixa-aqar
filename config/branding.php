@@ -41,7 +41,13 @@ return [
     'email' => env('BRAND_EMAIL', 'info@novixa.dev'),
     'phone' => env('BRAND_PHONE', '+967 776 248 526'),
 
+    // Admin panel's General Settings page (site_country/site_currency) --
+    // was previously hardcoded to Yemen regardless of deployment brand.
+    'country' => env('BRAND_COUNTRY', 'Yemen'),
+    'currency' => env('BRAND_CURRENCY', 'ر.ي'),
+
     // Browser chrome / PWA theme color (the <meta name="theme-color"> tag).
+    // RUSU's own espresso brand color on this deployment, not Novixa's blue.
     'theme_color' => env('BRAND_THEME_COLOR', '#1C1816'),
 
     // Absolute URL or a path under public/. Used for og:image / twitter:image

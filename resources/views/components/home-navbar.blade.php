@@ -104,10 +104,13 @@
                 <!-- Auth / User Dropdown -->
                 @if (auth()->check())
                     <div class="relative dropdown" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
-                        <button type="button" 
+                        <button type="button"
                                 id="userDropdownBtn"
                                 @click="open = !open"
                                 onclick="const m = document.getElementById('userDropdownMenu'); if (m) { m.classList.toggle('hidden'); }"
+                                :aria-expanded="open ? 'true' : 'false'"
+                                aria-haspopup="true"
+                                aria-controls="userDropdownMenu"
                                 class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-white bg-white/10 hover:bg-white/20 rounded-full border border-white/15 transition-colors cursor-pointer">
                             <div class="w-6 h-6 rounded-full bg-[#8C7869] text-white flex items-center justify-center font-bold text-xs">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
@@ -160,7 +163,9 @@
                 <!-- Hamburger Menu Button -->
                 <button id="menuToggleButton" type="button"
                     class="inline-flex md:hidden items-center justify-center p-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white focus:outline-none transition-colors"
-                    aria-label="Toggle navigation">
+                    aria-label="Toggle navigation"
+                    aria-expanded="false"
+                    aria-controls="menuToggle">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -227,7 +232,8 @@
         const mobileMenu = document.getElementById('menuToggle');
         if (toggleBtn && mobileMenu) {
             toggleBtn.addEventListener('click', function() {
-                mobileMenu.classList.toggle('hidden');
+                const isOpen = mobileMenu.classList.toggle('hidden') === false;
+                toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             });
         }
     });

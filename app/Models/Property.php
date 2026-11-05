@@ -123,6 +123,29 @@ class Property extends Model implements HasMedia
         'jupix_id',
     ];
 
+    /**
+     * Fields that must never reach the unauthenticated public API
+     * (PublicWebsiteController::properties()/property() apply this via
+     * ->makeHidden() rather than a model-wide $hidden, since the
+     * authenticated staff API (PropertyController) legitimately reads/
+     * writes internal_notes in its own JSON responses).
+     */
+    public const PUBLIC_API_HIDDEN = [
+        'internal_notes',
+        'moderation_notes',
+        'moderation_status',
+        'moderated_at',
+        'insurance_policy_id',
+        'insurance_coverage_amount',
+        'insurance_premium',
+        'insurance_expiry_date',
+        'jupix_id',
+        'rightmove_id',
+        'zoopla_id',
+        'onthemarket_id',
+        'last_synced_at',
+    ];
+
     protected $casts = [
         'last_synced_at' => 'datetime',
         'list_date' => 'date',
@@ -261,6 +284,11 @@ class Property extends Model implements HasMedia
     public function appointments()
     {
         return $this->hasMany(Appointment::class, 'property_id');
+    }
+
+    public function leases()
+    {
+        return $this->hasMany(Lease::class, 'property_id');
     }
 
     public function team(): BelongsTo
@@ -748,16 +776,24 @@ class Property extends Model implements HasMedia
     {
         parent::boot();
 
+        // Cache::flush() here used to wipe the WHOLE cache store on every
+        // single property create/update/delete -- not just property-related
+        // keys, but ComponentSettingsService's settings cache,
+        // ModuleManager's module list, every user's
+        // PropertyRecommendationService cache, etc. Property edits are
+        // frequent in a real-estate app, so those unrelated caches
+        // effectively never survived. Forget only the key a property change
+        // can actually invalidate.
         static::created(function ($property) {
-            Cache::flush();
+            Cache::forget('property_features');
         });
 
         static::updated(function ($property) {
-            Cache::flush();
+            Cache::forget('property_features');
         });
 
         static::deleted(function ($property) {
-            Cache::flush();
+            Cache::forget('property_features');
         });
     }
 

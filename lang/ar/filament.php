@@ -20,6 +20,7 @@ return [
         'buyer' => 'المشتري',
         'channel' => 'القناة',
         'comment' => 'التعليق',
+        'rating' => 'التقييم',
         'commission_amount' => 'قيمة العمولة',
         'company' => 'الشركة',
         'company_name' => 'اسم الشركة (إن وجد)',

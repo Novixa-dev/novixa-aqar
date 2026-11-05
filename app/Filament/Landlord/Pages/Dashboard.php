@@ -2,11 +2,11 @@
 
 namespace App\Filament\Landlord\Pages;
 
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard;
+use App\Models\Lease;
 use App\Models\Property;
-use App\Models\Tenant;
 
-class Dashboard extends Page
+class Dashboard extends BaseDashboard
 {
     protected string $view = 'filament.landlord.dashboard';
 
@@ -27,10 +27,20 @@ class Dashboard extends Page
     public function mount(): void
     {
         $this->totalProperties = Property::where('user_id', auth()->id())->count();
-        $this->occupiedProperties = Property::where('user_id', auth()->id())->where('status', 'occupied')->count();
-        $this->totalTenants = Tenant::whereHas('leases.property', function ($query) {
+        // 'occupied' has never been a real properties.status value in this
+        // codebase -- the real value for a rented property is Property::
+        // STATUS_RENTED ('rented'), so this always counted 0 regardless of
+        // how many properties were actually rented.
+        $this->occupiedProperties = Property::where('user_id', auth()->id())
+            ->where('status', Property::STATUS_RENTED)
+            ->count();
+        // Lease.tenant_id points to users.id (see Lease::tenant()), not
+        // tenants.id -- Tenant::leases() joins the wrong id space, so
+        // counting through it produced meaningless numbers. Count distinct
+        // tenant users directly off the landlord's own leases instead.
+        $this->totalTenants = Lease::whereHas('property', function ($query) {
             $query->where('user_id', auth()->id());
-        })->count();
+        })->distinct('tenant_id')->count('tenant_id');
     }
 
     protected function getHeaderWidgets(): array

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', app()->getLocale() === 'ar' ? 'خدماتنا العقارية المتكاملة | دار حضرموت العقارية' : 'Our Real Estate Services | Dar Hadhramaut Real Estate')
+@section('title', app()->getLocale() === 'ar' ? 'خدماتنا | '.$brand->name('ar') : 'Our Services | '.$brand->name('en'))
 
 @section('content')
 <div class="relative w-full overflow-hidden bg-[#FAF8F5] dark:bg-[#141211]">

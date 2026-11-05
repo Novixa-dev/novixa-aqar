@@ -44,6 +44,11 @@ running_migrations_and_seeders=${RUNNING_MIGRATIONS_AND_SEEDERS:-"false"}
 initialStuff() {
     echo "Container mode: $container_mode"
 
+    # Give MySQL a chance to finish starting before the migrate/seed calls
+    # below hit it -- on a fresh compose stack the app container and the
+    # mysql container start at roughly the same time, and MySQL's own
+    # startup (initializing its data directory on first boot) can take
+    # longer than the app takes to reach this point.
     echo "Waiting for MySQL database connection..."
     db_retries=60
     while ! php -r '
@@ -53,7 +58,7 @@ initialStuff() {
         $user = getenv("DB_USERNAME") ?: "aqar";
         $pass = getenv("DB_PASSWORD") ?: "secret";
         try {
-            $pdo = new PDO("mysql:host={$host};port={$port};dbname={$db}", $user, $pass, [PDO::ATTR_TIMEOUT => 2]);
+            new PDO("mysql:host={$host};port={$port};dbname={$db}", $user, $pass, [PDO::ATTR_TIMEOUT => 2]);
             exit(0);
         } catch (Throwable $e) {
             exit(1);

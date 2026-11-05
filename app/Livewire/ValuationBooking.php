@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Exception;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 use App\Models\AppointmentType;
 use App\Models\Appointment;
@@ -95,6 +96,17 @@ class ValuationBooking extends Component
 
     public function bookValuation()
     {
+        // Embedded with no @auth wrapper on the public property-detail page
+        // -- same risk PropertySubmissionForm/PropertyRequestForm already
+        // guard against (anyone can flood appointments from one IP).
+        $throttleKey = 'valuation-booking:'.request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $this->addError('selectedDate', __('You have made too many booking requests recently. Please try again later.'));
+
+            return;
+        }
+        RateLimiter::hit($throttleKey, 600); // 5 per 10 minutes per IP
+
         $this->validate();
 
         try {

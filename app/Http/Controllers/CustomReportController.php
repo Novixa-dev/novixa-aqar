@@ -34,25 +34,27 @@ class CustomReportController extends Controller
             'tenants' => 'nullable|array',
         ]);
 
-        // Generate the report data
-        $reportData = $this->generateReportData($validatedData);
+        // Generate the report data, scoped to the requesting user's own team
+        $reportData = $this->generateReportData($validatedData, $request->user()->current_team_id);
 
         // Return the report data as JSON
         return response()->json($reportData);
     }
 
-    private function generateReportData($criteria)
+    private function generateReportData($criteria, $teamId)
     {
         if ($criteria['report_type'] === 'market_analysis') {
             $marketData = $this->marketAnalysisService->generateMarketAnalysis(
                 $criteria['start_date'],
                 $criteria['end_date'],
+                $teamId,
                 $criteria['properties'] ?? null
             );
 
             $marketTrends = $this->marketAnalysisService->getMarketTrends(
                 $criteria['start_date'],
                 $criteria['end_date'],
+                $teamId,
                 $criteria['properties'] ?? null
             );
 
