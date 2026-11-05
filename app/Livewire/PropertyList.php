@@ -147,11 +147,11 @@ class PropertyList extends Component
                 $query->where('is_featured', true);
             }
 
-            $query->latest();
+            $query->latest()->with('media');
 
             return $query->paginate(12);
         } catch (Exception $e) {
-            return Property::publiclyVisible()->latest()->paginate(12);
+            return Property::publiclyVisible()->latest()->with('media')->paginate(12);
         }
     }
 
