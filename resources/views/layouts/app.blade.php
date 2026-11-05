@@ -13,7 +13,12 @@
     @endphp
     <title>{{ $pageTitle }}</title>
     <meta name="description" content="{{ \Illuminate\Support\Str::limit(strip_tags($pageDescription), 300) }}">
-    <link rel="canonical" href="{{ url()->current() }}">
+    {{-- Pages like /properties and /news build filter-aware, genuinely
+         distinct titles/descriptions per query string (status, page, search),
+         so the canonical must reflect that same URL, not strip it down to
+         the bare path -- a canonical pointing at the unfiltered page while
+         the title/description claim unique content is self-contradicting. --}}
+    <link rel="canonical" href="{{ url()->full() }}">
     @unless ($brand->indexable())
         {{-- Demo / staging: keep sample data out of search results. --}}
         <meta name="robots" content="noindex, nofollow">
@@ -27,7 +32,7 @@
     <meta property="og:type" content="{{ trim($__env->yieldContent('og_type')) ?: ($ogType ?? 'website') }}">
     <meta property="og:title" content="{{ $pageTitle }}">
     <meta property="og:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($pageDescription), 300) }}">
-    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:url" content="{{ url()->full() }}">
     <meta property="og:image" content="{{ $pageImage }}">
     <meta property="og:image:alt" content="{{ $pageTitle }}">
     <meta property="og:locale" content="{{ $isAr ? 'ar_YE' : 'en_US' }}">

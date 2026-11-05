@@ -13,7 +13,7 @@
             'offers' => [
                 '@type' => 'Offer',
                 'price' => $property->price,
-                'priceCurrency' => 'YER',
+                'priceCurrency' => $property->currency ?: 'YER',
                 'availability' => 'https://schema.org/InStock',
             ],
             // JSON_HEX_TAG escapes < and > as </>, which alone
