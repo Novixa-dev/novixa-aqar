@@ -1,3 +1,6 @@
+# Keeps the build context to what the image actually needs. Without this,
+# `COPY . .` in the Dockerfile also copies .git, node_modules and any local
+# .env (secrets) into the image.
 .git
 .github
 .vscode
@@ -24,6 +27,7 @@ vendor
 !.env.example
 storage/app/public/*
 bootstrap/cache/*.php
+tests/coverage
 coverage.xml
 .phpunit.cache
 .idea

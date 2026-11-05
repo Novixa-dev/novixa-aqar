@@ -6,6 +6,7 @@ use Exception;
 use Log;
 use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 use App\Models\Property;
 use App\Models\Booking;
@@ -43,7 +44,7 @@ class PropertyBooking extends Component
     public function mount($propertyId)
     {
         $this->propertyId = $propertyId;
-        $property = Property::with('team')->find($this->propertyId);
+        $property = Property::with('team')->findOrFail($this->propertyId);
         $this->availableDates = $property->getAvailableDatesForTeam();
     }
 
@@ -83,6 +84,17 @@ class PropertyBooking extends Component
 
     public function bookViewing()
     {
+        // Embedded with no @auth wrapper on the public property-detail page
+        // -- same risk PropertySubmissionForm/PropertyRequestForm already
+        // guard against (anyone can flood bookings/appointments from one IP).
+        $throttleKey = 'property-booking:'.request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $this->addError('selectedDate', __('You have made too many booking requests recently. Please try again later.'));
+
+            return;
+        }
+        RateLimiter::hit($throttleKey, 600); // 5 per 10 minutes per IP
+
         $this->validate();
 
         try {

@@ -12,7 +12,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Staff\Resources\PropertyModerations\Pages\ListPropertyModerations;
-use App\Filament\Staff\Resources\PropertyModerations\Pages\CreatePropertyModeration;
 use App\Filament\Staff\Resources\PropertyModerations\Pages\EditPropertyModeration;
 use App\Filament\Staff\Resources\PropertyModerationResource\Pages;
 use App\Models\Property;
@@ -114,7 +113,6 @@ class PropertyModerationResource extends Resource
     {
         return [
             'index' => ListPropertyModerations::route('/'),
-            'create' => CreatePropertyModeration::route('/create'),
             'edit' => EditPropertyModeration::route('/{record}/edit'),
         ];
     }

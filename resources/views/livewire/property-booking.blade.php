@@ -1,7 +1,7 @@
 <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
     <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-900">{{ app()->getLocale() === 'ar' ? 'حجز موعد لمعاينة العقار' : 'Book a Property Viewing' }}</h2>
-        <p class="mt-1 text-sm text-gray-500">{{ app()->getLocale() === 'ar' ? 'اختر التاريخ والوقت المناسبين لمعاينة هذا العقار.' : 'Select your preferred date and time to view this property.' }}</p>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'حجز موعد لمعاينة العقار' : 'Book a Property Viewing' }}</h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'اختر التاريخ والوقت المناسبين لمعاينة هذا العقار.' : 'Select your preferred date and time to view this property.' }}</p>
     </div>
 
     @if (session()->has('message'))
@@ -49,11 +49,11 @@
         {{-- Date & Time Selection --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                <label for="selectedDate" class="block text-sm font-medium text-gray-700 mb-1">
+                <label for="selectedDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ app()->getLocale() === 'ar' ? 'التاريخ المفضل' : 'Preferred Date' }} <span class="text-red-500">*</span>
                 </label>
                 <select id="selectedDate" wire:model.live="selectedDate"
-                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                     <option value="">{{ app()->getLocale() === 'ar' ? '— اختر تاريخاً —' : '— Choose a date —' }}</option>
                     @foreach($availableDates as $date)
                         <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->translatedFormat('D, d M Y') }}</option>
@@ -63,12 +63,12 @@
             </div>
 
             <div>
-                <label for="selectedTime" class="block text-sm font-medium text-gray-700 mb-1">
+                <label for="selectedTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ app()->getLocale() === 'ar' ? 'الوقت المفضل' : 'Preferred Time' }} <span class="text-red-500">*</span>
                 </label>
                 <select id="selectedTime" wire:model="selectedTime"
-                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm
-                    {{ empty($availableTimeSlots) ? 'bg-gray-100 cursor-not-allowed' : '' }}"
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm
+                    {{ empty($availableTimeSlots) ? 'bg-gray-100 dark:bg-gray-600 cursor-not-allowed' : '' }}"
                     {{ empty($availableTimeSlots) ? 'disabled' : '' }}>
                     <option value="">{{ $selectedDate ? (app()->getLocale() === 'ar' ? '— اختر وقتاً —' : '— Choose a time —') : (app()->getLocale() === 'ar' ? '— اختر تاريخاً أولاً —' : '— Select a date first —') }}</option>
                     @foreach($availableTimeSlots as $slot)
@@ -80,45 +80,45 @@
         </div>
 
         {{-- Divider --}}
-        <hr class="border-gray-200">
+        <hr class="border-gray-200 dark:border-gray-700">
 
         {{-- Personal Details --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">
+                <label for="userName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ app()->getLocale() === 'ar' ? 'الاسم الكامل' : 'Full Name' }} <span class="text-red-500">*</span>
                 </label>
                 <input type="text" id="userName" wire:model="userName" placeholder="{{ app()->getLocale() === 'ar' ? 'محمد أحمد' : 'John Smith' }}"
-                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 @error('userName') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <div>
-                <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-1">{{ app()->getLocale() === 'ar' ? 'البريد الإلكتروني' : 'Email Address' }}</label>
+                <label for="userEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ app()->getLocale() === 'ar' ? 'البريد الإلكتروني' : 'Email Address' }}</label>
                 <input type="email" id="userEmail" wire:model="userEmail" placeholder="you@example.com"
-                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 @error('userEmail') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <div class="sm:col-span-2">
-                <label for="userContact" class="block text-sm font-medium text-gray-700 mb-1">
+                <label for="userContact" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {{ app()->getLocale() === 'ar' ? 'رقم الهاتف' : 'Phone Number' }} <span class="text-red-500">*</span>
                 </label>
                 <input type="tel" id="userContact" wire:model="userContact" placeholder="+967 77X XXX XXX"
-                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 @error('userContact') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <div class="sm:col-span-2">
-                <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">{{ app()->getLocale() === 'ar' ? 'ملاحظات إضافية' : 'Additional Notes' }}</label>
+                <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ app()->getLocale() === 'ar' ? 'ملاحظات إضافية' : 'Additional Notes' }}</label>
                 <textarea id="notes" wire:model="notes" rows="3" placeholder="{{ app()->getLocale() === 'ar' ? 'أي متطلبات أو أسئلة خاصة...' : 'Any special requirements or questions...' }}"
-                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
                 @error('notes') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
             </div>
         </div>
 
         <div class="flex items-center justify-between pt-2">
-            <p class="text-xs text-gray-500">{{ app()->getLocale() === 'ar' ? 'الحقول المميزة بـ' : 'Fields marked' }} <span class="text-red-500">*</span> {{ app()->getLocale() === 'ar' ? 'مطلوبة.' : 'are required.' }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'الحقول المميزة بـ' : 'Fields marked' }} <span class="text-red-500">*</span> {{ app()->getLocale() === 'ar' ? 'مطلوبة.' : 'are required.' }}</p>
             <button type="submit"
                 class="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 wire:loading.attr="disabled" wire:loading.class="opacity-75 cursor-not-allowed">

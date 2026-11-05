@@ -16,7 +16,7 @@ services:
       WITH_SCHEDULER: '${WITH_SCHEDULER:-true}'
       WITH_HORIZON: '${WITH_HORIZON:-false}'
       WITH_REVERB: '${WITH_REVERB:-false}'
-      RUNNING_MIGRATIONS_AND_SEEDERS: '${RUNNING_MIGRATIONS_AND_SEEDERS:-true}'
+      RUNNING_MIGRATIONS_AND_SEEDERS: '${RUNNING_MIGRATIONS_AND_SEEDERS:-false}'
       DB_HOST: mysql
       REDIS_HOST: redis
     env_file:
@@ -49,6 +49,8 @@ services:
       - '${REVERB_PORT:-8080}:8080'
     environment:
       CONTAINER_MODE: reverb
+      DB_HOST: mysql
+      REDIS_HOST: redis
     env_file:
       - .env
     volumes:
@@ -74,6 +76,8 @@ services:
     environment:
       CONTAINER_MODE: worker
       WORKER_COMMAND: 'php /var/www/html/artisan queue:work --sleep=3 --tries=3 --max-time=3600'
+      DB_HOST: mysql
+      REDIS_HOST: redis
     env_file:
       - .env
     volumes:
@@ -103,7 +107,7 @@ services:
     networks:
       - appnet
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD || exit 1"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       start_period: 90s
       interval: 5s
       timeout: 5s

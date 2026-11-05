@@ -67,7 +67,19 @@ class MaintenanceRequestResource extends Resource
                 DatePicker::make('requested_date')
                     ->required(),
                 Select::make('property_id')
-                    ->relationship('property', 'title')
+                    ->relationship(
+                        'property',
+                        'title',
+                        // Unscoped, this let a tenant file a maintenance
+                        // request against any property in the system, not
+                        // just the one they actually lease. Property has no
+                        // leases() relation to whereHas() against, so go
+                        // through Lease directly (tenant_id -> users.id).
+                        modifyQueryUsing: fn ($query) => $query->whereIn(
+                            'id',
+                            \App\Models\Lease::where('tenant_id', auth()->id())->pluck('property_id'),
+                        ),
+                    )
                     ->required(),
                 RelationshipRepeater::make('workOrders')
                     ->relationship('workOrders')

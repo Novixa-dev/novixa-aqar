@@ -11,6 +11,36 @@ Full documentation map for Novixa Aqar. Start at the root [`README.md`](../READM
 | [`AQAR_DECISIONS.md`](AQAR_DECISIONS.md) | Architectural/product decision log with rationale |
 | [`AQAR_RULES.md`](AQAR_RULES.md) | Binding release-gate rules for this project |
 | [`TEST_USERS.md`](TEST_USERS.md) | Seeded demo accounts for every role/panel |
+| [`AQAR_UI_COMPARISON_REPORT_AR.md`](AQAR_UI_COMPARISON_REPORT_AR.md) | Arabic: live comparison of the `main`/`ui-improves` demos, with numbers |
+| [`THEME_STORE_FEASIBILITY_AR.md`](THEME_STORE_FEASIBILITY_AR.md) | Arabic: feasibility study for an installable UI theme store |
+
+## Product documentation (`product/`)
+
+Audience-facing documentation describing what the product does and who it's
+for — not how the code works. Start at [`product/README.md`](product/README.md).
+
+| Document | Purpose |
+|---|---|
+| [`product/01-OVERVIEW.md`](product/01-OVERVIEW.md) | What Novixa Aqar is and who it's for |
+| [`product/02-USERS-AND-ROLES.md`](product/02-USERS-AND-ROLES.md) | The 8 personas and what each can do |
+| [`product/03-FEATURES.md`](product/03-FEATURES.md) | Feature-by-feature breakdown |
+| [`product/04-USE-CASES.md`](product/04-USE-CASES.md) | Real-world scenarios the product handles |
+| [`product/05-DEMO-GUIDE-AR.md`](product/05-DEMO-GUIDE-AR.md) | Arabic: guided demo script |
+| [`product/06-TECHNICAL-OVERVIEW.md`](product/06-TECHNICAL-OVERVIEW.md) | Technical overview for a non-code audience |
+
+## QA, audits & operations (Arabic guides)
+
+| Document | Purpose |
+|---|---|
+| [`AQAR_LIVE_AUDIT_REPORT_AR.md`](AQAR_LIVE_AUDIT_REPORT_AR.md) | Live-site audit findings |
+| [`AQAR_BROWSER_TEST_PLAN_AR.md`](AQAR_BROWSER_TEST_PLAN_AR.md) | Final browser-based test plan |
+| [`AQAR_STAGING_MANUAL_QA_GUIDE_AR.md`](AQAR_STAGING_MANUAL_QA_GUIDE_AR.md) | Manual QA guide for the staging environment |
+| [`AQAR_EXTERNAL_SERVICES_PLAN_AR.md`](AQAR_EXTERNAL_SERVICES_PLAN_AR.md) | Plan for wiring up external/third-party services |
+| [`AQAR_KEYS_AND_SERVICES_AR.md`](AQAR_KEYS_AND_SERVICES_AR.md) | Registry of service credentials/keys needed and their status |
+| [`STAGING_DEMO_DEPLOYMENT_PROMPT.md`](STAGING_DEMO_DEPLOYMENT_PROMPT.md) | Prompt/checklist for deploying the full demo to staging |
+| [`FULL_DEMO_DATA_COMPLETION_REPORT.md`](FULL_DEMO_DATA_COMPLETION_REPORT.md) | Report on completing/fixing seeded demo data |
+| [`FINAL_PRE_DEPLOYMENT_AUDIT_REPORT.md`](FINAL_PRE_DEPLOYMENT_AUDIT_REPORT.md) | Final deep audit before a production deploy |
+| [`AQAR_QA_REPORT_2026-09-09.md`](AQAR_QA_REPORT_2026-09-09.md) | Dated full QA sweep and environment report |
 
 ## Deployment & release
 
@@ -19,6 +49,8 @@ Full documentation map for Novixa Aqar. Start at the root [`README.md`](../READM
 | [`PRODUCTION-DEPLOYMENT.md`](PRODUCTION-DEPLOYMENT.md) | Production deployment and environment configuration guide |
 | [`RELEASE-CHECKLIST.md`](RELEASE-CHECKLIST.md) | Local vs. production QA checklist |
 | [`REPOSITORY_RELEASE_AUDIT.md`](REPOSITORY_RELEASE_AUDIT.md) | Repository/git-history/branding release-readiness record |
+| [`DEPLOYMENT-ENVIRONMENT-INVENTORY.md`](DEPLOYMENT-ENVIRONMENT-INVENTORY.md) | Inventory of what each deployment environment needs/provides |
+| [`../deploy/README.md`](../deploy/README.md) · [`../deploy/aqar-demo/README.md`](../deploy/aqar-demo/README.md) | The two live deploy pipelines: Dexal (cPanel) and the Novixa VPS (Docker) |
 
 ## Architecture & API
 

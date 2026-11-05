@@ -183,7 +183,10 @@
                     <!-- Property Image with Badges -->
                     <div class="relative h-56 w-full overflow-hidden bg-gray-100 dark:bg-gray-900">
                         <a href="{{ route('property.detail', $property->id) }}">
-                            <img src="{{ $property->image_url }}" alt="{{ $property->title }}" loading="lazy"
+                            <img src="{{ $property->image_url }}" alt="{{ $property->title }}"
+                                {{-- The first card renders above the fold; lazy-loading it
+                                     delays the page's first real content image and hurts LCP. --}}
+                                @if(!$loop->first) loading="lazy" @endif
                                 class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110">
                         </a>
                         <div class="absolute top-3 start-3 flex flex-wrap gap-1.5 z-10">

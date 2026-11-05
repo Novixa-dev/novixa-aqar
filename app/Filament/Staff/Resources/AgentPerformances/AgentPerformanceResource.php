@@ -74,11 +74,16 @@ class AgentPerformanceResource extends Resource
                     ->sortable(),
                 TextColumn::make('appointments_count')
                     ->label(__('filament.fields.appointments'))
-                    ->counts('appointments')
+                    // appointments() is the customer side (Appointment.user_id);
+                    // agentAppointments() (Appointment.agent_id) is appointments
+                    // actually assigned to this user as the agent.
+                    ->counts('agentAppointments')
                     ->sortable(),
                 TextColumn::make('average_rating')
                     ->label(__('filament.fields.avg_rating'))
-                    ->avg('reviews', 'rating')
+                    // reviews() is reviews this user wrote; reviewsReceived()
+                    // (the morphMany on 'reviewable') is reviews they received.
+                    ->avg('reviewsReceived', 'rating')
                     ->sortable(),
             ])
             ->filters([

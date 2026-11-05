@@ -49,6 +49,62 @@
                 </div>
             </form>
 
+            @if (config('demo.quick_login'))
+                {{--
+                    Public demo only (DEMO_QUICK_LOGIN). Each button fills the
+                    normal form and submits it, so quick login goes through the
+                    same Fortify route, throttling and role redirect as typing
+                    the credentials by hand.
+                --}}
+                <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-5">
+                    <button type="button" id="demo-accounts-toggle" aria-expanded="false" aria-controls="demo-accounts"
+                        class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md border border-green-700 text-green-800 dark:text-green-300 dark:border-green-500 font-semibold text-sm hover:bg-green-50 dark:hover:bg-gray-700 focus:outline-none focus:ring ring-green-300 dark:ring-green-800 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        {{ __('Sign in with a demo account') }}
+                    </button>
+
+                    <div id="demo-accounts" hidden class="mt-3">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">{{ __('Choose a role to explore its dashboard. All data is fictional.') }}</p>
+                        <ul class="grid gap-2">
+                            @foreach (\App\Support\DemoAccounts::all() as $role => $account)
+                                <li>
+                                    <button type="button" data-demo-email="{{ $account['email'] }}"
+                                        class="demo-login w-full flex items-center justify-between gap-3 rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 text-start hover:border-green-600 hover:bg-green-50 dark:hover:bg-gray-700 focus:outline-none focus:ring ring-green-300 dark:ring-green-800 transition">
+                                        <span class="min-w-0">
+                                            <span class="block text-sm font-semibold text-gray-900 dark:text-gray-100">{{ app()->getLocale() === 'ar' ? $account['label_ar'] : $account['label_en'] }}</span>
+                                            <span class="block text-xs text-gray-600 dark:text-gray-400 truncate" dir="ltr">{{ $account['email'] }}</span>
+                                        </span>
+                                        <span class="shrink-0 text-xs font-semibold text-green-800 dark:text-green-300">{{ __('Log in') }}</span>
+                                    </button>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+
+                <script>
+                    (function () {
+                        var toggle = document.getElementById('demo-accounts-toggle');
+                        var list = document.getElementById('demo-accounts');
+                        var form = document.querySelector('form[action="{{ route('login') }}"]');
+                        if (!toggle || !list || !form) return;
+                        toggle.addEventListener('click', function () {
+                            var open = list.hidden;
+                            list.hidden = !open;
+                            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                        });
+                        list.querySelectorAll('.demo-login').forEach(function (button) {
+                            button.addEventListener('click', function () {
+                                form.querySelector('#email').value = button.dataset.demoEmail;
+                                form.querySelector('#password').value = @json(\App\Support\DemoAccounts::PASSWORD);
+                                list.querySelectorAll('.demo-login').forEach(function (b) { b.disabled = true; });
+                                form.submit();
+                            });
+                        });
+                    })();
+                </script>
+            @endif
+
             {{--
                 Socialstream::show() only reflects whether the package feature
                 is enabled, not whether any OAuth provider is actually

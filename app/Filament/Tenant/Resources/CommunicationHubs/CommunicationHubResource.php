@@ -17,10 +17,28 @@ use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
 
 class CommunicationHubResource extends Resource
 {
     protected static ?string $model = Message::class;
+
+    // Every sibling resource in this panel (Lease/Payment/MaintenanceRequest)
+    // scopes itself to the current user in its own getEloquentQuery() --
+    // panel-level Filament tenancy is off here (Features::teams() is
+    // disabled, see TenantPanelProvider.php), so there is no other safety
+    // net. This resource had none, which meant any tenant could see and
+    // open every message between every user in the entire system by simply
+    // opening this page: a live, reachable cross-user privacy leak.
+    public static function getEloquentQuery(): Builder
+    {
+        $userId = auth()->id();
+
+        return parent::getEloquentQuery()
+            ->where(fn (Builder $query) => $query
+                ->where('sender_id', $userId)
+                ->orWhere('recipient_id', $userId));
+    }
 
     public static function getModelLabel(): string
     {
@@ -45,7 +63,16 @@ class CommunicationHubResource extends Resource
             ->components([
                 Select::make('recipient_id')
                     ->label(__('filament.fields.to'))
-                    ->relationship('recipient', 'name')
+                    ->relationship(
+                        'recipient',
+                        'name',
+                        // Restrict who a tenant can message to users on their
+                        // own team -- unrestricted, this let a tenant message
+                        // literally any user in the system, across teams.
+                        modifyQueryUsing: fn ($query) => $query
+                            ->whereHas('teams', fn ($q) => $q->whereKey(auth()->user()->currentTeam?->id))
+                            ->whereKeyNot(auth()->id()),
+                    )
                     ->required(),
                 Textarea::make('content')
                     ->required()

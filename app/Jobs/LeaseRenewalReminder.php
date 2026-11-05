@@ -21,7 +21,12 @@ class LeaseRenewalReminder implements ShouldQueue
             ->get();
 
         foreach ($leasesUpForRenewal as $lease) {
-            $notificationService->sendLeaseRenewalReminder($lease->tenant, $lease);
+            // tenant_id is nullable -- a lease can exist before a tenant is
+            // assigned (CheckLeaseNotifications already guards against this
+            // for the same query; this job didn't).
+            if ($lease->tenant) {
+                $notificationService->sendLeaseRenewalReminder($lease->tenant, $lease);
+            }
         }
     }
 }

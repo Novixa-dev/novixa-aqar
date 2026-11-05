@@ -188,6 +188,15 @@ class AdvancedPropertySearch extends Component
 
     public function saveSearch()
     {
+        // This component is on a fully public page -- the "Save search"
+        // button is only rendered for logged-in users, but Livewire actions
+        // are callable directly regardless of what the Blade renders, so a
+        // guest triggering this would otherwise hit "call to a member
+        // function on null".
+        if (! auth()->check()) {
+            return;
+        }
+
         $this->validate([
             'search' => 'required|string|max:255',
         ]);

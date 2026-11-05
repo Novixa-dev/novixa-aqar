@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', app()->getLocale() === 'ar' ? 'الشروط والأحكام | '.$brand->name('ar') : 'Terms and Conditions | '.$brand->name('en'))
+
 @section('content')
 <div class="container mx-auto px-4 lg:px-8 py-12">
     <!-- Header -->

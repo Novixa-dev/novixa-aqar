@@ -33,14 +33,19 @@ class Tenant extends Model
         return $this->name ?? '';
     }
 
+    // Lease.tenant_id and Payment.tenant_id both point to users.id, not
+    // tenants.id (see CLAUDE.md) -- the default hasMany would join against
+    // this Tenant row's own id instead, which is a different id space and
+    // would silently return the wrong rows (or none). Pass this Tenant's
+    // user_id as the local key so the join actually matches.
     public function leases()
     {
-        return $this->hasMany(Lease::class, 'tenant_id');
+        return $this->hasMany(Lease::class, 'tenant_id', 'user_id');
     }
 
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'tenant_id');
+        return $this->hasMany(Payment::class, 'tenant_id', 'user_id');
     }
 
     public function reviews()

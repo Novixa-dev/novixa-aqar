@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Property;
 use App\Services\AIDescriptionService;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -79,6 +80,21 @@ class PropertySubmissionForm extends Component
 
     public function submit()
     {
+        // This is a public, unauthenticated page (no `auth`/`throttle` route
+        // middleware applies -- the actual submit() call goes through
+        // Livewire's shared update endpoint, not this route, so route
+        // middleware couldn't throttle it specifically anyway). Without this,
+        // anyone can flood the moderation queue and the media disk with
+        // unlimited submissions; same risk class the login/register
+        // throttles (FortifyServiceProvider) already guard against.
+        $throttleKey = 'property-submission:'.request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $this->addError('title', __('You have submitted too many properties recently. Please try again later.'));
+
+            return;
+        }
+        RateLimiter::hit($throttleKey, 600); // 3 per 10 minutes per IP
+
         $this->validate();
 
         $teamId = auth()->user()?->currentTeam?->id ?? \App\Models\Team::first()?->id;

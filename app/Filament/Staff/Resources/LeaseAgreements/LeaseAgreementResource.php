@@ -62,7 +62,7 @@ class LeaseAgreementResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('tenant.name'),
-                TextColumn::make('property.address'),
+                TextColumn::make('property.title'),
                 TextColumn::make('start_date'),
                 TextColumn::make('end_date'),
                 TextColumn::make('monthly_rent'),

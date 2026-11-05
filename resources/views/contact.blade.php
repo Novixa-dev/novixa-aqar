@@ -8,8 +8,8 @@
     <div class="relative bg-[#1C1816] text-white py-20 lg:py-24 overflow-hidden border-b border-white/10">
         <!-- Background Architectural Overlay -->
         <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80" 
-                 alt="Luxury Real Estate" 
+            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80"
+                 alt="Luxury Real Estate"
                  class="w-full h-full object-cover opacity-20 filter blur-[1px]">
             <div class="absolute inset-0 bg-gradient-to-b from-[#1C1816]/95 via-[#1C1816]/85 to-[#1C1816]"></div>
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_center,rgba(140,120,105,0.25),transparent_70%)]"></div>

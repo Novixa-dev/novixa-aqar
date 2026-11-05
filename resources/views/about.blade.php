@@ -8,8 +8,8 @@
     <div class="relative bg-[#1C1816] text-white py-20 lg:py-28 overflow-hidden border-b border-white/10">
         <!-- Background Image with Dark Gradient Overlay -->
         <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80" 
-                 alt="Luxury Architecture" 
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80"
+                 alt="Luxury Architecture"
                  class="w-full h-full object-cover opacity-20 filter blur-[1px] scale-105">
             <div class="absolute inset-0 bg-gradient-to-b from-[#1C1816]/95 via-[#1C1816]/85 to-[#1C1816]"></div>
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_center,rgba(140,120,105,0.25),transparent_70%)]"></div>
@@ -28,12 +28,12 @@
 
             <!-- Quick Action Links -->
             <div class="flex flex-wrap items-center justify-center gap-4">
-                <a href="{{ route('property.list') }}" 
+                <a href="{{ route('property.list') }}"
                    class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#8C7869] hover:bg-[#7A6759] text-white text-sm font-bold shadow-lg shadow-[#8C7869]/20 transition-all hover:scale-[1.02]">
                     <span>{{ app()->getLocale() === 'ar' ? 'استكشف عروض العقارات' : 'Browse Properties' }}</span>
                     <span class="{{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
                 </a>
-                <a href="{{ route('contact') }}" 
+                <a href="{{ route('contact') }}"
                    class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-bold border border-white/20 backdrop-blur-md transition-all">
                     <span>{{ app()->getLocale() === 'ar' ? 'تواصل مع مستشارينا' : 'Contact Advisory' }}</span>
                 </a>
