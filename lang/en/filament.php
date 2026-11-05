@@ -20,6 +20,7 @@ return [
         'buyer' => 'Buyer',
         'channel' => 'Channel',
         'comment' => 'Comment',
+        'rating' => 'Rating',
         'commission_amount' => 'Commission Amount',
         'company' => 'Company',
         'company_name' => 'Company Name (if applicable)',

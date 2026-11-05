@@ -29,7 +29,7 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
     use HasProfilePhoto {
         HasProfilePhoto::profilePhotoUrl as getPhotoUrl;
     }
-    // use HasConnectedAccounts;
+    use HasConnectedAccounts;
     use HasRoles;
     use HasTeams;
 
@@ -74,6 +74,11 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         'email',
         'password',
         'agent_preferences',
+        'phone',
+        'address',
+        'company_name',
+        'tax_id',
+        'preferred_contact_method',
     ];
 
     /**
@@ -225,6 +230,15 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    /**
+     * Appointments this user is the assigned agent for -- distinct from
+     * appointments() above, which is the customer side (Appointment.user_id).
+     */
+    public function agentAppointments()
+    {
+        return $this->hasMany(Appointment::class, 'agent_id');
     }
 
     public function bookings()

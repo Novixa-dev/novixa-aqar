@@ -101,9 +101,12 @@
                 <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm hover:shadow-2xl hover:border-blue-500/50 transition-all duration-300 border border-gray-100 dark:border-gray-700/80 overflow-hidden flex flex-col group">
                     <div class="relative h-60 w-full overflow-hidden bg-gray-100 dark:bg-gray-900">
                         <a href="{{ route('property.detail', $property->id) }}">
-                            <img src="{{ $property->image_url }}" 
-                                 alt="{{ $property->title }}" 
-                                 loading="lazy"
+                            <img src="{{ $property->image_url }}"
+                                 alt="{{ $property->title }}"
+                                 {{-- The first card renders above the fold, directly under the hero;
+                                      lazy-loading it delays the page's first real content image and
+                                      hurts LCP. Only defer the rest. --}}
+                                 @if(!$loop->first) loading="lazy" @endif
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                         </a>
                         <div class="absolute top-3 start-3 flex gap-1.5 z-10">

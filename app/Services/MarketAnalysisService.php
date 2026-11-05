@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class MarketAnalysisService
 {
-    public function generateMarketAnalysis($startDate, $endDate, $propertyIds = null)
+    public function generateMarketAnalysis($startDate, $endDate, $teamId, $propertyIds = null)
     {
-        $baseQuery = function () use ($startDate, $endDate, $propertyIds) {
+        $baseQuery = function () use ($startDate, $endDate, $teamId, $propertyIds) {
             $query = Property::query()
+                ->where('team_id', $teamId)
                 ->whereBetween('created_at', [$startDate, $endDate]);
 
             if ($propertyIds) {
@@ -46,9 +47,10 @@ class MarketAnalysisService
         ];
     }
 
-    public function getMarketTrends($startDate, $endDate, $propertyIds = null)
+    public function getMarketTrends($startDate, $endDate, $teamId, $propertyIds = null)
     {
         $query = Property::query()
+            ->where('team_id', $teamId)
             ->whereBetween('created_at', [$startDate, $endDate]);
 
         if ($propertyIds) {

@@ -21,12 +21,14 @@ class ViewMarketAnalysis extends ViewRecord
         $this->marketData = $marketAnalysisService->generateMarketAnalysis(
             $this->record->start_date,
             $this->record->end_date,
+            $this->record->team_id,
             $this->record->properties->pluck('id')->toArray()
         );
 
         $this->marketTrends = $marketAnalysisService->getMarketTrends(
             $this->record->start_date,
             $this->record->end_date,
+            $this->record->team_id,
             $this->record->properties->pluck('id')->toArray()
         );
     }

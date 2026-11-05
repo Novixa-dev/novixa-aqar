@@ -7,10 +7,13 @@ use InvalidArgumentException;
 
 class QRCodeService
 {
-    private const GOOGLE_CHART_BASE = 'https://chart.googleapis.com/chart';
+    // Google's Image Charts API (chart.googleapis.com) was shut down and
+    // now returns 404 for every request -- goqr.me's free API is a
+    // maintained drop-in replacement with the same "URL -> QR image" shape.
+    private const QR_API_BASE = 'https://api.qrserver.com/v1/create-qr-code/';
 
     /**
-     * Generate a QR code URL for a property using the Google Chart API.
+     * Generate a QR code URL for a property using a hosted QR code API.
      *
      * @param  Property  $property
      * @param  int  $size  Size in pixels (width and height)
@@ -44,11 +47,10 @@ class QRCodeService
             throw new InvalidArgumentException('QR code size must be between 50 and 1000 pixels.');
         }
 
-        return self::GOOGLE_CHART_BASE . '?' . http_build_query([
-            'cht' => 'qr',
-            'chs' => "{$size}x{$size}",
-            'chl' => $content,
-            'choe' => 'UTF-8',
+        return self::QR_API_BASE . '?' . http_build_query([
+            'size' => "{$size}x{$size}",
+            'data' => $content,
+            'charset-source' => 'UTF-8',
         ]);
     }
 

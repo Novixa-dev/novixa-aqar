@@ -33,14 +33,20 @@ class BookingCalendar extends Component
         $this->calendarIntegrationService = $calendarIntegrationService;
     }
 
-    public function mount($appointmentType)
+    public function mount($appointmentType = null)
     {
-        $this->appointmentType = AppointmentType::findOrFail($appointmentType);
+        // /booking-calendar has no route parameter (confirmed against
+        // routes/web.php and the smoke-test list in DemoAudit.php, which
+        // expects the bare URL to work) -- fall back to the first
+        // appointment type rather than requiring one that's never passed.
+        $this->appointmentType = $appointmentType
+            ? AppointmentType::findOrFail($appointmentType)
+            : AppointmentType::firstOrFail();
         $this->currentMonth = Carbon::now()->month;
         $this->currentYear = Carbon::now()->year;
 
         $this->dates = Property::all()->flatMap(function ($property) {
-            return $property->getAvailableDates();
+            return $property->getAvailableDatesForTeam();
         })->unique()->values()->toArray();
 
         $this->appointments = Appointment::with('property')

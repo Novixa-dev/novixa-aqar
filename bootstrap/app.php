@@ -40,6 +40,19 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(\App\Http\Middleware\SetLocaleMiddleware::class);
         $middleware->encryptCookies(except: ['locale']);
 
+        // App\Http\Middleware\TrimStrings exists in this repo with a
+        // password exception list, but it's Laravel 10-style configuration
+        // that nothing registers (this app uses the 11+ bootstrap/app.php
+        // middleware API) -- the global stack was inserting the framework's
+        // own TrimStrings instead, with no exceptions at all, silently
+        // trimming whitespace from every login/register/password-reset
+        // field including the password itself before validation/hashing.
+        $middleware->trimStrings(except: [
+            'current_password',
+            'password',
+            'password_confirmation',
+        ]);
+
         // Stripe delivers webhooks with their own signature scheme; the
         // Laravel CSRF token is neither present nor applicable.
         $middleware->validateCsrfTokens(except: [
@@ -63,6 +76,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'role'               => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission'         => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            // Same Laravel-10-vs-11 config gap as TrimStrings above: without
+            // this, the `guest` middleware (routes/web.php's /login,
+            // /register group) ran the framework's own RedirectIfAuthenticated
+            // instead of this app's role-aware one -- every already-logged-in
+            // user of any role landed on the public homepage when revisiting
+            // /login, instead of their own panel.
+            'guest'              => \App\Http\Middleware\RedirectIfAuthenticated::class,
         ]);
 
         $middleware->throttleApi();
