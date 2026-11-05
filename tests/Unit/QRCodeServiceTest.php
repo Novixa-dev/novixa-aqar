@@ -25,8 +25,9 @@ class QRCodeServiceTest extends TestCase
     {
         $url = $this->service->generateQRCodeUrl('https://example.com/property/1', 200);
 
-        $this->assertStringContainsString('chart.googleapis.com', $url);
-        $this->assertStringContainsString('cht=qr', $url);
+        // chart.googleapis.com was shut down by Google (confirmed 404);
+        // api.qrserver.com is the maintained replacement this service uses.
+        $this->assertStringContainsString('api.qrserver.com', $url);
         $this->assertStringContainsString('200x200', $url);
     }
 
@@ -89,7 +90,7 @@ class QRCodeServiceTest extends TestCase
 
         $url = $this->service->generatePropertyQRCodeUrl($property, 200);
 
-        $this->assertStringContainsString('chart.googleapis.com', $url);
-        $this->assertStringContainsString('cht=qr', $url);
+        $this->assertStringContainsString('api.qrserver.com', $url);
+        $this->assertStringContainsString('200x200', $url);
     }
 }

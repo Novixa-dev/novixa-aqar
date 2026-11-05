@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Enums\AgencyRole;
+use App\Models\Branch;
+use App\Models\Department;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use App\Services\AgencyPermissionService;
 use App\Services\AgencyRoleAuditService;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -40,12 +43,13 @@ class StaffController
             })
             ->when($request->filled('branch_id'), fn ($query) => $query->where('team_user.branch_id', $request->integer('branch_id')))
             ->when($request->filled('department_id'), fn ($query) => $query->where('team_user.department_id', $request->integer('department_id')))
-            ->with(['membership.branch:id,name', 'membership.department:id,name'])
             ->orderBy('users.name');
 
+        $paginator = $query->paginate(min(max($request->integer('per_page', 20), 1), 100));
+        $lookups = $this->branchAndDepartmentLookups($paginator->getCollection());
+
         return response()->json(
-            $query->paginate(min(max($request->integer('per_page', 20), 1), 100))
-                ->through(fn (User $user) => $this->serialize($team, $user))
+            $paginator->through(fn (User $user) => $this->serialize($team, $user, $lookups))
         );
     }
 
@@ -172,13 +176,18 @@ class StaffController
 
     private function member(Team $team, int $staff): User
     {
-        return $team->users()
-            ->with(['membership.branch:id,name', 'membership.department:id,name'])
-            ->findOrFail($staff);
+        return $team->users()->findOrFail($staff);
     }
 
-    private function serialize(Team $team, User $user): array
+    private function serialize(Team $team, User $user, ?array $lookups = null): array
     {
+        // 'membership' is the pivot ACCESSOR name set by Team::users()'s
+        // ->as('membership'), not an Eloquent relation method -- it can't be
+        // eager-loaded via ->with('membership.branch') (that throws
+        // RelationNotFoundException). Batch-fetching branch/department
+        // separately avoids both that and an N+1 per row.
+        $lookups ??= $this->branchAndDepartmentLookups(collect([$user]));
+
         return [
             'id' => $user->id,
             'name' => $user->name,
@@ -186,13 +195,32 @@ class StaffController
             'profile_photo_url' => $user->profile_photo_url,
             'role' => $user->membership->role,
             'branch_id' => $user->membership->branch_id,
-            'branch' => $user->membership->branch,
+            'branch' => $lookups['branches'][$user->membership->branch_id] ?? null,
             'department_id' => $user->membership->department_id,
-            'department' => $user->membership->department,
+            'department' => $lookups['departments'][$user->membership->department_id] ?? null,
             'job_title' => $user->membership->job_title,
             'phone' => $user->membership->phone,
             'bio' => $user->membership->bio,
             'is_public' => $user->membership->is_public,
+        ];
+    }
+
+    /**
+     * @param  Collection<int, User>  $users
+     * @return array{branches: array<int, array{id: int, name: string}>, departments: array<int, array{id: int, name: string}>}
+     */
+    private function branchAndDepartmentLookups(Collection $users): array
+    {
+        $branchIds = $users->pluck('membership.branch_id')->filter()->unique()->values();
+        $departmentIds = $users->pluck('membership.department_id')->filter()->unique()->values();
+
+        return [
+            'branches' => Branch::query()->whereIn('id', $branchIds)->get(['id', 'name'])
+                ->mapWithKeys(fn (Branch $branch) => [$branch->id => ['id' => $branch->id, 'name' => $branch->name]])
+                ->all(),
+            'departments' => Department::query()->whereIn('id', $departmentIds)->get(['id', 'name'])
+                ->mapWithKeys(fn (Department $department) => [$department->id => ['id' => $department->id, 'name' => $department->name]])
+                ->all(),
         ];
     }
 

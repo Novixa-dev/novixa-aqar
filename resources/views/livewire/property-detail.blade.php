@@ -16,12 +16,15 @@
                 'priceCurrency' => 'YER',
                 'availability' => 'https://schema.org/InStock',
             ],
-            // JSON_HEX_TAG escapes < and > as </> so a submitted
-            // title/description can never break out of this <script> tag
-            // (a prior version used JSON_UNESCAPED_SLASHES, which left
-            // "</script>" unescaped -- a stored-XSS path reachable through
-            // the public, unauthenticated property-submission form).
-        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
+            // JSON_HEX_TAG escapes < and > as </>, which alone
+            // fully blocks a "</script>" breakout regardless of slash
+            // escaping (a prior version relied on JSON_UNESCAPED_SLASHES
+            // for that instead, which left "</script>" unescaped -- a
+            // stored-XSS path reachable through the public, unauthenticated
+            // property-submission form). JSON_UNESCAPED_SLASHES is safe to
+            // keep alongside JSON_HEX_TAG and restores plain URLs like
+            // "https://schema.org" instead of "https:\/\/schema.org".
+        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_UNESCAPED_SLASHES);
     @endphp
     <script type="application/ld+json">{!! $jsonLd !!}</script>
 @endpush
