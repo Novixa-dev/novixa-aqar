@@ -214,11 +214,11 @@
 
                             <!-- Interactive Buttons Bar -->
                             <div class="mt-6 flex flex-wrap items-center gap-3">
-                                <button wire:click="toggleFavorite" 
-                                    class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold rounded-2xl border transition-all 
-                                    {{ $isFavorited 
-                                        ? 'text-white bg-red-600 border-red-600 hover:bg-red-700 shadow-md' 
-                                        : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700' 
+                                <button wire:click="toggleFavorite" wire:loading.attr="disabled" wire:target="toggleFavorite"
+                                    class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold rounded-2xl border transition-all disabled:opacity-60 disabled:cursor-not-allowed
+                                    {{ $isFavorited
+                                        ? 'text-white bg-red-600 border-red-600 hover:bg-red-700 shadow-md'
+                                        : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700'
                                     }}">
                                     <svg class="w-4 h-4 -ms-1 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                                         fill="{{ $isFavorited ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke="currentColor">
@@ -228,8 +228,8 @@
                                     {{ $isFavorited ? (app()->getLocale() === 'ar' ? 'في المفضلة' : 'In Wishlist') : (app()->getLocale() === 'ar' ? 'إضافة للمفضلة' : 'Add to Wishlist') }}
                                 </button>
                                 
-                                <button wire:click="openInquiryModal" type="button"
-                                     class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-md transition-colors">
+                                <button wire:click="openInquiryModal" wire:loading.attr="disabled" wire:target="openInquiryModal" type="button"
+                                     class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                                      <svg class="w-4 h-4 me-1.5 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                                      </svg>
@@ -301,16 +301,16 @@
                                 </div>
                                 <hr class="my-2 md:my-2 border-gray-200 dark:border-gray-800" />
                                 <div class="my-2">
-                                    <span class="text-gray-500">{{ app()->getLocale() === 'ar' ? 'الحي' : 'Neighborhood' }}</span>
+                                    <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'الحي' : 'Neighborhood' }}</span>
                                     @if ($neighborhood)
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'نظرة عامة' : 'Overview' }}</h3>
-                                                <p class="text-gray-600">{{ $neighborhood->description }}</p>
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'نظرة عامة' : 'Overview' }}</h3>
+                                                <p class="text-gray-600 dark:text-gray-300">{{ $neighborhood->description }}</p>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'إحصائيات رئيسية' : 'Key Statistics' }}</h3>
-                                                <ul class="list-disc list-inside">
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'إحصائيات رئيسية' : 'Key Statistics' }}</h3>
+                                                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                                                     <li>{{ app()->getLocale() === 'ar' ? 'عدد السكان' : 'Population' }}: {{ number_format($neighborhood->population) }}</li>
                                                     <li>{{ app()->getLocale() === 'ar' ? 'متوسط الدخل الشهري للأسرة' : 'Avg. Monthly Household Income' }}: {{ app(\App\Services\CurrencyService::class)->format($neighborhood->median_income) }}
                                                     </li>
@@ -319,16 +319,16 @@
                                                 </ul>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'المدارس' : 'Schools' }}</h3>
-                                                <ul class="list-disc list-inside">
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'المدارس' : 'Schools' }}</h3>
+                                                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                                                     @foreach ($neighborhood->schools as $school)
                                                         <li>{{ $school['name'] }} - {{ $school['rating'] }}/10</li>
                                                     @endforeach
                                                 </ul>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'المرافق' : 'Amenities' }}</h3>
-                                                <ul class="list-disc list-inside">
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'المرافق' : 'Amenities' }}</h3>
+                                                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                                                     @foreach ($neighborhood->amenities as $amenity)
                                                         <li>{{ $amenity }}</li>
                                                     @endforeach
@@ -336,7 +336,7 @@
                                             </div>
                                         </div>
 
-                                        <p class="text-sm text-gray-500 mt-2">{{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}:
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}:
                                             {{ $neighborhood->last_updated->translatedFormat('M d, Y H:i') }}</p>
 
                                         <!-- Neighborhood Reviews Section -->
