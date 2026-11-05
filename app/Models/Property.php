@@ -776,16 +776,24 @@ class Property extends Model implements HasMedia
     {
         parent::boot();
 
+        // Cache::flush() here used to wipe the WHOLE cache store on every
+        // single property create/update/delete -- not just property-related
+        // keys, but ComponentSettingsService's settings cache,
+        // ModuleManager's module list, every user's
+        // PropertyRecommendationService cache, etc. Property edits are
+        // frequent in a real-estate app, so those unrelated caches
+        // effectively never survived. Forget only the key a property change
+        // can actually invalidate.
         static::created(function ($property) {
-            Cache::flush();
+            Cache::forget('property_features');
         });
 
         static::updated(function ($property) {
-            Cache::flush();
+            Cache::forget('property_features');
         });
 
         static::deleted(function ($property) {
-            Cache::flush();
+            Cache::forget('property_features');
         });
     }
 
