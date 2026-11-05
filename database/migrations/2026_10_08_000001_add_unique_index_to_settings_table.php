@@ -29,9 +29,13 @@ return new class extends Migration
             ->whereNotIn('id', DB::query()->fromSub($keep, 'keep')->select('id'))
             ->delete();
 
-        Schema::table('settings', function (Blueprint $table) {
+        // On some deployments the table-creation migration already added this
+        // same unique index inline (pre-dates the two histories diverging),
+        // so a fresh migrate-from-scratch would otherwise fail here with
+        // "index already exists" the moment both migrations run together.
+        Schema::whenTableDoesntHaveIndex('settings', ['group', 'name'], function (Blueprint $table) {
             $table->unique(['group', 'name']);
-        });
+        }, 'unique');
     }
 
     /**
@@ -39,8 +43,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('settings', function (Blueprint $table) {
+        Schema::whenTableHasIndex('settings', ['group', 'name'], function (Blueprint $table) {
             $table->dropUnique(['group', 'name']);
-        });
+        }, 'unique');
     }
 };
