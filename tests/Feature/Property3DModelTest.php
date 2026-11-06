@@ -67,7 +67,10 @@ class Property3DModelTest extends TestCase
             ->get(route('property.detail', ['propertyId' => $property->id]));
 
         $response->assertStatus(200);
-        $response->assertSee('3D Property Model');
+        // The "3D Property Model" heading is now locale-aware (previously
+        // hardcoded English-only on an otherwise bilingual page); the test
+        // suite's default locale is Arabic, so this is what actually renders.
+        $response->assertSee('نموذج العقار ثلاثي الأبعاد');
         $response->assertSee('model-3d-container', false);
     }
 
@@ -84,7 +87,7 @@ class Property3DModelTest extends TestCase
             ->get(route('property.detail', ['propertyId' => $property->id]));
 
         $response->assertStatus(200);
-        $response->assertDontSee('3D Property Model');
+        $response->assertDontSee('نموذج العقار ثلاثي الأبعاد');
         $response->assertDontSee('model-3d-container', false);
     }
 
