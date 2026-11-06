@@ -687,6 +687,24 @@ class Property extends Model implements HasMedia
     }
 
     /**
+     * True if this property has ANY of the three independent VR/3D
+     * mechanisms the detail page can render: an embeddable virtual-tour
+     * URL, a standalone 3D model file (model_3d_url, <x-model-3d-viewer>),
+     * or a 3D model uploaded through the media library ('3d_models'
+     * collection, rendered via <model-viewer>). Each renders differently
+     * and none of this unifies their markup — this exists purely so the
+     * detail page can show one consistent "this property has a VR/3D
+     * experience" badge/button without each call site re-deriving the
+     * same three-way OR condition.
+     */
+    public function hasVirtualExperience(): bool
+    {
+        return $this->hasVirtualTour()
+            || filled($this->model_3d_url)
+            || $this->hasMedia('3d_models');
+    }
+
+    /**
      * Get the embedded virtual tour HTML
      *
      * @return string|null

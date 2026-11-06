@@ -26,7 +26,7 @@
             <a href="/" class="flex items-center gap-2.5 sm:gap-3 group min-w-0">
                 <img src="{{ asset('images/logo.svg') }}" class="h-9 sm:h-10 w-auto shrink-0 rounded-xl shadow-xs transition-transform group-hover:scale-105" alt="{{ $brand->name() }}" />
                 <div class="flex flex-col min-w-0">
-                    <span class="text-base sm:text-xl font-extrabold tracking-tight text-gray-900 dark:text-white whitespace-nowrap">
+                    <span class="text-base sm:text-xl font-extrabold tracking-tight text-gray-900 dark:text-white whitespace-nowrap truncate">
                         {{ $brand->name() }}
                     </span>
                     <span class="text-[11px] font-medium text-blue-600 dark:text-blue-400 whitespace-nowrap truncate">

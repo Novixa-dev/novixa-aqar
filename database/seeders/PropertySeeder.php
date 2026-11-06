@@ -158,6 +158,20 @@ class PropertySeeder extends Seeder
         ['شقة عائلية — 3 غرف نوم', 'Apartment', 'خلف', 3, 2, 140, 'YER', 200000, 'شقة عائلية مشمسة: 3 غرف نوم، صالة، حمامان، ومطبخ مجهز جزئياً، في عمارة بها مصعد.'],
     ];
 
+    /**
+     * A rotating pool of distinct, publicly embeddable virtual-tour links,
+     * one per provider actually supported by TourViewer (see
+     * resources/views/components/tour-viewer.blade.php) -- previously every
+     * tour-enabled property shared the exact same single Kuula link, so the
+     * demo could never show what a Matterport or 360° iframe embed actually
+     * looked like.
+     */
+    private const VIRTUAL_TOURS = [
+        ['url' => 'https://kuula.co/share/collection/7l2nJ', 'provider' => 'kuula'],
+        ['url' => 'https://my.matterport.com/show/?m=zEWsxhZpGba', 'provider' => 'matterport'],
+        ['url' => 'https://kuula.co/share/7Jd0M', 'provider' => 'kuula'],
+    ];
+
     private function createArabicProperties($category, string $type): void
     {
         $neighborhoods = Neighborhood::all()->keyBy('name');
@@ -165,6 +179,7 @@ class PropertySeeder extends Seeder
 
         foreach ($rows as $i => [$title, $propertyType, $district, $bedrooms, $bathrooms, $area, $currency, $price, $description]) {
             $neighborhood = $neighborhoods->get($district);
+            $tour = $i % 4 === 0 ? self::VIRTUAL_TOURS[intdiv($i, 4) % count(self::VIRTUAL_TOURS)] : null;
 
             Property::create([
                 'title' => $title,
@@ -189,9 +204,9 @@ class PropertySeeder extends Seeder
                 'postal_code' => '00967',
                 'country' => 'Yemen',
                 'neighborhood_id' => $neighborhood?->id,
-                'virtual_tour_url' => $i % 4 === 0 ? 'https://kuula.co/share/collection/7l2nJ' : null,
-                'virtual_tour_provider' => $i % 4 === 0 ? 'kuula' : null,
-                'live_tour_available' => $i % 4 === 0,
+                'virtual_tour_url' => $tour['url'] ?? null,
+                'virtual_tour_provider' => $tour['provider'] ?? null,
+                'live_tour_available' => $tour !== null,
             ]);
         }
     }
