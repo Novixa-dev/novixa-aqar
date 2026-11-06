@@ -24,14 +24,14 @@
     <div class="container mx-auto px-4 lg:px-8">
         <div class="flex items-center justify-between h-20">
             <!-- Far Right (RTL): Brand Logo & Symbol -->
-            <a href="/" class="flex items-center gap-3 group shrink-0">
-                <div class="w-10 h-10 rounded-xl bg-[#8C7869] text-white flex items-center justify-center font-black text-xl shadow-md group-hover:scale-105 transition-transform">
+            <a href="/" class="flex items-center gap-3 group shrink-0 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-[#8C7869] text-white flex items-center justify-center font-black text-xl shadow-md group-hover:scale-105 transition-transform shrink-0">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
-                <div class="flex flex-col leading-tight">
-                    <span class="text-xl font-extrabold tracking-tight text-white font-sans">
+                <div class="flex flex-col leading-tight min-w-0">
+                    <span class="text-xl font-extrabold tracking-tight text-white font-sans truncate">
                         {{ app()->getLocale() === 'ar' ? 'رســــو' : 'RUSU' }}
                     </span>
                     <span class="text-[9px] font-bold uppercase tracking-widest text-[#C2B2A3]">
@@ -41,7 +41,7 @@
             </a>
 
             <!-- Center Navigation Links -->
-            <nav class="hidden md:flex items-center gap-1 lg:gap-1.5 xl:gap-2 text-[13px] lg:text-sm font-bold">
+            <nav class="hidden lg:flex items-center gap-1 lg:gap-1.5 xl:gap-2 text-[13px] lg:text-sm font-bold">
                 <a href="{{ url('/') }}" class="px-3 py-1.5 lg:px-3.5 xl:px-4 lg:py-2 rounded-full whitespace-nowrap transition-all {{ request()->is('/') ? 'bg-[#8C7869] text-white shadow-sm' : 'text-stone-200 hover:text-white hover:bg-white/10' }}">
                     {{ app()->getLocale() === 'ar' ? 'الرئيسية' : 'Home' }}
                 </a>
@@ -162,7 +162,7 @@
 
                 <!-- Hamburger Menu Button -->
                 <button id="menuToggleButton" type="button"
-                    class="inline-flex md:hidden items-center justify-center p-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white focus:outline-none transition-colors"
+                    class="inline-flex lg:hidden items-center justify-center p-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white focus:outline-none transition-colors"
                     aria-label="Toggle navigation"
                     aria-expanded="false"
                     aria-controls="menuToggle">
@@ -174,7 +174,7 @@
         </div>
 
         <!-- Mobile Drawer Menu -->
-        <div class="hidden md:hidden py-4 border-t border-white/10 text-white" id="menuToggle">
+        <div class="hidden lg:hidden py-4 border-t border-white/10 text-white" id="menuToggle">
             <div class="flex flex-col gap-2 font-bold text-sm">
                 <a href="{{ url('/') }}" class="py-2.5 px-4 rounded-xl transition-colors {{ request()->is('/') ? 'bg-[#8C7869] text-white' : 'text-stone-200 hover:bg-white/10' }}">
                     {{ app()->getLocale() === 'ar' ? 'الرئيسية' : 'Home' }}
