@@ -77,6 +77,8 @@ class ModuleManager
             \Log::warning("Failed to persist enabled state for module '{$name}': ".$e->getMessage());
         }
 
+        $this->clearCache();
+
         return true;
     }
 
@@ -102,6 +104,8 @@ class ModuleManager
             \Log::warning("Failed to persist disabled state for module '{$name}': ".$e->getMessage());
         }
 
+        $this->clearCache();
+
         return true;
     }
 
@@ -119,6 +123,8 @@ class ModuleManager
 
         $module->install();
 
+        $this->clearCache();
+
         return true;
     }
 
@@ -135,6 +141,8 @@ class ModuleManager
         }
 
         $module->uninstall();
+
+        $this->clearCache();
 
         return true;
     }

@@ -97,8 +97,8 @@
                         <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch">
                             <!-- Image Half (6 cols) -->
                             <div class="lg:col-span-6 relative overflow-hidden min-h-[280px] lg:min-h-[380px]">
-                                <img src="{{ $covers[0] }}" 
-                                     alt="{{ $leadArticle->title }}" 
+                                <img src="{{ $leadArticle->image_src ?: $covers[0] }}"
+                                     alt="{{ $leadArticle->title }}"
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent lg:hidden"></div>
                                 <span class="absolute top-4 start-4 px-3.5 py-1 rounded-full bg-amber-500 text-white text-xs font-black shadow-md flex items-center gap-1.5">
@@ -160,8 +160,8 @@
                             <div class="bg-white dark:bg-[#1C1816] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-stone-200/80 dark:border-stone-800 flex flex-col justify-between group hover:-translate-y-1">
                                 <div>
                                     <div class="relative aspect-video overflow-hidden">
-                                        <img src="{{ $covers[$imgIndex] }}" 
-                                             alt="{{ $featured->title }}" 
+                                        <img src="{{ $featured->image_src ?: $covers[$imgIndex] }}"
+                                             alt="{{ $featured->title }}"
                                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                                         <span class="absolute top-3 start-3 px-2.5 py-1 text-xs font-bold text-white bg-amber-500 rounded-lg shadow-sm">
@@ -215,7 +215,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                 @forelse($news as $article)
                     @php
-                        $artImg = $covers[($article->id) % count($covers)];
+                        $artImg = $article->image_src ?: $covers[($article->id) % count($covers)];
                     @endphp
                     <div class="bg-white dark:bg-[#1C1816] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-stone-200/80 dark:border-stone-800 flex flex-col justify-between group hover:-translate-y-1">
                         <div>
