@@ -2,9 +2,19 @@
 
 namespace App\Support;
 
+use App\Settings\GeneralSettings;
+
 /**
- * Locale-aware access to config/branding.php. Shared with every view as
+ * Locale-aware access to this deployment's brand. Shared with every view as
  * $brand (see AppServiceProvider), e.g. {{ $brand->name() }}.
+ *
+ * Contact-detail accessors (email/phone/address) read the admin-editable
+ * GeneralSettings row first, falling back to config/branding.php (the
+ * .env-driven per-deployment defaults, and what SiteSettingsSeeder seeds
+ * GeneralSettings from in the first place) when a value was never set.
+ * Before this, GeneralSettings' "General Settings" admin page was a
+ * confirmed dead end: edits there never reached any public page, which
+ * only ever read config('branding.*').
  */
 class Brand
 {
@@ -37,7 +47,18 @@ class Brand
 
     public function address(?string $locale = null): string
     {
-        return $this->localized('address', $locale);
+        // GeneralSettings has one site_address field (SiteSettingsSeeder seeds
+        // it from the English config value), while config/branding.php's
+        // address is genuinely bilingual -- so this can only safely override
+        // the localized default once an admin has actually typed something
+        // different from what was seeded; otherwise an Arabic visitor would
+        // see the seeded English address verbatim.
+        $settingsValue = trim((string) (app(GeneralSettings::class)->site_address ?? ''));
+        $seededDefault = trim((string) config('branding.address.en'));
+
+        return ($settingsValue !== '' && $settingsValue !== $seededDefault)
+            ? $settingsValue
+            : $this->localized('address', $locale);
     }
 
     public function company(): string
@@ -52,12 +73,16 @@ class Brand
 
     public function email(): string
     {
-        return (string) config('branding.email');
+        $settingsValue = trim((string) (app(GeneralSettings::class)->site_email ?? ''));
+
+        return $settingsValue !== '' ? $settingsValue : (string) config('branding.email');
     }
 
     public function phone(): string
     {
-        return (string) config('branding.phone');
+        $settingsValue = trim((string) (app(GeneralSettings::class)->site_phone ?? ''));
+
+        return $settingsValue !== '' ? $settingsValue : (string) config('branding.phone');
     }
 
     /** tel: / wa.me friendly digits, e.g. 967776248526. */
