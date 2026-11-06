@@ -20,6 +20,8 @@ use App\Models\PropertyTemplate;
 use App\Models\Review;
 use App\Models\User;
 use App\Models\UtilityPayment;
+use App\Models\Vendor;
+use App\Models\VendorReview;
 use Illuminate\Database\Seeder;
 
 /**
@@ -52,6 +54,7 @@ class DemoDataCompletionSeeder extends Seeder
 
         $this->seedPropertyFeatures($teamId);
         $this->seedReviews($buyer, $tenant, $landlord, $seller);
+        $this->seedVendorReviews($landlord, $staff, $admin);
         $this->seedFavorites($teamId, $buyer, $tenant);
         $this->seedKeyLocations($teamId);
         $this->seedPropertyTemplates();
@@ -72,7 +75,57 @@ class DemoDataCompletionSeeder extends Seeder
             .UtilityPayment::count().' utility payments, '
             .Message::count().' internal messages, '
             .ChatConversation::count().' chat conversations, '
-            .ContactMessage::count().' contact messages.');
+            .ContactMessage::count().' contact messages, '
+            .VendorReview::count().' vendor reviews.');
+    }
+
+    /**
+     * VendorReview previously had a model, factory and migration but was
+     * never seeded anywhere — the Contractor panel's vendor-rating UI
+     * rendered with zero data on every fresh demo. Rates every vendor
+     * DemoWorkflowSeeder created, from whichever office/landlord personas
+     * exist, deterministically by vendor id so re-seeding is stable.
+     */
+    private function seedVendorReviews(?User $landlord, ?User $staff, ?User $admin): void
+    {
+        $reviewers = array_values(array_filter([$landlord, $staff, $admin]));
+        if (empty($reviewers)) {
+            return;
+        }
+
+        $copy = [
+            ['rating' => 4.8, 'quality' => 5, 'timeliness' => 5, 'communication' => 4, 'professionalism' => 5, 'value' => 5, 'text' => 'التزام تام بالمواعيد وجودة تنفيذ عالية، تم حل المشكلة من أول زيارة دون أي رسوم إضافية مفاجئة.', 'pros' => ['سرعة في الاستجابة', 'فنيون محترفون', 'سعر عادل'], 'cons' => []],
+            ['rating' => 4.2, 'quality' => 4, 'timeliness' => 4, 'communication' => 4, 'professionalism' => 4, 'value' => 4, 'text' => 'تعامل جيد وأسعار مناسبة، تأخر الفني نحو نصف ساعة عن الموعد المحدد لكن النتيجة النهائية كانت مرضية.', 'pros' => ['أسعار منافسة', 'نتيجة نهائية جيدة'], 'cons' => ['تأخير بسيط عن الموعد']],
+            ['rating' => 3.6, 'quality' => 4, 'timeliness' => 3, 'communication' => 3, 'professionalism' => 4, 'value' => 4, 'text' => 'العمل مقبول بشكل عام، لكن التواصل بشأن موعد الزيارة احتاج متابعة أكثر من مرة.', 'pros' => ['جودة تنفيذ مقبولة'], 'cons' => ['يحتاج تحسين التواصل']],
+        ];
+
+        Vendor::orderBy('id')->get()->each(function (Vendor $vendor, int $i) use ($reviewers, $copy) {
+            if (VendorReview::where('vendor_id', $vendor->id)->exists()) {
+                return;
+            }
+
+            $row = $copy[$i % count($copy)];
+            $reviewer = $reviewers[$i % count($reviewers)];
+
+            VendorReview::create([
+                'vendor_id' => $vendor->id,
+                'work_order_id' => null,
+                'reviewer_id' => $reviewer->id,
+                'rating' => $row['rating'],
+                'quality_rating' => $row['quality'],
+                'timeliness_rating' => $row['timeliness'],
+                'communication_rating' => $row['communication'],
+                'professionalism_rating' => $row['professionalism'],
+                'value_rating' => $row['value'],
+                'review_text' => $row['text'],
+                'pros' => $row['pros'],
+                'cons' => $row['cons'],
+                'would_recommend' => $row['rating'] >= 4.0,
+                'would_hire_again' => $row['rating'] >= 3.5,
+                'review_date' => now()->subDays(random_int(5, 90)),
+                'is_verified' => true,
+            ]);
+        });
     }
 
     /** 4-6 realistic Arabic amenities per property, deterministic by id so re-seeding is stable. */
@@ -137,22 +190,29 @@ class DemoDataCompletionSeeder extends Seeder
             ]);
         }
 
-        // A couple of generic reviews on properties not already reviewed
-        // above, for broader coverage, from always-present personas.
-        $genericReviewer = $buyer;
-        if ($genericReviewer) {
-            $genericTargets = Property::whereDoesntHave('reviews')->orderBy('id')->take(2)->get();
+        // Broader generic-review coverage on properties not already reviewed
+        // above, rotating through every always-present persona so most of
+        // the demo inventory shows real social proof instead of leaving the
+        // vast majority of properties with zero reviews.
+        $genericReviewers = array_values(array_filter([$buyer, $tenant, $seller, $landlord]));
+        if (! empty($genericReviewers)) {
+            $genericTargets = Property::whereDoesntHave('reviews')->orderBy('id')->take(10)->get();
             $genericCopy = [
                 ['rating' => 4, 'title' => 'عقار جيد بشكل عام', 'comment' => 'السعر مناسب مقارنة بمثيلاته في نفس الحي، ويستحق الزيارة قبل اتخاذ القرار.'],
                 ['rating' => 3, 'title' => 'يحتاج بعض الصيانة البسيطة', 'comment' => 'الموقع ممتاز، لكن العقار يحتاج بعض أعمال الصيانة البسيطة قبل الانتقال إليه مباشرة.'],
+                ['rating' => 5, 'title' => 'تجاوز توقعاتي', 'comment' => 'التشطيبات فاخرة والموقع هادئ، تعاملت مع الوكيل العقاري بسلاسة من أول اتصال حتى التسليم.'],
+                ['rating' => 4, 'title' => 'موقع استراتيجي وخدمات قريبة', 'comment' => 'قريب جداً من المدارس والأسواق، والمساحات الداخلية مستغلة بشكل ذكي.'],
+                ['rating' => 5, 'title' => 'استثمار موفق', 'comment' => 'عائد إيجاري جيد مقارنة بسعر الشراء، وأنصح به لأي مستثمر يبحث عن عقار في هذا الحي.'],
+                ['rating' => 2, 'title' => 'تجربة متوسطة', 'comment' => 'العقار مقبول، لكن بعض التشطيبات تحتاج تحديثاً وكانت أبطأ من المتوقع في إجراءات التسليم.'],
             ];
             foreach ($genericTargets as $i => $property) {
+                $reviewer = $genericReviewers[$i % count($genericReviewers)];
                 Review::firstOrCreate([
-                    'user_id' => $genericReviewer->id,
+                    'user_id' => $reviewer->id,
                     'reviewable_id' => $property->id,
                     'reviewable_type' => Property::class,
                 ], $genericCopy[$i % count($genericCopy)] + [
-                    'review_date' => now()->subDays(random_int(2, 20)),
+                    'review_date' => now()->subDays(random_int(2, 45)),
                     'approved' => true,
                     'moderation_status' => 'approved',
                 ]);
