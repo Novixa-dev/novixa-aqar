@@ -5,12 +5,14 @@ namespace App\Filament\Staff\Resources\News;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -67,6 +69,13 @@ class NewsResource extends Resource
                     ->maxLength(500)
                     ->rows(3)
                     ->helperText(__('A brief summary of the news article (optional)')),
+                FileUpload::make('image_url')
+                    ->label(app()->getLocale() === 'ar' ? 'صورة المقال' : 'Article Image')
+                    ->disk('public')
+                    ->directory('news')
+                    ->image()
+                    ->imageEditor()
+                    ->maxSize(5120),
                 RichEditor::make('content')
                     ->required()
                     ->columnSpanFull()
@@ -102,6 +111,9 @@ class NewsResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('image_src')
+                    ->label(app()->getLocale() === 'ar' ? 'الصورة' : 'Image')
+                    ->square(),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()
