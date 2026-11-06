@@ -35,6 +35,15 @@ class UserSeeder extends Seeder
                     'name' => $account['name'],
                     'password' => Hash::make(DemoAccounts::PASSWORD),
                     'email_verified_at' => now(),
+                    // A full URL in profile_photo_path is rendered as-is by
+                    // User::profilePhotoUrl() (see that accessor) rather than
+                    // resolved against the local storage disk, so every demo
+                    // persona gets a real avatar without shipping binary
+                    // image assets for this. DiceBear's "initials" style was
+                    // chosen deliberately over a photo-avatar service: it
+                    // can't mismatch a persona's gender or ethnicity because
+                    // it never attempts to depict a person at all.
+                    'profile_photo_path' => 'https://api.dicebear.com/7.x/initials/svg?seed='.$roleName,
                 ]
             );
 
