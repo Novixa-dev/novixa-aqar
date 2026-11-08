@@ -11,8 +11,6 @@ use Filament\Actions\DeleteBulkAction;
 use App\Filament\Contractor\Resources\Contractors\Pages\ListContractors;
 use App\Filament\Contractor\Resources\Contractors\Pages\CreateContractor;
 use App\Filament\Contractor\Resources\Contractors\Pages\EditContractor;
-use App\Filament\Contractor\Resources\ContractorResource\Pages;
-use App\Filament\Contractor\Resources\ContractorResource\RelationManagers;
 use App\Models\Contractor;
 use App\Models\User;
 use Filament\Forms;

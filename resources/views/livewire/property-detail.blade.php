@@ -6,17 +6,25 @@
         $jsonLd = json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'RealEstateListing',
-            'name' => $property->title,
+            'name' => strip_tags($property->title),
             'description' => \Illuminate\Support\Str::limit(strip_tags($property->description), 250),
             'url' => url()->current(),
             'image' => $property->getFirstMediaUrl('images') ?: asset('images/property-placeholder.png'),
             'offers' => [
                 '@type' => 'Offer',
                 'price' => $property->price,
-                'priceCurrency' => 'YER',
+                'priceCurrency' => $property->currency ?: 'YER',
                 'availability' => 'https://schema.org/InStock',
             ],
-        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            // JSON_HEX_TAG escapes < and > as </>, which alone
+            // fully blocks a "</script>" breakout regardless of slash
+            // escaping (a prior version relied on JSON_UNESCAPED_SLASHES
+            // for that instead, which left "</script>" unescaped -- a
+            // stored-XSS path reachable through the public, unauthenticated
+            // property-submission form). JSON_UNESCAPED_SLASHES is safe to
+            // keep alongside JSON_HEX_TAG and restores plain URLs like
+            // "https://schema.org" instead of "https:\/\/schema.org".
+        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_UNESCAPED_SLASHES);
     @endphp
     <script type="application/ld+json">{!! $jsonLd !!}</script>
 @endpush
@@ -45,6 +53,13 @@
                                         {{ $property->translated_type }}
                                     </span>
                                 </div>
+                                @if($property->hasVirtualExperience())
+                                    <a href="#virtual-tour-section"
+                                        class="absolute top-4 end-4 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black text-white bg-purple-600/90 backdrop-blur-md shadow-lg hover:bg-purple-500 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>
+                                        {{ app()->getLocale() === 'ar' ? 'جولة افتراضية / 3D' : 'VR / 3D Tour' }}
+                                    </a>
+                                @endif
                             </div>
 
                             @if($galleryMedia->count() > 1)
@@ -69,7 +84,7 @@
                                             <svg class="w-5 h-5 inline me-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                                             </svg>
-                                            3D Property Model
+                                            {{ app()->getLocale() === 'ar' ? 'نموذج العقار ثلاثي الأبعاد' : '3D Property Model' }}
                                         </h3>
                                     </div>
                                     <model-viewer 
@@ -206,11 +221,11 @@
 
                             <!-- Interactive Buttons Bar -->
                             <div class="mt-6 flex flex-wrap items-center gap-3">
-                                <button wire:click="toggleFavorite" 
-                                    class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold rounded-2xl border transition-all 
-                                    {{ $isFavorited 
-                                        ? 'text-white bg-red-600 border-red-600 hover:bg-red-700 shadow-md' 
-                                        : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700' 
+                                <button wire:click="toggleFavorite" wire:loading.attr="disabled" wire:target="toggleFavorite"
+                                    class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold rounded-2xl border transition-all disabled:opacity-60 disabled:cursor-not-allowed
+                                    {{ $isFavorited
+                                        ? 'text-white bg-red-600 border-red-600 hover:bg-red-700 shadow-md'
+                                        : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700'
                                     }}">
                                     <svg class="w-4 h-4 -ms-1 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                                         fill="{{ $isFavorited ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke="currentColor">
@@ -220,13 +235,21 @@
                                     {{ $isFavorited ? (app()->getLocale() === 'ar' ? 'في المفضلة' : 'In Wishlist') : (app()->getLocale() === 'ar' ? 'إضافة للمفضلة' : 'Add to Wishlist') }}
                                 </button>
                                 
-                                <button wire:click="openInquiryModal" type="button"
-                                     class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-md transition-colors">
+                                <button wire:click="openInquiryModal" wire:loading.attr="disabled" wire:target="openInquiryModal" type="button"
+                                     class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                                      <svg class="w-4 h-4 me-1.5 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                                      </svg>
                                      {{ app()->getLocale() === 'ar' ? 'إرسال استفسار' : 'Send Inquiry' }}
                                  </button>
+
+                                @if($property->hasVirtualExperience())
+                                    <a href="#virtual-tour-section"
+                                        class="inline-flex items-center justify-center py-3 px-5 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-2xl shadow-md transition-colors">
+                                        <svg class="w-4 h-4 me-1.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>
+                                        {{ app()->getLocale() === 'ar' ? 'جولة افتراضية / 3D' : 'VR / 3D Tour' }}
+                                    </a>
+                                @endif
 
                                 <a href="#" title="" data-modal-target="scheduleViewingModal"
                                     data-modal-toggle="scheduleViewingModal"
@@ -293,16 +316,16 @@
                                 </div>
                                 <hr class="my-2 md:my-2 border-gray-200 dark:border-gray-800" />
                                 <div class="my-2">
-                                    <span class="text-gray-500">{{ app()->getLocale() === 'ar' ? 'الحي' : 'Neighborhood' }}</span>
+                                    <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'ar' ? 'الحي' : 'Neighborhood' }}</span>
                                     @if ($neighborhood)
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'نظرة عامة' : 'Overview' }}</h3>
-                                                <p class="text-gray-600">{{ $neighborhood->description }}</p>
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'نظرة عامة' : 'Overview' }}</h3>
+                                                <p class="text-gray-600 dark:text-gray-300">{{ $neighborhood->description }}</p>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'إحصائيات رئيسية' : 'Key Statistics' }}</h3>
-                                                <ul class="list-disc list-inside">
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'إحصائيات رئيسية' : 'Key Statistics' }}</h3>
+                                                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                                                     <li>{{ app()->getLocale() === 'ar' ? 'عدد السكان' : 'Population' }}: {{ number_format($neighborhood->population) }}</li>
                                                     <li>{{ app()->getLocale() === 'ar' ? 'متوسط الدخل الشهري للأسرة' : 'Avg. Monthly Household Income' }}: {{ app(\App\Services\CurrencyService::class)->format($neighborhood->median_income) }}
                                                     </li>
@@ -311,16 +334,16 @@
                                                 </ul>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'المدارس' : 'Schools' }}</h3>
-                                                <ul class="list-disc list-inside">
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'المدارس' : 'Schools' }}</h3>
+                                                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                                                     @foreach ($neighborhood->schools as $school)
                                                         <li>{{ $school['name'] }} - {{ $school['rating'] }}/10</li>
                                                     @endforeach
                                                 </ul>
                                             </div>
                                             <div>
-                                                <h3 class="text-lg font-semibold">{{ app()->getLocale() === 'ar' ? 'المرافق' : 'Amenities' }}</h3>
-                                                <ul class="list-disc list-inside">
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'المرافق' : 'Amenities' }}</h3>
+                                                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                                                     @foreach ($neighborhood->amenities as $amenity)
                                                         <li>{{ $amenity }}</li>
                                                     @endforeach
@@ -328,7 +351,7 @@
                                             </div>
                                         </div>
 
-                                        <p class="text-sm text-gray-500 mt-2">{{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}:
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ app()->getLocale() === 'ar' ? 'آخر تحديث' : 'Last updated' }}:
                                             {{ $neighborhood->last_updated->translatedFormat('M d, Y H:i') }}</p>
 
                                         <!-- Neighborhood Reviews Section -->
@@ -625,6 +648,14 @@
                         </p>
                     </div>
 
+                    {{-- Scroll target shared by every VR/3D entry point below (hero badge,
+                         Interactive Buttons Bar button) regardless of which of the three
+                         independent mechanisms (virtual_tour_url, model_3d_url, '3d_models'
+                         media) actually renders further down the page. --}}
+                    @if($property->hasVirtualExperience())
+                        <div id="virtual-tour-section"></div>
+                    @endif
+
                     {{-- Virtual Tour Section --}}
                     @if($property->virtual_tour_url)
                         <div class="w-full mt-8 mb-8">
@@ -654,7 +685,7 @@
                     {{-- 3D Model Viewer Section --}}
                     @if($property->model_3d_url)
                         <div class="w-full mt-8 mb-8">
-                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">3D Property Model</h2>
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">{{ app()->getLocale() === 'ar' ? 'نموذج العقار ثلاثي الأبعاد' : '3D Property Model' }}</h2>
                             <x-model-3d-viewer :modelUrl="$property->model_3d_url" :propertyTitle="$property->title" />
                         </div>
                     @endif
@@ -1063,7 +1094,9 @@
                             </div>
                             <div class="p-4 md:p-5 space-y-4">
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    Schedule a live virtual tour with one of our agents who will guide you through the property in real-time via video call.
+                                    {{ app()->getLocale() === 'ar'
+                                        ? 'احجز جولة افتراضية مباشرة مع أحد وكلائنا العقاريين الذين سيرشدونك عبر العقار بشكل مباشر عن طريق مكالمة فيديو.'
+                                        : 'Schedule a live virtual tour with one of our agents who will guide you through the property in real-time via video call.' }}
                                 </p>
 
                                 <div>
@@ -1087,18 +1120,18 @@
                                     <label for="tourNotes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ app()->getLocale() === 'ar' ? 'ملاحظات إضافية (اختياري)' : 'Additional Notes (Optional)' }}</label>
                                     <textarea id="tourNotes" wire:model="tourNotes" rows="3"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        placeholder="Any specific areas you'd like to focus on or questions you have..."></textarea>
+                                        placeholder="{{ app()->getLocale() === 'ar' ? 'أي مناطق معينة ترغب بالتركيز عليها أو أسئلة لديك...' : "Any specific areas you'd like to focus on or questions you have..." }}"></textarea>
                                     @error('tourNotes') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                                 <button type="submit"
                                     class="text-white bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                                    Schedule Tour
+                                    {{ app()->getLocale() === 'ar' ? 'حجز الجولة' : 'Schedule Tour' }}
                                 </button>
                                 <button type="button" wire:click="closeScheduleLiveTourModal"
                                     class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                    Cancel
+                                    {{ app()->getLocale() === 'ar' ? 'إلغاء' : 'Cancel' }}
                                 </button>
                             </div>
                         </form>
@@ -1134,13 +1167,13 @@
                             </label>
                             <input type="text" id="lead_name" wire:model="name"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-500 focus:border-primary-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="أدخل اسمك الكامل" required>
+                                placeholder="{{ app()->getLocale() === 'ar' ? 'أدخل اسمك الكامل' : 'Enter your full name' }}" required>
                             @error('name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label for="lead_email" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
-                                البريد الإلكتروني <span class="text-red-500">*</span>
+                                {{ __('lead.attributes.email') }} <span class="text-red-500">*</span>
                             </label>
                             <input type="email" id="lead_email" wire:model="email"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-500 focus:border-primary-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
@@ -1164,14 +1197,14 @@
                             </label>
                             <textarea id="lead_message" wire:model="message" rows="3"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-500 focus:border-primary-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="أكتب أي أسئلة أو ملاحظات تود الاستفسار عنها..."></textarea>
+                                placeholder="{{ app()->getLocale() === 'ar' ? 'أكتب أي أسئلة أو ملاحظات تود الاستفسار عنها...' : 'Write any questions or notes you would like to ask about...' }}"></textarea>
                             @error('message') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                             <button type="button" wire:click="closeInquiryModal"
                                 class="py-2.5 px-4 text-xs font-medium text-gray-700 bg-white rounded-xl border border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
-                                إلغاء
+                                {{ __('lead.form.cancel') }}
                             </button>
                             <button type="submit"
                                 class="py-2.5 px-5 text-xs font-bold text-white bg-primary-700 hover:bg-primary-800 rounded-xl shadow-md transition-all duration-150">

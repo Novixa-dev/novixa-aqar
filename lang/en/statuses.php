@@ -34,6 +34,7 @@ return [
         'confirmed' => 'Confirmed',
         'completed' => 'Completed',
         'cancelled' => 'Cancelled',
+        'rescheduled' => 'Rescheduled',
     ],
     'maintenance' => [
         'pending' => 'Pending',

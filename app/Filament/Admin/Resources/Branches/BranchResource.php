@@ -12,7 +12,6 @@ use App\Models\Branch;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use App\Filament\Admin\Resources\BranchResource\Pages;
 
 class BranchResource extends Resource
 {

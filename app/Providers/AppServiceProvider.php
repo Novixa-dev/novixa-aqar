@@ -26,8 +26,17 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(Brand::class);
-        // Register the module manager as a singleton
-        $this->app->singleton(ModuleManager::class, function ($app) {
+        // NOT a singleton: under Octane, a singleton's constructor runs once
+        // per worker and ModuleManager::$modules then stays fixed in memory
+        // for that worker's entire lifetime -- enable()/disable() mutate it
+        // and persist to the DB/cache, but only the worker that handled that
+        // request would ever see the change; every other live worker keeps
+        // serving the stale module list until it happens to restart. A plain
+        // bind() re-resolves (and re-runs loadModules()) on every request,
+        // which is cheap in the common case since loadModules() itself
+        // already checks a Cache key before falling back to a filesystem
+        // scan.
+        $this->app->bind(ModuleManager::class, function ($app) {
             return new ModuleManager();
         });
 

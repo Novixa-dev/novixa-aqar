@@ -67,13 +67,36 @@ class NewsList extends Component
             ->get();
     }
 
+    protected function seoTitleAndDescription(): array
+    {
+        $isArabic = app()->getLocale() === 'ar';
+        $brand = app(\App\Support\Brand::class);
+
+        $heading = $isArabic ? 'الأخبار العقارية' : 'Real Estate News';
+        if ($this->featuredOnly) {
+            $heading = $isArabic ? 'أخبار عقارية مميزة' : 'Featured Real Estate News';
+        }
+        if ($this->search !== '') {
+            $heading .= $isArabic ? " — بحث: \"{$this->search}\"" : " — search: \"{$this->search}\"";
+        }
+
+        $description = $isArabic
+            ? "{$heading} من {$brand->name()} — تحديثات السوق العقاري، نصائح، وتحليلات في اليمن."
+            : "{$heading} from {$brand->name()} — real-estate market updates, tips, and analysis in Yemen.";
+
+        return [$heading.' | '.$brand->name(), \Illuminate\Support\Str::limit($description, 160)];
+    }
+
     public function render()
     {
+        [$title, $description] = $this->seoTitleAndDescription();
+
         return view('livewire.news-list', [
             'news' => $this->news,
             'featuredNews' => $this->featuredNews,
         ])->layout('layouts.app', [
-            'title' => app()->getLocale() === 'ar' ? 'الأخبار العقارية' : 'Real Estate News',
+            'title' => $title,
+            'metaDescription' => $description,
         ]);
     }
 }
