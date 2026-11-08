@@ -23,25 +23,34 @@
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @foreach($featuredNews as $featured)
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-between group">
-                            <div>
-                                <span class="inline-block px-2.5 py-1 text-xs font-bold text-amber-700 bg-amber-50 dark:bg-amber-900/40 dark:text-amber-300 rounded-lg mb-3">
+                        <a href="{{ route('news.detail', $featured->slug) }}" class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col justify-between group overflow-hidden">
+                            <div class="relative h-40 w-full overflow-hidden bg-gray-100 dark:bg-gray-900">
+                                @if($featured->image_src)
+                                    <img src="{{ $featured->image_src }}" alt="{{ $featured->title }}" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-700">
+                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+                                    </div>
+                                @endif
+                                <span class="absolute top-3 start-3 inline-block px-2.5 py-1 text-xs font-bold text-amber-700 bg-amber-50/95 dark:bg-amber-900/80 dark:text-amber-300 rounded-lg shadow-sm">
                                     {{ __('Featured') }}
                                 </span>
-                                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                                    <a href="{{ route('news.detail', $featured->slug) }}">
+                            </div>
+                            <div class="p-6 flex flex-col justify-between flex-1">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                                         {{ $featured->title }}
-                                    </a>
-                                </h3>
-                                @if($featured->excerpt)
-                                    <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">{{ $featured->excerpt }}</p>
-                                @endif
+                                    </h3>
+                                    @if($featured->excerpt)
+                                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">{{ $featured->excerpt }}</p>
+                                    @endif
+                                </div>
+                                <div class="flex items-center justify-between text-xs text-gray-400 pt-4 border-t border-gray-100 dark:border-gray-700">
+                                    <span>{{ $featured->published_at ? $featured->published_at->translatedFormat('M d, Y') : now()->translatedFormat('M d, Y') }}</span>
+                                    <span class="text-blue-600 font-semibold">{{ __('Read More') }} <span class="inline-block {{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span></span>
+                                </div>
                             </div>
-                            <div class="flex items-center justify-between text-xs text-gray-400 pt-4 border-t border-gray-100 dark:border-gray-700">
-                                <span>{{ $featured->published_at ? $featured->published_at->translatedFormat('M d, Y') : now()->translatedFormat('M d, Y') }}</span>
-                                <span class="text-blue-600 font-semibold">{{ __('Read More') }} <span class="inline-block {{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span></span>
-                            </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             </div>
@@ -65,29 +74,38 @@
         <!-- News Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             @forelse($news as $article)
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-between group">
-                    <div>
+                <a href="{{ route('news.detail', $article->slug) }}" class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col justify-between group overflow-hidden">
+                    <div class="relative h-36 w-full overflow-hidden bg-gray-100 dark:bg-gray-900">
+                        @if($article->image_src)
+                            <img src="{{ $article->image_src }}" alt="{{ $article->title }}" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-700">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+                            </div>
+                        @endif
                         @if($article->is_featured)
-                            <span class="inline-block px-2.5 py-1 text-xs font-bold text-amber-700 bg-amber-50 dark:bg-amber-900/40 dark:text-amber-300 rounded-lg mb-2">
+                            <span class="absolute top-3 start-3 inline-block px-2.5 py-1 text-xs font-bold text-amber-700 bg-amber-50/95 dark:bg-amber-900/80 dark:text-amber-300 rounded-lg shadow-sm">
                                 {{ __('Featured') }}
                             </span>
                         @endif
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                            <a href="{{ route('news.detail', $article->slug) }}">
+                    </div>
+                    <div class="p-6 flex flex-col justify-between flex-1">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                                 {{ $article->title }}
-                            </a>
-                        </h3>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">
-                            {{ $article->excerpt ?: Str::limit(strip_tags($article->content), 120) }}
-                        </p>
+                            </h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">
+                                {{ $article->excerpt ?: Str::limit(strip_tags($article->content), 120) }}
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-gray-400 pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <span>{{ $article->published_at ? $article->published_at->translatedFormat('M d, Y') : now()->translatedFormat('M d, Y') }}</span>
+                            <span class="text-blue-600 font-bold">
+                                {{ __('Read More') }} <span class="inline-block {{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
+                            </span>
+                        </div>
                     </div>
-                    <div class="flex items-center justify-between text-xs text-gray-400 pt-4 border-t border-gray-100 dark:border-gray-700">
-                        <span>{{ $article->published_at ? $article->published_at->translatedFormat('M d, Y') : now()->translatedFormat('M d, Y') }}</span>
-                        <a href="{{ route('news.detail', $article->slug) }}" class="text-blue-600 font-bold hover:underline">
-                            {{ __('Read More') }} <span class="inline-block {{ app()->getLocale() === 'ar' ? 'rotate-180' : '' }}">&rarr;</span>
-                        </a>
-                    </div>
-                </div>
+                </a>
             @empty
                 <div class="col-span-full text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
                     <p class="text-gray-500 dark:text-gray-400 text-sm">

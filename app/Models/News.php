@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
  * @property string $title
  * @property string $slug
  * @property string|null $excerpt
+ * @property string|null $image_url
  * @property string $content
  * @property bool $is_featured
  * @property \DateTime|null $published_at
@@ -33,6 +34,7 @@ class News extends Model
         'title',
         'slug',
         'excerpt',
+        'image_url',
         'content',
         'is_featured',
         'published_at',
@@ -96,6 +98,23 @@ class News extends Model
     public function getSanitizedContentAttribute(): string
     {
         return app(HtmlSanitizer::class)->sanitize($this->content);
+    }
+
+    /**
+     * Resolved, display-ready image URL -- image_url is either a full
+     * external URL (as the seeders use, to avoid shipping binary assets)
+     * or a relative path under the public disk (as the Filament
+     * FileUpload field saves), matching App\Models\Image::getUrlAttribute.
+     */
+    public function getImageSrcAttribute(): ?string
+    {
+        if (blank($this->image_url)) {
+            return null;
+        }
+
+        return str_starts_with($this->image_url, 'http')
+            ? $this->image_url
+            : asset('storage/'.$this->image_url);
     }
 
     /**
