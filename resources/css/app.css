@@ -4,6 +4,28 @@
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
+/* `primary-*` utilities (bg-primary-700, ring-primary-500, text-primary-600...)
+   are used across ~8 public forms/components (property-detail, submission
+   and request forms, review forms, latest-news, the tax estimator, wishlist)
+   but Tailwind only generates a utility class for a color scale that's
+   actually declared -- with none defined, every one of these classes
+   compiled to nothing, rendering several primary action buttons (e.g.
+   "Send Inquiry") completely transparent. Matches this brand's existing
+   #2563eb (badge-sale, theme-color) at the 600 step, using Tailwind's own
+   "blue" scale for the rest so hover/focus/text variants all line up. */
+@theme {
+    --color-primary-50: #eff6ff;
+    --color-primary-100: #dbeafe;
+    --color-primary-200: #bfdbfe;
+    --color-primary-300: #93c5fd;
+    --color-primary-400: #60a5fa;
+    --color-primary-500: #3b82f6;
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-primary-800: #1e40af;
+    --color-primary-900: #1e3a8a;
+}
+
 :root {
     --font-arabic: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif;
     --bg-luxury-light: #FAF8F5;
