@@ -149,13 +149,27 @@ class PropertySeeder extends Seeder
         ['أرض مسوّرة للتخزين أو المعارض', 'Land', 'الشرج', 0, 0, 800, 'YER', 300000, 'أرض مسوّرة بالكامل على طريق رئيسي، تصلح مستودعاً أو ساحة عرض سيارات أو معرضاً مؤقتاً. الإيجار شهري.'],
         ['شقة عائلية — 4 غرف', 'Apartment', 'الديس', 4, 3, 200, 'YER', 280000, 'شقة عائلية غير مفروشة: 4 غرف نوم، صالة واسعة، 3 حمامات، في عمارة نظيفة بها حارس وخزان مياه مركزي.'],
         ['محل تجاري في سوق الديس', 'Commercial', 'الديس', 0, 1, 45, 'YER', 180000, 'محل تجاري في قلب سوق الديس، مناسب للملابس أو الإلكترونيات أو الخدمات، بحركة زبائن عالية طوال اليوم.'],
-        ['فيلا راقية مع مسبح', 'Villa', 'خلف', 6, 5, 480, 'USD', 1800, 'فيلا فاخرة بمسبح خاص وحديقة: 6 غرف نوم، 5 حمامات، مناسبة للعائلات الكبيرة أو مقرات الضيافة.'],
+        ['فيلا راقية مع مسبح', 'Villa', 'خلف', 6, 5, 480, 'USD', 1800, 'فيلا فاخرة بمسبح خاص وحديقة: 6 غرف نوم، 5 حمامات، مناسبة للعائلات الكبيرة أو مقرات الضيافة. الإيجار شهري.'],
         ['عمارة سكنية كاملة — 6 شقق', 'Building', 'بويش', 18, 12, 700, 'YER', 1500000, 'عمارة سكنية كاملة من 6 شقق، مناسبة لسكن موظفي الشركات والمنظمات، مع مواقف وخزانات مستقلة.'],
         ['مستودع على الطريق الدائري', 'Commercial', 'الشرج', 0, 1, 500, 'YER', 400000, 'مستودع بسقف مرتفع وبوابة واسعة لدخول الشاحنات، مناسب للتخزين والتوزيع، على الطريق الدائري مباشرة.'],
         ['شقة مفروشة للإيجار السنوي', 'Apartment', 'فوه', 2, 1, 95, 'USD', 450, 'شقة مفروشة أنيقة بعقد سنوي: غرفتا نوم، صالة ومطبخ، قريبة من جامعة حضرموت ومراكز التسوق.'],
         ['مكتب للشركات والمؤسسات', 'Commercial', 'حي السلام', 0, 2, 140, 'YER', 350000, 'مكتب بمساحة مفتوحة وغرفتي اجتماعات في مبنى تجاري حديث، مع مولد احتياطي وإنترنت عالي السرعة.'],
         ['بيت شعبي — 3 غرف', 'Villa', 'بويش', 3, 2, 180, 'YER', 160000, 'بيت شعبي مرمم بالكامل: 3 غرف نوم، حوش داخلي، مطبخ وحمامان، في حي هادئ قريب من البحر.'],
         ['شقة عائلية — 3 غرف نوم', 'Apartment', 'خلف', 3, 2, 140, 'YER', 200000, 'شقة عائلية مشمسة: 3 غرف نوم، صالة، حمامان، ومطبخ مجهز جزئياً، في عمارة بها مصعد.'],
+    ];
+
+    /**
+     * A rotating pool of distinct, publicly embeddable virtual-tour links,
+     * one per provider actually supported by TourViewer (see
+     * resources/views/components/tour-viewer.blade.php) -- previously every
+     * tour-enabled property shared the exact same single Kuula link, so the
+     * demo could never show what a Matterport or 360° iframe embed actually
+     * looked like.
+     */
+    private const VIRTUAL_TOURS = [
+        ['url' => 'https://kuula.co/share/collection/7l2nJ', 'provider' => 'kuula'],
+        ['url' => 'https://my.matterport.com/show/?m=zEWsxhZpGba', 'provider' => 'matterport'],
+        ['url' => 'https://kuula.co/share/7Jd0M', 'provider' => 'kuula'],
     ];
 
     private function createArabicProperties($category, string $type): void
@@ -165,6 +179,7 @@ class PropertySeeder extends Seeder
 
         foreach ($rows as $i => [$title, $propertyType, $district, $bedrooms, $bathrooms, $area, $currency, $price, $description]) {
             $neighborhood = $neighborhoods->get($district);
+            $tour = $i % 4 === 0 ? self::VIRTUAL_TOURS[intdiv($i, 4) % count(self::VIRTUAL_TOURS)] : null;
 
             Property::create([
                 'title' => $title,
@@ -175,7 +190,7 @@ class PropertySeeder extends Seeder
                 'bedrooms' => $bedrooms,
                 'bathrooms' => $bathrooms,
                 'area_sqft' => $area,
-                'year_built' => $propertyType === 'Land' ? null : 2012 + ($i * 7) % 14,
+                'year_built' => $propertyType === 'Land' ? null : 2008 + ($i * 3) % 18,
                 'property_type' => $propertyType,
                 'status' => $type === 'sales' ? 'For Sale' : 'For Rent',
                 'is_featured' => $i % 3 === 0,
@@ -189,9 +204,9 @@ class PropertySeeder extends Seeder
                 'postal_code' => '00967',
                 'country' => 'Yemen',
                 'neighborhood_id' => $neighborhood?->id,
-                'virtual_tour_url' => $i % 4 === 0 ? 'https://kuula.co/share/collection/7l2nJ' : null,
-                'virtual_tour_provider' => $i % 4 === 0 ? 'kuula' : null,
-                'live_tour_available' => $i % 4 === 0,
+                'virtual_tour_url' => $tour['url'] ?? null,
+                'virtual_tour_provider' => $tour['provider'] ?? null,
+                'live_tour_available' => $tour !== null,
             ]);
         }
     }

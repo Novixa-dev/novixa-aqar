@@ -42,5 +42,10 @@ class NotificationService
         Notification::send($tenant, new WorkOrderCreated($workOrder));
     }
 
+    public function sendLeaseRenewalReminder(User $tenant, Lease $lease)
+    {
+        Notification::send($tenant, new LeaseRenewalReminder($lease));
+    }
+
     // ... (keep existing methods)
 }

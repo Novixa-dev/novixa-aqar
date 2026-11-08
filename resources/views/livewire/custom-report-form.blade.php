@@ -26,7 +26,7 @@
             <label for="properties" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ app()->getLocale() === 'ar' ? 'العقارات' : 'Properties' }}</label>
             <select wire:model="selectedProperties" id="properties" multiple class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 @foreach($properties as $property)
-                    <option value="{{ $property->id }}">{{ $property->address }}</option>
+                    <option value="{{ $property->id }}">{{ $property->location }}</option>
                 @endforeach
             </select>
         </div>

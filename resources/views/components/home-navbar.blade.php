@@ -26,7 +26,7 @@
             <a href="/" class="flex items-center gap-2.5 sm:gap-3 group min-w-0">
                 <img src="{{ asset('images/logo.svg') }}" class="h-9 sm:h-10 w-auto shrink-0 rounded-xl shadow-xs transition-transform group-hover:scale-105" alt="{{ $brand->name() }}" />
                 <div class="flex flex-col min-w-0">
-                    <span class="text-base sm:text-xl font-extrabold tracking-tight text-gray-900 dark:text-white whitespace-nowrap">
+                    <span class="text-base sm:text-xl font-extrabold tracking-tight text-gray-900 dark:text-white whitespace-nowrap truncate">
                         {{ $brand->name() }}
                     </span>
                     <span class="text-[11px] font-medium text-blue-600 dark:text-blue-400 whitespace-nowrap truncate">
@@ -80,10 +80,13 @@
                 <!-- Auth Buttons / User Dropdown -->
                 @if (auth()->check())
                     <div class="relative dropdown" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
-                        <button type="button" 
+                        <button type="button"
                                 id="userDropdownBtn"
                                 @click="open = !open"
                                 onclick="const m = document.getElementById('userDropdownMenu'); if (m) { m.classList.toggle('hidden'); }"
+                                :aria-expanded="open ? 'true' : 'false'"
+                                aria-haspopup="true"
+                                aria-controls="userDropdownMenu"
                                 class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                             <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
@@ -147,7 +150,9 @@
                 <!-- Mobile Menu Button -->
                 <button id="menuToggleButton" type="button"
                     class="inline-flex items-center justify-center p-2.5 text-gray-500 rounded-xl lg:hidden hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 focus:outline-none transition-colors"
-                    aria-label="Toggle navigation">
+                    aria-label="Toggle navigation"
+                    aria-expanded="false"
+                    aria-controls="menuToggle">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -200,7 +205,8 @@
         const mobileMenu = document.getElementById('menuToggle');
         if (toggleBtn && mobileMenu) {
             toggleBtn.addEventListener('click', function() {
-                mobileMenu.classList.toggle('hidden');
+                const isOpen = mobileMenu.classList.toggle('hidden') === false;
+                toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             });
         }
     });

@@ -47,9 +47,17 @@ class DemoAudit extends Command
         '/', '/properties', '/properties/search', '/news', '/news-list',
         '/about', '/services', '/contact', '/contact-us', '/calculators',
         '/terms', '/terms-and-conditions', '/privacy', '/privacy-policy',
-        '/submit-property', '/property-request', '/wishlist',
-        '/booking-calendar', '/login', '/register', '/sitemap.xml', '/up',
+        '/submit-property', '/property-request',
+        '/login', '/register', '/sitemap.xml', '/up',
     ];
+
+    /**
+     * Pages that require login but aren't inside a Filament panel -- the
+     * client() helper follows redirects (max 5), so these were previously
+     * listed in PUBLIC_ROUTES and silently always passed by evaluating the
+     * /login page they got redirected to instead of the actual page.
+     */
+    private const AUTHENTICATED_ROUTES = ['/wishlist', '/booking-calendar'];
 
 
     public function handle(): int
@@ -65,6 +73,7 @@ class DemoAudit extends Command
         $this->auditContent();
         $this->auditForms();
         $this->auditPersonas();
+        $this->auditAuthenticatedRoutes();
         $this->auditAuthorization();
         $this->auditErrorHandling();
 
@@ -387,6 +396,48 @@ class DemoAudit extends Command
                     $response->successful() && $broken === null,
                     $response->status()." {$ms}ms".($broken ? " contains [{$broken}]" : ''),
                 ];
+            });
+        }
+    }
+
+    /**
+     * Pages behind plain `auth` middleware (not a Filament panel) -- logged
+     * in once as the tenant persona, then fetched with redirects disabled
+     * so a bounce to /login shows up as a failure instead of silently
+     * passing on the login page's own 200.
+     */
+    private function auditAuthenticatedRoutes(): void
+    {
+        $this->out('--- AUTHENTICATED (NON-PANEL) PAGES ---');
+
+        $jar = new CookieJar;
+        $token = $this->csrfToken($jar);
+
+        if ($token === null) {
+            foreach (self::AUTHENTICATED_ROUTES as $route) {
+                $this->check("GET {$route}", fn () => [false, 'no csrf token on /login']);
+            }
+            return;
+        }
+
+        Http::withOptions(['cookies' => $jar, 'allow_redirects' => false])
+            ->timeout(30)
+            ->asForm()
+            ->post($this->base.'/login', [
+                '_token' => $token,
+                'email' => DemoAccounts::email('tenant'),
+                'password' => DemoAccounts::PASSWORD,
+            ]);
+
+        foreach (self::AUTHENTICATED_ROUTES as $route) {
+            $this->check("GET {$route}", function () use ($route, $jar) {
+                $started = microtime(true);
+                $response = Http::withOptions(['cookies' => $jar, 'allow_redirects' => false])
+                    ->timeout(30)
+                    ->get($this->base.$route);
+                $ms = (int) ((microtime(true) - $started) * 1000);
+
+                return [$response->status() === 200, "{$response->status()} {$ms}ms"];
             });
         }
     }

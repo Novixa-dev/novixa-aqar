@@ -80,12 +80,12 @@ Route::get('/robots.txt', function () {
     return response(implode("\n", $lines)."\n", 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
 })->name('robots');
 
-Route::post('/bookings', [BookingController::class, 'store'])->middleware('throttle:10,1');
+Route::post('/bookings', [BookingController::class, 'store'])->middleware('throttle:10,1')->name('bookings.store');
 Route::middleware('auth')->group(function () {
     Route::get('/bookings/{booking}/calendar.ics', [BookingController::class, 'downloadIcs'])->name('booking.ics');
     Route::get('/appointments/{appointment}/calendar.ics', [AppointmentController::class, 'downloadIcs'])->name('appointment.ics');
-    Route::put('/bookings/{booking}', [BookingController::class, 'update']);
-    Route::get('/bookings', [BookingController::class, 'index']);
+    Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
+    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
 });
 Route::get('/properties/{propertyId}/book', PropertyBooking::class)->name('property.book');
 Route::post('/payments/session', [PaymentController::class, 'createSession'])->middleware(['auth', 'throttle:10,1']);

@@ -9,7 +9,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $featuredProperties = Property::publiclyVisible()->where('is_featured', true)->take(3)->get();
+        $featuredProperties = Property::publiclyVisible()->where('is_featured', true)->with('media')->take(3)->get();
 
         $mapProperties = Property::publiclyVisible()->whereNotNull('latitude')
             ->whereNotNull('longitude')

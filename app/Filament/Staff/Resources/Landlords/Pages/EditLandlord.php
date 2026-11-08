@@ -11,7 +11,7 @@ class EditLandlord extends EditRecord
 {
     protected static string $resource = LandlordResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             DeleteAction::make(),

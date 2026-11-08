@@ -23,6 +23,7 @@ return [
 
     'attributes' => [
         'name' => 'Full Name',
+        'email' => 'Email Address',
         'phone' => 'Phone Number',
         'whatsapp' => 'WhatsApp Number',
         'source' => 'Lead Source',
@@ -36,6 +37,7 @@ return [
         'inquiry_title' => 'Send an Inquiry About This Property',
         'inquiry_subtitle' => 'Fill in your details and one of our real estate consultants will contact you directly.',
         'send_inquiry' => 'Send Inquiry',
+        'cancel' => 'Cancel',
         'schedule_viewing' => 'Schedule a Viewing',
         'preferred_date' => 'Preferred Viewing Date',
         'preferred_time' => 'Preferred Time',
