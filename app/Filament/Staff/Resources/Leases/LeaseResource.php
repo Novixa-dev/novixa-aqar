@@ -49,7 +49,7 @@ class LeaseResource extends Resource
         return $schema
             ->components([
                 Select::make('property_id')
-                    ->relationship('property', 'address')
+                    ->relationship('property', 'title')
                     ->required()
                     ->searchable(),
                 Select::make('tenant_id')
@@ -85,7 +85,7 @@ class LeaseResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('property.address')
+                TextColumn::make('property.title')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('tenant.name')

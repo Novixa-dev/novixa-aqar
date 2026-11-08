@@ -12,6 +12,7 @@ class PropertyMap extends Component
     public function __construct($properties = [])
     {
         $this->properties = Property::select('id', 'latitude', 'longitude', 'title', 'location')
+            ->publiclyVisible()
             ->where('latitude', '!=', null)
             ->where('longitude', '!=', null)
             ->get()->toArray();

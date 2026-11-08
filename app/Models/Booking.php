@@ -87,7 +87,9 @@ class Booking extends Model
 
     private function getDefaultStaffId()
     {
-        return User::where('role', 'staff')->first()->id ?? null;
+        // Spatie Permission stores roles via model_has_roles, not a `role`
+        // column on users -- the column this used to query doesn't exist.
+        return User::role('staff')->first()?->id;
     }
 
     public function cancel()
@@ -96,6 +98,11 @@ class Booking extends Model
             $this->status = 'cancelled';
             $this->save();
             event(new BookingCancelled($this));
+            // BookingCancelled/BookingRescheduled have no registered
+            // listener anywhere in the app -- without this, cancelling or
+            // rescheduling a viewing notified nobody at all, unlike
+            // PropertyBooking's own 'confirmed' notify() call.
+            $this->user?->notify(new \App\Notifications\BookingNotification($this, 'cancelled'));
             return true;
         }
         return false;
@@ -108,6 +115,7 @@ class Booking extends Model
             $this->time = $newTime;
             $this->save();
             event(new BookingRescheduled($this));
+            $this->user?->notify(new \App\Notifications\BookingNotification($this, 'rescheduled'));
             return true;
         }
         return false;

@@ -35,16 +35,21 @@ class PublicWebsiteController extends Controller
                     ->orWhere('postal_code', 'like', $term));
             });
 
-        return response()->json($query->latest('list_date')->paginate(
+        $paginator = $query->latest('list_date')->paginate(
             min(max($request->integer('per_page', 20), 1), 100)
-        ));
+        );
+
+        $paginator->getCollection()->each->makeHidden(Property::PUBLIC_API_HIDDEN);
+
+        return response()->json($paginator);
     }
 
     public function property(Team $team, int $property): JsonResponse
     {
         $record = $this->publicProperties($team)
             ->with(['images', 'features', 'rooms'])
-            ->findOrFail($property);
+            ->findOrFail($property)
+            ->makeHidden(Property::PUBLIC_API_HIDDEN);
 
         return response()->json(['data' => $record]);
     }

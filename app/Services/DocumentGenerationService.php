@@ -31,7 +31,7 @@ class DocumentGenerationService
     {
         // Implement access control logic here
         // For example, check if the user's team has access to this template
-        return Auth::user()->team_id === $template->team_id;
+        return Auth::user()->current_team_id === $template->team_id;
     }
 
     private function sanitizeContent($content)

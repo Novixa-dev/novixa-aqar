@@ -14,7 +14,6 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Forms;
-use App\Filament\Admin\Resources\MenuResource\Pages;
 
 class MenuResource extends Resource
 {

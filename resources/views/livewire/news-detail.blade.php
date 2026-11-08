@@ -1,4 +1,44 @@
 <div>
+@push('meta')
+    <!-- Schema.org JSON-LD Structured Data -->
+    @php
+        $newsJsonLd = json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => strip_tags($news->title),
+            'description' => \Illuminate\Support\Str::limit(strip_tags($news->excerpt ?: $news->content), 250),
+            'url' => url()->current(),
+            'image' => $news->image_src ?: asset('images/og-default.jpg'),
+            'datePublished' => optional($news->published_at)->toIso8601String(),
+            'dateModified' => $news->updated_at->toIso8601String(),
+            'author' => [
+                '@type' => 'Organization',
+                'name' => $news->author?->name ?: $brand->name(),
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => $brand->name(),
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => asset('images/logo.svg'),
+                ],
+            ],
+        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_UNESCAPED_SLASHES);
+
+        $breadcrumbJsonLd = json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => app()->getLocale() === 'ar' ? 'الرئيسية' : 'Home', 'item' => url('/')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => __('News'), 'item' => route('news.list')],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => strip_tags($news->title), 'item' => url()->current()],
+            ],
+        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_UNESCAPED_SLASHES);
+    @endphp
+    <script type="application/ld+json">{!! $newsJsonLd !!}</script>
+    <script type="application/ld+json">{!! $breadcrumbJsonLd !!}</script>
+@endpush
+
     <div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
         <div class="container mx-auto px-4 max-w-4xl">
             <!-- Back Button -->
@@ -11,7 +51,13 @@
             </div>
 
             <!-- Article Content -->
-            <article class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 sm:p-10 mb-8 border border-gray-100 dark:border-gray-700">
+            <article class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden mb-8 border border-gray-100 dark:border-gray-700">
+                @if($news->image_src)
+                    <div class="relative h-56 sm:h-80 w-full overflow-hidden bg-gray-100 dark:bg-gray-900">
+                        <img src="{{ $news->image_src }}" alt="{{ $news->title }}" class="w-full h-full object-cover">
+                    </div>
+                @endif
+                <div class="p-6 sm:p-10">
                 <!-- Featured Badge -->
                 @if($news->is_featured)
                     <span class="inline-block px-3 py-1 text-xs font-bold text-gray-900 bg-amber-400 rounded-lg mb-4 shadow-xs">
@@ -48,6 +94,7 @@
                 <!-- Content -->
                 <div class="prose prose-lg dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 leading-loose">
                     {!! $news->sanitized_content !!}
+                </div>
                 </div>
             </article>
 

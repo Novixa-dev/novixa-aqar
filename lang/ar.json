@@ -130,6 +130,9 @@
     "The selected time slot is no longer available. Please choose another time.": "الوقت المحدد لم يعد متاحاً. يرجى اختيار وقت آخر.",
     "An unexpected error occurred.": "حدث خطأ غير متوقع.",
     "Please try again or contact support if the problem persists.": "يرجى المحاولة مرة أخرى أو التواصل مع الدعم إذا استمرت المشكلة.",
+    "You have submitted too many properties recently. Please try again later.": "لقد أرسلت عدداً كبيراً من طلبات إضافة العقارات مؤخراً. يرجى المحاولة مرة أخرى بعد قليل.",
+    "You have submitted too many requests recently. Please try again later.": "لقد أرسلت عدداً كبيراً من الطلبات مؤخراً. يرجى المحاولة مرة أخرى بعد قليل.",
+    "You have made too many booking requests recently. Please try again later.": "لقد قمت بعدد كبير من طلبات الحجز مؤخراً. يرجى المحاولة مرة أخرى بعد قليل.",
     "Enter full name": "أدخل الاسم الكامل",
     "Enter password": "أدخل كلمة المرور",
     "Leave blank to keep current password (when editing)": "اتركه فارغاً للاحتفاظ بكلمة المرور الحالية (عند التعديل)",
@@ -459,6 +462,7 @@
     "User": "المستخدم",
     "Virtual tour provider": "مزوّد الجولة الافتراضية",
     "Water usage": "استهلاك المياه",
+    "Limited market data available": "بيانات السوق المتاحة محدودة",
     "No comparable properties found": "لا توجد عقارات مشابهة للمقارنة",
     "Property is priced at market average": "سعر العقار مطابق لمتوسط السوق",
     "Property is priced significantly below market average - great investment opportunity": "سعر العقار أقل بكثير من متوسط السوق — فرصة استثمارية ممتازة",
@@ -479,5 +483,8 @@
     "Reset Password Notification": "إعادة تعيين كلمة المرور",
     "You are receiving this email because we received a password reset request for your account.": "تصلك هذه الرسالة لأننا تلقّينا طلباً لإعادة تعيين كلمة مرور حسابك.",
     "This password reset link will expire in :count minutes.": "تنتهي صلاحية رابط إعادة التعيين خلال :count دقيقة.",
-    "If you did not request a password reset, no further action is required.": "إذا لم تطلب إعادة تعيين كلمة المرور فلا يلزمك أي إجراء."
+    "If you did not request a password reset, no further action is required.": "إذا لم تطلب إعادة تعيين كلمة المرور فلا يلزمك أي إجراء.",
+    "Sign in with a demo account": "الدخول بحساب تجريبي",
+    "Choose a role to explore its dashboard. All data is fictional.": "اختر دوراً لاستعراض لوحته. جميع البيانات تجريبية وخيالية.",
+    "Demo accounts cannot change their email or password.": "لا يمكن تغيير البريد أو كلمة المرور لحسابات العرض التجريبي."
 }

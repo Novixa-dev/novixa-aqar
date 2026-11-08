@@ -58,11 +58,11 @@ class PropertyValuationService
         foreach ($comparables as $comparable) {
             $lastSale = $comparable->transactions->first();
             if ($lastSale) {
-                $totalValue += $lastSale->sale_price;
+                $totalValue += $lastSale->amount;
                 $count++;
 
                 if ($comparable->area_sqft > 0) {
-                    $pricePerSqft[] = $lastSale->sale_price / $comparable->area_sqft;
+                    $pricePerSqft[] = $lastSale->amount / $comparable->area_sqft;
                 }
             }
         }

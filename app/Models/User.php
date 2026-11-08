@@ -29,13 +29,40 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
     use HasProfilePhoto {
         HasProfilePhoto::profilePhotoUrl as getPhotoUrl;
     }
-    // use HasConnectedAccounts;
+    use HasConnectedAccounts;
     use HasRoles;
     use HasTeams;
 
     use Notifiable;
     // use SetsProfilePhotoFromUrl;
     use TwoFactorAuthenticatable;
+
+    protected static function booted(): void
+    {
+        // On the public demo every visitor shares the seeded personas, so a
+        // changed password or email on one of them locks everyone else out
+        // until the next reseed.
+        static::updating(function (User $user): void {
+            if (! config('demo.quick_login') || ! $user->isDemoAccount()) {
+                return;
+            }
+
+            if ($user->isDirty('password') || $user->isDirty('email')) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'email' => __('Demo accounts cannot change their email or password.'),
+                ]);
+            }
+        });
+    }
+
+    public function isDemoAccount(): bool
+    {
+        return in_array(
+            $this->getOriginal('email') ?? $this->email,
+            array_column(\App\Support\DemoAccounts::all(), 'email'),
+            true,
+        );
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -47,6 +74,11 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         'email',
         'password',
         'agent_preferences',
+        'phone',
+        'address',
+        'company_name',
+        'tax_id',
+        'preferred_contact_method',
     ];
 
     /**
@@ -198,6 +230,15 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    /**
+     * Appointments this user is the assigned agent for -- distinct from
+     * appointments() above, which is the customer side (Appointment.user_id).
+     */
+    public function agentAppointments()
+    {
+        return $this->hasMany(Appointment::class, 'agent_id');
     }
 
     public function bookings()

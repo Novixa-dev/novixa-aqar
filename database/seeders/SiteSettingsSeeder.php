@@ -15,8 +15,8 @@ class SiteSettingsSeeder extends Seeder
         $settings->site_email = config('branding.email');
         $settings->site_phone = config('branding.phone');
         $settings->site_address = config('branding.address.en');
-        $settings->site_country = 'Yemen';
-        $settings->site_currency = 'ر.ي';
+        $settings->site_country = config('branding.country');
+        $settings->site_currency = config('branding.currency');
         $settings->site_default_language = 'ar';
         $settings->facebook_url = null;
         $settings->twitter_url = null;

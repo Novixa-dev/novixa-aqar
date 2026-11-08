@@ -67,10 +67,6 @@ class ImageResource extends Resource
                     ->label(__('filament.fields.property'))
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('user.name')
-                    ->label(__('filament.fields.user'))
-                    ->searchable()
-                    ->sortable(),
             ])
             ->filters([
                 //

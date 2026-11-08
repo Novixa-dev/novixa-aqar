@@ -65,6 +65,12 @@ class ReviewResource extends Resource
                     ->required(),
                 Hidden::make('reviewable_type')
                     ->default(Property::class),
+                TextInput::make('rating')
+                    ->label(__('filament.fields.rating'))
+                    ->required()
+                    ->numeric()
+                    ->min(1)
+                    ->max(5),
                 Textarea::make('comment')
                     ->label(__('filament.fields.comment'))
                     ->required(),
