@@ -497,3 +497,5 @@ Also found and fixed in passing: this file (`docs/AQAR_TASKS.md`) on this branch
 PR #100's test coverage (`OwnerPropertySubmissionTest`'s corrected assertion + the new `for_rent`-path test) came along with the cherry-pick unchanged. Full root-cause tables for both ported PRs (Phases 30-31) live in `main`'s copy of this file — not duplicated here to avoid two copies of the same detail drifting apart.
 
 Also cherry-picked PR #101 (8 icon-only interactive controls — close buttons, calendar nav, star ratings, the auth logo link — given locale-aware `aria-label`s for screen readers). Applied with zero code conflicts, same reasoning as above. Full detail: `main`'s copy of this file, Phase 32.
+
+Also cherry-picked PR #102 (`Neighborhood::crime_rate` was collected but never displayed on property-detail — one new line in the existing Key Statistics list; also documents a competitor-comparison pass, main's copy of this file Phase 33). Zero code conflicts.
