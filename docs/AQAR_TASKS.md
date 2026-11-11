@@ -555,3 +555,25 @@ Live Playwright pass against both running demos (`aqar-demo.novixa.dev`, `aqar-d
 
 - This was the first pass of an explicitly open-ended, ongoing "review everything and keep improving" engagement — the broader asks (full SEO/OG audit beyond what P30 touched, adding features, deeper UX/animation work, cross-browser/device matrix beyond what Playwright's Chromium covers) continue in subsequent rounds rather than being treated as complete here.
 - P28/P29's still-open items (P29-18 through P29-21, the sitewide `Organization`/`WebSite` schema, the photo-pool size, `ui-improves`' missing CI coverage) remain open; not re-attempted this round.
+
+## Phase 31 (2026-11-11) — Public property-submission form: moderation-bypass + lost sale/rent intent (PR #100)
+
+Code-reading pass over `PropertySubmissionForm` (the public, unauthenticated "list your property" form). Found `moderation_status` was never set on creation — `scopePubliclyVisible()` treats `NULL` as already-approved, so public submissions went live immediately with zero staff review, despite the form's own message claiming otherwise — plus the form wrote the moderation-shaped string `'pending'` into the unrelated `status` (for_sale/for_rent) field with no UI control to set it, which would have kept even an approved listing out of the sitemap and chatbot results. Fixed both: `moderation_status => 'pending'` now set explicitly, and a new required For Sale/For Rent toggle sets `status` correctly. Full writeup and fix detail in PR #100's branch (this branch doesn't carry it yet, pending merge).
+
+## Phase 32 (2026-11-11) — Accessibility: icon-only controls with no accessible name
+
+Checked the contact form's `ContactController`/`contact.blade.php` (clean — bilingual, logical RTL utilities, graceful mail-failure handling, no fix needed) and `aqar-demo2` on mobile (AR/EN, home/properties/news — clean, no issues found) as the remaining items from Phase 30's review round, then ran an accessibility pass: scripted a check for every `<img>` without `alt` (0 real hits — an initial regex false-positived on `->` inside Blade/PHP expressions truncating the tag match early; redone correctly) and every icon-only `<button>`/`<a>` (an SVG with no visible text) lacking `aria-label`/`title`.
+
+| ID | Problem | Fix | Status |
+|---|---|---|---|
+| P32-1 | 7 icon-only interactive controls had no accessible name for screen readers: the floor-plan annotation popup's close button, the chatbot's send button, both calendar widgets' prev/next-month buttons (`booking-calendar.blade.php` and the community-events calendar in `property-detail.blade.php`), the property-inquiry modal's close button, and the two review forms' 5-star rating buttons (`neighborhood-review-form.blade.php`, `property-review-form.blade.php`) | Added locale-aware `aria-label` (e.g. "Previous month"/"الشهر السابق", "N out of 5 stars"/"N من 5 نجوم") to each, matching the existing `app()->getLocale() === 'ar' ? … : …` pattern already used throughout these files | **FIXED** |
+| P32-2 | The Jetstream auth-pages logo link (`authentication-card-logo.blade.php`) wraps only an SVG with no accessible name | Added `aria-label` ("Home"/"الصفحة الرئيسية") | **FIXED** |
+
+### Verification notes
+
+No `<img>` missing `alt` found project-wide after correcting the detection script (confirmed via a from-scratch Python scan of every `.blade.php` file, not a sample). Each `aria-label` addition is a single new attribute on an existing tag — no markup restructuring, so no risk to existing Blade/Alpine/Livewire wiring. Could not run an automated accessibility audit (axe-core, Lighthouse) against the live demos this round — no local vendor/PHP 8.4 to drive a full browser audit tool against authenticated flows; this was a targeted code-level pass, not an exhaustive WCAG audit. Broader accessibility work (color contrast ratios, full heading-hierarchy audit, keyboard-navigation trap testing in modals) remains open.
+
+### Not fixed this round — carried forward as open follow-ups
+
+- Comparison against other real-estate platforms is next.
+- Full WCAG audit (contrast ratios, heading hierarchy, keyboard traps, screen-reader pass with a real AT) beyond this targeted icon-button sweep.

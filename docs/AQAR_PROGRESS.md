@@ -883,3 +883,17 @@ User asked a specific, concrete question ("why don't favorite-card images show?"
 **Verification:** `php -l` clean on every changed file; every finding confirmed live (screenshots, raw HTML/meta, rendered investment-analysis numbers) before deciding the fix, not from code-reading alone. Could not run `php artisan test` locally (PHP 8.3 only, project needs ≥8.4) — CI is authoritative, same caveat as every prior round.
 
 **Explicitly ongoing, not "done":** this is the first round of an open-ended engagement; broader SEO/feature/animation/UX work continues in subsequent rounds.
+
+## 2026-11-11 — Phase 31 (PR #100): public property-submission form was bypassing moderation entirely
+
+`PropertySubmissionForm::submit()` never set `moderation_status`, leaving it `NULL` — which `scopePubliclyVisible()` treats as "predates moderation, already approved" by design. A public, unauthenticated submission went live immediately on every public page (listings, home, map, search, comparison) with zero staff review, despite the form's own success message claiming otherwise. The same call also wrote the moderation-shaped string `'pending'` into `status` (the separate for_sale/for_rent field) with no UI control to set it — the exact `status`-field-overloading mistake already fixed on the Staff panel's side (migration `2026_08_24_000001`) — which would have kept even an approved listing out of the sitemap and chatbot results. Fixed both: `moderation_status => 'pending'` now set explicitly, and a new required For Sale/For Rent toggle sets `status` to the correct canonical value. Updated the one existing test that had been asserting the buggy behavior as correct; added new coverage. See `AQAR_TASKS.md` Phase 31, PR #100.
+
+## 2026-11-11 — Phase 32: accessibility pass, demo2-mobile and contact-form checks close out the Phase 30/31 review round
+
+Closed out the remaining items from the live-audit review round: `ContactController`/`contact.blade.php` checked clean (bilingual, logical RTL utilities, graceful mail-failure handling); `aqar-demo2` reviewed on mobile across AR/EN for home/properties/news — clean, no issues found.
+
+Ran a project-wide accessibility sweep for two concrete, mechanically-checkable categories: `<img>` tags missing `alt`, and icon-only buttons/links (an SVG with no visible text) missing an accessible name. The `alt` check came back clean project-wide (a first attempt had false positives from `->` inside Blade expressions truncating the regex match — corrected and re-run across every `.blade.php` file). Found and fixed 8 icon-only controls with no `aria-label`: the floor-plan viewer's close button, the chatbot's send button, both calendar widgets' prev/next-month buttons, the property-inquiry modal's close button, both review forms' star-rating buttons, and the auth-pages logo link — each given a locale-aware label matching the codebase's existing `app()->getLocale() === 'ar' ? … : …` pattern.
+
+**Verification:** each fix is a single new attribute on an existing tag, no markup restructuring. Could not run an automated accessibility audit tool (axe-core/Lighthouse) against the live demos this round — no local vendor/PHP 8.4 to drive one; this was a targeted code-level pass, not an exhaustive WCAG audit. Full detail: `AQAR_TASKS.md` Phase 32.
+
+**Still open from this review round:** comparison against other real-estate platforms (next), and a fuller WCAG pass (contrast ratios, heading hierarchy, keyboard traps) beyond this icon-button sweep.
