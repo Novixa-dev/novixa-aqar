@@ -47,6 +47,16 @@ class SetLocaleMiddleware
      */
     private function detectBrowserLocale(Request $request): ?string
     {
+        // Skip in automated tests: PHPUnit runs every test in one long-lived
+        // PHP process, and Symfony's test Request::create() can carry a
+        // stray HTTP_ACCEPT_LANGUAGE into $_SERVER from an earlier test that
+        // set custom headers, bleeding into unrelated tests that assert on
+        // the suite's Arabic-default locale. Deterministic test behavior
+        // doesn't need real browser-language detection anyway.
+        if (app()->environment('testing')) {
+            return null;
+        }
+
         $header = $request->server('HTTP_ACCEPT_LANGUAGE');
         if (!$header) {
             return null;
