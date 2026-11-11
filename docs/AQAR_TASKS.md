@@ -555,3 +555,30 @@ Live Playwright pass against both running demos (`aqar-demo.novixa.dev`, `aqar-d
 
 - This was the first pass of an explicitly open-ended, ongoing "review everything and keep improving" engagement — the broader asks (full SEO/OG audit beyond what P30 touched, adding features, deeper UX/animation work, cross-browser/device matrix beyond what Playwright's Chromium covers) continue in subsequent rounds rather than being treated as complete here.
 - P28/P29's still-open items (P29-18 through P29-21, the sitewide `Organization`/`WebSite` schema, the photo-pool size, `ui-improves`' missing CI coverage) remain open; not re-attempted this round.
+
+## Phase 33 (2026-11-11) — Competitor comparison (Bayut/Property Finder) + one surfaced-data gap closed
+
+Researched what major regional portals (Bayut, Property Finder — UAE's two largest) lead with, then checked each against this codebase's actual, already-built capabilities rather than assuming gaps:
+
+| Competitor feature | Novixa Aqar's actual state | Verdict |
+|---|---|---|
+| AI-powered conversational property search | `ChatbotService`/`chatbot-widget.blade.php` already exists and queries live listings (`Property::active()->publiclyVisible()`) | **Already have it** — no gap |
+| Automated valuation ("TruEstimate") | Property-detail page already renders an Investment Analysis block (market comparison, ROI) | **Already have it** — no gap |
+| Physical-verification trust badge ("TruCheck") | The staff moderation workflow (Phase 31, PR #100) now actually gates public visibility — a natural place to add a "Verified by Novixa" badge on `moderation_status = 'approved'` listings, reusing data that already exists | **Partial — concrete follow-up idea, not yet built** |
+| Mortgage/financing calculator | `/calculators` route → `CalculatorsComponent` is live and public | **Already have it** — no gap |
+| Neighborhood/area guides (prices, schools, walk score, crime data) | `Neighborhood` model already carries `walk_score`, `transit_score`, `median_income`, `population`, `schools`, `amenities`, **and `crime_rate`** (collected by `NeighborhoodDataService`) and is already shown inline on the property-detail page — except `crime_rate` was being collected and stored but never rendered anywhere | **P33-1, found and fixed below** |
+| Saved searches + alerts | `SavedSearch` model + migration exist (`user_id`, `criteria` JSON) but have **zero** UI: no Livewire component, no controller, no route, no view references it anywhere in the codebase | **P33-2, found but not built — concrete backlog item below** |
+
+| ID | Problem | Fix | Status |
+|---|---|---|---|
+| P33-1 | `Neighborhood::crime_rate` is collected and stored (seeded for every neighborhood) but was never displayed in the neighborhood section of the property-detail page, alongside the already-shown Walk/Transit Score | Added a `crime_rate` line to the existing "Key Statistics" list in `property-detail.blade.php`, same pattern as the surrounding lines | **FIXED** |
+| P33-2 | `SavedSearch` is a fully dead feature: model + migration exist, nothing else does. Competitors treat saved search + email alerts as a baseline retention feature | **Not built this round** — scoping it properly needs a Livewire "Save this search" action on `AdvancedPropertySearch`/`PropertyList`, a "My Saved Searches" page, and a scheduled job to diff new matching listings against each saved `criteria` and email the owner. This is a real, scoped feature addition (not a bug fix), substantial enough to deserve its own round rather than being rushed in alongside this comparison pass | **OPEN — concrete next-round candidate** |
+| P33-3 | No "Verified listing" trust badge, despite the moderation workflow (fixed in Phase 31) now being the real gate for what the public sees | **Not built this round** — natural next step once Phase 31/PR #100 merges: a small badge component on property cards/detail checking `moderation_status === 'approved'` | **OPEN — concrete next-round candidate, depends on PR #100** |
+
+### Verification notes
+
+Compared against live 2026 feature reporting on Bayut/Property Finder (web search, see chat), then verified each claim against this codebase directly (grep for the actual model/service/route) rather than assuming a gap existed — this is why AI search, valuation, and mortgage tools are marked "already have it" instead of being proposed as new features. `crime_rate` fix is a single new `@if`/`<li>` block, same pattern as adjacent lines — no risk.
+
+### Not fixed this round — carried forward as open follow-ups
+
+- P33-2 (saved search + alerts) and P33-3 (verified-listing badge) are the two concrete, scoped feature ideas from this round, ready to pick up next.

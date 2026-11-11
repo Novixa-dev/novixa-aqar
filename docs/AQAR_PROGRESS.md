@@ -883,3 +883,13 @@ User asked a specific, concrete question ("why don't favorite-card images show?"
 **Verification:** `php -l` clean on every changed file; every finding confirmed live (screenshots, raw HTML/meta, rendered investment-analysis numbers) before deciding the fix, not from code-reading alone. Could not run `php artisan test` locally (PHP 8.3 only, project needs ≥8.4) — CI is authoritative, same caveat as every prior round.
 
 **Explicitly ongoing, not "done":** this is the first round of an open-ended engagement; broader SEO/feature/animation/UX work continues in subsequent rounds.
+
+## 2026-11-11 — Phase 33: competitor comparison (Bayut/Property Finder) against what this codebase actually has
+
+Compared Novixa Aqar against live 2026 reporting on the UAE's two largest portals, then checked every claim against the codebase directly rather than assuming a gap: AI-powered conversational search, automated valuation, and a public mortgage calculator **already exist** here (`ChatbotService`, the property-detail Investment Analysis block, `/calculators`) — correctly *not* proposed as new work.
+
+Two real gaps found, one fixed, one scoped for later: `Neighborhood::crime_rate` is collected and stored for every neighborhood but was never rendered on the property-detail page's neighborhood section (fixed — one new line alongside the existing Walk/Transit Score display); `SavedSearch` (model + migration) has zero UI anywhere — no component, route, or view references it — a real, scoped feature (save-search button, a saved-searches page, a new-match email job) substantial enough to deserve its own round rather than being rushed in here. Also flagged a natural "Verified listing" trust badge idea building on Phase 31's now-real moderation gate.
+
+Full detail: `AQAR_TASKS.md` Phase 33.
+
+**This closes out the Phase 30/31/32/33 review round** (wishlist images, first-visit locale, footer/seed-data fixes, submission-form moderation bypass, accessibility sweep, competitor comparison). The engagement itself remains open-ended per the user's own framing — next candidates: saved search + alerts, a verified-listing badge, and whatever the next pass over the project surfaces.

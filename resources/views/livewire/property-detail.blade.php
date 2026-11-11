@@ -331,6 +331,9 @@
                                                     </li>
                                                     <li>{{ app()->getLocale() === 'ar' ? 'مؤشر إمكانية المشي' : 'Walk Score' }}: {{ $neighborhood->walk_score }}/100</li>
                                                     <li>{{ app()->getLocale() === 'ar' ? 'مؤشر النقل العام' : 'Transit Score' }}: {{ $neighborhood->transit_score }}/100</li>
+                                                    @if ($neighborhood->crime_rate)
+                                                        <li>{{ app()->getLocale() === 'ar' ? 'معدل الجريمة' : 'Crime Rate' }}: {{ $neighborhood->crime_rate }}</li>
+                                                    @endif
                                                 </ul>
                                             </div>
                                             <div>
