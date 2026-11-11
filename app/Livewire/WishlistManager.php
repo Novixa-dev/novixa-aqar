@@ -58,7 +58,7 @@ class WishlistManager extends Component
         $user = Auth::user();
         
         $query = $user->favoriteProperties()
-            ->with(['images', 'neighborhood', 'features', 'category']);
+            ->with(['media', 'neighborhood', 'features', 'category']);
 
         if ($this->search) {
             $query->where(function ($q) {
