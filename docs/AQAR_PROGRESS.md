@@ -905,3 +905,13 @@ Ran a project-wide accessibility sweep for two concrete, mechanically-checkable 
 **Verification:** each fix is a single new attribute on an existing tag, no markup restructuring. Could not run an automated accessibility audit tool (axe-core/Lighthouse) against the live demos this round — no local vendor/PHP 8.4 to drive one; this was a targeted code-level pass, not an exhaustive WCAG audit. Full detail: `AQAR_TASKS.md` Phase 32.
 
 **Still open from this review round:** comparison against other real-estate platforms (next), and a fuller WCAG pass (contrast ratios, heading hierarchy, keyboard traps) beyond this icon-button sweep.
+
+## 2026-11-11 — Phase 33: competitor comparison (Bayut/Property Finder) against what this codebase actually has
+
+Compared Novixa Aqar against live 2026 reporting on the UAE's two largest portals, then checked every claim against the codebase directly rather than assuming a gap: AI-powered conversational search, automated valuation, and a public mortgage calculator **already exist** here (`ChatbotService`, the property-detail Investment Analysis block, `/calculators`) — correctly *not* proposed as new work.
+
+Two real gaps found, one fixed, one scoped for later: `Neighborhood::crime_rate` is collected and stored for every neighborhood but was never rendered on the property-detail page's neighborhood section (fixed — one new line alongside the existing Walk/Transit Score display); `SavedSearch` (model + migration) has zero UI anywhere — no component, route, or view references it — a real, scoped feature (save-search button, a saved-searches page, a new-match email job) substantial enough to deserve its own round rather than being rushed in here. Also flagged a natural "Verified listing" trust badge idea building on Phase 31's now-real moderation gate.
+
+Full detail: `AQAR_TASKS.md` Phase 33.
+
+**This closes out the Phase 30/31/32/33 review round** (wishlist images, first-visit locale, footer/seed-data fixes, submission-form moderation bypass, accessibility sweep, competitor comparison). The engagement itself remains open-ended per the user's own framing — next candidates: saved search + alerts, a verified-listing badge, and whatever the next pass over the project surfaces.
