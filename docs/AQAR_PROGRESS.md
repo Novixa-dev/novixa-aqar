@@ -896,6 +896,5 @@ Cherry-picked PR #99 (wishlist/favorites images, first-visit browser-language de
 
 Bumped `deploy/aqar-demo2/app.env`'s `DEMO_SEED_VERSION` 6→7 (this branch's own history had already reused "6" once for an undocumented reason, so reusing it again risked the reseed silently no-opping) — confirmed `PropertySeeder.php`/`NewsSeeder.php` are textually identical to `main`'s, so the reseed will produce the same corrected output verified there.
 
-Also found and fixed in passing: `docs/AQAR_TASKS.md` on this branch had several stray control bytes (a null byte, form-feeds, a BEL, backspaces) that were making Git treat the whole file as binary and blocking a clean merge. Stripped them to match the same text on `main`. Full detail: `AQAR_TASKS.md`'s new port entry.
 
 **Verification:** same sandbox caveats as every prior round — `php -l` clean, no local PHP ≥8.4/vendor to run the suite directly; CI on the port PR is authoritative.

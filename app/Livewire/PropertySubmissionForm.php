@@ -23,7 +23,7 @@ class PropertySubmissionForm extends Component
     public $property_type;
     public $neighborhood_id;
     public $owner_phone;
-    public $listing_type = 'sale';
+    public $listing_type = 'for_sale';
     public $images = [];
     public $video;
     public $customDescription;
@@ -40,6 +40,7 @@ class PropertySubmissionForm extends Component
         'area_sqft' => 'required|numeric|min:0',
         'year_built' => 'nullable|integer|min:1800|max:2099',
         'property_type' => 'required|string|max:255',
+        'listing_type' => 'required|in:for_sale,for_rent',
         'neighborhood_id' => 'nullable|exists:neighborhoods,id',
         'owner_phone' => 'nullable|string|max:30',
         'images.*' => 'image|max:5120', // 5MB Max
@@ -111,7 +112,13 @@ class PropertySubmissionForm extends Component
             'property_type' => $this->property_type,
             'neighborhood_id' => $this->neighborhood_id ?: null,
             'internal_notes' => $this->owner_phone ? 'رقم هاتف المالك: ' . $this->owner_phone : null,
-            'status' => 'pending',
+            // `status` holds the listing's for_sale/for_rent state (Property::ACTIVE_STATUSES);
+            // it is a different field from `moderation_status` below, which gates public
+            // visibility (scopePubliclyVisible treats NULL as already-approved) -- confusing
+            // the two previously let public submissions skip staff review entirely and,
+            // once approved, stay excluded from the sitemap/chatbot's `active()` scope.
+            'status' => $this->listing_type,
+            'moderation_status' => 'pending',
             'team_id' => $teamId,
             'user_id' => auth()->id(),
             'custom_description' => $this->customDescription,
@@ -129,7 +136,7 @@ class PropertySubmissionForm extends Component
     
         session()->flash('message', __('تم إرسال طلب إضافة العقار بنجاح وهو قيد المراجعة والموافقة من قبل إدارة المكتب.'));
         $this->dispatch('propertySubmitted');
-        $this->reset(['title', 'description', 'location', 'price', 'bedrooms', 'bathrooms', 'area_sqft', 'year_built', 'property_type', 'neighborhood_id', 'owner_phone', 'images', 'video', 'customDescription']);
+        $this->reset(['title', 'description', 'location', 'price', 'bedrooms', 'bathrooms', 'area_sqft', 'year_built', 'property_type', 'listing_type', 'neighborhood_id', 'owner_phone', 'images', 'video', 'customDescription']);
     }
 
     public function preview()
