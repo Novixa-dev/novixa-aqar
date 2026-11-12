@@ -104,6 +104,7 @@
                 <button
                     type="submit"
                     :disabled="!currentMessage.trim() || isEscalated"
+                    aria-label="{{ app()->getLocale() === 'ar' ? 'إرسال' : 'Send' }}"
                     class="text-white rounded-lg px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-90 transition-colors"
                     style="background-color: var(--brand-color)"
                 >

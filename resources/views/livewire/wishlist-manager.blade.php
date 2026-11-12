@@ -66,15 +66,10 @@
                             </button>
 
                             <a href="{{ route('property.detail', $property->id) }}">
-                                @if($property->images->count() > 0)
-                                    <img class="rounded-t-lg w-full h-48 object-cover" 
-                                         src="{{ $property->images->first()->url }}" 
-                                         alt="{{ $property->title }}">
-                                @else
-                                    <div class="rounded-t-lg w-full h-48 bg-gray-300 flex items-center justify-center">
-                                        <span class="text-gray-500">{{ app()->getLocale() === 'ar' ? 'لا توجد صورة' : 'No image' }}</span>
-                                    </div>
-                                @endif
+                                <img class="rounded-t-lg w-full h-48 object-cover"
+                                     src="{{ $property->image_url }}"
+                                     loading="lazy"
+                                     alt="{{ $property->title }}">
                             </a>
 
                             <div class="p-5">
