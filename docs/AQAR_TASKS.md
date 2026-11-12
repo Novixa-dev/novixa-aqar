@@ -572,3 +572,21 @@ Code-reading pass over `PropertySubmissionForm` (the public, unauthenticated "li
 ### Not fixed this round — carried forward as open follow-ups
 
 - Contact/submission-form i18n review beyond this one form, accessibility pass, `aqar-demo2` mobile screenshots, and a comparison against other real-estate platforms were all named in the same review round and remain open for the next pass.
+
+## Phase 32 (2026-11-11) — Accessibility: icon-only controls with no accessible name
+
+Checked the contact form's `ContactController`/`contact.blade.php` (clean — bilingual, logical RTL utilities, graceful mail-failure handling, no fix needed) and `aqar-demo2` on mobile (AR/EN, home/properties/news — clean, no issues found) as the remaining items from Phase 30's review round, then ran an accessibility pass: scripted a check for every `<img>` without `alt` (0 real hits — an initial regex false-positived on `->` inside Blade/PHP expressions truncating the tag match early; redone correctly) and every icon-only `<button>`/`<a>` (an SVG with no visible text) lacking `aria-label`/`title`.
+
+| ID | Problem | Fix | Status |
+|---|---|---|---|
+| P32-1 | 7 icon-only interactive controls had no accessible name for screen readers: the floor-plan annotation popup's close button, the chatbot's send button, both calendar widgets' prev/next-month buttons (`booking-calendar.blade.php` and the community-events calendar in `property-detail.blade.php`), the property-inquiry modal's close button, and the two review forms' 5-star rating buttons (`neighborhood-review-form.blade.php`, `property-review-form.blade.php`) | Added locale-aware `aria-label` (e.g. "Previous month"/"الشهر السابق", "N out of 5 stars"/"N من 5 نجوم") to each, matching the existing `app()->getLocale() === 'ar' ? … : …` pattern already used throughout these files | **FIXED** |
+| P32-2 | The Jetstream auth-pages logo link (`authentication-card-logo.blade.php`) wraps only an SVG with no accessible name | Added `aria-label` ("Home"/"الصفحة الرئيسية") | **FIXED** |
+
+### Verification notes
+
+No `<img>` missing `alt` found project-wide after correcting the detection script (confirmed via a from-scratch Python scan of every `.blade.php` file, not a sample). Each `aria-label` addition is a single new attribute on an existing tag — no markup restructuring, so no risk to existing Blade/Alpine/Livewire wiring. Could not run an automated accessibility audit (axe-core, Lighthouse) against the live demos this round — no local vendor/PHP 8.4 to drive a full browser audit tool against authenticated flows; this was a targeted code-level pass, not an exhaustive WCAG audit. Broader accessibility work (color contrast ratios, full heading-hierarchy audit, keyboard-navigation trap testing in modals) remains open.
+
+### Not fixed this round — carried forward as open follow-ups
+
+- Comparison against other real-estate platforms is next.
+- Full WCAG audit (contrast ratios, heading hierarchy, keyboard traps, screen-reader pass with a real AT) beyond this targeted icon-button sweep.

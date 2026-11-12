@@ -17,6 +17,7 @@
             {{-- Month navigation --}}
             <div class="flex items-center justify-between mb-4">
                 <button wire:click="previousMonth"
+                    aria-label="{{ app()->getLocale() === 'ar' ? 'الشهر السابق' : 'Previous month' }}"
                     class="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                 </button>
@@ -24,6 +25,7 @@
                     {{ \Carbon\Carbon::create($currentYear, $currentMonth, 1)->translatedFormat('F Y') }}
                 </h3>
                 <button wire:click="nextMonth"
+                    aria-label="{{ app()->getLocale() === 'ar' ? 'الشهر التالي' : 'Next month' }}"
                     class="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                 </button>

@@ -896,4 +896,12 @@ Continuing the same review mandate, moved from the live-demo audit to a code-rea
 
 **Verification:** `php -l` clean; logic traced end-to-end through `Property`'s own scope definitions and docblocks (which already document the `status`/`moderation_status` split from the prior P0). Could not click through the live form or run the suite locally (no vendor/PHP 8.4 in this sandbox) — CI is authoritative, same caveat as every prior round. Full detail: `AQAR_TASKS.md` Phase 31.
 
-**Still open from this review round:** other forms' i18n (started, not finished), accessibility pass, `aqar-demo2` mobile screenshots, comparison against other real-estate platforms.
+## 2026-11-11 — Phase 32: accessibility pass, demo2-mobile and contact-form checks close out the Phase 30/31 review round
+
+Closed out the remaining items from the live-audit review round: `ContactController`/`contact.blade.php` checked clean (bilingual, logical RTL utilities, graceful mail-failure handling); `aqar-demo2` reviewed on mobile across AR/EN for home/properties/news — clean, no issues found.
+
+Ran a project-wide accessibility sweep for two concrete, mechanically-checkable categories: `<img>` tags missing `alt`, and icon-only buttons/links (an SVG with no visible text) missing an accessible name. The `alt` check came back clean project-wide (a first attempt had false positives from `->` inside Blade expressions truncating the regex match — corrected and re-run across every `.blade.php` file). Found and fixed 8 icon-only controls with no `aria-label`: the floor-plan viewer's close button, the chatbot's send button, both calendar widgets' prev/next-month buttons, the property-inquiry modal's close button, both review forms' star-rating buttons, and the auth-pages logo link — each given a locale-aware label matching the codebase's existing `app()->getLocale() === 'ar' ? … : …` pattern.
+
+**Verification:** each fix is a single new attribute on an existing tag, no markup restructuring. Could not run an automated accessibility audit tool (axe-core/Lighthouse) against the live demos this round — no local vendor/PHP 8.4 to drive one; this was a targeted code-level pass, not an exhaustive WCAG audit. Full detail: `AQAR_TASKS.md` Phase 32.
+
+**Still open from this review round:** comparison against other real-estate platforms (next), and a fuller WCAG pass (contrast ratios, heading hierarchy, keyboard traps) beyond this icon-button sweep.
