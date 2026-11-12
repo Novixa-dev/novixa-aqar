@@ -30,6 +30,23 @@
                     @error('title') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                        {{ app()->getLocale() === 'ar' ? 'نوع العرض' : 'Listing Type' }} <span class="text-red-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center justify-center gap-2 p-3 text-sm rounded-xl border cursor-pointer transition-colors {{ $listing_type === 'for_sale' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 font-bold' : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400' }}">
+                            <input type="radio" wire:model.live="listing_type" value="for_sale" class="sr-only">
+                            {{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}
+                        </label>
+                        <label class="flex items-center justify-center gap-2 p-3 text-sm rounded-xl border cursor-pointer transition-colors {{ $listing_type === 'for_rent' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 font-bold' : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400' }}">
+                            <input type="radio" wire:model.live="listing_type" value="for_rent" class="sr-only">
+                            {{ app()->getLocale() === 'ar' ? 'للإيجار' : 'For Rent' }}
+                        </label>
+                    </div>
+                    @error('listing_type') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                </div>
+
                 <div>
                     <label for="property_type" class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         {{ app()->getLocale() === 'ar' ? 'نوع العقار' : 'Property Type' }} <span class="text-red-500">*</span>
@@ -48,7 +65,7 @@
 
                 <div>
                     <label for="price" class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        {{ app()->getLocale() === 'ar' ? 'السعر المطلوب (ر.ي)' : 'Asking Price (YER)' }} <span class="text-red-500">*</span>
+                        {{ $listing_type === 'for_rent' ? (app()->getLocale() === 'ar' ? 'الإيجار الشهري (ر.ي)' : 'Monthly Rent (YER)') : (app()->getLocale() === 'ar' ? 'السعر المطلوب (ر.ي)' : 'Asking Price (YER)') }} <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
                         <input type="number" id="price" wire:model="price" placeholder="0.00"
