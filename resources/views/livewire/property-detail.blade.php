@@ -852,7 +852,8 @@
                             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                                 <!-- Calendar Navigation -->
                                 <div class="flex items-center justify-between mb-6">
-                                    <button wire:click="changeMonth('prev')" 
+                                    <button wire:click="changeMonth('prev')"
+                                        aria-label="{{ app()->getLocale() === 'ar' ? 'الشهر السابق' : 'Previous month' }}"
                                         class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                         <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -861,7 +862,8 @@
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                                         {{ \Carbon\Carbon::create($selectedYear, $selectedMonth, 1)->translatedFormat('F Y') }}
                                     </h3>
-                                    <button wire:click="changeMonth('next')" 
+                                    <button wire:click="changeMonth('next')"
+                                        aria-label="{{ app()->getLocale() === 'ar' ? 'الشهر التالي' : 'Next month' }}"
                                         class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                         <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -1156,6 +1158,7 @@
                             </p>
                         </div>
                         <button type="button" wire:click="closeInquiryModal"
+                            aria-label="{{ app()->getLocale() === 'ar' ? 'إغلاق' : 'Close' }}"
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-700 dark:hover:text-white transition-colors">
                             <svg class="w-4 h-4" aria-hidden="true" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
