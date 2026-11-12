@@ -898,3 +898,7 @@ Bumped `deploy/aqar-demo2/app.env`'s `DEMO_SEED_VERSION` 6→7 (this branch's ow
 
 
 **Verification:** same sandbox caveats as every prior round — `php -l` clean, no local PHP ≥8.4/vendor to run the suite directly; CI on the port PR is authoritative.
+
+## 2026-11-12 — Also ported PR #101 (accessibility: icon-only controls)
+
+Cherry-picked PR #101 (8 icon-only interactive controls given locale-aware `aria-label`s for screen readers) from `main` the same way as #99/#100 — zero code conflicts, only the two docs logs conflicted. Full detail: `main`'s copy of `AQAR_PROGRESS.md`, Phase 32.

@@ -25,7 +25,9 @@
             <label for="rating" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ app()->getLocale() === 'ar' ? 'التقييم العام' : 'Overall Rating' }}</label>
             <div class="flex items-center mt-1">
                 @for ($i = 1; $i <= 5; $i++)
-                    <button type="button" wire:click="$set('rating', {{ $i }})" class="text-3xl focus:outline-none transition-colors {{ $i <= $rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }} hover:scale-110">
+                    <button type="button" wire:click="$set('rating', {{ $i }})"
+                        aria-label="{{ app()->getLocale() === 'ar' ? $i . ' من 5 نجوم' : $i . ' out of 5 stars' }}"
+                        class="text-3xl focus:outline-none transition-colors {{ $i <= $rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600' }} hover:scale-110">
                         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
                         </svg>
