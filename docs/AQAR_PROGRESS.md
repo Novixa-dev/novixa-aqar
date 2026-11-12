@@ -883,3 +883,17 @@ User asked a specific, concrete question ("why don't favorite-card images show?"
 **Verification:** `php -l` clean on every changed file; every finding confirmed live (screenshots, raw HTML/meta, rendered investment-analysis numbers) before deciding the fix, not from code-reading alone. Could not run `php artisan test` locally (PHP 8.3 only, project needs ≥8.4) — CI is authoritative, same caveat as every prior round.
 
 **Explicitly ongoing, not "done":** this is the first round of an open-ended engagement; broader SEO/feature/animation/UX work continues in subsequent rounds.
+
+## 2026-11-11 — Phase 31: public property-submission form was bypassing moderation entirely
+
+Continuing the same review mandate, moved from the live-demo audit to a code-reading pass over the public, unauthenticated "list your property" form (`PropertySubmissionForm`) — the next item flagged for review.
+
+**Found a real moderation-bypass bug, not just a cosmetic one:** `Property::create()` in the form's `submit()` never set `moderation_status`, leaving it `NULL`. `Property::scopePubliclyVisible()` — the scope every public page actually queries through (`PropertyList`, `HomeController`, `AdvancedPropertySearch`, `PropertyComparison`, `PropertyMap`) — treats `NULL` as "predates moderation, already approved," by design, to avoid hiding legacy rows seeded before the moderation column existed. That same design choice meant a brand-new public submission was indistinguishable from an already-approved legacy row: it went live immediately, with zero staff review, despite the form's own success message explicitly telling the submitter their listing is "pending review."
+
+**Second, related bug:** the form also wrote the literal string `'pending'` into `status` (the listing's for_sale/for_rent field) — not a canonical value — while declaring an unused `$listing_type` property with no actual form control. This is the exact `status`-field-overloading mistake a prior migration (`2026_08_24_000001`) already fixed on the Staff moderation panel's side, reintroduced here on the public submission side. Consequence: even once a staff member approved such a listing, it would stay excluded from the XML sitemap and from the AI chatbot's results, both of which filter on `status` being a real for_sale/for_rent value.
+
+**Fix:** `submit()` now explicitly sets `moderation_status => 'pending'` (closing the bypass), and a new required "For Sale / For Rent" toggle in the form sets `status` to the correct canonical value instead of `'pending'`. Updated the one existing test that had been asserting the buggy behavior as if it were correct, and added coverage for the `for_rent` path and for `isPubliclyVisible()` being `false` right after submission.
+
+**Verification:** `php -l` clean; logic traced end-to-end through `Property`'s own scope definitions and docblocks (which already document the `status`/`moderation_status` split from the prior P0). Could not click through the live form or run the suite locally (no vendor/PHP 8.4 in this sandbox) — CI is authoritative, same caveat as every prior round. Full detail: `AQAR_TASKS.md` Phase 31.
+
+**Still open from this review round:** other forms' i18n (started, not finished), accessibility pass, `aqar-demo2` mobile screenshots, comparison against other real-estate platforms.
