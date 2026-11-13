@@ -616,3 +616,24 @@ Compared against live 2026 feature reporting on Bayut/Property Finder (web searc
 ### Not fixed this round — carried forward as open follow-ups
 
 - P33-2 (saved search + alerts) and P33-3 (verified-listing badge) are the two concrete, scoped feature ideas from this round, ready to pick up next.
+
+## Phase 34 (2026-11-13) — Round 34: maintenance-API write IDOR, data/logic fixes, dead-page cleanup, PR hygiene (PR #110)
+
+| ID | Problem | Fix | Status |
+|---|---|---|---|
+| P34-1 (P13-5) | V1 maintenance API scoped **reads** per role but not **writes**: a write-capable member linked as a tenant could file a request under another tenant's `tenant_id`, for a property they don't lease, and set office-only fields (`status`, `payment_status`); a linked vendor could reassign the job or delete it | `MaintenanceController`: `prepareForCreate`/`prepareForUpdate` force the caller's own `tenant_id`, require an active lease on `property_id`, and whitelist editable fields per role (tenant: title/description/priority/photos; vendor: job-progress fields); `destroy` is manager-only. Note: `RequireAgencyPermission` already makes the `member` agency role read-only, so the hole was reachable by `editor`-role tenant/vendor accounts | **FIXED — `MaintenanceApiAuthorizationTest` (6 tests); CI on PR #110** |
+| P34-2 | Two seeded "بيت شعبي" (traditional house) listings were typed `Villa` → rendered as **"Luxury Villa / فيلا فاخرة"**; and publicly submitted listings (lowercase `villa`, `apartment`) showed the raw English type because the label map was exact-case | Label map keyed lowercase + `strtolower()` lookup; the two rows retyped `house` (villa-style stock photos); `Independent House` filter option added on `/properties`; `DEMO_SEED_VERSION` 6→7 on main so the reseed applies live | **FIXED** |
+| P34-3 | Investment Analysis on a **rental** showed **"-99.8% vs market"**: sale prices and monthly rents share `properties.price` and the market average mixed both — which also skewed every *sale* listing's comparison downward | `MarketAnalysisService::generateMarketAnalysis()` takes an optional listing-status filter; `AIInvestmentAnalysisService` compares like-for-like (rent vs rent, sale vs sale) and matches type case-insensitively; the buyer-oriented panel is no longer shown on rentals; position badge (Excellent/Good/…) now translated | **FIXED — new `InvestmentAnalyticsTest::test_market_position_compares_rentals_only_against_rentals`** |
+| P34-4 | Public `/properties/search` rendered an "advanced search" form with **no result list** (template still contained a `... keep existing property list display ...` placeholder) filtering on UK-only fields (postcode, EPC A–G, walk/bike score) | URL now 301-redirects to `/properties` (the real, working search); `AdvancedPropertySearch` component, view and `PropertyController` removed | **FIXED — `LegacyPropertySearchRedirectTest`** |
+| P34-5 (P21-11) | Dead `MaintenanceRequestForm` Livewire component + view (unreferenced anywhere) | Removed | **FIXED** |
+| P34-6 | Open PRs | Dependabot #103 (`spiral/roadrunner-http` 3.6→4.2.1) merged after rebase with laravel-tests, Full Install Smoke Test and Docker green (worker 3.8/goridge 4 unchanged; RR binary fetched at image build; deploy has verify+rollback). Earlier this round #104–#108 merged. Only #110 (this round) remains open | **DONE** |
+
+### Verification notes
+
+No local PHP 8.4/vendor in this environment — every change was `php -l`-checked locally and verified by CI (`laravel-tests`, the authoritative suite). The first CI run of #110 failed 4 new tests: the tenant/vendor fixtures used the `member` agency role, which `RequireAgencyPermission` rejects for writes before the controller runs, and `vendors.added_by` is NOT NULL; the tests were corrected to use `editor` (the lowest write-capable role) rather than weakening any assertion. "PHP Security Checker" is red on main too (symfony/http-client advisories) — pre-existing, not this PR's.
+
+### Not fixed this round — carried forward as open follow-ups
+
+- P33-2 saved search + alerts; P33-3 verified-listing badge; Organization/WebSite JSON-LD (P28-24/P29-18).
+- Port P34-2..P34-5 to `ui-improves` (demo2) with its own `DEMO_SEED_VERSION` bump.
+- `PHP Security Checker`: bump `symfony/http-client` once a patched release is lockable.
