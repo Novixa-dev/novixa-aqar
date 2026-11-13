@@ -136,6 +136,9 @@
                             <a href="{{ route('wishlist') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-stone-200 hover:bg-white/10 transition-colors">
                                 <span>{{ app()->getLocale() === 'ar' ? 'المفضلة' : 'Wishlist' }}</span>
                             </a>
+                            <a href="{{ route('saved-searches') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-stone-200 hover:bg-white/10 transition-colors">
+                                <span>{{ app()->getLocale() === 'ar' ? 'عمليات البحث المحفوظة' : 'Saved searches' }}</span>
+                            </a>
                             <a href="/user/profile" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-stone-200 hover:bg-white/10 transition-colors">
                                 <span>{{ app()->getLocale() === 'ar' ? 'الملف الشخصي' : 'Profile' }}</span>
                             </a>
@@ -202,6 +205,9 @@
                     <div class="flex flex-col gap-2 pt-4 border-t border-white/10">
                         <a href="{{ $dashboardUrl }}" class="w-full text-center py-2.5 text-xs font-bold text-white bg-[#8C7869] rounded-full">
                             {{ __('Dashboard') }}
+                        </a>
+                        <a href="{{ route('saved-searches') }}" class="w-full text-center py-2.5 text-xs font-bold text-stone-200 bg-white/10 rounded-full">
+                            {{ app()->getLocale() === 'ar' ? 'عمليات البحث المحفوظة' : 'Saved searches' }}
                         </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

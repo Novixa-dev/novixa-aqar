@@ -61,9 +61,9 @@ class PropertyRecommendationService
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get()
-            ->map(function ($search) {
-                return json_decode($search->criteria, true);
-            });
+            // criteria is cast to an array on the model; json_decode() on it
+            // threw a TypeError as soon as any user had a saved search.
+            ->map(fn (SavedSearch $search) => $search->criteria ?? []);
     }
 
     private function getBrowsingBehavior(User $user)
