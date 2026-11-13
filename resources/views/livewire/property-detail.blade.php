@@ -370,7 +370,7 @@
                                                                 </svg>
                                                             @endfor
                                                         </div>
-                                                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($neighborhoodAverageRating, 1) }} ({{ $neighborhoodReviews->count() }} {{ Str::plural('review', $neighborhoodReviews->count()) }})</span>
+                                                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($neighborhoodAverageRating, 1) }} ({{ $neighborhoodReviews->count() }} {{ app()->getLocale() === 'ar' ? ($neighborhoodReviews->count() === 1 ? 'تقييم' : 'تقييمات') : Str::plural('review', $neighborhoodReviews->count()) }})</span>
                                                     </div>
                                                 @endif
                                             </div>
@@ -846,7 +846,7 @@
                                 <svg class="w-6 h-6 me-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
-                                Community Events Calendar
+                                {{ app()->getLocale() === 'ar' ? 'تقويم فعاليات الحي' : 'Community Events Calendar' }}
                             </h2>
                             
                             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
@@ -906,14 +906,14 @@
                                                         {{ $event->location }}
                                                         @if(isset($event->distance_from_property))
                                                             <span class="ms-2 text-xs text-blue-600 dark:text-blue-400">
-                                                                ({{ number_format($event->distance_from_property, 1) }} km away)
+                                                                ({{ app()->getLocale() === 'ar' ? 'على بعد '.number_format($event->distance_from_property, 1).' كم' : number_format($event->distance_from_property, 1).' km away' }})
                                                             </span>
                                                         @endif
                                                     </div>
                                                     
                                                     @if($event->category)
                                                         <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 mb-2">
-                                                            {{ ucfirst($event->category) }}
+                                                            {{ __(ucfirst($event->category)) }}
                                                         </span>
                                                     @endif
                                                     
@@ -925,14 +925,14 @@
                                                     
                                                     @if($event->organizer)
                                                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                                            Organized by: {{ $event->organizer }}
+                                                            {{ app()->getLocale() === 'ar' ? 'الجهة المنظمة:' : 'Organized by:' }} {{ $event->organizer }}
                                                         </p>
                                                     @endif
                                                     
                                                     @if($event->website_url)
                                                         <a href="{{ $event->website_url }}" target="_blank" 
                                                            class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mt-2">
-                                                            Learn more
+                                                            {{ app()->getLocale() === 'ar' ? 'اعرف المزيد' : 'Learn more' }}
                                                             <svg class="w-4 h-4 ms-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                                                             </svg>
@@ -946,7 +946,7 @@
                                 
                                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <p class="text-sm text-gray-600 dark:text-gray-400 text-center">
-                                        Showing {{ $communityEvents->count() }} upcoming events within 10 km of this property
+                                        {{ app()->getLocale() === 'ar' ? 'عرض '.$communityEvents->count().' فعالية قادمة ضمن 10 كم من هذا العقار' : 'Showing '.$communityEvents->count().' upcoming events within 10 km of this property' }}
                                     </p>
                                 </div>
                             </div>
