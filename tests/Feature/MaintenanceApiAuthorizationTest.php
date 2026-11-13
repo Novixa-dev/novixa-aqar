@@ -29,11 +29,13 @@ class MaintenanceApiAuthorizationTest extends TestCase
 
     private Tenant $otherTenant;
 
+    private User $owner;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $owner = User::factory()->create();
+        $owner = $this->owner = User::factory()->create();
         $this->team = Team::factory()->create(['user_id' => $owner->id]);
         $owner->forceFill(['current_team_id' => $this->team->id])->save();
 
@@ -54,10 +56,13 @@ class MaintenanceApiAuthorizationTest extends TestCase
         ]);
     }
 
+    // 'editor' is the lowest agency role RequireAgencyPermission lets write
+    // to the V1 API at all ('member' is view-only), so it's the role these
+    // write-scoping rules actually have to hold for.
     private function member(?string $email = null): User
     {
         $user = User::factory()->create($email ? ['email' => $email] : []);
-        $this->team->users()->attach($user, ['role' => 'member']);
+        $this->team->users()->attach($user, ['role' => 'editor']);
         $user->forceFill(['current_team_id' => $this->team->id])->save();
 
         return $user;
@@ -139,7 +144,7 @@ class MaintenanceApiAuthorizationTest extends TestCase
     public function test_a_vendor_can_progress_their_job_but_not_reassign_or_delete_it(): void
     {
         $vendorUser = $this->member('jobs@vendor.example.test');
-        $vendor = Vendor::create(['team_id' => $this->team->id, 'company_name' => 'Fix-It Ltd', 'email' => $vendorUser->email, 'vendor_type' => 'plumber']);
+        $vendor = Vendor::create(['team_id' => $this->team->id, 'company_name' => 'Fix-It Ltd', 'email' => $vendorUser->email, 'vendor_type' => 'plumber', 'added_by' => $this->owner->id]);
         $request = $this->request(['vendor_id' => $vendor->id]);
         Sanctum::actingAs($vendorUser);
 
