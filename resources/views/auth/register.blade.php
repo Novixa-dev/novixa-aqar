@@ -4,6 +4,8 @@
     <div class="min-h-full flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
 
         <div class="w-full sm:max-w-md mb-4 mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ app()->getLocale() === 'ar' ? 'إنشاء حساب' : 'Create an account' }}</h1>
+
             <x-validation-errors class="mb-4" />
         
             <form method="POST" action="{{ route('register') }}">

@@ -8,7 +8,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MediaProxyController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\TenantController;
 use App\Livewire\BookingCalendar;
 use App\Livewire\CalculatorsComponent;
@@ -94,7 +93,10 @@ Route::post('/payments/webhook', [PaymentController::class, 'handleWebhook'])->m
 Route::get('/payments/success', [PaymentController::class, 'handlePaymentSuccess'])->middleware('auth');
 Route::get('/booking-calendar', BookingCalendar::class)->middleware('auth')->name('booking.calendar');
 Route::get('/properties', PropertyList::class)->name('property.list');
-Route::get('/properties/search', [PropertyController::class, 'search'])->name('property.search');
+// The old standalone "advanced search" page never got its results list
+// (and filtered on UK-only postcode/energy/walkability fields); the
+// /properties listing is the real search, so keep old links working.
+Route::permanentRedirect('/properties/search', '/properties')->name('property.search');
 Route::get('/properties/{propertyId}', PropertyDetail::class)->name('property.detail');
 
 Route::middleware(['auth', 'verified'])->group(function () {

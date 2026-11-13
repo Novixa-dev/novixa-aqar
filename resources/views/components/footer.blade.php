@@ -93,7 +93,7 @@
 
         <div class="pt-8 border-t border-[#332A26] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8C7A6B] gap-4">
             <div>
-                {{ $socials->footer_copyright ?: (date('Y').' '.$brand->name().'. '.__('All rights reserved.')) }}
+                {{ $brand->copyright() }}
             </div>
             <div class="flex items-center gap-4">
                 <span>{{ app()->getLocale() === 'ar' ? 'تصميم وتطوير فاخر' : 'Luxury Real Estate Platform' }}</span>

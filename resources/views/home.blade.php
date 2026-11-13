@@ -2,6 +2,10 @@
 
 @section('title', app()->getLocale() === 'ar' ? 'رسو العقارية | نصنع الفخامة في كل تفصيلة' : 'RUSU Real Estate | Crafting Luxury in Every Detail')
 
+@push('meta')
+    <script type="application/ld+json">{!! $brand->homepageJsonLd() !!}</script>
+@endpush
+
 @section('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 @endsection

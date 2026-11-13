@@ -3,8 +3,10 @@ name: Docker
 on:
   push:
     branches: [main]
+  # ui-improves (aqar-demo2) is a long-lived release branch too: PRs into it
+  # were never tested before merge, only by the deploy's own test step.
   pull_request:
-    branches: [main]
+    branches: [main, ui-improves]
   workflow_dispatch:
 
 permissions:
@@ -57,21 +59,35 @@ jobs:
     permissions:
       contents: read
       packages: write
+    # Secrets can't be read in a job-level `if`, so expose their presence
+    # here. Without Docker Hub credentials the login step used to fail on
+    # every push to main, a permanent red check unrelated to the real
+    # deploys (deploy-aqar-demo*.yml build and ship their own image).
+    env:
+      HAS_DOCKERHUB: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
 
     steps:
+      - name: Skip notice (no Docker Hub credentials)
+        if: env.HAS_DOCKERHUB != 'true'
+        run: echo "::notice title=Docker Hub publish skipped::DOCKERHUB_USERNAME/DOCKERHUB_TOKEN are not configured; demo deploys build their own image."
+
       - name: Checkout code
+        if: env.HAS_DOCKERHUB == 'true'
         uses: actions/checkout@v7
 
       - name: Login to Docker Hub
+        if: env.HAS_DOCKERHUB == 'true'
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set up Docker Buildx
+        if: env.HAS_DOCKERHUB == 'true'
         uses: docker/setup-buildx-action@v4
 
       - name: Extract metadata for Docker
+        if: env.HAS_DOCKERHUB == 'true'
         id: meta
         uses: docker/metadata-action@v6
         with:
@@ -83,6 +99,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image
+        if: env.HAS_DOCKERHUB == 'true'
         uses: docker/build-push-action@v7
         with:
           context: .

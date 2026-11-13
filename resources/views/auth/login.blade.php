@@ -3,6 +3,8 @@
 @section('content')
     <div class="min-h-full flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
         <div class="w-full sm:max-w-md mb-4 mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ app()->getLocale() === 'ar' ? 'تسجيل الدخول' : 'Log in' }}</h1>
+
 
             @if (session('status'))
                 <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
