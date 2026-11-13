@@ -66,6 +66,22 @@ class SeoAndBrandingTest extends TestCase
         $this->assertSame(url('/'), $graph[array_search('WebSite', $types)]['url']);
     }
 
+    public function test_an_english_stored_copyright_is_not_shown_on_the_arabic_site(): void
+    {
+        $settings = app(\App\Settings\GeneralSettings::class);
+        $settings->footer_copyright = '© 2026 Novixa Aqar. All rights reserved.';
+        $settings->save();
+        $brand = app(\App\Support\Brand::class);
+
+        app()->setLocale('ar');
+        $this->assertStringContainsString('جميع الحقوق محفوظة', $brand->copyright());
+
+        app()->setLocale('en');
+        $this->assertSame('© 2026 Novixa Aqar. All rights reserved.', $brand->copyright());
+
+        $this->get('/')->assertOk();
+    }
+
     public function test_an_indexable_deployment_has_no_noindex_tag(): void
     {
         config(['branding.indexable' => true]);
