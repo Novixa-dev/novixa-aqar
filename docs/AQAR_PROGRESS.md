@@ -915,3 +915,15 @@ Two real gaps found, one fixed, one scoped for later: `Neighborhood::crime_rate`
 Full detail: `AQAR_TASKS.md` Phase 33.
 
 **This closes out the Phase 30/31/32/33 review round** (wishlist images, first-visit locale, footer/seed-data fixes, submission-form moderation bypass, accessibility sweep, competitor comparison). The engagement itself remains open-ended per the user's own framing — next candidates: saved search + alerts, a verified-listing badge, and whatever the next pass over the project surfaces.
+
+## 2026-11-13 — Phase 34: maintenance-API write IDOR closed, two visible data/logic bugs, dead search page retired, PR queue cleared
+
+- **Security (P13-5 → P34-1):** V1 maintenance API now scopes writes per role, not just reads (tenant can only file for a property they lease, under their own tenant record, without office-only fields; vendors can only progress their own jobs; delete is manager-only).
+- **Live data bugs:** traditional houses no longer render as "Luxury Villa"; publicly submitted listings show translated type labels; Investment Analysis compares like-for-like (the "-99.8% vs market" on rentals is gone, and sale comparisons are no longer dragged down by rents).
+- **Cleanup:** the unfinished `/properties/search` page now 301s to `/properties`; two dead Livewire components removed.
+- **Live crawl (both demos, AR/EN, desktop/mobile):** no console errors, failed requests, broken images/links or mobile overflow; leftover English on Arabic pages fixed; auth pages get an `<h1>`.
+- **SEO:** homepage Organization/WebSite JSON-LD.
+- **CI:** Docker Hub publish no longer red without credentials.
+- **PRs:** #103 merged (all six dependabot PRs now done); round-34 work in draft PR #110, ported to demo2 in PR #111.
+- **Owner decision needed:** demo2 presents RUSU as Saudi (Riyadh, +966 placeholder phone) while its listings and brand description are Yemeni.
+- Details and verification: `docs/AQAR_TASKS.md` → Phase 34.

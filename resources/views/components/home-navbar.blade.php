@@ -47,7 +47,7 @@
                         onclick="window.toggleTheme()" 
                         class="p-2 rounded-full text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 transition-all focus:outline-none cursor-pointer"
                         title="{{ app()->getLocale() === 'ar' ? 'تبديل المظهر (فاتح / داكن)' : 'Toggle Theme (Light / Dark)' }}"
-                        aria-label="Toggle Theme">
+                        aria-label="{{ app()->getLocale() === 'ar' ? 'تبديل المظهر' : 'Toggle Theme' }}">
                     <!-- Sun icon (shown in dark mode) -->
                     <svg class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -63,9 +63,9 @@
                     @if(app()->getLocale() === 'ar')
                         <a href="{{ route('lang.switch', 'en') }}" 
                            class="flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                           title="Switch to English">
+                           title="التبديل إلى الإنجليزية">
                             <span>🇬🇧</span>
-                            <span>English</span>
+                            <span lang="en">English</span>
                         </a>
                     @else
                         <a href="{{ route('lang.switch', 'ar') }}" 
@@ -150,7 +150,7 @@
                 <!-- Mobile Menu Button -->
                 <button id="menuToggleButton" type="button"
                     class="inline-flex items-center justify-center p-2.5 text-gray-500 rounded-xl lg:hidden hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 focus:outline-none transition-colors"
-                    aria-label="Toggle navigation"
+                    aria-label="{{ app()->getLocale() === 'ar' ? 'فتح القائمة' : 'Toggle navigation' }}"
                     aria-expanded="false"
                     aria-controls="menuToggle">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

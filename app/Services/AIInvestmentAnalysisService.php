@@ -24,7 +24,12 @@ class AIInvestmentAnalysisService
     public function analyzeInvestment(Property $property)
     {
         try {
-            $marketAnalysis = $this->marketAnalysisService->generateMarketAnalysis(now()->subYear(), now(), $property->team_id);
+            // Compare like with like: a for-rent listing's price is a monthly
+            // rent, so it must never be averaged with (or measured against)
+            // sale prices — that is what produced "-99.8% vs market".
+            $marketAnalysis = $this->marketAnalysisService->generateMarketAnalysis(
+                now()->subYear(), now(), $property->team_id, null, $this->comparableStatuses($property)
+            );
             $valuation = $this->propertyValuationService->calculateValuation($property);
             
             // Only get recommendations if property has a user
@@ -67,8 +72,8 @@ class AIInvestmentAnalysisService
     private function calculatePredictedROI(Property $property, array $marketAnalysis)
     {
         // Simplified ROI calculation based on market trends
-        $marketDataItem = $marketAnalysis['market_data']->where('property_type', $property->property_type)->first();
-        
+        $marketDataItem = $this->comparableMarketData($property, $marketAnalysis);
+
         if (!$marketDataItem || !isset($marketDataItem->avg_price)) {
             // Default to 3% appreciation if no market data available
             $appreciationRate = 3;
@@ -178,8 +183,8 @@ class AIInvestmentAnalysisService
             ];
         }
 
-        $marketDataItem = $marketAnalysis['market_data']->where('property_type', $property->property_type)->first();
-        
+        $marketDataItem = $this->comparableMarketData($property, $marketAnalysis);
+
         if (!$marketDataItem || !isset($marketDataItem->avg_price) || $marketDataItem->avg_price <= 0) {
             return [
                 'position' => 'average',
@@ -215,6 +220,37 @@ class AIInvestmentAnalysisService
         ];
     }
     
+    public static function isRentalListing(Property $property): bool
+    {
+        return in_array(
+            Property::canonicalStatus($property->status),
+            [Property::STATUS_FOR_RENT, Property::STATUS_RENTED],
+            true
+        );
+    }
+
+    /** @return array<int, string> */
+    private function comparableStatuses(Property $property): array
+    {
+        // Include the legacy Title-Case spellings: rows written before
+        // status canonicalisation still carry them.
+        return self::isRentalListing($property)
+            ? [Property::STATUS_FOR_RENT, Property::STATUS_RENTED, 'For Rent', 'Rented']
+            : [Property::STATUS_FOR_SALE, Property::STATUS_SOLD, 'For Sale', 'Sold', 'active', 'available'];
+    }
+
+    /**
+     * property_type casing differs by source (seeders write 'Villa', the
+     * forms/API write 'villa'), so match case-insensitively.
+     */
+    private function comparableMarketData(Property $property, array $marketAnalysis)
+    {
+        $type = strtolower((string) $property->property_type);
+
+        return collect($marketAnalysis['market_data'] ?? [])
+            ->first(fn ($row) => strtolower((string) ($row->property_type ?? '')) === $type);
+    }
+
     private function calculateStandardDeviation(array $values)
     {
         $count = count($values);

@@ -84,7 +84,7 @@
 
         <div class="pt-8 mt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
             <div>
-                {{ $socials->footer_copyright ?: (date('Y').' '.$brand->name().'. '.__('All rights reserved.')) }}
+                {{ $brand->copyright() }}
             </div>
             <div class="flex items-center gap-4">
                 <span>{{ app()->getLocale() === 'ar' ? 'تطوير:' : 'Powered by:' }} <a href="{{ $brand->companyUrl() }}" target="_blank" rel="noopener" class="font-bold hover:text-white">{{ $brand->company() }}</a></span>

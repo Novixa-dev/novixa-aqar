@@ -616,3 +616,31 @@ Compared against live 2026 feature reporting on Bayut/Property Finder (web searc
 ### Not fixed this round — carried forward as open follow-ups
 
 - P33-2 (saved search + alerts) and P33-3 (verified-listing badge) are the two concrete, scoped feature ideas from this round, ready to pick up next.
+
+## Phase 34 (2026-11-13) — Round 34: maintenance-API write IDOR, data/logic fixes, dead-page cleanup, PR hygiene (PR #110)
+
+| ID | Problem | Fix | Status |
+|---|---|---|---|
+| P34-1 (P13-5) | V1 maintenance API scoped **reads** per role but not **writes**: a write-capable member linked as a tenant could file a request under another tenant's `tenant_id`, for a property they don't lease, and set office-only fields (`status`, `payment_status`); a linked vendor could reassign the job or delete it | `MaintenanceController`: `prepareForCreate`/`prepareForUpdate` force the caller's own `tenant_id`, require an active lease on `property_id`, and whitelist editable fields per role (tenant: title/description/priority/photos; vendor: job-progress fields); `destroy` is manager-only. Note: `RequireAgencyPermission` already makes the `member` agency role read-only, so the hole was reachable by `editor`-role tenant/vendor accounts | **FIXED — `MaintenanceApiAuthorizationTest` (6 tests); CI on PR #110** |
+| P34-2 | Two seeded "بيت شعبي" (traditional house) listings were typed `Villa` → rendered as **"Luxury Villa / فيلا فاخرة"**; and publicly submitted listings (lowercase `villa`, `apartment`) showed the raw English type because the label map was exact-case | Label map keyed lowercase + `strtolower()` lookup; the two rows retyped `house` (villa-style stock photos); `Independent House` filter option added on `/properties`; `DEMO_SEED_VERSION` 6→7 on main so the reseed applies live | **FIXED** |
+| P34-3 | Investment Analysis on a **rental** showed **"-99.8% vs market"**: sale prices and monthly rents share `properties.price` and the market average mixed both — which also skewed every *sale* listing's comparison downward | `MarketAnalysisService::generateMarketAnalysis()` takes an optional listing-status filter; `AIInvestmentAnalysisService` compares like-for-like (rent vs rent, sale vs sale) and matches type case-insensitively; the buyer-oriented panel is no longer shown on rentals; position badge (Excellent/Good/…) now translated | **FIXED — new `InvestmentAnalyticsTest::test_market_position_compares_rentals_only_against_rentals`** |
+| P34-4 | Public `/properties/search` rendered an "advanced search" form with **no result list** (template still contained a `... keep existing property list display ...` placeholder) filtering on UK-only fields (postcode, EPC A–G, walk/bike score) | URL now 301-redirects to `/properties` (the real, working search); `AdvancedPropertySearch` component, view and `PropertyController` removed | **FIXED — `LegacyPropertySearchRedirectTest`** |
+| P34-5 (P21-11) | Dead `MaintenanceRequestForm` Livewire component + view (unreferenced anywhere) | Removed | **FIXED** |
+| P34-7 | Live text-node crawl of the Arabic site (both demos, desktop+mobile, 18 pages each) found English UI left on Arabic pages: property-page community-events section (heading, "km away", category chips, "Organized by", "Learn more", "Showing N upcoming events…"), neighbourhood "(N review)" count, navbar aria-labels, and the footer copyright (an English settings string shown verbatim) | All localized; the footer falls back to the localized default when the stored copyright has no Arabic. The same crawl found **zero** console errors, failed requests, broken images, broken internal links (100 checked) or mobile horizontal overflow | **FIXED** |
+| P34-8 | Login / register / forgot-password had no `<h1>` | Added a localized `<h1>` to each | **FIXED** |
+| P34-9 (P28-24/P29-18) | No Organization/WebSite structured data | Homepage emits a `RealEstateAgent` + `WebSite` (with sitelinks `SearchAction` → `/properties?search=`) JSON-LD graph via `Brand::homepageJsonLd()`; country from `branding.country` | **FIXED — `SeoAndBrandingTest`** |
+| P34-10 | "Docker" workflow red on every push to main: Docker Hub login fails (no `DOCKERHUB_*` secrets) | Publish steps gated on secret presence, otherwise a notice; real deploys are unaffected (they build their own image) | **FIXED** |
+| P34-11 | P33-3 verified-listing badge | **Declined:** every publicly visible listing is already moderation-approved, so the badge would show on every card and imply a physical inspection that never happened | **WON'T DO** |
+| P34-12 | demo2 (`ui-improves`) hard-codes Saudi content — footer "Riyadh" address, placeholder phone `+966 55 000 0000`, `info@rusurealestate.com`, home "since 2009 in Saudi Arabia" and Riyadh project cards — while its configured brand description and every listing are Yemeni | **Needs a product decision** (is RUSU a Saudi or Yemeni brand?) — raised with the owner; not changed | **OPEN — owner decision** |
+| P34-6 | Open PRs | Dependabot #103 (`spiral/roadrunner-http` 3.6→4.2.1) merged after rebase with laravel-tests, Full Install Smoke Test and Docker green (worker 3.8/goridge 4 unchanged; RR binary fetched at image build; deploy has verify+rollback). Earlier this round #104–#108 merged. Only #110 (this round) remains open | **DONE** |
+
+### Verification notes
+
+No local PHP 8.4/vendor in this environment — every change was `php -l`-checked locally and verified by CI (`laravel-tests`, the authoritative suite). The first CI run of #110 failed 4 new tests: the tenant/vendor fixtures used the `member` agency role, which `RequireAgencyPermission` rejects for writes before the controller runs, and `vendors.added_by` is NOT NULL; the tests were corrected to use `editor` (the lowest write-capable role) rather than weakening any assertion. "PHP Security Checker" is red on main too (symfony/http-client advisories) — pre-existing, not this PR's.
+
+### Not fixed this round — carried forward as open follow-ups
+
+- P33-2 saved search + alerts (real feature: save action, "My saved searches" page, scheduled match-and-email job).
+- Port to `ui-improves` (demo2): PR #111 (with `DEMO_SEED_VERSION` 8).
+- P34-12 demo2 brand-country decision.
+- `PHP Security Checker`: bump `symfony/http-client` once a patched release is lockable.

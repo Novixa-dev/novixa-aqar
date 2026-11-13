@@ -2,17 +2,28 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Models\Lease;
 use App\Models\MaintenanceRequest;
 use App\Models\Tenant;
 use App\Models\Vendor;
 use App\Services\WorkflowNotifier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class MaintenanceController extends TenantCrudController
 {
+    private const MANAGER_ROLES = ['admin', 'super_admin', 'staff', 'agent'];
+
+    // Office-workflow fields only the agency (or, for job progress, the
+    // assigned vendor) may set — never the tenant who raised the request.
+    private const TENANT_EDITABLE = ['title', 'description', 'priority', 'photos'];
+
+    private const VENDOR_EDITABLE = ['status', 'completed_at', 'invoice_reference', 'quote_references', 'photos'];
+
     protected string $model = MaintenanceRequest::class;
 
     protected string $routeParameter = 'maintenance';
@@ -34,21 +45,16 @@ class MaintenanceController extends TenantCrudController
     protected function teamQuery(Request $request): Builder
     {
         $query = parent::teamQuery($request);
-        $user = $request->user();
 
-        if ($user->hasAnyRole(['admin', 'super_admin', 'staff', 'agent'])) {
+        if ($this->isManager($request)) {
             return $query;
         }
 
-        $teamId = $this->teamId($request);
-
-        $tenantId = Tenant::where('user_id', $user->id)->where('team_id', $teamId)->value('id');
-        if ($tenantId) {
+        if ($tenantId = $this->linkedTenantId($request)) {
             return $query->where('tenant_id', $tenantId);
         }
 
-        $vendorId = Vendor::where('email', $user->email)->where('team_id', $teamId)->value('id');
-        if ($vendorId) {
+        if ($vendorId = $this->linkedVendorId($request)) {
             return $query->where('vendor_id', $vendorId);
         }
 
@@ -57,6 +63,77 @@ class MaintenanceController extends TenantCrudController
         // via this endpoint — deny, matching the Contractor Filament
         // resource's own "no linked record -> empty, not an error" pattern.
         return $query->whereRaw('1 = 0');
+    }
+
+    public function destroy(Request $request): JsonResponse
+    {
+        abort_unless($this->isManager($request), 403);
+
+        return parent::destroy($request);
+    }
+
+    // Reads were already scoped per role, but writes weren't: a tenant could
+    // file a request under another tenant's tenant_id, and any team member
+    // with no claim at all could still create one.
+    protected function prepareForCreate(Request $request, array $attributes): array
+    {
+        if ($this->isManager($request)) {
+            return $attributes;
+        }
+
+        $tenantId = $this->linkedTenantId($request);
+        abort_unless($tenantId, 403);
+
+        $leasesProperty = Lease::where('tenant_id', $request->user()->id)
+            ->where('property_id', $attributes['property_id'])
+            ->exists();
+
+        if (! $leasesProperty) {
+            throw ValidationException::withMessages([
+                'property_id' => [__('You can only report maintenance for a property you lease.')],
+            ]);
+        }
+
+        return ['tenant_id' => $tenantId, 'property_id' => $attributes['property_id'], 'team_id' => $attributes['team_id'], 'requested_date' => $attributes['requested_date']]
+            + array_intersect_key($attributes, array_flip(self::TENANT_EDITABLE));
+    }
+
+    protected function prepareForUpdate(Request $request, Model $record, array $attributes): array
+    {
+        if ($this->isManager($request)) {
+            return $attributes;
+        }
+
+        $editable = $this->linkedTenantId($request) ? self::TENANT_EDITABLE : self::VENDOR_EDITABLE;
+
+        return array_intersect_key($attributes, array_flip($editable));
+    }
+
+    private function isManager(Request $request): bool
+    {
+        $user = $request->user();
+
+        if ($user->hasAnyRole(self::MANAGER_ROLES)) {
+            return true;
+        }
+
+        $team = $user->currentTeam;
+
+        return $team && ($user->ownsTeam($team) || $user->hasTeamRole($team, 'admin') || $user->hasTeamRole($team, 'manager'));
+    }
+
+    private function linkedTenantId(Request $request): ?int
+    {
+        return Tenant::where('user_id', $request->user()->id)
+            ->where('team_id', $this->teamId($request))
+            ->value('id');
+    }
+
+    private function linkedVendorId(Request $request): ?int
+    {
+        return Vendor::where('email', $request->user()->email)
+            ->where('team_id', $this->teamId($request))
+            ->value('id');
     }
 
     protected function rules(Request $request, ?Model $record = null): array
@@ -69,7 +146,7 @@ class MaintenanceController extends TenantCrudController
             'status' => ['sometimes', Rule::in(['pending', 'in_progress', 'completed', 'cancelled'])],
             'priority' => ['sometimes', Rule::in(['low', 'normal', 'high', 'urgent'])],
             'requested_date' => [$record ? 'sometimes' : 'required', 'date'],
-            'tenant_id' => [$record ? 'sometimes' : 'required', Rule::exists('tenants', 'id')->where('team_id', $teamId)],
+            'tenant_id' => [$record || ! $this->isManager($request) ? 'sometimes' : 'required', Rule::exists('tenants', 'id')->where('team_id', $teamId)],
             'property_id' => [$record ? 'sometimes' : 'required', Rule::exists('properties', 'id')->where('team_id', $teamId)],
             'vendor_id' => ['nullable', Rule::exists('vendors', 'id')->where('team_id', $teamId)],
             'photos' => ['nullable', 'array'],

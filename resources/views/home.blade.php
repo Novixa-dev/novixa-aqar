@@ -2,6 +2,10 @@
 
 @section('title', app()->getLocale() === 'ar' ? $brand->name('ar').' | عقارات في اليمن' : $brand->name('en').' | Properties in Yemen')
 
+@push('meta')
+    <script type="application/ld+json">{!! $brand->homepageJsonLd() !!}</script>
+@endpush
+
 @section('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 @endsection

@@ -91,6 +91,23 @@ class Brand
         return preg_replace('/\D/', '', $this->phone());
     }
 
+    /**
+     * Footer copyright line. general.footer_copyright is a single
+     * admin-editable string; when it holds no Arabic (the demo seeds an
+     * English one) it is not shown on the Arabic site, which gets the
+     * localized default instead.
+     */
+    public function copyright(): string
+    {
+        $stored = trim((string) (app(GeneralSettings::class)->footer_copyright ?? ''));
+
+        if ($stored !== '' && ! (app()->getLocale() === 'ar' && ! preg_match('/\p{Arabic}/u', $stored))) {
+            return $stored;
+        }
+
+        return '© '.date('Y').' '.$this->name().'. '.__('All rights reserved.');
+    }
+
     public function ogImage(): string
     {
         $image = (string) config('branding.og_image');
@@ -109,6 +126,52 @@ class Brand
     public function themeColor(): string
     {
         return (string) config('branding.theme_color');
+    }
+
+    /**
+     * Organization + WebSite structured data for the homepage (Google's
+     * site-name and sitelinks-search-box signals). RealEstateAgent is the
+     * schema.org Organization subtype for a property agency. Built here,
+     * not in Blade, because '@context' would be read as a Blade directive.
+     */
+    public function homepageJsonLd(): string
+    {
+        $home = url('/');
+        $otherLocale = app()->getLocale() === 'ar' ? 'en' : 'ar';
+        $country = (string) config('branding.country');
+
+        return json_encode([
+            '@context' => 'https://schema.org',
+            '@graph' => [
+                [
+                    '@type' => 'RealEstateAgent',
+                    '@id' => $home.'#organization',
+                    'name' => $this->name(),
+                    'alternateName' => $this->name($otherLocale),
+                    'url' => $home,
+                    'logo' => $this->ogImage(),
+                    'image' => $this->ogImage(),
+                    'description' => $this->description(),
+                    'email' => $this->email(),
+                    'telephone' => $this->phone(),
+                    'address' => ['@type' => 'PostalAddress', 'streetAddress' => $this->address(), 'addressCountry' => $country],
+                    'areaServed' => ['@type' => 'Country', 'name' => $country],
+                ],
+                [
+                    '@type' => 'WebSite',
+                    '@id' => $home.'#website',
+                    'name' => $this->name(),
+                    'url' => $home,
+                    'inLanguage' => ['ar', 'en'],
+                    'publisher' => ['@id' => $home.'#organization'],
+                    'potentialAction' => [
+                        '@type' => 'SearchAction',
+                        'target' => ['@type' => 'EntryPoint', 'urlTemplate' => url('/properties').'?search={search_term_string}'],
+                        'query-input' => 'required name=search_term_string',
+                    ],
+                ],
+            ],
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
     }
 
     private function localized(string $key, ?string $locale): string
