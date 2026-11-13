@@ -10965,22 +10965,22 @@
         },
         {
             "name": "spiral/roadrunner-cli",
-            "version": "3.0.1",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/roadrunner-php/cli.git",
-                "reference": "2e87a385801962403679f6c8751fda9af98afb9a"
+                "reference": "2124655555d872c2a8d18dcc9b59cbdce9791b83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/roadrunner-php/cli/zipball/2e87a385801962403679f6c8751fda9af98afb9a",
-                "reference": "2e87a385801962403679f6c8751fda9af98afb9a",
+                "url": "https://api.github.com/repos/roadrunner-php/cli/zipball/2124655555d872c2a8d18dcc9b59cbdce9791b83",
+                "reference": "2124655555d872c2a8d18dcc9b59cbdce9791b83",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.0",
                 "composer/semver": "^3.4",
-                "internal/dload": "^1.19.0",
+                "internal/dload": "^1.19.1",
                 "php": ">=8.2",
                 "roadrunner/worker": "^3.8",
                 "symfony/console": "^6.4 || ^7.0 || ^8.0",
@@ -11041,7 +11041,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-19T08:50:22+00:00"
+            "time": "2026-10-30T21:04:24+00:00"
         },
         {
             "name": "spiral/roadrunner-http",
@@ -18632,5 +18632,5 @@
         "php": "^8.4|^8.5"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
