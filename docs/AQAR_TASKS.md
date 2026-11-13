@@ -644,3 +644,13 @@ No local PHP 8.4/vendor in this environment — every change was `php -l`-checke
 - Port to `ui-improves` (demo2): PR #111 (with `DEMO_SEED_VERSION` 8).
 - P34-12 demo2 brand-country decision.
 - `PHP Security Checker`: bump `symfony/http-client` once a patched release is lockable.
+
+## Phase 35 (2026-11-13) — Saved searches + alerts, CI for demo2, consolidated backlog
+
+| ID | Problem | Fix | Status |
+|---|---|---|---|
+| P35-1 (P33-2) | Saved search + new-listing alerts missing (model/table existed with no UI) | "Save search & alert me" on `/properties`, `/saved-searches` page (own searches only), daily `saved-searches:send-alerts` mail+database digest of new public matches with a watermark so nothing repeats; one shared `Property::scopeMatchingSearchCriteria()` for listing and alerts; demo searches for buyer/tenant (`DEMO_SEED_VERSION` 8). Also fixed `PropertyRecommendationService::getSearchHistory()` which `json_decode()`d an array cast and would have thrown on the first saved search | **PR #112 — `SavedSearchTest` (7 tests)** |
+| P35-2 | `ui-improves` lock lags `main` by ~86 packages | Security-relevant packages patched in PR #111 (`composer audit` clean); full sync left as a backlog item | **OPEN — see `AQAR_BACKLOG.md`** |
+| P35-3 (P29-21) | PRs into `ui-improves` ran no CI at all | `main.yml` `pull_request` trigger now includes `ui-improves` (on that branch, PR #111) | **FIXED** |
+| P35-4 | Open items scattered across 20+ phase sections | New `docs/AQAR_BACKLOG.md`: one list, split by "needs owner" vs "engineering" | **DONE** |
+| P35-5 | Round-34 footer copyright fix used a `@php…@endphp` block in a template that already uses inline `@php(...)`; Blade mis-compiles that pair, so every page 500'd in CI (21 tests) | Logic moved to `Brand::copyright()` with a test; caught by CI before merge, never reached a demo | **FIXED (PR #110)** |

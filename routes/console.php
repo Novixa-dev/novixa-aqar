@@ -106,3 +106,7 @@ Schedule::call(function () {
         }
     }
 })->daily();
+
+// Saved-search alerts (P33-2): one digest per saved search per day, covering
+// listings published since the previous run.
+Schedule::command('saved-searches:send-alerts')->dailyAt('09:00')->withoutOverlapping();

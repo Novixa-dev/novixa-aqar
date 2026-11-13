@@ -103,6 +103,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/apply/{property_id}', RentalApplicationForm::class)->name('rental.apply');
     Route::get('/applications', [TenantController::class, 'applications'])->name('tenant.applications');
     Route::get('/wishlist', WishlistManager::class)->name('wishlist');
+    Route::get('/saved-searches', \App\Livewire\SavedSearches::class)->name('saved-searches');
     Route::get('/custom-reports', [CustomReportController::class, 'index'])->name('custom-reports.index');
     Route::post('/custom-reports/generate', [CustomReportController::class, 'generateReport'])->name('custom-reports.generate');
 });
