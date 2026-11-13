@@ -487,5 +487,10 @@
     "Sign in with a demo account": "الدخول بحساب تجريبي",
     "Choose a role to explore its dashboard. All data is fictional.": "اختر دوراً لاستعراض لوحته. جميع البيانات تجريبية وخيالية.",
     "Demo accounts cannot change their email or password.": "لا يمكن تغيير البريد أو كلمة المرور لحسابات العرض التجريبي.",
-    "You can only report maintenance for a property you lease.": "يمكنك الإبلاغ عن الصيانة فقط لعقار تستأجره."
+    "You can only report maintenance for a property you lease.": "يمكنك الإبلاغ عن الصيانة فقط لعقار تستأجره.",
+    "Excellent": "ممتاز",
+    "Good": "جيد",
+    "Average": "متوسط",
+    "Above average": "أعلى من المتوسط",
+    "Premium": "فاخر"
 }

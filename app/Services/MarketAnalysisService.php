@@ -7,15 +7,24 @@ use Illuminate\Support\Facades\DB;
 
 class MarketAnalysisService
 {
-    public function generateMarketAnalysis($startDate, $endDate, $teamId, $propertyIds = null)
+    /**
+     * @param  array<int, string>|null  $statuses  restrict to these listing
+     *   statuses — sale prices and monthly rents share the `price` column, so
+     *   averaging across both produces a meaningless "market price".
+     */
+    public function generateMarketAnalysis($startDate, $endDate, $teamId, $propertyIds = null, ?array $statuses = null)
     {
-        $baseQuery = function () use ($startDate, $endDate, $teamId, $propertyIds) {
+        $baseQuery = function () use ($startDate, $endDate, $teamId, $propertyIds, $statuses) {
             $query = Property::query()
                 ->where('team_id', $teamId)
                 ->whereBetween('created_at', [$startDate, $endDate]);
 
             if ($propertyIds) {
                 $query->whereIn('id', $propertyIds);
+            }
+
+            if ($statuses) {
+                $query->whereIn('status', $statuses);
             }
 
             return $query;

@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Property;
+use App\Models\Team;
 use App\Services\AIInvestmentAnalysisService;
 use App\Services\MarketAnalysisService;
 use App\Services\PropertyRecommendationService;
@@ -166,5 +167,37 @@ class InvestmentAnalyticsTest extends TestCase
         $this->assertEquals(round($expectedRent, 2), $cashFlow['estimated_annual_rent']);
         $this->assertEquals(round($expectedExpenses, 2), $cashFlow['estimated_expenses']);
         $this->assertEquals(round($expectedNetCashFlow, 2), $cashFlow['net_cash_flow']);
+    }
+
+    public function test_market_position_compares_rentals_only_against_rentals(): void
+    {
+        // Monthly rents and sale prices share the price column; mixing them
+        // made a 160,000/month rental read as "-99.8% vs market".
+        $team = Team::factory()->create();
+        $make = fn (string $status, int $price) => Property::factory()->create([
+            'team_id' => $team->id,
+            'property_type' => 'villa',
+            'status' => $status,
+            'price' => $price,
+        ]);
+
+        $rental = $make('for_rent', 100000);
+        $make('for_rent', 200000);
+        $make('for_sale', 9000000);
+        $sale = $make('for_sale', 11000000);
+
+        $valuation = $this->createStub(PropertyValuationService::class);
+        $valuation->method('calculateValuation')->willReturn(0.0);
+        $recommendations = $this->createStub(PropertyRecommendationService::class);
+        $recommendations->method('getRecommendations')->willReturn([]);
+
+        $service = new AIInvestmentAnalysisService(new MarketAnalysisService(), $recommendations, $valuation);
+
+        // Rental average: (100k + 200k) / 2 = 150k -> -33.33%
+        $this->assertEqualsWithDelta(-33.33, $service->analyzeInvestment($rental)['market_position']['price_vs_market'], 0.01);
+        // Sale average: (9M + 11M) / 2 = 10M -> +10%
+        $this->assertEqualsWithDelta(10.0, $service->analyzeInvestment($sale)['market_position']['price_vs_market'], 0.01);
+        $this->assertTrue(AIInvestmentAnalysisService::isRentalListing($rental));
+        $this->assertFalse(AIInvestmentAnalysisService::isRentalListing($sale));
     }
 }

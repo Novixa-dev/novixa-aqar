@@ -160,6 +160,15 @@ class PropertyDetail extends Component
     
     public function loadInvestmentAnalytics()
     {
+        // Investment analysis (ROI, purchase-price cash flow, market
+        // position) is a buyer's tool; on a rental the "price" is a monthly
+        // rent and every figure it would show is meaningless.
+        if (\App\Services\AIInvestmentAnalysisService::isRentalListing($this->property)) {
+            $this->investmentAnalytics = null;
+
+            return;
+        }
+
         try {
             $aiInvestmentService = app(\App\Services\AIInvestmentAnalysisService::class);
             $this->investmentAnalytics = $aiInvestmentService->analyzeInvestment($this->property);
