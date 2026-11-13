@@ -9,6 +9,7 @@ use Livewire\Component;
 use App\Models\Property;
 use App\Models\Favorite;
 use App\Models\PropertyFeature;
+use App\Models\SavedSearch;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
@@ -100,48 +101,7 @@ class PropertyList extends Component
     public function getPropertiesProperty()
     {
         try {
-            $query = Property::query()->publiclyVisible();
-
-            if (!empty($this->search)) {
-                $query->where(function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%')
-                      ->orWhere('location', 'like', '%' . $this->search . '%');
-                });
-            }
-
-            if (!empty($this->status)) {
-                $query->where('status', $this->status);
-            }
-
-            if (!empty($this->propertyType)) {
-                $query->where('property_type', $this->propertyType);
-            }
-
-            $priceFilterActive = $this->minPrice > 0 || ($this->maxPrice < 1000000000 && $this->maxPrice > 0);
-
-            if ($priceFilterActive) {
-                // A price range only makes sense within one currency — comparing a raw
-                // number against listings priced in YER, SAR, and USD alike would be
-                // misleading. Scope to the app's default currency rather than mixing them.
-                $query->where('currency', config('currencies.default'));
-            }
-
-            if ($this->minPrice > 0) {
-                $query->where('price', '>=', $this->minPrice);
-            }
-
-            if ($this->maxPrice < 1000000000 && $this->maxPrice > 0) {
-                $query->where('price', '<=', $this->maxPrice);
-            }
-
-            if ($this->minBedrooms > 0) {
-                $query->where('bedrooms', '>=', $this->minBedrooms);
-            }
-
-            if ($this->minBathrooms > 0) {
-                $query->where('bathrooms', '>=', $this->minBathrooms);
-            }
+            $query = Property::query()->publiclyVisible()->matchingSearchCriteria($this->currentCriteria());
 
             if ($this->featuredOnly) {
                 $query->where('is_featured', true);
@@ -153,6 +113,70 @@ class PropertyList extends Component
         } catch (Exception $e) {
             return Property::publiclyVisible()->latest()->with('media')->paginate(12);
         }
+    }
+
+    /** This page's active filters in SavedSearch::CRITERIA_KEYS form. */
+    public function currentCriteria(): array
+    {
+        return SavedSearch::normalizeCriteria([
+            'search' => $this->search,
+            'status' => $this->status,
+            'property_type' => $this->propertyType,
+            'min_price' => $this->minPrice,
+            // 1,000,000,000 is this page's "no maximum" sentinel.
+            'max_price' => (int) $this->maxPrice < 1000000000 ? $this->maxPrice : 0,
+            'min_bedrooms' => $this->minBedrooms,
+            'min_bathrooms' => $this->minBathrooms,
+        ]);
+    }
+
+    /** "Save this search": remember the filters and alert on new matches. */
+    public function saveSearch()
+    {
+        $user = Auth::user();
+        $isArabic = app()->getLocale() === 'ar';
+
+        if (! $user) {
+            session()->put('url.intended', url()->previous());
+
+            return $this->redirectRoute('login');
+        }
+
+        $criteria = $this->currentCriteria();
+
+        if ($criteria === []) {
+            session()->flash('saved_search_error', $isArabic ? 'اختر فلتراً واحداً على الأقل قبل حفظ البحث.' : 'Pick at least one filter before saving this search.');
+
+            return;
+        }
+
+        $existing = $user->savedSearches()->get();
+
+        if ($existing->contains(fn (SavedSearch $saved) => $saved->criteria == $criteria)) {
+            session()->flash('saved_search_success', $isArabic ? 'هذا البحث محفوظ لديك مسبقاً.' : 'You have already saved this search.');
+
+            return;
+        }
+
+        if ($existing->count() >= SavedSearch::MAX_PER_USER) {
+            session()->flash('saved_search_error', $isArabic
+                ? 'وصلت للحد الأقصى ('.SavedSearch::MAX_PER_USER.') من عمليات البحث المحفوظة. احذف بحثاً قديماً أولاً.'
+                : 'You have reached the limit of '.SavedSearch::MAX_PER_USER.' saved searches. Delete an old one first.');
+
+            return;
+        }
+
+        $user->savedSearches()->create([
+            'name' => SavedSearch::describe($criteria),
+            'criteria' => $criteria,
+            'alerts_enabled' => true,
+            // Alert only on listings published after saving, not the current results.
+            'last_notified_at' => now(),
+        ]);
+
+        session()->flash('saved_search_success', $isArabic
+            ? 'تم حفظ البحث. سنرسل لك تنبيهاً عند نشر عقارات جديدة مطابقة.'
+            : 'Search saved. We will alert you when new matching listings are published.');
     }
 
     public function updatedSearch()

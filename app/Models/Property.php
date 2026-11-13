@@ -194,6 +194,56 @@ class Property extends Model implements HasMedia
         return $query->where(fn (Builder $q) => $q->where('moderation_status', 'approved')->orWhereNull('moderation_status'));
     }
 
+    /**
+     * The /properties listing filters, shared by PropertyList and saved-search
+     * alerts so the two can never disagree on what "matches" means. Keys are
+     * SavedSearch::CRITERIA_KEYS.
+     */
+    public function scopeMatchingSearchCriteria(Builder $query, array $criteria): Builder
+    {
+        $search = trim((string) ($criteria['search'] ?? ''));
+        if ($search !== '') {
+            $query->where(function (Builder $q) use ($search) {
+                $q->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%')
+                    ->orWhere('location', 'like', '%'.$search.'%');
+            });
+        }
+
+        if (! empty($criteria['status'])) {
+            $query->where('status', $criteria['status']);
+        }
+
+        if (! empty($criteria['property_type'])) {
+            $query->where('property_type', $criteria['property_type']);
+        }
+
+        $minPrice = (float) ($criteria['min_price'] ?? 0);
+        $maxPrice = (float) ($criteria['max_price'] ?? 0);
+
+        if ($minPrice > 0 || $maxPrice > 0) {
+            // A price range only makes sense within one currency — comparing a
+            // raw number against listings priced in YER, SAR and USD alike would
+            // be misleading, so scope to the app's default currency.
+            $query->where('currency', config('currencies.default'));
+        }
+        if ($minPrice > 0) {
+            $query->where('price', '>=', $minPrice);
+        }
+        if ($maxPrice > 0) {
+            $query->where('price', '<=', $maxPrice);
+        }
+
+        if ((int) ($criteria['min_bedrooms'] ?? 0) > 0) {
+            $query->where('bedrooms', '>=', (int) $criteria['min_bedrooms']);
+        }
+        if ((int) ($criteria['min_bathrooms'] ?? 0) > 0) {
+            $query->where('bathrooms', '>=', (int) $criteria['min_bathrooms']);
+        }
+
+        return $query;
+    }
+
     public function isPubliclyVisible(): bool
     {
         return in_array($this->moderation_status, ['approved', null], true);

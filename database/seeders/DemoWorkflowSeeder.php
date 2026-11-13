@@ -10,6 +10,7 @@ use App\Models\LeaseAgreement;
 use App\Models\MaintenanceRequest;
 use App\Models\Payment;
 use App\Models\Property;
+use App\Models\SavedSearch;
 use App\Models\RentalApplication;
 use App\Models\Tenant;
 use App\Models\Transaction;
@@ -38,6 +39,25 @@ class DemoWorkflowSeeder extends Seeder
         $staff = User::where('email', DemoAccounts::email('staff'))->first();
         $tenantUser = User::where('email', DemoAccounts::email('tenant'))->first();
         $buyerUser = User::where('email', DemoAccounts::email('buyer'))->first();
+
+        // Saved searches (P33-2) so the buyer and tenant personas' "Saved
+        // searches" pages are not empty in the demo.
+        foreach ([
+            [$buyerUser, ['status' => Property::STATUS_FOR_SALE, 'property_type' => 'villa', 'min_bedrooms' => 4]],
+            [$buyerUser, ['status' => Property::STATUS_FOR_SALE, 'property_type' => 'apartment', 'search' => 'بويش']],
+            [$tenantUser, ['status' => Property::STATUS_FOR_RENT, 'min_bedrooms' => 2]],
+        ] as [$owner, $criteria]) {
+            // criteria is JSON, so match in PHP rather than in a where().
+            if (! $owner || $owner->savedSearches()->get()->contains(fn (SavedSearch $saved) => $saved->criteria == $criteria)) {
+                continue;
+            }
+            $owner->savedSearches()->create([
+                'name' => SavedSearch::describe($criteria, 'ar'),
+                'criteria' => $criteria,
+                'alerts_enabled' => true,
+                'last_notified_at' => now(),
+            ]);
+        }
 
         // Give the landlord direct ownership of several rentals so their
         // panel shows inventory and ownership-scoped resources have rows.
