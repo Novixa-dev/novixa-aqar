@@ -606,7 +606,7 @@
                                             <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ app()->getLocale() === 'ar' ? 'الموقع في السوق' : 'Market Position' }}</h4>
                                             <div class="flex items-center justify-between mb-2">
                                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $this->getPositionBadgeClass($investmentAnalytics['market_position']['position']) }}">
-                                                    {{ ucfirst(str_replace('_', ' ', $investmentAnalytics['market_position']['position'])) }}
+                                                    {{ __(ucfirst(str_replace('_', ' ', $investmentAnalytics['market_position']['position']))) }}
                                                 </span>
                                                 <span class="text-sm {{ $investmentAnalytics['market_position']['price_vs_market'] < 0 ? 'text-green-600' : 'text-red-600' }} font-semibold">
                                                     {{ $investmentAnalytics['market_position']['price_vs_market'] >= 0 ? '+' : '' }}{{ number_format($investmentAnalytics['market_position']['price_vs_market'], 1) }}% {{ app()->getLocale() === 'ar' ? 'مقارنة بالسوق' : 'vs market' }}
