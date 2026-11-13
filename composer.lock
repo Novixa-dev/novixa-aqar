@@ -3402,16 +3402,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.13.2",
+            "version": "2.13.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "adee536f95101929f262b8c59e8a61472f347d58"
+                "reference": "6d3cd8285a97eaa352956a4ada92fa03ecce1c4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/adee536f95101929f262b8c59e8a61472f347d58",
-                "reference": "adee536f95101929f262b8c59e8a61472f347d58",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/6d3cd8285a97eaa352956a4ada92fa03ecce1c4e",
+                "reference": "6d3cd8285a97eaa352956a4ada92fa03ecce1c4e",
                 "shasum": ""
             },
             "require": {
@@ -3501,7 +3501,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.13.2"
+                "source": "https://github.com/guzzle/psr7/tree/2.13.3"
             },
             "funding": [
                 {
@@ -3517,7 +3517,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-17T23:49:46+00:00"
+            "time": "2026-11-12T15:57:42+00:00"
         },
         {
             "name": "guzzlehttp/uri-template",
@@ -4397,16 +4397,16 @@
         },
         {
             "name": "laravel/horizon",
-            "version": "v5.50.1",
+            "version": "v5.51.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/horizon.git",
-                "reference": "9d65cae809688179ce2c4ace64eb75e886e245c5"
+                "reference": "e168e56b97a4a4bb2b7481c1ad01b1be1e49963e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/horizon/zipball/9d65cae809688179ce2c4ace64eb75e886e245c5",
-                "reference": "9d65cae809688179ce2c4ace64eb75e886e245c5",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/e168e56b97a4a4bb2b7481c1ad01b1be1e49963e",
+                "reference": "e168e56b97a4a4bb2b7481c1ad01b1be1e49963e",
                 "shasum": ""
             },
             "require": {
@@ -4471,9 +4471,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/horizon/issues",
-                "source": "https://github.com/laravel/horizon/tree/v5.50.1"
+                "source": "https://github.com/laravel/horizon/tree/v5.51.0"
             },
-            "time": "2026-10-13T06:25:19+00:00"
+            "time": "2026-11-02T15:26:17+00:00"
         },
         {
             "name": "laravel/jetstream",
@@ -18632,5 +18632,5 @@
         "php": "^8.4|^8.5"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
