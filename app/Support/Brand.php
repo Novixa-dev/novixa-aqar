@@ -111,6 +111,51 @@ class Brand
         return (string) config('branding.theme_color');
     }
 
+    /**
+     * Organization + WebSite structured data for the homepage (Google's
+     * site-name and sitelinks-search-box signals). RealEstateAgent is the
+     * schema.org Organization subtype for a property agency. Built here,
+     * not in Blade, because '@context' would be read as a Blade directive.
+     */
+    public function homepageJsonLd(): string
+    {
+        $home = url('/');
+        $otherLocale = app()->getLocale() === 'ar' ? 'en' : 'ar';
+
+        return json_encode([
+            '@context' => 'https://schema.org',
+            '@graph' => [
+                [
+                    '@type' => 'RealEstateAgent',
+                    '@id' => $home.'#organization',
+                    'name' => $this->name(),
+                    'alternateName' => $this->name($otherLocale),
+                    'url' => $home,
+                    'logo' => $this->ogImage(),
+                    'image' => $this->ogImage(),
+                    'description' => $this->description(),
+                    'email' => $this->email(),
+                    'telephone' => $this->phone(),
+                    'address' => ['@type' => 'PostalAddress', 'streetAddress' => $this->address(), 'addressCountry' => 'YE'],
+                    'areaServed' => ['@type' => 'Country', 'name' => 'Yemen'],
+                ],
+                [
+                    '@type' => 'WebSite',
+                    '@id' => $home.'#website',
+                    'name' => $this->name(),
+                    'url' => $home,
+                    'inLanguage' => ['ar', 'en'],
+                    'publisher' => ['@id' => $home.'#organization'],
+                    'potentialAction' => [
+                        '@type' => 'SearchAction',
+                        'target' => ['@type' => 'EntryPoint', 'urlTemplate' => url('/properties').'?search={search_term_string}'],
+                        'query-input' => 'required name=search_term_string',
+                    ],
+                ],
+            ],
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
+    }
+
     private function localized(string $key, ?string $locale): string
     {
         $locale ??= app()->getLocale();

@@ -51,6 +51,21 @@ class SeoAndBrandingTest extends TestCase
         $this->assertStringNotContainsString('Dar Hadhramaut', $html);
     }
 
+    public function test_the_homepage_publishes_organization_and_website_structured_data(): void
+    {
+        $html = $this->get('/')->assertOk()->getContent();
+
+        preg_match_all('#<script type="application/ld\+json">(.*?)</script>#s', $html, $blocks);
+        $graph = collect($blocks[1])
+            ->map(fn (string $json) => json_decode($json, true))
+            ->firstWhere('@context', 'https://schema.org')['@graph'] ?? [];
+        $types = array_column($graph, '@type');
+
+        $this->assertContains('RealEstateAgent', $types);
+        $this->assertContains('WebSite', $types);
+        $this->assertSame(url('/'), $graph[array_search('WebSite', $types)]['url']);
+    }
+
     public function test_an_indexable_deployment_has_no_noindex_tag(): void
     {
         config(['branding.indexable' => true]);
