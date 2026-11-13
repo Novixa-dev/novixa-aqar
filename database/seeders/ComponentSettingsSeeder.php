@@ -13,7 +13,6 @@ class ComponentSettingsSeeder extends Seeder
             'property-booking',
             'property-map',
             'valuation-booking',
-            'advanced-property-search',
             // Add other Livewire components here
         ];
 
