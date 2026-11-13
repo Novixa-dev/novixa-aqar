@@ -3,8 +3,10 @@ name: Docker
 on:
   push:
     branches: [main]
+  # ui-improves (aqar-demo2) is a long-lived release branch too: PRs into it
+  # were never tested before merge, only by the deploy's own test step.
   pull_request:
-    branches: [main]
+    branches: [main, ui-improves]
   workflow_dispatch:
 
 permissions:
