@@ -121,6 +121,7 @@ class Brand
     {
         $home = url('/');
         $otherLocale = app()->getLocale() === 'ar' ? 'en' : 'ar';
+        $country = (string) config('branding.country');
 
         return json_encode([
             '@context' => 'https://schema.org',
@@ -136,8 +137,8 @@ class Brand
                     'description' => $this->description(),
                     'email' => $this->email(),
                     'telephone' => $this->phone(),
-                    'address' => ['@type' => 'PostalAddress', 'streetAddress' => $this->address(), 'addressCountry' => 'YE'],
-                    'areaServed' => ['@type' => 'Country', 'name' => 'Yemen'],
+                    'address' => ['@type' => 'PostalAddress', 'streetAddress' => $this->address(), 'addressCountry' => $country],
+                    'areaServed' => ['@type' => 'Country', 'name' => $country],
                 ],
                 [
                     '@type' => 'WebSite',
