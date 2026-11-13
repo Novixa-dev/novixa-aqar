@@ -91,6 +91,23 @@ class Brand
         return preg_replace('/\D/', '', $this->phone());
     }
 
+    /**
+     * Footer copyright line. general.footer_copyright is a single
+     * admin-editable string; when it holds no Arabic (the demo seeds an
+     * English one) it is not shown on the Arabic site, which gets the
+     * localized default instead.
+     */
+    public function copyright(): string
+    {
+        $stored = trim((string) (app(GeneralSettings::class)->footer_copyright ?? ''));
+
+        if ($stored !== '' && ! (app()->getLocale() === 'ar' && ! preg_match('/\p{Arabic}/u', $stored))) {
+            return $stored;
+        }
+
+        return '© '.date('Y').' '.$this->name().'. '.__('All rights reserved.');
+    }
+
     public function ogImage(): string
     {
         $image = (string) config('branding.og_image');

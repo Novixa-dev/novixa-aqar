@@ -93,16 +93,7 @@
 
         <div class="pt-8 border-t border-[#332A26] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8C7A6B] gap-4">
             <div>
-                @php
-                    // footer_copyright is one admin-editable string; when it holds no
-                    // Arabic (the demo seeds an English one) don't show it on the
-                    // Arabic site — fall back to the localized default instead.
-                    $copyright = $socials->footer_copyright;
-                    if ($copyright && app()->getLocale() === 'ar' && ! preg_match('/\p{Arabic}/u', $copyright)) {
-                        $copyright = null;
-                    }
-                @endphp
-                {{ $copyright ?: ('© '.date('Y').' '.$brand->name().'. '.__('All rights reserved.')) }}
+                {{ $brand->copyright() }}
             </div>
             <div class="flex items-center gap-4">
                 <span>{{ app()->getLocale() === 'ar' ? 'تصميم وتطوير فاخر' : 'Luxury Real Estate Platform' }}</span>
