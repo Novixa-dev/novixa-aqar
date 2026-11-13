@@ -503,5 +503,12 @@
     "Good": "Good",
     "Average": "Average",
     "Above average": "Above average",
-    "Premium": "Premium"
+    "Premium": "Premium",
+    "Workshop": "Workshop",
+    "Market": "Market",
+    "Community": "Community",
+    "Festival": "Festival",
+    "Concert": "Concert",
+    "Fundraiser": "Fundraiser",
+    "Sports": "Sports"
 }
