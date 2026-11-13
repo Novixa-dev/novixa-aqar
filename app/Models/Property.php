@@ -852,8 +852,9 @@ class Property extends Model implements HasMedia
             ],
         ];
 
-        $type = $this->property_type ?? 'Apartment';
-        $images = $stockImages[$type] ?? $stockImages['Apartment'];
+        $type = ucfirst(strtolower($this->property_type ?? 'Apartment'));
+        // A standalone house reads closer to the villa photos than a flat.
+        $images = $stockImages[$type] ?? ($type === 'House' ? $stockImages['Villa'] : $stockImages['Apartment']);
         $index = abs(((int)($this->id ?? 1)) % count($images));
 
         return $images[$index];
@@ -861,21 +862,23 @@ class Property extends Model implements HasMedia
 
     public function getTranslatedTypeAttribute(): string
     {
+        $ar = app()->getLocale() === 'ar';
+
+        // Keyed lowercase: the same type arrives as 'Villa' from the seeder
+        // and Staff panel but 'villa'/'apartment' from the public submission
+        // and request forms and the V1 API, so an exact-case lookup left
+        // every publicly submitted listing showing the raw English value.
         $types = [
-            'Apartment' => app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment',
-            'Villa' => app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Luxury Villa',
-            // The only property_type value actually stored lowercase
-            // ('house', not 'House') — every other key here exactly matches
-            // its real stored casing, so this one silently never matched
-            // and fell through to the raw value below.
-            'house' => app()->getLocale() === 'ar' ? 'منزل مستقل' : 'Independent House',
-            'Land' => app()->getLocale() === 'ar' ? 'أرض سكنية / تجارية' : 'Land / Plot',
-            'Commercial' => app()->getLocale() === 'ar' ? 'عقار تجاري / مكتب' : 'Commercial / Office',
-            'Building' => app()->getLocale() === 'ar' ? 'عمارة استثمارية' : 'Investment Building',
-            'HMO' => app()->getLocale() === 'ar' ? 'سكن مشترك' : 'Shared Living (HMO)',
+            'apartment' => $ar ? 'شقة سكنية' : 'Apartment',
+            'villa' => $ar ? 'فيلا فاخرة' : 'Luxury Villa',
+            'house' => $ar ? 'منزل مستقل' : 'Independent House',
+            'land' => $ar ? 'أرض سكنية / تجارية' : 'Land / Plot',
+            'commercial' => $ar ? 'عقار تجاري / مكتب' : 'Commercial / Office',
+            'building' => $ar ? 'عمارة استثمارية' : 'Investment Building',
+            'hmo' => $ar ? 'سكن مشترك' : 'Shared Living (HMO)',
         ];
 
-        return $types[$this->property_type] ?? ($this->property_type ?: (app()->getLocale() === 'ar' ? 'عقار سكني' : 'Residential'));
+        return $types[strtolower((string) $this->property_type)] ?? ($this->property_type ?: ($ar ? 'عقار سكني' : 'Residential'));
     }
 
     /**

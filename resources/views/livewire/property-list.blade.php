@@ -73,6 +73,8 @@
                             </option>
                             <option value="Villa">{{ app()->getLocale() === 'ar' ? 'فيلا فاخرة' : 'Luxury Villa' }}
                             </option>
+                            <option value="house">{{ app()->getLocale() === 'ar' ? 'منزل مستقل' : 'Independent House' }}
+                            </option>
                             <option value="Land">{{ app()->getLocale() === 'ar' ? 'أرض سكنية / تجارية' : 'Land / Plot'
                                 }}</option>
                             <option value="Commercial">{{ app()->getLocale() === 'ar' ? 'عقار تجاري / مكتب' :
