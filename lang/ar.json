@@ -502,5 +502,6 @@
     "Sports": "رياضة",
     "Please log in to write a review.": "يرجى تسجيل الدخول لكتابة تقييم.",
     "You are not eligible to review this property.": "يمكنك تقييم هذا العقار فقط بعد حجزه أو استئجاره.",
-    "You have already reviewed this neighborhood.": "لقد قيّمت هذا الحي من قبل."
+    "You have already reviewed this neighborhood.": "لقد قيّمت هذا الحي من قبل.",
+    "We could not send the reset email right now. Please try again later or contact us.": "تعذّر إرسال رسالة استعادة كلمة المرور حالياً. يرجى المحاولة لاحقاً أو التواصل معنا."
 }

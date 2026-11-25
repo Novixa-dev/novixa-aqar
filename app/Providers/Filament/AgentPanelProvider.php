@@ -41,7 +41,7 @@ class AgentPanelProvider extends PanelProvider
             ->login([\Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'create'])
             ->loginRouteSlug('login')
             ->homeUrl('/agent')
-            ->passwordReset()
+            ->passwordReset(\App\Filament\Auth\RequestPasswordReset::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
                 'primary' => Color::Blue,
