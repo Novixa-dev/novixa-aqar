@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use Illuminate\Support\Facades\RateLimiter;
+use App\Support\PublicFormThrottle;
 use Livewire\Component;
 use App\Models\Property;
 use App\Models\Favorite;
@@ -194,17 +194,15 @@ class PropertyDetail extends Component
 
     public function submitLeadForm()
     {
-        // Every inquiry creates a CRM lead and scores it; cap it per IP the
-        // same way PropertyRequestForm/PropertySubmissionForm do.
-        $throttleKey = 'property-inquiry:'.request()->ip();
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-            $this->addError('name', __('You have submitted too many requests recently. Please try again later.'));
+        $this->validate();
+
+        // Every inquiry creates a scored CRM lead; cap it (see
+        // PublicFormThrottle). Only valid submissions count.
+        if (! PublicFormThrottle::attempt('property-inquiry', request()->ip(), $this->email)) {
+            $this->addError('throttle', __('You have submitted too many requests recently. Please try again later.'));
 
             return;
         }
-        RateLimiter::hit($throttleKey, 600); // 5 per 10 minutes per IP
-
-        $this->validate();
 
         $teamId = $this->team?->id ?? \App\Models\Team::first()?->id;
 

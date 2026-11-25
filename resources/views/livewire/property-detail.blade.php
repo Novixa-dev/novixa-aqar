@@ -1167,6 +1167,9 @@
                     </div>
 
                     <form wire:submit.prevent="submitLeadForm" class="p-6 space-y-4">
+                        @error('throttle')
+                            <div role="alert" class="p-3 text-sm rounded-xl bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300">{{ $message }}</div>
+                        @enderror
                         <div>
                             <label for="lead_name" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
                                 {{ __('lead.attributes.name') ?? 'الاسم الكامل' }} <span class="text-red-500">*</span>
