@@ -499,5 +499,8 @@
     "Festival": "مهرجان",
     "Concert": "حفل",
     "Fundraiser": "حملة خيرية",
-    "Sports": "رياضة"
+    "Sports": "رياضة",
+    "Please log in to write a review.": "يرجى تسجيل الدخول لكتابة تقييم.",
+    "You are not eligible to review this property.": "يمكنك تقييم هذا العقار فقط بعد حجزه أو استئجاره.",
+    "You have already reviewed this neighborhood.": "لقد قيّمت هذا الحي من قبل."
 }

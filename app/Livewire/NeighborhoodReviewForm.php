@@ -29,6 +29,12 @@ class NeighborhoodReviewForm extends Component
 
     public function submitReview()
     {
+        if (! Auth::check()) {
+            $this->addError('general', __('Please log in to write a review.'));
+
+            return;
+        }
+
         $this->validate();
 
         // Check if user has already reviewed this neighborhood
@@ -38,7 +44,7 @@ class NeighborhoodReviewForm extends Component
             ->first();
 
         if ($existingReview) {
-            $this->addError('general', 'You have already reviewed this neighborhood.');
+            $this->addError('general', __('You have already reviewed this neighborhood.'));
             return;
         }
 
