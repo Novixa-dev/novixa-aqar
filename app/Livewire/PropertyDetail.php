@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 use App\Models\Property;
 use App\Models\Favorite;
@@ -51,7 +52,7 @@ class PropertyDetail extends Component
         'name' => 'required|string|max:255',
         'email' => 'required|email|max:255',
         'phone' => 'nullable|string|max:20',
-        'message' => 'nullable|string',
+        'message' => 'nullable|string|max:5000',
     ];
 
     public function boot(NeighborhoodDataService $neighborhoodDataService, LeadScoringService $leadScoringService)
@@ -193,6 +194,16 @@ class PropertyDetail extends Component
 
     public function submitLeadForm()
     {
+        // Every inquiry creates a CRM lead and scores it; cap it per IP the
+        // same way PropertyRequestForm/PropertySubmissionForm do.
+        $throttleKey = 'property-inquiry:'.request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $this->addError('name', __('You have submitted too many requests recently. Please try again later.'));
+
+            return;
+        }
+        RateLimiter::hit($throttleKey, 600); // 5 per 10 minutes per IP
+
         $this->validate();
 
         $teamId = $this->team?->id ?? \App\Models\Team::first()?->id;

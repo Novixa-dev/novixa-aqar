@@ -29,10 +29,18 @@ class PropertyReviewForm extends Component
 
     public function submitReview()
     {
+        // The form only renders for signed-in users, but a session that
+        // expires while the page is open would otherwise hit a null user.
+        if (! Auth::check()) {
+            $this->addError('general', __('Please log in to write a review.'));
+
+            return;
+        }
+
         $this->validate();
 
         if (!$this->canUserReview()) {
-            $this->addError('general', 'You are not eligible to review this property.');
+            $this->addError('general', __('You are not eligible to review this property.'));
             return;
         }
 

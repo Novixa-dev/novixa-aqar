@@ -510,5 +510,8 @@
     "Festival": "Festival",
     "Concert": "Concert",
     "Fundraiser": "Fundraiser",
-    "Sports": "Sports"
+    "Sports": "Sports",
+    "Please log in to write a review.": "Please log in to write a review.",
+    "You are not eligible to review this property.": "You can only review this property after booking or renting it.",
+    "You have already reviewed this neighborhood.": "You have already reviewed this neighborhood."
 }
