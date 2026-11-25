@@ -36,7 +36,7 @@ Route::middleware('guest')->group(function () {
     // are declared here; without them the public login had no way to
     // recover a forgotten password.
     Route::get('/forgot-password', [\Laravel\Fortify\Http\Controllers\PasswordResetLinkController::class, 'create'])->name('password.request');
-    Route::post('/forgot-password', [\Laravel\Fortify\Http\Controllers\PasswordResetLinkController::class, 'store'])->middleware('throttle:6,1')->name('password.email');
+    Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'store'])->middleware('throttle:6,1')->name('password.email');
     Route::get('/reset-password/{token}', [\Laravel\Fortify\Http\Controllers\NewPasswordController::class, 'create'])->name('password.reset');
     Route::post('/reset-password', [\Laravel\Fortify\Http\Controllers\NewPasswordController::class, 'store'])->middleware('throttle:6,1')->name('password.update');
 });
