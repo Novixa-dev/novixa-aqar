@@ -152,13 +152,15 @@ COPY --chown=${USER}:${USER} .docker/healthcheck /usr/local/bin/healthcheck
 # Copy environment file
 COPY --chown=${USER}:${USER} .env.example ./.env
 
-# Pre-fetch the RoadRunner server binary at build time. Octane's
-# `octane:roadrunner` command otherwise lazily downloads it from GitHub's
-# API on first boot -- on a shared host like Railway that call comes back
-# HTTP 403 (GitHub's anonymous API rate limit, exhausted by other tenants
-# on the same egress IP), so the octane process crash-looped forever and
-# the app never came up. Doing it once here, at build time, means every
-# container boot just uses the binary already baked into the image.
+# Bake the RoadRunner server binary into the image. Octane would otherwise
+# download it from GitHub's API -- lazily on first boot (on a shared host
+# that call came back HTTP 403, GitHub's anonymous rate limit exhausted by
+# other tenants, and the app crash-looped), or at build time via
+# octane:install, which hit the same 403 on a shared CI runner and failed
+# a demo2 deploy. Copying it from the official image needs no API call;
+# octane:install then finds ./rr and skips the download. Pinned to the
+# 2025.1 line that `rr get-binary` resolved to.
+COPY --from=ghcr.io/roadrunner-server/roadrunner:2025.1.15 --chown=${USER}:${USER} /usr/bin/rr ./rr
 RUN mkdir -p /tmp/opcache-file-cache && php artisan octane:install --server=roadrunner --no-interaction
 
 # octane:install leaves an empty .rr.yaml, which lets RoadRunner serve
