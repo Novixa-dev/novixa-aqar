@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
+use App\View\Components\PropertyMap;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -11,23 +12,7 @@ class HomeController extends Controller
     {
         $featuredProperties = Property::publiclyVisible()->where('is_featured', true)->with('media')->take(3)->get();
 
-        $mapProperties = Property::publiclyVisible()->whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->where('latitude', '!=', 0)
-            ->where('longitude', '!=', 0)
-            ->get(['id', 'title', 'price', 'latitude', 'longitude', 'bedrooms', 'bathrooms', 'area_sqft'])
-            ->map(function ($property) {
-                return [
-                    'id' => $property->id,
-                    'title' => $property->title,
-                    'price' => $property->price,
-                    'latitude' => $property->latitude,
-                    'longitude' => $property->longitude,
-                    'bedrooms' => $property->bedrooms,
-                    'bathrooms' => $property->bathrooms,
-                    'area_sqft' => $property->area_sqft,
-                ];
-            });
+        $mapProperties = PropertyMap::markerQuery()->get();
 
         return view('home', [
             'featuredProperties' => $featuredProperties,
