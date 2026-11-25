@@ -53,7 +53,7 @@ class AppPanelProvider extends PanelProvider
             ->loginRouteSlug('login')
             ->homeUrl('/app')
             ->registration()
-            ->passwordReset()
+            ->passwordReset(\App\Filament\Auth\RequestPasswordReset::class)
             // Email verification is disabled app-wide: Fortify's own
             // Features::emailVerification() is commented out in
             // config/fortify.php, and App\Models\User doesn't implement

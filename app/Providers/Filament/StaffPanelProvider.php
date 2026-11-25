@@ -57,7 +57,7 @@ class StaffPanelProvider extends PanelProvider
             ->loginRouteSlug('login')
             ->homeUrl('/staff')
             // ->registration()
-            ->passwordReset()
+            ->passwordReset(\App\Filament\Auth\RequestPasswordReset::class)
             // ->emailVerification()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
