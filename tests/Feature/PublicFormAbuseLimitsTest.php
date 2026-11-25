@@ -8,6 +8,7 @@ use App\Models\ContactMessage;
 use App\Models\Lead;
 use App\Models\Property;
 use App\Models\Team;
+use App\Support\PublicFormThrottle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
@@ -15,7 +16,7 @@ use Tests\TestCase;
 
 /**
  * Public forms that store a record and notify the office must be capped
- * per IP and bounded in size, like PropertyRequestForm already was.
+ * and bounded in size (see PublicFormThrottle).
  */
 class PublicFormAbuseLimitsTest extends TestCase
 {
@@ -30,32 +31,63 @@ class PublicFormAbuseLimitsTest extends TestCase
         ];
     }
 
-    public function test_the_contact_form_is_capped_per_ip_with_a_localized_error(): void
+    public function test_one_sender_is_capped_with_a_localized_error_shown_above_the_form(): void
     {
         Mail::fake();
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < PublicFormThrottle::PER_SENDER; $i++) {
             $this->from('/contact')->post('/contact', $this->contactPayload())->assertSessionHasNoErrors();
         }
 
         $this->from('/contact')->post('/contact', $this->contactPayload())
             ->assertRedirect('/contact')
-            ->assertSessionHasErrors('message');
+            ->assertSessionHasErrors('throttle');
 
-        $this->assertSame(5, ContactMessage::count());
+        $this->assertSame(PublicFormThrottle::PER_SENDER, ContactMessage::count());
     }
 
-    public function test_the_contact_message_length_is_bounded(): void
+    public function test_visitors_sharing_one_ip_are_not_blocked_by_each_others_messages(): void
     {
         Mail::fake();
 
-        $this->from('/contact')->post('/contact', $this->contactPayload(['message' => str_repeat('a', 5001)]))
-            ->assertSessionHasErrors('message');
+        // e.g. several prospects behind one mobile-carrier NAT address
+        for ($i = 0; $i < 6; $i++) {
+            $this->from('/contact')
+                ->post('/contact', $this->contactPayload(['email' => "visitor{$i}@example.test"]))
+                ->assertSessionHasNoErrors();
+        }
 
-        $this->assertSame(0, ContactMessage::count());
+        $this->assertSame(6, ContactMessage::count());
     }
 
-    public function test_the_property_inquiry_form_is_capped_per_ip(): void
+    public function test_one_ip_rotating_emails_is_still_capped(): void
+    {
+        Mail::fake();
+
+        for ($i = 0; $i < PublicFormThrottle::PER_IP; $i++) {
+            $this->post('/contact', $this->contactPayload(['email' => "spam{$i}@example.test"]));
+        }
+
+        $this->from('/contact')->post('/contact', $this->contactPayload(['email' => 'one-more@example.test']))
+            ->assertSessionHasErrors('throttle');
+
+        $this->assertSame(PublicFormThrottle::PER_IP, ContactMessage::count());
+    }
+
+    public function test_invalid_submissions_do_not_use_up_the_budget(): void
+    {
+        Mail::fake();
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->from('/contact')->post('/contact', $this->contactPayload(['message' => str_repeat('a', 5001)]))
+                ->assertSessionHasErrors('message');
+        }
+
+        $this->from('/contact')->post('/contact', $this->contactPayload())->assertSessionHasNoErrors();
+        $this->assertSame(1, ContactMessage::count());
+    }
+
+    public function test_the_property_inquiry_form_is_capped_per_sender(): void
     {
         $team = Team::factory()->create();
         $property = Property::factory()->create(['team_id' => $team->id]);
@@ -64,12 +96,12 @@ class PublicFormAbuseLimitsTest extends TestCase
         // The form clears itself after each successful inquiry.
         $fill = fn () => $component->set('name', 'علي')->set('email', 'ali@example.test')->set('message', 'ما هو السعر النهائي؟');
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < PublicFormThrottle::PER_SENDER; $i++) {
             $fill()->call('submitLeadForm')->assertHasNoErrors();
         }
-        $fill()->call('submitLeadForm')->assertHasErrors('name');
+        $fill()->call('submitLeadForm')->assertHasErrors('throttle');
 
-        $this->assertSame(5, Lead::count());
+        $this->assertSame(PublicFormThrottle::PER_SENDER, Lead::count());
     }
 
     public function test_the_property_inquiry_message_length_is_bounded(): void
