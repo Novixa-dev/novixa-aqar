@@ -513,5 +513,6 @@
     "Sports": "Sports",
     "Please log in to write a review.": "Please log in to write a review.",
     "You are not eligible to review this property.": "You can only review this property after booking or renting it.",
-    "You have already reviewed this neighborhood.": "You have already reviewed this neighborhood."
+    "You have already reviewed this neighborhood.": "You have already reviewed this neighborhood.",
+    "We could not send the reset email right now. Please try again later or contact us.": "We could not send the reset email right now. Please try again later or contact us."
 }

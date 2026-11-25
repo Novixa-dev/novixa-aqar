@@ -214,7 +214,7 @@ User-requested final verification that the exact code about to be published matc
 | P18-4 | 5 of 9 panels' Dashboard pages (Contractor, Landlord, Seller, Buyer, App) showed raw English "Dashboard" — they extend generic `Page` instead of Filament's `Dashboard` base, losing its free built-in localization | Added the same `getTitle()`/`getNavigationLabel()` override Staff/Agent already had | **FIXED** | `f0519d2` |
 | P18-5 | Tenant persona's entire dashboard widget area (5 stats, table heading, empty state, row action) was hardcoded English | Translated to match the rest of the codebase | **FIXED** | `21a2fa9` |
 | P18-6 | One flaky test (`TransactionTest::test_transaction_scope`) failed in 1 of 4 full-suite runs against identical code | Investigated directly (isolated 3×, forced the suspected leak order explicitly) — could not reproduce; concluded pre-existing rare flake, not caused by this session | **NOT REPRODUCIBLE / NOT A REGRESSION** | — |
-| P18-7 | Password-reset gives zero visible feedback when mail sending throws (mail delivery itself fails locally only because `mailpit` isn't running outside Docker — already documented) | Not fixed — lower risk to leave Filament's password-reset internals alone than patch blind; flagged for a follow-up once a real mail provider makes this verifiable end-to-end | **DOCUMENTED, DEFERRED** | — |
+| P18-7 | Password-reset gives zero visible feedback when mail sending throws (mail delivery itself fails locally only because `mailpit` isn't running outside Docker — already documented) | Not fixed — lower risk to leave Filament's password-reset internals alone than patch blind; flagged for a follow-up once a real mail provider makes this verifiable end-to-end | **FIXED (Phase 37)** — public `/forgot-password` and all 9 panels' reset pages catch the mail transport failure, report it, and show a localized error; covered by `PublicPasswordResetTest` (failing SMTP transport) | — |
 
 **Fresh migrate:fresh --seed --force**: exit 0, all 16 seeders `DONE`; confirmed Phase 17's fixes (transaction seeding, news translation) survive a from-scratch reseed, and the "test" PropertyCategory does not reappear (no seeder path creates it).
 
@@ -677,3 +677,9 @@ Live crawl of both demos (AR/EN × desktop/mobile × 18 pages = 144 page loads):
 - `DocuSignService::getAccessToken()` returns a hard-coded placeholder — e-signature is not functional (owner decision: implement JWT auth with real credentials, or hide the feature).
 - Duplicate neighbourhood reviews possible under a double-submit race (no unique index on user + reviewable) — pre-existing, found by code review.
 
+
+## Phase 37 (2026-11-25) — Password-reset mail failures
+
+| ID | Problem | Fix | Status |
+|---|---|---|---|
+| P37-1 (P18-7) | If the mail transport fails (e.g. SMTP down or the sending domain not yet verified, P23-11), `POST /forgot-password` returned a bare 500 and the panels' reset pages threw a Livewire error | `App\Http\Controllers\Auth\PasswordResetLinkController` wraps Fortify's action; `App\Filament\Auth\RequestPasswordReset` (registered in all 9 panels) wraps Filament's. Both report the exception and show a localized error (AR/EN) | **FIXED — `PublicPasswordResetTest` (real failing SMTP transport, public + panel)** |

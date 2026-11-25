@@ -51,7 +51,7 @@ class LandlordPanelProvider extends PanelProvider
             ->loginRouteSlug('login')
             ->homeUrl('/landlord')
             // ->registration()
-            ->passwordReset()
+            ->passwordReset(\App\Filament\Auth\RequestPasswordReset::class)
             // ->emailVerification()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([

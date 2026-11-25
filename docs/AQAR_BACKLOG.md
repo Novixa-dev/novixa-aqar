@@ -31,11 +31,11 @@ decision); **Eng** = engineering work that can be picked up directly.
 | P28-29 | No `hreflang` | Locale is a session value on the same URL; needs `/en/...` URLs (or a `?lang=` canonical scheme) before hreflang is possible |
 | P28-26 | No long-lived cache headers for `/build/*` at the edge | Nginx/Cloudflare config on the VPS, outside the app |
 | P28-25 | File cache driver | Fine for one instance; decide before scaling out Octane workers across hosts |
-| P18-7 | Password reset shows no feedback when mail sending throws | Catch and show a localized error |
 | P13-11 | `PermissionsSeeder` takes ~7 minutes | Not demo-visible; batch the permission inserts |
 
 ## Recently closed (for context)
 
+- P18-7: a mail failure on password reset now shows a localized error (public page and all 9 panels) instead of a 500.
 - Phase 36: 41+42 new security advisories patched on both branches; homepage map "NaN undefined" + popup XSS (#126); contact/inquiry abuse limits (#125); dependabot #114–#123 consolidated (#124).
 
 - P33-2 saved searches + alerts — PR #112.
