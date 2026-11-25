@@ -15,19 +15,8 @@ class HomeController extends Controller
             ->whereNotNull('longitude')
             ->where('latitude', '!=', 0)
             ->where('longitude', '!=', 0)
-            ->get(['id', 'title', 'price', 'latitude', 'longitude', 'bedrooms', 'bathrooms', 'area_sqft'])
-            ->map(function ($property) {
-                return [
-                    'id' => $property->id,
-                    'title' => $property->title,
-                    'price' => $property->price,
-                    'latitude' => $property->latitude,
-                    'longitude' => $property->longitude,
-                    'bedrooms' => $property->bedrooms,
-                    'bathrooms' => $property->bathrooms,
-                    'area_sqft' => $property->area_sqft,
-                ];
-            });
+            // currency/status feed the map popups' price and "monthly" label.
+            ->get(['id', 'title', 'price', 'currency', 'status', 'latitude', 'longitude']);
 
         return view('home', [
             'featuredProperties' => $featuredProperties,
