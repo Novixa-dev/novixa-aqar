@@ -9,20 +9,21 @@ class PropertyMap extends Component
 {
     public array $properties;
 
+    /** Enough markers to cover the demo market without bloating the page. */
+    public const MAX_MARKERS = 300;
+
     /**
-     * Use the markers the caller passes (the homepage does); otherwise load
-     * every public, geolocated listing. The constructor used to ignore its
-     * argument and select only id/title/location/coordinates, so every
+     * Use the markers the caller passes (the homepage does) -- an empty list
+     * means an empty map, not "show everything"; with no argument, load the
+     * public, active, geolocated listings. The constructor used to ignore
+     * its argument and select only id/title/location/coordinates, so every
      * popup's price rendered as "NaN undefined".
      */
     public function __construct($properties = null)
     {
-        $rows = $properties !== null && count($properties) > 0
+        $rows = $properties !== null
             ? collect($properties)
-            : Property::query()->publiclyVisible()
-                ->whereNotNull('latitude')->whereNotNull('longitude')
-                ->where('latitude', '!=', 0)->where('longitude', '!=', 0)
-                ->get(['id', 'title', 'price', 'currency', 'status', 'latitude', 'longitude']);
+            : self::markerQuery()->get();
 
         $this->properties = $rows->map(fn ($p) => [
             'id' => data_get($p, 'id'),
@@ -33,6 +34,17 @@ class PropertyMap extends Component
             'latitude' => (float) data_get($p, 'latitude'),
             'longitude' => (float) data_get($p, 'longitude'),
         ])->values()->all();
+    }
+
+    /** Public, still-available (not sold/rented), geolocated listings. */
+    public static function markerQuery()
+    {
+        return Property::query()->publiclyVisible()->active()
+            ->whereNotNull('latitude')->whereNotNull('longitude')
+            ->where('latitude', '!=', 0)->where('longitude', '!=', 0)
+            ->latest()
+            ->limit(self::MAX_MARKERS)
+            ->select(['id', 'title', 'price', 'currency', 'status', 'latitude', 'longitude']);
     }
 
     public function render()
