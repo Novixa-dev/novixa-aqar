@@ -27,6 +27,7 @@ class PropertyMapComponentTest extends TestCase
         $rental = $this->geolocated(['status' => 'for_rent', 'price' => 160000, 'currency' => 'YER']);
         $sale = $this->geolocated(['status' => 'for_sale', 'price' => 36000000, 'currency' => 'YER']);
         $this->geolocated(['moderation_status' => 'pending']);
+        $this->geolocated(['status' => 'sold']); // no longer available
 
         $markers = collect((new PropertyMap)->properties)->keyBy('id');
 
@@ -47,10 +48,27 @@ class PropertyMapComponentTest extends TestCase
             ->assertSee('"rent":true', false);
     }
 
-    public function test_html_in_a_title_is_escaped_in_the_marker_data(): void
+    public function test_an_empty_marker_list_stays_empty(): void
     {
-        $this->geolocated(['title' => '<img src=x onerror=alert(1)>']);
+        $this->geolocated(['status' => 'for_sale']);
+
+        $this->assertSame([], (new PropertyMap([]))->properties);
+    }
+
+    public function test_html_in_a_title_is_json_escaped_in_the_marker_data(): void
+    {
+        $this->geolocated(['status' => 'for_sale', 'title' => '<img src=x onerror=alert(1)>']);
 
         $this->get('/')->assertOk()->assertDontSee('<img src=x onerror=alert(1)>', false);
+    }
+
+    public function test_popups_are_never_built_from_an_html_string(): void
+    {
+        // Leaflet renders a string popup as raw HTML; titles are user input,
+        // so popups must stay DOM nodes filled via textContent.
+        $script = file_get_contents(resource_path('views/components/property-map.blade.php'));
+
+        $this->assertDoesNotMatchRegularExpression('/bindPopup\(\s*[`\'"]/', $script);
+        $this->assertStringContainsString('textContent', $script);
     }
 }
