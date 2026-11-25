@@ -3,7 +3,7 @@
 Every item still open, collected from the "carried forward" sections of
 `AQAR_TASKS.md` (Phases 13–35) so nothing is lost in the phase history.
 Phase detail and verification stay in `AQAR_TASKS.md`; this file is the
-to-do list. Last consolidated: **2026-11-13**.
+to-do list. Last consolidated: **2026-11-25**.
 
 Legend: **Owner** = needs the product owner (access, credentials or a
 decision); **Eng** = engineering work that can be picked up directly.
@@ -13,6 +13,7 @@ decision); **Eng** = engineering work that can be picked up directly.
 | ID | Item | What is needed |
 |---|---|---|
 | P34-12 / P28-28 | demo2 (RUSU) presents itself as a **Saudi** company (Riyadh address, placeholder phone `+966 55 000 0000`, "since 2009 in Saudi Arabia", Riyadh project cards) while its brand description and every listing are **Yemeni** | Decide: is RUSU Saudi or Yemeni? Then either Yemeni contact details in the footer/home, or real Saudi contact details instead of the placeholder phone |
+| P36-9 | DocuSign e-signature is not functional: `DocuSignService::getAccessToken()` returns `'your_access_token_here'` | Decide: implement the JWT grant with real DocuSign credentials, or hide e-signature from the UI |
 | P23-11 | Transactional mail domain not verified | DNS records on `novixa.dev` (records listed in `AQAR_KEYS_AND_SERVICES_AR.md`) |
 | P23-12 | No continuous uptime monitoring | An UptimeRobot (or similar) check on `https://aqar-demo.novixa.dev/up` and `aqar-demo2` |
 | — | Docker Hub image publishing is skipped (no `DOCKERHUB_USERNAME`/`DOCKERHUB_TOKEN` secrets) | Add the secrets if a public image is wanted; otherwise nothing to do (deploys build their own image) |
@@ -23,6 +24,7 @@ decision); **Eng** = engineering work that can be picked up directly.
 | ID | Item | Notes |
 |---|---|---|
 | P35-2 | `ui-improves` dependency lock lags `main` by ~86 packages (including major bumps: docusign 9, spatie/permission 8) | Port main's `composer.json`/`composer.lock` to `ui-improves` in its own PR with a full test run; security patches were already applied in PR #111 |
+| P36-10 | A double-submit can store two reviews of the same neighbourhood by one user (check-then-insert, no unique index) | Unique index on (user_id, reviewable_type, reviewable_id) + handle the duplicate-key error |
 | P29-20 | Property-detail page has 15+ stacked sections | Tabs or anchor navigation; also RSS feed and categories for news |
 | P32 | Full WCAG pass | Contrast ratios, heading hierarchy, keyboard traps in modals, screen-reader pass |
 | P28-27 / P29-19 | Seeded photo pool is ~16 images reused across ~28 listings | Larger curated pool (external URLs, per the "no binary assets" convention) |
@@ -33,6 +35,8 @@ decision); **Eng** = engineering work that can be picked up directly.
 | P13-11 | `PermissionsSeeder` takes ~7 minutes | Not demo-visible; batch the permission inserts |
 
 ## Recently closed (for context)
+
+- Phase 36: 41+42 new security advisories patched on both branches; homepage map "NaN undefined" + popup XSS (#126); contact/inquiry abuse limits (#125); dependabot #114–#123 consolidated (#124).
 
 - P33-2 saved searches + alerts — PR #112.
 - P29-21 CI on PRs into `ui-improves` — PR #111.

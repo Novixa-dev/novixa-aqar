@@ -654,3 +654,26 @@ No local PHP 8.4/vendor in this environment — every change was `php -l`-checke
 | P35-3 (P29-21) | PRs into `ui-improves` ran no CI at all | `main.yml` `pull_request` trigger now includes `ui-improves` (on that branch, PR #111) | **FIXED** |
 | P35-4 | Open items scattered across 20+ phase sections | New `docs/AQAR_BACKLOG.md`: one list, split by "needs owner" vs "engineering" | **DONE** |
 | P35-5 | Round-34 footer copyright fix used a `@php…@endphp` block in a template that already uses inline `@php(...)`; Blade mis-compiles that pair, so every page 500'd in CI (21 tests) | Logic moved to `Brand::copyright()` with a test; caught by CI before merge, never reached a demo | **FIXED (PR #110)** |
+
+## Phase 36 (2026-11-25) — Scan & review: 41 new security advisories, map bug + XSS, form abuse limits, code-reviewed
+
+| ID | Problem | Fix | Status |
+|---|---|---|---|
+| P36-1 | 10 open dependabot PRs (#114–#123) all touching the same lockfiles | Consolidated into one update (#124): docusign 9→10, phpunit, tinker, horizon, roadrunner-cli, vite 8.3.8, preline 5.1, autoprefixer, postcss, sass-embedded. Dependabot auto-closed the originals | **FIXED — #124; laravel-tests + Full Install Smoke Test (composer install → npm ci → npm run build) green; demo1 deployed** |
+| P36-2 | `composer audit`: **41 advisories in 5 packages** published since Phase 35 — incl. `web-auth/cose-lib` RSA verification accepting trivially forged signatures, `web-auth/webauthn-lib` forged attestations / ignored REVOKED, `spomky-labs/pki-framework` (27), `cbor-php`, `league/csv`; npm: `postcss-selector-parser` | Patched within constraints (#124); npm `overrides` pin for the selector parser. demo2 had 42 (+ `laravel/framework` 13.35 Concurrency output injection) — patched in #127 | **FIXED — composer audit / npm audit: none on both branches** |
+| P36-3 | **Homepage map popups showed "NaN undefined"** (live): `PropertyMap` ignored the markers passed to it and selected no price/currency | Component uses its input (empty list = empty map); shared `PropertyMap::markerQuery()` = public + active + geolocated, newest 300 | **FIXED — #126, `PropertyMapComponentTest`** |
+| P36-4 | **Stored-XSS path**: popups built as an HTML string with the listing title interpolated; Leaflet renders string popups as raw HTML | Popups are DOM nodes filled via `textContent`; adds price, "monthly" for rentals, link to the listing, localized zoom titles; regression guard fails if `bindPopup` ever gets a string again | **FIXED — #126** |
+| P36-5 | `POST /contact` (stores + emails the office) and the property-page inquiry (creates a scored CRM lead) had **no rate limit and no message length cap** | `App\Support\PublicFormThrottle`: 3 per IP+email and 20 per IP per 10 min (shared carrier-NAT IPs are common in Yemen), counted only after validation passes; localized error shown above the form; 5,000-char cap (submission description 10,000) | **FIXED — #125, `PublicFormAbuseLimitsTest` (7 tests)** |
+| P36-6 | Review forms: `submitReview()` called `bookings()` on a null user if the session expired while the page was open; English error strings | Localized guard + translated messages | **FIXED — #125** |
+| P36-7 (P26-6) | Unreferenced `DocumentGenerator` Livewire component (wrote to an undeclared `$templates`, stub field extraction) | Removed with its view (no route/view referenced it) | **FIXED — #125** |
+| P36-8 | Process | #125 and #126 were reviewed with the `code-review` skill before merge; all of its findings were applied (only-valid-submissions counting, per-sender + per-IP budgets, separate throttle error key, empty-list/active-only/capped markers, a test that actually guards the XSS fix) | **DONE** |
+
+### Verification notes
+
+Live crawl of both demos (AR/EN × desktop/mobile × 18 pages = 144 page loads): 0 console errors, 0 failed requests, 0 broken images, 0 broken internal links (97 checked), 0 mobile overflow, one `<h1>` per page. Security headers present on both (HSTS preload, CSP, XFO, nosniff, Referrer-Policy, Permissions-Policy). TTFB 0.2–1.0 s.
+
+### Not fixed this round — carried forward (see `AQAR_BACKLOG.md`)
+
+- `DocuSignService::getAccessToken()` returns a hard-coded placeholder — e-signature is not functional (owner decision: implement JWT auth with real credentials, or hide the feature).
+- Duplicate neighbourhood reviews possible under a double-submit race (no unique index on user + reviewable) — pre-existing, found by code review.
+
