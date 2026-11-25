@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Support\PublicFormThrottle;
 use Livewire\Component;
 use App\Models\Property;
 use App\Models\Favorite;
@@ -51,7 +52,7 @@ class PropertyDetail extends Component
         'name' => 'required|string|max:255',
         'email' => 'required|email|max:255',
         'phone' => 'nullable|string|max:20',
-        'message' => 'nullable|string',
+        'message' => 'nullable|string|max:5000',
     ];
 
     public function boot(NeighborhoodDataService $neighborhoodDataService, LeadScoringService $leadScoringService)
@@ -194,6 +195,14 @@ class PropertyDetail extends Component
     public function submitLeadForm()
     {
         $this->validate();
+
+        // Every inquiry creates a scored CRM lead; cap it (see
+        // PublicFormThrottle). Only valid submissions count.
+        if (! PublicFormThrottle::attempt('property-inquiry', request()->ip(), $this->email)) {
+            $this->addError('throttle', __('You have submitted too many requests recently. Please try again later.'));
+
+            return;
+        }
 
         $teamId = $this->team?->id ?? \App\Models\Team::first()?->id;
 

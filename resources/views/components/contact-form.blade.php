@@ -6,6 +6,10 @@
         </div>
     @endif
 
+    @error('throttle')
+        <div class="p-4 mb-6 text-sm text-red-800 rounded-2xl bg-red-50 dark:bg-gray-700 dark:text-red-400 border border-red-200 dark:border-red-600" role="alert">{{ $message }}</div>
+    @enderror
+
     <form action="{{ route('contact.submit') }}" method="POST" class="space-y-6" style="--brand-color: {{ $brand->themeColor() }}">
         @csrf
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
