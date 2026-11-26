@@ -116,10 +116,10 @@
                 @error('movingDistance') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
             </div>
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
+                <label for="calc-first-time-buyer" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
                     {{ app()->getLocale() === 'ar' ? 'مشتري لأول مرة؟' : 'First Time Buyer?' }}
                 </label>
-                <select wire:model="isFirstTimeBuyer" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white">
+                <select id="calc-first-time-buyer" wire:model="isFirstTimeBuyer" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-sm text-gray-900 dark:text-white">
                     <option value="">{{ app()->getLocale() === 'ar' ? 'اختر الإجابة' : 'Select option' }}</option>
                     <option value="1">{{ app()->getLocale() === 'ar' ? 'نعم' : 'Yes' }}</option>
                     <option value="0">{{ app()->getLocale() === 'ar' ? 'لا' : 'No' }}</option>
@@ -136,7 +136,7 @@
         @if($costOfMovingResult)
             <div class="mt-8 p-6 bg-blue-50 dark:bg-blue-900/30 rounded-2xl border border-blue-100 dark:border-blue-800">
                 <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">{{ app()->getLocale() === 'ar' ? 'إجمالي تكاليف الانتقال التقديرية:' : 'Total Estimated Moving Cost:' }}</span>
-                <span class="text-3xl font-black text-blue-600 dark:text-blue-400">{{ app(\App\Services\CurrencyService::class)->format($costOfMovingResult['total_cost'] ?? 0, 2) }}</span>
+                <span class="text-3xl font-black text-blue-600 dark:text-blue-400">{{ app(\App\Services\CurrencyService::class)->format($costOfMovingResult['total_cost'] ?? 0) }}</span>
             </div>
         @endif
     </div>

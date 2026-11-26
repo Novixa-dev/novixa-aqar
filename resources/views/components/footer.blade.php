@@ -4,7 +4,7 @@
             <!-- Col 1: Brand & Bio -->
             <div class="space-y-4">
                 <a href="/" class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo.svg') }}" class="h-10 w-auto rounded-xl shadow-xs" alt="{{ $brand->name() }}" />
+                    <img src="{{ asset('images/logo.svg') }}" class="h-10 w-auto rounded-xl shadow-xs" alt="" />
                     <span class="text-xl font-black text-white">
                         {{ $brand->name() }}
                     </span>
@@ -82,7 +82,7 @@
             </div>
         </div>
 
-        <div class="pt-8 mt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+        <div class="pt-8 mt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-4">
             <div>
                 {{ $brand->copyright() }}
             </div>

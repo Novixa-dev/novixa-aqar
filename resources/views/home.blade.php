@@ -35,14 +35,15 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <input type="text" name="search" 
+                    <input type="text" name="search"
+                           aria-label="{{ app()->getLocale() === 'ar' ? 'كلمة البحث' : 'Search keywords' }}"
                            placeholder="{{ app()->getLocale() === 'ar' ? 'ابحث عن عقارات، مناطق، أحياء...' : 'Search properties, areas, neighborhoods...' }}" 
                            class="w-full ps-11 pe-4 py-3.5 bg-gray-800/90 border border-gray-700/80 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white placeholder-gray-400 transition-all">
                 </div>
                 
                 <!-- Status Select Dropdown -->
                 <div class="relative w-full md:w-48 group">
-                    <select name="status" 
+                    <select name="status" aria-label="{{ app()->getLocale() === 'ar' ? 'نوع العرض' : 'Listing type' }}"
                             style="background-image: none !important; -webkit-appearance: none; -moz-appearance: none; appearance: none;"
                             class="w-full ps-4 pe-10 py-3.5 bg-gray-800/90 border border-gray-700/80 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer [background-image:none] transition-all">
                         <option value="" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
@@ -58,7 +59,7 @@
 
                 <!-- Property Type Select Dropdown -->
                 <div class="relative w-full md:w-56 group">
-                    <select name="property_type" 
+                    <select name="property_type" aria-label="{{ app()->getLocale() === 'ar' ? 'نوع العقار' : 'Property type' }}"
                             style="background-image: none !important; -webkit-appearance: none; -moz-appearance: none; appearance: none;"
                             class="w-full ps-4 pe-10 py-3.5 bg-gray-800/90 border border-gray-700/80 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-white appearance-none cursor-pointer [background-image:none] transition-all">
                         <option value="" class="bg-gray-800 text-white py-2">{{ app()->getLocale() === 'ar' ? 'جميع الأنواع' : 'All Types' }}</option>
