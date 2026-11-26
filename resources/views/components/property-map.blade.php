@@ -12,7 +12,15 @@
 @endphp
 
 <script type="module">
-    const L = await window.loadLeaflet();
+    let L;
+    try {
+        L = await window.loadLeaflet();
+    } catch (error) {
+        // Map chunk unavailable (network, or a page cached across a deploy):
+        // hide the empty box instead of leaving a blank 400px gap.
+        document.getElementById('map')?.setAttribute('hidden', '');
+        throw error;
+    }
     const properties = @json($properties);
     const currencySymbols = @json(collect(app(\App\Services\CurrencyService::class)->all())->map(fn ($c) => $c['symbol']));
     const t = @json($mapText);

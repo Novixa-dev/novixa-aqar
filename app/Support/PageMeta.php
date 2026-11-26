@@ -133,6 +133,9 @@ final class PageMeta
         $cut = mb_substr($text, 0, $max - 1);
         $space = mb_strrpos($cut, ' ');
 
-        return rtrim($space > $max * 0.6 ? mb_substr($cut, 0, $space) : $cut, " ،,.;:—-").'…';
+        $cut = $space > $max * 0.6 ? mb_substr($cut, 0, $space) : $cut;
+
+        // Unicode-aware: rtrim() works on bytes and would split Arabic letters.
+        return preg_replace('/[\s،,.;:—-]+$/u', '', $cut).'…';
     }
 }

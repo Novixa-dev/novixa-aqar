@@ -119,5 +119,10 @@ class SeoAndBrandingTest extends TestCase
         $this->assertLessThanOrEqual(\App\Support\PageMeta::DESCRIPTION_MAX, mb_strlen($description));
         $this->assertStringEndsWith('…', $description);
         $this->assertSame('Plain text.', \App\Support\PageMeta::description('<p>Plain   text.</p>'));
+
+        // Arabic text cut next to a multibyte character stays valid UTF-8.
+        $arabic = \App\Support\PageMeta::description(str_repeat('مثالـ ، ', 40));
+        $this->assertTrue(mb_check_encoding($arabic, 'UTF-8'));
+        $this->assertLessThanOrEqual(\App\Support\PageMeta::DESCRIPTION_MAX, mb_strlen($arabic));
     }
 }
