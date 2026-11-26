@@ -57,10 +57,13 @@
         <script>
             let viewer3D = null;
 
-            document.addEventListener('DOMContentLoaded', function() {
-                if (window.Model3DViewer && '{{ $modelUrl }}') {
-                    viewer3D = new window.Model3DViewer('model-3d-container', '{{ $modelUrl }}');
+            // three.js is loaded on demand (see resources/js/app.js).
+            document.addEventListener('DOMContentLoaded', async function() {
+                if (!window.loadModel3DViewer || !'{{ $modelUrl }}') {
+                    return;
                 }
+                const Model3DViewer = await window.loadModel3DViewer();
+                viewer3D = new Model3DViewer('model-3d-container', '{{ $modelUrl }}');
             });
 
             function resetModel3DCamera() {

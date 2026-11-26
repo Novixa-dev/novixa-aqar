@@ -12,6 +12,7 @@
 @endphp
 
 <script type="module">
+    const L = await window.loadLeaflet();
     const properties = @json($properties);
     const currencySymbols = @json(collect(app(\App\Services\CurrencyService::class)->all())->map(fn ($c) => $c['symbol']));
     const t = @json($mapText);
