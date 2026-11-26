@@ -83,9 +83,14 @@ class CurrencyService
             'thousands_separator' => ',',
         ];
 
+        // Whole amounts (almost every listing price) drop the ".00": "$285,000"
+        // reads as a price, "$285,000.00" as an invoice line. Fractions keep
+        // the currency's own precision.
+        $decimals = (float) $amount === floor((float) $amount) ? 0 : $currency['decimals'];
+
         $number = number_format(
             (float) $amount,
-            $currency['decimals'],
+            $decimals,
             '.',
             $currency['thousands_separator']
         );
