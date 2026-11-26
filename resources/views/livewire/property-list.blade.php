@@ -21,11 +21,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 <!-- Search Input -->
                 <div class="relative col-span-1 md:col-span-2">
-                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-400 mb-1.5">
+                    <label for="pl-search" class="block text-xs font-bold text-gray-700 dark:text-gray-400 mb-1.5">
                         {{ app()->getLocale() === 'ar' ? 'البحث بالاسم أو الحي' : 'Search by title or area' }}
                     </label>
                     <div class="relative">
-                        <input type="text" wire:model.live.debounce.300ms="search"
+                        <input type="text" id="pl-search" wire:model.live.debounce.300ms="search"
                             class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             placeholder="{{ app()->getLocale() === 'ar' ? 'ابحث عن شقة، فيلا، حي فوه، الديس، حدة...' : 'Search apartment, villa, Mukalla, Sanaa...' }}">
                         <span class="absolute end-3 top-3.5 text-gray-400"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg></span>
@@ -34,11 +34,11 @@
 
                 <!-- Status Filter -->
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-400 mb-1.5">
+                    <label for="pl-status" class="block text-xs font-bold text-gray-700 dark:text-gray-400 mb-1.5">
                         {{ app()->getLocale() === 'ar' ? 'نوع العملية' : 'Purpose' }}
                     </label>
                     <div class="relative">
-                        <select wire:model.live="status"
+                        <select id="pl-status" wire:model.live="status"
                             class="w-full ps-4 pe-10 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-gray-900 dark:text-white appearance-none cursor-pointer">
                             <option value="">{{ app()->getLocale() === 'ar' ? 'الكل (بيع وإيجار)' : 'All (Sale & Rent)' }}</option>
                             <option value="for_sale">{{ app()->getLocale() === 'ar' ? 'للبيع' : 'For Sale' }}</option>
@@ -54,11 +54,11 @@
 
                 <!-- Property Type Filter -->
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-400 mb-1.5">
+                    <label for="pl-type" class="block text-xs font-bold text-gray-700 dark:text-gray-400 mb-1.5">
                         {{ app()->getLocale() === 'ar' ? 'نوع العقار' : 'Property Type' }}
                     </label>
                     <div class="relative">
-                        <select wire:model.live="propertyType"
+                        <select id="pl-type" wire:model.live="propertyType"
                             class="w-full ps-4 pe-10 py-3 bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-sm text-gray-900 dark:text-white appearance-none cursor-pointer">
                             <option value="">{{ app()->getLocale() === 'ar' ? 'جميع الأنواع' : 'All Types' }}</option>
                             <option value="Apartment">{{ app()->getLocale() === 'ar' ? 'شقة سكنية' : 'Apartment' }}</option>
@@ -80,11 +80,11 @@
             <!-- Secondary Filters: Bedrooms & Price -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-100 dark:border-gray-800/80 text-xs">
                 <div>
-                    <label class="block font-bold text-gray-700 dark:text-gray-400 mb-1">
+                    <label for="pl-beds" class="block font-bold text-gray-700 dark:text-gray-400 mb-1">
                         {{ app()->getLocale() === 'ar' ? 'غرف النوم (الحد الأدنى)' : 'Min Bedrooms' }}
                     </label>
                     <div class="relative">
-                        <select wire:model.live="minBedrooms"
+                        <select id="pl-beds" wire:model.live="minBedrooms"
                             class="w-full ps-3 pe-8 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-xs appearance-none cursor-pointer">
                             <option value="0">{{ app()->getLocale() === 'ar' ? 'أي عدد' : 'Any' }}</option>
                             <option value="1">1+ {{ app()->getLocale() === 'ar' ? 'غرفة' : 'Bed' }}</option>
@@ -101,11 +101,11 @@
                 </div>
 
                 <div>
-                    <label class="block font-bold text-gray-700 dark:text-gray-400 mb-1">
+                    <label for="pl-baths" class="block font-bold text-gray-700 dark:text-gray-400 mb-1">
                         {{ app()->getLocale() === 'ar' ? 'دورات المياه' : 'Min Bathrooms' }}
                     </label>
                     <div class="relative">
-                        <select wire:model.live="minBathrooms"
+                        <select id="pl-baths" wire:model.live="minBathrooms"
                             class="w-full ps-3 pe-8 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-xs appearance-none cursor-pointer">
                             <option value="0">{{ app()->getLocale() === 'ar' ? 'أي عدد' : 'Any' }}</option>
                             <option value="1">1+ {{ app()->getLocale() === 'ar' ? 'حمام' : 'Bath' }}</option>
@@ -121,18 +121,18 @@
                 </div>
 
                 <div>
-                    <label class="block font-bold text-gray-700 dark:text-gray-400 mb-1">
+                    <label for="pl-min-price" class="block font-bold text-gray-700 dark:text-gray-400 mb-1">
                         {{ app()->getLocale() === 'ar' ? 'السعر الأدنى (ر.ي)' : 'Min Price' }}
                     </label>
-                    <input type="number" wire:model.live.debounce.400ms="minPrice" placeholder="0"
+                    <input type="number" id="pl-min-price" wire:model.live.debounce.400ms="minPrice" placeholder="0"
                         class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-xs">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-gray-700 dark:text-gray-400 mb-1">
+                    <label for="pl-max-price" class="block font-bold text-gray-700 dark:text-gray-400 mb-1">
                         {{ app()->getLocale() === 'ar' ? 'السعر الأقصى (ر.ي)' : 'Max Price' }}
                     </label>
-                    <input type="number" wire:model.live.debounce.400ms="maxPrice" placeholder="100,000,000"
+                    <input type="number" id="pl-max-price" wire:model.live.debounce.400ms="maxPrice" placeholder="100,000,000"
                         class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white text-xs">
                 </div>
             </div>

@@ -75,8 +75,7 @@ class CalculatorsComponent extends Component
     {
         return view('livewire.calculators')
             ->extends('layouts.app')
-            ->section('content')
-            ->layoutData(['title' => app()->getLocale() === 'ar' ? 'الحاسبات العقارية' : 'Real Estate Calculators']);
+            ->section('content');
     }
 
     public function calculateMortgage()

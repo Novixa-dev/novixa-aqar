@@ -6,13 +6,19 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @php
-        $pageTitle = trim($__env->yieldContent('title')) ?: ($title ?? $brand->title());
-        $pageDescription = trim($__env->yieldContent('meta_description')) ?: ($metaDescription ?? $brand->description());
+        $routeMeta = \App\Support\PageMeta::forRoute();
+        $pageTitle = \App\Support\PageMeta::title(
+            trim($__env->yieldContent('title')) ?: ($title ?? $routeMeta['title'] ?? $brand->title()),
+            $brand->name()
+        );
+        $pageDescription = \App\Support\PageMeta::description(
+            trim($__env->yieldContent('meta_description')) ?: ($metaDescription ?? $routeMeta['description'] ?? $brand->description())
+        );
         $pageImage = trim($__env->yieldContent('og_image')) ?: (($ogImage ?? null) ?: $brand->ogImage());
         $isAr = app()->getLocale() === 'ar';
     @endphp
     <title>{{ $pageTitle }}</title>
-    <meta name="description" content="{{ \Illuminate\Support\Str::limit(strip_tags($pageDescription), 300) }}">
+    <meta name="description" content="{{ $pageDescription }}">
     {{-- Pages like /properties and /news build filter-aware, genuinely
          distinct titles/descriptions per query string (status, page, search),
          so the canonical must reflect that same URL, not strip it down to
@@ -31,7 +37,7 @@
     <meta property="og:site_name" content="{{ $brand->name() }}">
     <meta property="og:type" content="{{ trim($__env->yieldContent('og_type')) ?: ($ogType ?? 'website') }}">
     <meta property="og:title" content="{{ $pageTitle }}">
-    <meta property="og:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($pageDescription), 300) }}">
+    <meta property="og:description" content="{{ $pageDescription }}">
     <meta property="og:url" content="{{ url()->full() }}">
     <meta property="og:image" content="{{ $pageImage }}">
     <meta property="og:image:alt" content="{{ $pageTitle }}">
@@ -39,7 +45,7 @@
     <meta property="og:locale:alternate" content="{{ $isAr ? 'en_US' : 'ar_YE' }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $pageTitle }}">
-    <meta name="twitter:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($pageDescription), 200) }}">
+    <meta name="twitter:description" content="{{ $pageDescription }}">
     <meta name="twitter:image" content="{{ $pageImage }}">
     <meta name="google" content="notranslate">
     @stack('meta')
@@ -51,7 +57,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300..900&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

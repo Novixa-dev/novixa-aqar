@@ -24,7 +24,7 @@ return [
     // Default meta / Open Graph description when a page sets none.
     'description' => [
         'ar' => env('BRAND_DESCRIPTION_AR', 'نوفيكسا عقار: منصة عقارية متكاملة للبيع والإيجار في اليمن — بحث متقدم، معاينات وحجوزات، إدارة العقود والإيجارات والصيانة، ولوحة خاصة لكل دور.'),
-        'en' => env('BRAND_DESCRIPTION_EN', 'Novixa Aqar: a complete real-estate platform for sales and rentals in Yemen — advanced search, viewings and bookings, leases, rent and maintenance, with a dedicated workspace for every role.'),
+        'en' => env('BRAND_DESCRIPTION_EN', 'Novixa Aqar: properties for sale and rent in Yemen — advanced search, viewings and bookings, leases, rent and maintenance, and a workspace for every role.'),
     ],
 
     // The company behind the product.

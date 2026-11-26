@@ -107,10 +107,10 @@
             <h3 class="text-base font-semibold text-gray-800 mb-3">{{ app()->getLocale() === 'ar' ? 'تاريخ ووقت الموعد' : 'Appointment Date &amp; Time' }}</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label for="selectedDate" class="block text-sm font-medium text-gray-700 mb-1">
+                    <label for="vb-selectedDate" class="block text-sm font-medium text-gray-700 mb-1">
                         {{ app()->getLocale() === 'ar' ? 'التاريخ المفضل' : 'Preferred Date' }} <span class="text-red-500">*</span>
                     </label>
-                    <select id="selectedDate" wire:model.live="selectedDate"
+                    <select id="vb-selectedDate" wire:model.live="selectedDate"
                         class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         <option value="">{{ app()->getLocale() === 'ar' ? '— اختر تاريخاً —' : '— Choose a date —' }}</option>
                         @foreach ($availableDates as $date)
@@ -121,10 +121,10 @@
                 </div>
 
                 <div>
-                    <label for="selectedTime" class="block text-sm font-medium text-gray-700 mb-1">
+                    <label for="vb-selectedTime" class="block text-sm font-medium text-gray-700 mb-1">
                         {{ app()->getLocale() === 'ar' ? 'الوقت المفضل' : 'Preferred Time' }} <span class="text-red-500">*</span>
                     </label>
-                    <select id="selectedTime" wire:model="selectedTime"
+                    <select id="vb-selectedTime" wire:model="selectedTime"
                         class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm
                         {{ empty($availableTimeSlots) ? 'bg-gray-100 cursor-not-allowed' : '' }}"
                         {{ empty($availableTimeSlots) ? 'disabled' : '' }}>
