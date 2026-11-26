@@ -93,4 +93,31 @@ class SeoAndBrandingTest extends TestCase
     {
         $this->assertFileExists(public_path(config('branding.og_image')));
     }
+
+    public function test_pages_without_their_own_meta_get_route_specific_ones(): void
+    {
+        $home = $this->get('/')->assertOk()->getContent();
+        $submit = $this->get('/submit-property')->assertOk()->getContent();
+        $request = $this->get('/property-request')->assertOk()->getContent();
+
+        $title = fn (string $html) => preg_match('#<title>(.*?)</title>#s', $html, $m) ? html_entity_decode($m[1]) : null;
+        $description = fn (string $html) => preg_match('#<meta name="description" content="([^"]*)"#', $html, $m) ? html_entity_decode($m[1]) : null;
+
+        $this->assertStringStartsWith('أضف عقارك |', $title($submit));
+        $this->assertStringStartsWith('اطلب عقاراً |', $title($request));
+        $this->assertNotSame($description($home), $description($submit));
+        $this->assertNotSame($description($submit), $description($request));
+    }
+
+    public function test_titles_and_descriptions_fit_search_result_snippets(): void
+    {
+        $this->assertSame('A short page | Brand', \App\Support\PageMeta::title('A short page | Brand', 'Brand'));
+        $long = str_repeat('كلمة ', 14).'| Brand';
+        $this->assertStringEndsNotWith('| Brand', \App\Support\PageMeta::title($long, 'Brand'));
+
+        $description = \App\Support\PageMeta::description(str_repeat('word ', 60));
+        $this->assertLessThanOrEqual(\App\Support\PageMeta::DESCRIPTION_MAX, mb_strlen($description));
+        $this->assertStringEndsWith('…', $description);
+        $this->assertSame('Plain text.', \App\Support\PageMeta::description('<p>Plain   text.</p>'));
+    }
 }
