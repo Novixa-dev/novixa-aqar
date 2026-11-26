@@ -912,12 +912,21 @@ class Property extends Model implements HasMedia
 
     public function getTranslatedTypeAttribute(): string
     {
+        return self::typeLabel($this->property_type);
+    }
+
+    /**
+     * Display name of a property type in the current locale.
+     *
+     * Keyed lowercase: the same type arrives as 'Villa' from the seeder and
+     * Staff panel but 'villa'/'apartment' from the public submission and
+     * request forms and the V1 API, so an exact-case lookup left every
+     * publicly submitted listing showing the raw English value.
+     */
+    public static function typeLabel(?string $type): string
+    {
         $ar = app()->getLocale() === 'ar';
 
-        // Keyed lowercase: the same type arrives as 'Villa' from the seeder
-        // and Staff panel but 'villa'/'apartment' from the public submission
-        // and request forms and the V1 API, so an exact-case lookup left
-        // every publicly submitted listing showing the raw English value.
         $types = [
             'apartment' => $ar ? 'شقة سكنية' : 'Apartment',
             'villa' => $ar ? 'فيلا فاخرة' : 'Luxury Villa',
@@ -928,7 +937,7 @@ class Property extends Model implements HasMedia
             'hmo' => $ar ? 'سكن مشترك' : 'Shared Living (HMO)',
         ];
 
-        return $types[strtolower((string) $this->property_type)] ?? ($this->property_type ?: ($ar ? 'عقار سكني' : 'Residential'));
+        return $types[strtolower((string) $type)] ?? ($type ?: ($ar ? 'عقار سكني' : 'Residential'));
     }
 
     /**

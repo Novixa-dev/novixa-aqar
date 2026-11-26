@@ -154,16 +154,16 @@
                         <div>
                             <div class="grid grid-cols-3 gap-2 text-center text-xs text-gray-700 dark:text-gray-300 py-3 border-t border-gray-100 dark:border-gray-700/80 bg-gray-50 dark:bg-gray-900/40 rounded-xl px-2 mb-4">
                                 <div>
-                                    <span class="block text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'الغرف' : 'Beds' }}</span>
-                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 18v-5a2 2 0 012-2h14a2 2 0 012 2v5m0 0v2m0-2H3m0 0v2m3.5-10V8a2 2 0 012-2h7a2 2 0 012 2v2" /></svg> {{ $property->bedrooms ?? 1 }}</span>
+                                    <span class="block text-gray-500 dark:text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'الغرف' : 'Beds' }}</span>
+                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 18v-5a2 2 0 012-2h14a2 2 0 012 2v5m0 0v2m0-2H3m0 0v2m3.5-10V8a2 2 0 012-2h7a2 2 0 012 2v2" /></svg> {{ $property->bedrooms ?? '—' }}</span>
                                 </div>
                                 <div>
-                                    <span class="block text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'الحمامات' : 'Baths' }}</span>
-                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16v2a4 4 0 01-4 4H8a4 4 0 01-4-4v-2zm2 0V6a2 2 0 012-2h1.5M6 18l-1 2m13-2l1 2" /></svg> {{ $property->bathrooms ?? 1 }}</span>
+                                    <span class="block text-gray-500 dark:text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'الحمامات' : 'Baths' }}</span>
+                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16v2a4 4 0 01-4 4H8a4 4 0 01-4-4v-2zm2 0V6a2 2 0 012-2h1.5M6 18l-1 2m13-2l1 2" /></svg> {{ $property->bathrooms ?? '—' }}</span>
                                 </div>
                                 <div>
-                                    <span class="block text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
-                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 4.5H4.5M9 4.5L3.75 9.75M15 9V4.5M15 4.5h4.5M15 4.5l5.25 5.25M9 15v4.5M9 19.5H4.5M9 19.5l-5.25-5.25M15 15v4.5M15 19.5h4.5M15 19.5l5.25-5.25" /></svg> {{ $property->area_sqft ?? 150 }} م²</span>
+                                    <span class="block text-gray-500 dark:text-gray-400 text-[10px]">{{ app()->getLocale() === 'ar' ? 'المساحة' : 'Area' }}</span>
+                                    <span class="font-bold inline-flex items-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 4.5H4.5M9 4.5L3.75 9.75M15 9V4.5M15 4.5h4.5M15 4.5l5.25 5.25M9 15v4.5M9 19.5H4.5M9 19.5l-5.25-5.25M15 15v4.5M15 19.5h4.5M15 19.5l5.25-5.25" /></svg> {{ $property->area_sqft ? number_format($property->area_sqft).' '.(app()->getLocale() === 'ar' ? 'م²' : 'm²') : '—' }}</span>
                                 </div>
                             </div>
 
@@ -182,6 +182,52 @@
         </div>
     </section>
 
+
+    @php($isAr = app()->getLocale() === 'ar')
+
+    {{-- Browse entry points: by property type and by city, with live counts. --}}
+    @if($browseTypes->isNotEmpty() || $browseAreas->isNotEmpty())
+    <section class="mb-16 grid grid-cols-1 lg:grid-cols-5 gap-6" aria-labelledby="browse-heading">
+        <h2 id="browse-heading" class="sr-only">{{ $isAr ? 'تصفح العقارات' : 'Browse properties' }}</h2>
+
+        @if($browseTypes->isNotEmpty())
+        <div class="lg:col-span-3 bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700/80 p-6 sm:p-8 shadow-sm">
+            <h3 class="text-xl font-extrabold text-gray-900 dark:text-white mb-1">{{ $isAr ? 'تصفح حسب نوع العقار' : 'Browse by property type' }}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">{{ $isAr ? 'اختر النوع المناسب لاحتياجك' : 'Pick the kind of place you need' }}</p>
+            <ul class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                @foreach($browseTypes as $type)
+                    <li>
+                        <a href="{{ route('property.list', ['property_type' => $type['value']]) }}"
+                           class="flex items-center justify-between gap-2 h-full rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 px-4 py-3.5 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group">
+                            <span class="text-sm font-bold text-gray-800 dark:text-gray-100 group-hover:text-blue-700 dark:group-hover:text-blue-300">{{ $type['label'] }}</span>
+                            <span class="shrink-0 min-w-7 text-center text-xs font-black text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/50 rounded-full px-2 py-0.5">{{ $type['count'] }}</span>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
+        @if($browseAreas->isNotEmpty())
+        <div class="lg:col-span-2 bg-gradient-to-br from-blue-700 to-indigo-800 text-white rounded-3xl p-6 sm:p-8 shadow-sm">
+            <h3 class="text-xl font-extrabold mb-1">{{ $isAr ? 'تصفح حسب المدينة' : 'Browse by city' }}</h3>
+            <p class="text-sm text-blue-100 mb-6">{{ $isAr ? 'العروض المتاحة الآن في كل مدينة' : 'Listings available now in each city' }}</p>
+            <ul class="space-y-2.5">
+                @foreach($browseAreas as $area)
+                    <li>
+                        <a href="{{ route('property.list', ['search' => $area['name']]) }}"
+                           class="flex items-center justify-between gap-3 rounded-2xl bg-white/10 hover:bg-white/20 px-4 py-3 transition-colors">
+                            <span class="font-bold">{{ $area['name'] }}</span>
+                            <span class="text-xs font-semibold text-blue-50">{{ $area['count'] }} {{ $isAr ? 'عقار' : ($area['count'] === 1 ? 'listing' : 'listings') }}</span>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+    </section>
+    @endif
+
     <!-- Interactive Property Map Section -->
     <section class="mb-16">
         <div class="text-center max-w-2xl mx-auto mb-8">
@@ -192,6 +238,58 @@
             <x-property-map :properties="$mapProperties" />
         </div>
     </section>
+
+    {{-- Owners and seekers: the two public request flows. --}}
+    <section class="mb-16 grid grid-cols-1 md:grid-cols-2 gap-6" aria-label="{{ $isAr ? 'خدمات للملاك والباحثين' : 'For owners and seekers' }}">
+        <div class="rounded-3xl bg-gray-900 dark:bg-gray-800 text-white p-8 flex flex-col justify-between gap-6 border border-gray-800 dark:border-gray-700">
+            <div>
+                <h2 class="text-2xl font-extrabold mb-2">{{ $isAr ? 'لديك عقار للبيع أو الإيجار؟' : 'Have a property to sell or rent?' }}</h2>
+                <p class="text-gray-300 text-sm leading-relaxed">{{ $isAr ? 'أضف إعلانك مع الصور والسعر والموقع، ويراجعه فريقنا قبل النشر.' : 'Add your listing with photos, price and location; our team reviews it before it goes live.' }}</p>
+            </div>
+            <a href="{{ route('property.submit') }}" class="self-start inline-flex items-center gap-2 rounded-xl bg-white text-gray-900 px-5 py-3 text-sm font-bold hover:bg-blue-50 transition-colors">
+                {{ $isAr ? 'أضف عقارك' : 'List your property' }}
+            </a>
+        </div>
+        <div class="rounded-3xl bg-emerald-50 dark:bg-emerald-900/20 p-8 flex flex-col justify-between gap-6 border border-emerald-100 dark:border-emerald-800/60">
+            <div>
+                <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white mb-2">{{ $isAr ? 'لم تجد ما تبحث عنه؟' : "Can't find what you need?" }}</h2>
+                <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{{ $isAr ? 'أخبرنا بالنوع والمدينة والميزانية، وسنتواصل معك بالعروض المناسبة.' : 'Tell us the type, city and budget, and we will contact you with matching listings.' }}</p>
+            </div>
+            <a href="{{ route('property.request') }}" class="self-start inline-flex items-center gap-2 rounded-xl bg-emerald-700 text-white px-5 py-3 text-sm font-bold hover:bg-emerald-800 transition-colors">
+                {{ $isAr ? 'اطلب عقاراً' : 'Request a property' }}
+            </a>
+        </div>
+    </section>
+
+    @if($latestNews->isNotEmpty())
+    <section class="mb-16" aria-labelledby="news-heading">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+            <div>
+                <h2 id="news-heading" class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-2">{{ $isAr ? 'أحدث الأخبار والأدلة العقارية' : 'Latest news and guides' }}</h2>
+                <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">{{ $isAr ? 'نصائح السوق والتملك والإيجار' : 'Market insight, buying and renting advice' }}</p>
+            </div>
+            <a href="{{ route('news') }}" class="inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                <span>{{ $isAr ? 'كل الأخبار' : 'All news' }}</span>
+                <span class="{{ $isAr ? 'rotate-180' : '' }}" aria-hidden="true">&rarr;</span>
+            </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @foreach($latestNews as $article)
+                <article class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700/80 overflow-hidden shadow-sm hover:shadow-xl transition-shadow flex flex-col group">
+                    @if($article->image_src)
+                        <img src="{{ $article->image_src }}" alt="" loading="lazy" decoding="async" width="640" height="360" class="w-full h-44 object-cover">
+                    @endif
+                    <div class="p-6 flex flex-col gap-3 flex-1">
+                        <time datetime="{{ $article->published_at?->toDateString() }}" class="text-xs font-semibold text-gray-500 dark:text-gray-400">{{ $article->published_at?->translatedFormat('j F Y') }}</time>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-snug line-clamp-2 group-hover:text-blue-700 dark:group-hover:text-blue-300">
+                            <a href="{{ route('news.detail', $article->slug) }}" class="after:absolute after:inset-0 relative">{{ $article->title }}</a>
+                        </h3>
+                    </div>
+                </article>
+            @endforeach
+        </div>
+    </section>
+    @endif
 
     <!-- Why Choose Us Features Grid -->
     <section class="mb-12 py-12 bg-gray-50 dark:bg-gray-800/40 rounded-3xl p-8 lg:p-12 border border-gray-100 dark:border-gray-800">
