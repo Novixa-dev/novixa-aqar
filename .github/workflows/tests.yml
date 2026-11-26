@@ -23,7 +23,9 @@ jobs:
         with:
           php-version: '8.5'
           extensions: mbstring, pdo, pdo_sqlite, bcmath, opcache, zip, gd, intl
-          coverage: xdebug
+          # pcov: line coverage only, several times faster than xdebug (which
+          # took ~28 of the 30 allowed minutes and was often cancelled).
+          coverage: pcov
 
       - name: Get composer cache directory
         id: composer-cache
